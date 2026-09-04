@@ -186,10 +186,17 @@ export default [
     await page.click('[data-t=open-finder]');
     await page.click('[data-t=finder-generate]');
     // Scroll the prompt to where the node JSON with positions is visible.
+    await page.evaluate(() => window.mm.clearOfPanels());
+    // Tall enough to hold the instruction preamble and the first position
+    // records in one frame, scrolled to the top rather than into the middle of
+    // a record: the artifact is specified as JSON *plus* instructions.
     await page.evaluate(() => {
       const t = document.querySelector('[data-t=finder-prompt]');
-      t.style.height = '540px'; t.rows = 26;
-      t.scrollTop = Math.max(0, t.value.indexOf('MAP JSON') - 40);
+      t.style.height = '820px'; t.rows = 40;
+      t.style.fontSize = '10px';
+      t.scrollTop = 0;
+      const p = document.getElementById('finder');
+      if (p) p.style.width = '640px';
     });
     await sleepFrames(page, 0, 2);
     await H.shot(page, cdp, H.out(this.file));

@@ -19,6 +19,8 @@ const BASE_FROM_TOP = (m: FontMeta) => (m.pad + m.glyph * 0.78) / m.glyph;
 export interface TextRun {
   anchor: THREE.Vector3; text: string; color: THREE.Color;
   nodeSizeWorld: number; alpha: number; above?: boolean;
+  /** -1 sets the label to the left of the node, +1 to the right, 0 centred. */
+  side?: -1 | 0 | 1;
 }
 
 /** Greedy wrap to at most `maxLines` lines of about `perLine` characters. */
@@ -99,7 +101,7 @@ void main() {
 }`;
 
 /** Where each run's glyphs live in the instance buffer, and how big it is. */
-export interface RunSpan { start: number; count: number; widthEm: number; lines: number; above: boolean; }
+export interface RunSpan { start: number; count: number; widthEm: number; lines: number; above: boolean; side: -1 | 0 | 1; }
 
 export class TextLayer {
   readonly mesh: THREE.Mesh;
@@ -216,11 +218,14 @@ export class TextLayer {
       const above = !!run.above;
       // Below: block hangs under the node. Above: block sits clear on top of it.
       const emY = above ? 0.55 + (lines.length - 1) * m.lineHeight + 0.30 : -0.92;
-      const side = above ? -1 : 1;
+      const vSide = above ? -1 : 1;   // which way the block hangs off the node
       lines.forEach((line, li) => {
         let width = 0;
         for (const ch of line) width += (m.chars[ch]?.adv ?? 0);
-        let pen = -width / 2;
+        // Labels in a ring stack on top of each other when every one is
+        // centred. Setting them to the outward side makes them radiate.
+        const hSide = run.side ?? 0;
+        let pen = hSide === 0 ? -width / 2 : hSide < 0 ? -width - 0.55 : 0.55;
         const baseY = -li * m.lineHeight;
         for (const ch of line) {
           const g = m.chars[ch];
@@ -231,13 +236,13 @@ export class TextLayer {
           this.aColor.setXYZ(i, run.color.r, run.color.g, run.color.b);
           this.aNodeSize.setX(i, run.nodeSizeWorld);
           this.aAlpha.setX(i, run.alpha);
-          this.aOff.setXY(i, emY, side);
+          this.aOff.setXY(i, emY, vSide);
           pen += g.adv;
           i++;
         }
       });
       this.spans.push({ start: spanStart, count: i - spanStart, widthEm: widest,
-                        lines: lines.length, above });
+                        lines: lines.length, above, side: run.side ?? 0 });
     }
     for (const a of [this.aRect, this.aUV, this.aAnchor, this.aColor, this.aNodeSize, this.aAlpha, this.aOff]) a.needsUpdate = true;
     this.geo.instanceCount = i;

@@ -100,7 +100,27 @@ landmark overlay next to the operation it drove.
 
 ---
 
-## D-004 · Reading: **organic-bioluminescent**  · PENDING — Art Director, cycle 1
+## D-004 · Reading: **organic-bioluminescent**  · cycle 1 · SETTLED — RULED BY THE ART DIRECTOR
+
+**Ruled and closed.** The Art Director ratified organic-bioluminescent in cycle
+1, from the frames, and the ruling is not reopened.
+
+Its reasoning, in its own terms: the arbiter test is whichever keeps the five
+node states legible and the space still, and the organic reading already passes
+both halves. Sampled directly from artifact 07 the ground is exactly (18,14,11)
+— `#120E0B` — and reads identically at five widely separated points, with no
+vignette, gradient, grid or fog plane, so the only luminance in the world
+belongs to nodes and filaments. That empty ground is what makes the state ladder
+work. Filaments measure 28,23,19 at rest and 141,123,107 when carrying state — a
+five-fold step landing on exactly the links incident to the selection and the
+search hit. A restrained-holographic reading would have to introduce translucent
+planes, cyan edge geometry or chrome to be legible as itself, and each is an
+extra luminance and an extra ring-like contour competing with the state
+signatures on the only channel this design has left.
+
+---
+
+## D-004-orig · The provisional working reading (superseded by the ruling above)
 
 §01/Atmosphere delegates the organic-versus-holographic call to one arbiter, and
 §04 names that arbiter as the Art Director critic. The Art Director cannot rule
@@ -158,10 +178,18 @@ channel that reuses none of the five state signatures, or struck. It is
 **modelled**: every node carries `createdAt` and `lastTouchedAt` in the synced
 model.
 
-**Declared channel: chroma.** `saturation = mix(0.62, 1.00, recency)`. Old,
-settled districts read slightly muted; the recently grown frontier reads at full
-chroma. The channel touches neither the luminance ladder (D-006) nor any ring
-geometry, so it cannot be confused with a state. Recency never moves a node.
+**Declared channel: chroma.** `saturation = mix(0.45, 1.00, recency)`. Old,
+settled districts read muted; the recently grown frontier reads at full chroma.
+The channel touches neither the luminance ladder (D-006) nor any ring geometry,
+so it cannot be confused with a state. Recency never moves a node.
+
+*Cycle 1 refinement (the channel is unchanged; only its span moved).* The Art
+Director measured the saturation spread at whole-brain framing as 0.13–0.54
+within single hue families and found it indistinguishable from depth
+attenuation — the channel was present but did not read. The span was widened
+from `0.62..1.00` to `0.45..1.00` so the frontier's lead exceeds the depth-fade
+range. This tunes a parameter inside the decision; it does not reopen the
+decision, which is that recency's channel is chroma.
 
 ---
 

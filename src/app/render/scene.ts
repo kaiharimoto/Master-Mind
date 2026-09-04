@@ -133,11 +133,17 @@ export class Scene {
       posOf.set(n.id, p);
       const size = sizeForDegree(deg.get(n.id) ?? 0);
       // Chroma is the recency channel (D-007). It touches nothing else.
-      const sat = 0.62 + 0.38 * recencyOf(doc, n);
+      // The range was widened from 0.62..1.00 to 0.45..1.00 because at
+      // whole-brain framing the narrower spread was indistinguishable from
+      // depth attenuation. The CHANNEL is unchanged; only its span is.
+      const sat = 0.45 + 0.55 * recencyOf(doc, n);
       inst.push({ pos: p, color: hue(n.color), state: st, size, sat });
       this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0 });
+      // Unplaced nodes sit in a ring. Their labels are pushed to the outward
+      // side so they radiate from the holding cluster rather than pile onto it.
+      const side: -1 | 0 | 1 = n.placed ? 0 : (n.pos[0] < doc.holding.origin[0] ? -1 : 1);
       runs.push({
-        anchor: p, text: n.text, color: textCol, nodeSizeWorld: size,
+        anchor: p, text: n.text, color: textCol, nodeSizeWorld: size, side,
         alpha: st === 'plain' ? 0.86 : 1.0,
         // Deterministic, position-free stagger: half the labels sit above their
         // node, half below. Halves label collisions in dense districts and never
@@ -221,7 +227,9 @@ export class Scene {
       const h = Math.max(span.lines * 1.18 * emPx, 8);
       const gap = nodePx * 0.62 + emPx * 0.92;
       const cy = span.above ? s.y - gap - h * 0.5 : s.y + gap + h * 0.5;
-      boxes.push({ i, x0: s.x - w / 2, x1: s.x + w / 2, y0: cy - h / 2, y1: cy + h / 2,
+      const sd = span.side ?? 0;
+      const x0 = sd === 0 ? s.x - w / 2 : sd < 0 ? s.x - w - emPx * 0.55 : s.x + emPx * 0.55;
+      boxes.push({ i, x0, x1: x0 + w, y0: cy - h / 2, y1: cy + h / 2,
                    pri: meta.priority, z: s.z });
       this.runAlphas[i] = meta.baseAlpha;
     }

@@ -334,6 +334,7 @@ export default [
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
     await FRAME_ALL(page, 1.12);
     await page.click('[data-t=open-finder]');
+    await page.evaluate(() => window.mm.clearOfPanels());
     const log = { parses: [] };
     const type = async (sel, text) => page.evaluate(({ s, t }) => {
       const el = document.querySelector(s); el.focus(); el.value = t;
@@ -367,9 +368,48 @@ export default [
         await page.click('[data-t=finder-reject]');
         log.linksAfterReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
         log.nodesAfterReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.nodes)); } },
+      // Placement is the ONLY finder path that writes a node position, and
+      // positions are declared sacred — so it is the acceptance most worth
+      // showing. Reach it the way a user does: by dispatching the suggestions
+      // in front of it, one at a time, not by jumping an index.
+      { at: 640, fn: async () => {
+          for (let guard = 0; guard < 4; guard++) {
+            const kind = await page.evaluate(() => {
+              const s = window.mm.suggestions[window.mm.sugIndex];
+              return s ? s.kind : null;
+            });
+            if (kind === 'placement' || kind === null) break;
+            await page.click('[data-t=finder-reject]');
+            await page.waitForTimeout(40);
+          }
+        } },
+      { at: 700, fn: async () => {
+          log.holdingBeforePlacement = await page.evaluate(() => window.mm.store.holdingCount());
+          log.placement = await page.evaluate(() => {
+            const s = window.mm.suggestions[window.mm.sugIndex];
+            return s && s.kind === 'placement'
+              ? { node: s.node, to: s.pos, wasPlaced: window.mm.store.doc.nodes[s.node].placed,
+                  from: window.mm.store.doc.nodes[s.node].pos.slice() }
+              : null;
+          });
+          if (log.placement) await page.click('[data-t=finder-accept]');
+        } },
+      { at: 740, fn: async () => {
+          log.afterPlacement = await page.evaluate((n) => {
+            const x = n ? window.mm.store.doc.nodes[n] : null;
+            return x ? { placed: x.placed, pos: x.pos.slice() } : null;
+          }, log.placement ? log.placement.node : null);
+          log.holdingAfterPlacement = await page.evaluate(() => window.mm.store.holdingCount());
+        } },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 26, onFrame: script(steps) });
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 30, onFrame: script(steps) });
     return {
+      placementAccepted: log.placement && log.afterPlacement
+        ? { node: log.placement.node, from: log.placement.from, to: log.afterPlacement.pos,
+            landedWhereSuggested: JSON.stringify(log.afterPlacement.pos) === JSON.stringify(log.placement.to),
+            wasUnplaced: log.placement.wasPlaced === false, nowPlaced: log.afterPlacement.placed,
+            holding: [log.holdingBeforePlacement, log.holdingAfterPlacement] }
+        : null,
       replyPath: "authored by the agent's own session acting as the chat (declared in report.md); " +
                  'a malformed reply and an adversarially messy reply pass through the same parser in the same take',
       malformed: log.parses[0], messy: log.parses[1],

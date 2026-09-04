@@ -110,8 +110,10 @@ void main() {
                  * (1.0 - smoothstep(CORE * 2.62 - aa, CORE * 2.62 + aa, r));
     float f = fract(u * 4.0);
     float d = min(f, 1.0 - f);
-    ring = radial * (1.0 - smoothstep(0.022, 0.042, d));
-    ringCol = vec3(0.955, 0.918, 0.862);
+    ring = radial * (1.0 - smoothstep(0.018, 0.036, d));
+    // Tinted from the node's own hue, lifted toward bone. Pure white squares
+    // read as a transform gizmo's drag handles rather than as a state.
+    ringCol = mix(vColor, vec3(0.955, 0.918, 0.862), 0.42);
   }
 
   float a = max(core, ring);
