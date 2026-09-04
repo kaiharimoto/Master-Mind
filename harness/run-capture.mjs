@@ -11,9 +11,11 @@ import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import stills from './drivers/stills.mjs';
 import motion from './drivers/motion.mjs';
-import { openBrowser, openApp, shot, step, record, compose, grab, probe, sha, launch, SEED } from './capture.mjs';
+import { openBrowser, openApp, shot, step, record, compose, grab, probe, sha, launch, SEED, INIT_SCRIPT } from './capture.mjs';
 import { y4m } from './clips-to-y4m.mjs';
 import { POSE, FRAME_ALL, NODE_ID, SELECT, sleepFrames } from './drivers/util.mjs';
+import { windowsTarget } from './win-target.mjs';
+import { chromium } from 'playwright';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DRIVERS = [...stills, ...motion].sort((a, b) => a.id.localeCompare(b.id));
@@ -84,7 +86,34 @@ async function runDriver(d) {
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };
-      const w = await H.app({ surface: 'windows', lens: 'canvas', map: driver.map, width: 960, height: 1080, actor: 'windows-twin' });
+      // The Windows side comes from the REAL win32-x64 binary running under
+      // Wine when it is available, so the propagation proof crosses an actual
+      // platform boundary rather than two tabs of the same browser.
+      let w, winSource = 'chromium', winTarget = null, winUA = null;
+      const wt = await windowsTarget({ timeoutMs: 200000 });
+      if (wt.available) {
+        try {
+          const wb = await chromium.connectOverCDP(wt.cdpUrl);
+          const wp = wb.contexts()[0].pages()[0];
+          const wcdp = await wb.contexts()[0].newCDPSession(wp);
+          await wcdp.send('Emulation.setDeviceMetricsOverride',
+            { width: 960, height: 1080, deviceScaleFactor: 1, mobile: false });
+          await wp.addInitScript(INIT_SCRIPT);
+          await wp.goto(`http://127.0.0.1:${S.httpPort}/index.html?port=${S.wsPort}` +
+            `&surface=windows&map=${encodeURIComponent(driver.map)}&actor=windows-twin` +
+            `&account=${encodeURIComponent('kai@master-mind.local')}`);
+          await wp.waitForFunction(() => window.mm && window.mm.ready, null, { timeout: 180000 });
+          await wp.evaluate(() => window.mm.stop());
+          await step(wp, 0);
+          w = { page: wp, cdp: wcdp, errs: [] };
+          winSource = 'windows-binary-under-wine';
+          winTarget = wt; winUA = wt.version?.['User-Agent'] ?? null;
+        } catch (e) {
+          void e;
+          if (wt.close) wt.close();
+        }
+      }
+      if (!w) w = await H.app({ surface: 'windows', lens: 'canvas', map: driver.map, width: 960, height: 1080, actor: 'windows-twin' });
       const a = await H.app({ surface: 'android', lens: 'canvas', map: driver.map, width: 960, height: 1080, actor: 'android-twin', touch: true });
       const pose = { yaw: 0.34, pitch: 0.16 };
       for (const p of [w, a]) { await POSE(p.page, pose); await FRAME_ALL(p.page, 1.18); }
@@ -119,6 +148,7 @@ async function runDriver(d) {
       const nodeA = await a.page.evaluate(i => window.mm.store.doc.nodes[i], id);
       const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);
       const before = {
+        windowsSurface: winSource, windowsUserAgent: winUA,
         positionsIdenticalAcrossSurfaces: same(pw0, pa0),
         nodeCount: { windows: Object.keys(pw0).length, android: Object.keys(pa0).length },
       };
@@ -132,7 +162,10 @@ async function runDriver(d) {
         bothSurfacesAgreeOnNode: same(node, nodeA),
         nodeCount: { windows: Object.keys(pw1).length, android: Object.keys(pa1).length },
       };
+      after.windowsSurface = winSource;
+      after.windowsUserAgent = winUA;
       twinCache = { before, after };
+      if (winTarget && winTarget.close) winTarget.close();
       return before;
     },
   };

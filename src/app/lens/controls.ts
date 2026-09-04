@@ -21,6 +21,8 @@ export class Controls {
   private dragLast = new THREE.Vector3();
   private downAt = { x: 0, y: 0, t: 0 };
   private lpFired = false;
+  /** True once a begun drag has actually moved. A press that never moves is a tap. */
+  private dragMoved = false;
   private lastTapId: NodeId | null = null;
   private lastTapT = 0;
   private linkFrom: NodeId | null = null;
@@ -85,12 +87,12 @@ export class Controls {
       from: { t: p.target.clone(), yaw: p.yaw, pitch: p.pitch, d: p.dist },
       to: { t: new THREE.Vector3(n.pos[0], n.pos[1], n.pos[2]),
             yaw: p.yaw + 0.34, pitch: clamp(p.pitch * 0.55 + 0.08, -0.6, 0.6), d: endDist },
-      t0: performance.now(), ms,
+      t0: this.now(), ms,
     };
   }
   get flying() { return this.fly !== null; }
   /** Advance a fly-to. `nowMs` lets the harness drive it deterministically. */
-  tickFly(nowMs = performance.now()): boolean {
+  tickFly(nowMs = this.now()): boolean {
     if (!this.fly) return false;
     const f = this.fly;
     const k = easeInOut(clamp((nowMs - f.t0) / f.ms, 0, 1));
@@ -121,6 +123,7 @@ export class Controls {
     const n = this.store.node(id);
     if (!n) return;
     this.dragging = id;
+    this.dragMoved = false;
     this.dragPlane.set(n.pos[0], n.pos[1], n.pos[2]);
     this.dragLast.copy(this.dragPlane);
     if (cluster) {
@@ -165,7 +168,7 @@ export class Controls {
   attachMouse(el: HTMLElement) {
     el.addEventListener('mousedown', e => {
       const [x, y] = this.toCanvas(el, e.clientX, e.clientY);
-      this.downAt = { x, y, t: performance.now() };
+      this.downAt = { x, y, t: this.now() };
       const id = this.scene.pick(x, y);
       if (id && e.button === 0) {
         this.beginDrag(id, e.altKey);
@@ -174,8 +177,11 @@ export class Controls {
     });
     el.addEventListener('mousemove', e => {
       const [x, y] = this.toCanvas(el, e.clientX, e.clientY);
-      if (this.dragging) this.moveDrag(x, y);
-      else if (this.orbiting) this.orbit(e.movementX, e.movementY);
+      if (this.dragging) {
+        if (!this.dragMoved && Math.hypot(x - this.downAt.x, y - this.downAt.y) <= 4) return;
+        this.dragMoved = true;
+        this.moveDrag(x, y);
+      } else if (this.orbiting) this.orbit(e.movementX, e.movementY);
     });
     const up = (e: MouseEvent) => {
       const [x, y] = this.toCanvas(el, e.clientX, e.clientY);
@@ -217,7 +223,7 @@ export class Controls {
       }
       const t = e.touches[0];
       const [x, y] = this.toCanvas(el, t.clientX, t.clientY);
-      this.downAt = { x, y, t: performance.now() };
+      this.downAt = { x, y, t: this.now() };
       const id = this.scene.pick(x, y);
       if (id) {
         this.beginDrag(id, false);
@@ -241,8 +247,18 @@ export class Controls {
       }
       const t = e.touches[0];
       const [x, y] = this.toCanvas(el, t.clientX, t.clientY);
-      if (Math.hypot(x - this.downAt.x, y - this.downAt.y) > 8) cancelLp();
+      // Measured from where the finger went down, not from the running orbit
+      // anchor — otherwise an orbit never travels far enough to cancel the
+      // long-press, and a second capture fires mid-gesture.
+      const far = this.lp
+        ? Math.hypot(x - this.lp.x, y - this.lp.y) > 8
+        : Math.hypot(x - this.downAt.x, y - this.downAt.y) > 8;
+      if (far) cancelLp();
       if (this.dragging) {
+        // A press that never travels is a tap, not a placement — so the node
+        // only moves once the finger has actually gone somewhere.
+        if (!far && !this.dragMoved) return;
+        this.dragMoved = true;
         this.moveDrag(x, y);
         this.hooks.onGestureFired('dragnode', 'Place / move');
       } else if (this.orbiting) {
@@ -255,9 +271,9 @@ export class Controls {
     el.addEventListener('touchend', e => {
       e.preventDefault();
       cancelLp();
-      const moved = this.dragging !== null || this.lpFired;
+      const moved = this.dragMoved || this.lpFired;
       this.lpFired = false;
-      const now = performance.now();
+      const now = this.now();
       const t = e.changedTouches[0];
       const [x, y] = this.toCanvas(el, t.clientX, t.clientY);
       const still = Math.hypot(x - this.downAt.x, y - this.downAt.y) < 12;

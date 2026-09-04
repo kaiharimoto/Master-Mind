@@ -1,0 +1,12 @@
+{
+  "target": "windows",
+  "arch": "x64",
+  "electron": "33.4.11",
+  "executable": "Master Mind.exe",
+  "executableBytes": 188784128,
+  "executableSha256": "1925f358e7f0e9675a5ac4198fb076613f0db318da56d388799a97be74a5b19c",
+  "files": 97,
+  "totalBytes": 326395946,
+  "builtAt": "2026-09-04T18:48:35.668Z",
+  "note": "PE version metadata and icon are not rewritten: that step needs 32-bit Wine, which this container cannot install (report.md F-007)."
+}

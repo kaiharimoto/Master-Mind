@@ -42,6 +42,8 @@ const INIT = `(() => {
   void RealDate;
 })();`;
 
+export const INIT_SCRIPT = INIT;
+
 export async function openBrowser(extraArgs = []) {
   return chromium.launch({ args: [...CHROME_ARGS, ...extraArgs] });
 }

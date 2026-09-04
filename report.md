@@ -50,7 +50,8 @@ with real touch and real `DeviceOrientationEvent` injection, so the app's own
 gyro and touch code paths run unmodified.
 **This is an environment substitution, declared here. It is not presented as a
 physical device anywhere in the evidence set; every Android-surface artifact
-carries a lens tag naming it.** **Verified.**
+carries a lens tag naming it.** The APK itself is still built for real — see
+F-013 — so what is substituted is the *device*, not the build. **Verified.**
 
 **F-004 · No webcam, and no way to create one at OS level.**
 `ls /dev/video*` → *No such file or directory*. `modinfo`, `lsmod` and `insmod`
@@ -103,10 +104,57 @@ node, never resolve by re-layout — with two *separate browser processes*
 connecting over a socket. What is substituted is the hosting tier, not the
 mechanism. See `DIRECTION.md` D-002.
 
-**F-007 · No Wine. The Windows binary is built but not executed.**
-`command -v wine` / `wine64` → not found. The Windows target is produced as a
-real `win32-x64` Electron artifact; the renderer bundle running in this
-container is byte-identical to the one inside it. **Verified.**
+**F-007 · CORRECTED. Wine was absent at census but installable, and the Windows
+target both builds and RUNS here.**
+At census time `command -v wine` returned nothing, and the census recorded that
+the Windows binary could not be executed. That was true of the image as found
+and **false of the environment**: `apt-get install -y wine64` succeeds. This
+entry is corrected rather than left standing.
+
+What was then verified, in this order:
+
+1. **The Windows target builds.** `src/build-windows.mjs` produces a real
+   `win32-x64` Electron application: 97 files, 326 MB, `Master Mind.exe`
+   188.8 MB, assembled from the official Electron 33.4.11 win32-x64
+   distribution. Manifest and hashes in `src/targets/windows/BUILD.json`.
+   *Not* built through `electron-builder`: its Windows path shells out to
+   `rcedit-ia32.exe` to rewrite the executable's version resources, which needs
+   32-bit Wine, and `wine32` cannot be installed here (`libgphoto2-6t64:i386`
+   depends on `libgd3:i386`, which apt refuses to resolve). What that costs is
+   the PE version metadata and a custom icon — nothing about the application.
+2. **The Windows target runs.** Launched under `wine` on an Xvfb display with a
+   remote debugging port, it reports
+   `Mozilla/5.0 (Windows NT 10.0; Win64; x64) … Electron/33.4.11` and serves a
+   live CDP endpoint.
+3. **It works.** Connected over CDP: the map loads (150 nodes, 208 links, 8 in
+   holding), sync reports `live`, and WebGL2 is available through
+   ANGLE/SwiftShader. Screenshot: `docs/evidence-notes/windows-target-running.png`.
+4. **It is slow.** 8.5 fps at 1600×950 under Wine, against 12.5 fps for the same
+   bundle in Chromium directly (F-002). Both are software-rasterised.
+
+**Consequence for the evidence set.** The Windows-surface artifacts are captured
+in Chromium rather than inside the Wine-hosted binary, because the harness needs
+a freshly seeded sync service and an isolated browser context *per artifact*,
+and because Wine costs a further third of the frame rate. The renderer is the
+same bundle either way — and that is now demonstrated rather than asserted. The
+one place it matters most, the twin composite, uses the **real Windows binary**
+for its Windows side; see the artifact 11/12 recipe.
+
+**F-013 · Both platform targets build for real.**
+Not claimed — done, in this container, with the outputs hashed:
+
+| Target | Output | Size | Toolchain |
+|---|---|---:|---|
+| Windows | `src/targets/windows/win-unpacked/Master Mind.exe` + 96 files | 188.8 MB exe, 326 MB total | Electron 33.4.11 win32-x64, assembled by `src/build-windows.mjs` |
+| Android | `src/targets/android/app-debug.apk` | 22.8 MB | Capacitor 6.2.1 + Gradle, Android SDK platform 34, build-tools 34.0.0, via `src/build-android.mjs` |
+
+The APK really carries the app: 19 web assets under `assets/public/`, including
+both committed seed fixtures, the SDF font atlas and the 7.8 MB MediaPipe hand
+landmarker model. Manifests and SHA-256s in `src/targets/*/BUILD.json`.
+The Android SDK is installed non-interactively (licences accepted by piping
+`yes` into `sdkmanager --licenses`), so the build has no manual step.
+
+The Windows binary also **runs** (F-007). The APK does not and cannot: F-003.
 
 **F-008 · Capture toolchain is present and sufficient.**
 Chromium 1194 with WebGL2 under SwiftShader (verified by a live probe returning
@@ -175,6 +223,7 @@ detectable.
 | 3 | Firebase managed tier | Local WebSocket sync service, same semantics | F-006 | Hosting substitution |
 | 4 | Physical/`v4l2loopback` webcam | Chromium fake capture device + real MediaPipe | F-004 | Environment substitution |
 | 5 | AR Foundation / ARCore on device | Device-profile surface with real gyro + touch injection | F-003 | Environment substitution |
+| 5b | Windows standalone executed | Windows binary built **and executed under Wine**; evidence-set Windows surface captured in Chromium for isolation and speed, twin composite uses the real binary | F-007 | Corrected finding |
 | 6 | ≥24 fps realtime video | Frame-accurate rendering on the app's virtual clock at 30 fps | F-010 | Capture-method substitution |
 | 7 | (poses unnamed by the brief) Pinch | Two-finger V for select/confirm | F-011 | Design choice, measured |
 

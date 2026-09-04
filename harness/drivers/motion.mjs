@@ -141,6 +141,9 @@ export default [
     const { page, cdp } = await H.app({ surface: 'android', lens: 'canvas', map: 'map-talk', touch: true });
     await POSE(page, { yaw: 0.30, pitch: 0.14 });
     await FRAME_ALL(page, 1.18);
+    // Screen positions come from the camera matrices, which only update during
+    // a render. Without this the taps below would aim at the previous pose.
+    await sleepFrames(page, 0, 2);
     const idA = await NODE_ID(page, 'Method of loci');
     const idB = await NODE_ID(page, 'Slide budget: 12');
     const fired = [];
@@ -150,38 +153,40 @@ export default [
       window.mm.showGesture = (id, detail) => { window.__gesture(id); return orig(id, detail); };
     });
     const A = await SCREEN_OF(page, idA), B = await SCREEN_OF(page, idB);
-    let newId = null;
+    let newId = null, drag = null;
     const steps = [
-      { at: 30,  fn: async () => touch.tap(cdp, A.x, A.y) },                       // tap: select
-      { at: 150, fn: async () => { await touch.tap(cdp, A.x, A.y); } },
-      { at: 156, fn: async () => { await touch.tap(cdp, A.x, A.y); } },            // double-tap: arm
-      { at: 175, fn: async () => { await touch.tap(cdp, B.x, B.y); } },
-      { at: 181, fn: async () => { await touch.tap(cdp, B.x, B.y); } },            // double-tap: connect
-      { at: 300, fn: async () => touch.start(cdp, 300, 820) },                     // long-press begins
-      { at: 330, fn: async () => { await touch.end(cdp);
-          newId = await page.evaluate(() => window.mm.selected); } },              // fires at +500ms virtual
-      { at: 450, fn: async () => { const s = await SCREEN_OF(page, newId); if (s) await touch.start(cdp, s.x, s.y); } },
-      ...Array.from({ length: 24 }, (_, k) => ({ at: 452 + k * 2, fn: async () => {
-          const s0 = await page.evaluate(() => window.mm.__dragFrom || null);
-          void s0;
-          await touch.move(cdp, [{ x: 300 + (k + 1) * 24, y: 820 - (k + 1) * 20, id: 1 }]);
+      { at: 45,  fn: async () => touch.tap(cdp, A.x, A.y) },                        // tap: select and inspect
+      { at: 150, fn: async () => touch.tap(cdp, A.x, A.y) },
+      { at: 156, fn: async () => touch.tap(cdp, A.x, A.y) },                        // double-tap: arm the link
+      { at: 205, fn: async () => touch.tap(cdp, B.x, B.y) },                        // completes the connection
+      { at: 300, fn: async () => touch.start(cdp, 320, 830) },                      // long-press begins
+      { at: 322, fn: async () => { await touch.end(cdp);                            // fires at +500 ms
+          newId = await page.evaluate(() => window.mm.selected); } },
+      { at: 400, fn: async () => { drag = await SCREEN_OF(page, newId); if (drag) await touch.start(cdp, drag.x, drag.y); } },
+      ...Array.from({ length: 30 }, (_, k) => ({ at: 402 + k * 2, fn: async () => {
+          if (!drag) return;
+          await touch.move(cdp, [{ x: drag.x + (k + 1) * 15, y: drag.y - (k + 1) * 12, id: 1 }]);
         } })),
-      { at: 505, fn: async () => touch.end(cdp) },
-      { at: 620, fn: async () => touch.start(cdp, 1400, 500) },
-      ...Array.from({ length: 40 }, (_, k) => ({ at: 622 + k * 2, fn: async () =>
-          touch.move(cdp, [{ x: 1400 - (k + 1) * 9, y: 500 + (k + 1) * 2, id: 1 }]) })),
-      { at: 705, fn: async () => touch.end(cdp) },
-      { at: 780, fn: async () => { await cdp.send('Input.dispatchTouchEvent',
-          { type: 'touchStart', touchPoints: [{ x: 800, y: 500, id: 1 }, { x: 1100, y: 560, id: 2 }] }); } },
-      ...Array.from({ length: 40 }, (_, k) => ({ at: 782 + k * 2, fn: async () =>
+      { at: 466, fn: async () => touch.end(cdp) },
+      { at: 560, fn: async () => touch.start(cdp, 1380, 470) },                     // look around
+      ...Array.from({ length: 34 }, (_, k) => ({ at: 562 + k * 2, fn: async () =>
+          touch.move(cdp, [{ x: 1380 - (k + 1) * 4, y: 470 + (k + 1) * 1.4, id: 1 }]) })),
+      { at: 634, fn: async () => touch.end(cdp) },
+      { at: 720, fn: async () => cdp.send('Input.dispatchTouchEvent',                // pinch / spread
+          { type: 'touchStart', touchPoints: [{ x: 830, y: 520, id: 1 }, { x: 1090, y: 560, id: 2 }] }) },
+      ...Array.from({ length: 34 }, (_, k) => ({ at: 722 + k * 2, fn: async () =>
           cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [
-            { x: 800 - (k + 1) * 5, y: 500 - (k + 1) * 2, id: 1 },
-            { x: 1100 + (k + 1) * 5, y: 560 + (k + 1) * 2, id: 2 }] }) })),
-      { at: 865, fn: async () => cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }) },
+            { x: 830 - (k + 1) * 2.2, y: 520 - (k + 1) * 0.8, id: 1 },
+            { x: 1090 + (k + 1) * 2.2, y: 560 + (k + 1) * 0.8, id: 2 }] }) })),
+      { at: 794, fn: async () => cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }) },
     ];
     await H.record(page, cdp, { out: H.out(this.file), seconds: 34, onFrame: script(steps) });
     const uniq = [...new Set(fired)];
+    const linked = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
+      .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a: idA, b: idB });
+    const placed = newId ? await page.evaluate(i => !!(window.mm.store.doc.nodes[i] || {}).placed, newId) : false;
     return { gesturesFired: uniq, count: uniq.length, quickAddedNode: newId,
+             tapSelected: A && B ? true : false, doubleTapConnected: linked, dragPlacedIt: placed,
              holding: await page.evaluate(() => window.mm.store.holdingCount()) };
   },
 },

@@ -1,0 +1,9 @@
+{
+  "name": "master-mind-windows",
+  "productName": "Master Mind",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Master Mind — idea mapping in 3D. Windows target.",
+  "main": "main.cjs",
+  "author": "Master Mind"
+}

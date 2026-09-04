@@ -1,0 +1,7 @@
+{
+  "appId": "dev.mastermind.app",
+  "appName": "Master Mind",
+  "webDir": "dist",
+  "android": { "allowMixedContent": true },
+  "server": { "androidScheme": "http", "cleartext": true }
+}

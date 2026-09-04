@@ -1,16 +1,56 @@
 {
   "name": "master-mind",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
+    "@capacitor/android": "6.2.1",
+    "@capacitor/core": "6.2.1",
     "@mediapipe/tasks-vision": "1.0.1",
     "esbuild": "0.28.2",
     "three": "0.185.1",
     "ws": "8.21.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "6.2.1",
     "@types/three": "0.185.0",
+    "electron": "33.4.11",
+    "electron-builder": "25.1.8",
     "playwright": "1.56.1"
-  }
+  },
+  "description": "Master Mind - idea mapping in 3D",
+  "scripts": {
+    "build": "node build.mjs",
+    "server": "node server/sync.mjs",
+    "build:windows": "node build-windows.mjs",
+    "build:android": "node build-android.mjs"
+  },
+  "build": {
+    "appId": "dev.mastermind.app",
+    "productName": "Master Mind",
+    "directories": {
+      "output": "targets/windows",
+      "buildResources": "electron"
+    },
+    "files": [
+      "dist/**/*",
+      "server/**/*",
+      "electron/main.cjs",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "electronDownload": {
+      "cache": ".electron-cache"
+    }
+  },
+  "main": "electron/main.cjs"
 }

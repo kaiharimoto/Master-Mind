@@ -8,3 +8,10 @@ harness/clips/*.y4m
 harness/clips/frame-sample.png
 .mmdata*/
 src/dist/
+src/targets/windows/win-unpacked/
+src/targets/android/*.apk
+src/android/
+src/.android-sdk/
+src/.electron-cache/
+src/.mmdata/
+.capture-tmp/

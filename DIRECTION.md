@@ -32,7 +32,7 @@ if a Unity licence were granted:
 |---|---|---|
 | No GPU — `/dev/dri` absent | `ls /dev/dri` → no such file | Editor GUI and both players are software-rendered only |
 | No KVM — `/dev/kvm` absent, 0 CPUs with `vmx`/`svm` | `ls /dev/kvm`; `grep -c '(vmx\|svm)' /proc/cpuinfo` → 0 | The Android player **cannot be run at all** |
-| No Wine | `command -v wine` → not found | The Windows standalone cannot be executed |
+| No Wine *at census* — later installed | `command -v wine` → not found; `apt-get install -y wine64` then succeeded | Corrected in F-007: the Windows target builds **and runs**. Unity is still blocked by the two rows above |
 
 A Unity build is therefore producible but **not runnable**, and artifacts 03,
 05, 11, 12, 16, 17, 18, 19 and 20 all require a *running* build. The licence
@@ -46,11 +46,14 @@ and it *runs here*, which Unity does not.
 
 Target mapping, and how each is honest about what it is:
 
-- **Windows target** — Electron. `electron-builder` emits real `win32-x64`
-  artifacts; the renderer process running here is the identical bundle. The
-  Windows *binary* is built, not executed (no Wine). Declared as **F-007**.
-- **Android target** — Capacitor + Android SDK → real `.apk` via Gradle. The
-  APK is built, not executed (no KVM). The Android *surface* is driven in
+- **Windows target** — Electron. `src/build-windows.mjs` emits a real
+  `win32-x64` application from the official Electron distribution, and it
+  **runs here under Wine** at 8.5 fps with WebGL2 and live sync (F-007). The
+  evidence set is captured in Chromium for per-artifact isolation and speed;
+  the twin composite uses the real Windows binary for its Windows side.
+- **Android target** — Capacitor + Android SDK → a real 22.8 MB `.apk` via
+  Gradle, carrying both seed fixtures, the font atlas and the hand-landmarker
+  model (F-013). The APK is built, not executed (no KVM). The Android *surface* is driven in
   Chromium under a Pixel-class device profile with real touch events
   (`Input.dispatchTouchEvent`) and real orientation events
   (`Emulation.setDeviceOrientationOverride` → `DeviceOrientationEvent`), so the

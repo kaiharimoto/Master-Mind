@@ -13,12 +13,15 @@ import { createRequire } from 'node:module';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const PORT = Number(process.env.MM_PORT || 8788);
 const DATA = process.env.MM_DATA || resolve(ROOT, '.mmdata');
-const SEEDS = resolve(ROOT, 'seeds');
+const SEEDS = process.env.MM_SEEDS || resolve(ROOT, 'seeds');
 
 // applyOp is the SAME function the clients run — one implementation, so the
 // server cannot converge differently from a surface.
 const require = createRequire(import.meta.url);
-const { applyOp } = require(resolve(ROOT, 'src/server/model.cjs'));
+const MODEL = existsSync(resolve(ROOT, 'src/server/model.cjs'))
+  ? resolve(ROOT, 'src/server/model.cjs')
+  : resolve(dirname(fileURLToPath(import.meta.url)), 'model.cjs');
+const { applyOp } = require(MODEL);
 
 mkdirSync(DATA, { recursive: true });
 

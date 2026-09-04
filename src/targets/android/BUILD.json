@@ -1,0 +1,13 @@
+{
+  "target": "android",
+  "abi": "universal",
+  "apk": "app-debug.apk",
+  "bytes": 22830432,
+  "sha256": "0a46bdca30ddce39afe0b1b8e99d482f26e26214a8df2b9d37564e4845ad93d0",
+  "webAssetsInApk": 19,
+  "hasSeeds": true,
+  "hasFontAtlas": true,
+  "hasHandModel": true,
+  "builtWith": "Capacitor 6.2.1 + Gradle, Android SDK platform 34, build-tools 34.0.0",
+  "note": "Built, not executed: this container has no /dev/kvm so no emulator can run (report.md F-003)."
+}
