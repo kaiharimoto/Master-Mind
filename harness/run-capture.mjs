@@ -183,7 +183,7 @@ async function runDriver(d) {
         a: await a.page.evaluate(() => window.mm.provenance()),
       };
       const provLine = (p, claimed) =>
-        `${p.runtime} · ${p.platform} · ${claimed} · ws ${p.transport.replace('ws://', '')} · socket #${p.socket} · sync ${p.status}`;
+        `${p.runtime} · ${p.platform} · ${claimed} · socket #${p.socket} on ${p.transport.replace('ws://', '')} · sync ${p.status}`;
       await sleepFrames(w.page, 0, 3); await sleepFrames(a.page, 0, 3);
       const pw0 = await positions(w.page), pa0 = await positions(a.page);
       const bw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w0.png'));
@@ -192,8 +192,8 @@ async function runDriver(d) {
         labels: ['Windows — canvas', 'Android — canvas'],
         // Read from each running process, not typed. If the Wine binary did not
         // come up, this line says chromium and the frame does not over-claim.
-        sublabels: [provLine(prov.w, winSource === 'windows-binary-under-wine' ? 'wine · the built win32-x64 binary' : 'chromium fallback — NOT the built binary'),
-                    provLine(prov.a, 'chromium · android device profile · touch')] });
+        sublabels: [provLine(prov.w, winSource === 'windows-binary-under-wine' ? 'wine · the built binary' : 'FALLBACK — NOT the built binary'),
+                    provLine(prov.a, 'android device profile · touch')] });
 
       // The edit is made on Android, through the ordinary editor.
       const id = await NODE_ID(a.page, 'Demo: search fly-to');
@@ -251,7 +251,7 @@ async function runDriver(d) {
       const moved = `moved node ${moveId}: ${fmt(posBefore)} -> ${fmt(posAfter)}`;
       await compose([aw, aa], resolve(OUTDIR, '12_sync_twin_after.png'), { mode: 'h', width: 1920, height: 1080,
         labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'],
-        sublabels: [`${moved} · socket #${provAfter.w.socket} · ${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · built binary' : 'chromium fallback'} · camera frozen from 11`,
+        sublabels: [`${moved} · socket #${provAfter.w.socket} · ${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · built binary' : 'FALLBACK — not the built binary'} · camera frozen from 11`,
                     `${moved} · socket #${provAfter.a.socket} · ${provAfter.a.runtime} · android profile · camera frozen from 11`] });
 
       const pw1 = await positions(w.page), pa1 = await positions(a.page);

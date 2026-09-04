@@ -141,9 +141,15 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
     // A second line for provenance: which process rendered this panel, over
     // which transport, and the measured values the panel is being asked to
     // prove. It is written from what the running app reported, never typed.
+    //
+    // The size is solved so the whole line fits the panel it belongs to. A
+    // provenance line that runs off the edge is worse than none: it reads as
+    // the frame hiding the part that did not fit.
     if (sublabels && sublabels[i]) {
+      const chars = String(sublabels[i]).length;
+      const size = Math.max(11, Math.min(17, Math.floor((cellW - 34) / (chars * 0.55))));
       f += `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:` +
-           `text='${esc(sublabels[i])}':x=20:y=42:fontsize=17:fontcolor=0xB9AA9B`;
+           `text='${esc(sublabels[i])}':x=20:y=${42 + (17 - size)}:fontsize=${size}:fontcolor=0xB9AA9B`;
     }
     parts.push(`${f}[v${i}]`);
   }

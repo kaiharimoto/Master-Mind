@@ -6,9 +6,10 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T21:17:11.528Z",
-  "lastRunAt": "2026-09-04T21:46:45.590Z",
+  "lastRunAt": "2026-09-04T21:48:55.383Z",
   "lastRunCaptured": [
-    "04"
+    "11",
+    "12"
   ],
   "artifacts": [
     {
@@ -80,7 +81,7 @@
         "fnSha": "3aea3c4d4dee4b9e"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-04T21:46:46.863Z"
     },
     {
@@ -201,6 +202,145 @@
       "fileMtime": "2026-09-04T21:17:24.517Z"
     },
     {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "title": "Twin composite — before",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 9.6,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 188376,
+        "sha256": "429dae394a864689944495d684ba336c7f0e9edee3b8fd72c4c82112ecb1b92f"
+      },
+      "result": {
+        "windowsSurface": "windows-binary-under-wine",
+        "windowsUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) MasterMind/1.0.0 Chrome/130.0.6723.191 Electron/33.4.11 Safari/537.36",
+        "positionsIdenticalAcrossSurfaces": true,
+        "nodeCount": {
+          "windows": 11,
+          "android": 11
+        }
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "twin composite BEFORE: Windows and Android on one map, identical frozen camera",
+        "surface": "twin",
+        "lens": null,
+        "fnSha": "861f6cca2f545723"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:49:03.663Z"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "title": "Twin composite — after",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 0.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 215612,
+        "sha256": "9f954fe271c3620cd2278c247597f71e571e1f68b50a198fd1fc523b73adffc6"
+      },
+      "result": {
+        "positionsIdenticalAcrossSurfaces": true,
+        "movedNode": "s480af97d09",
+        "movedFrom": [
+          -6.1,
+          -4.3,
+          -3.1
+        ],
+        "movedTo": [
+          6.558412201890814,
+          -0.3650990043456783,
+          -8.251318211012865
+        ],
+        "positionEditPropagated": true,
+        "onlyTheDraggedNodeMoved": true,
+        "everyOtherPositionUnchanged": true,
+        "noNodeDropped": true,
+        "editPropagated": true,
+        "concurrentConflictKeptBoth": true,
+        "bothSurfacesAgreeOnNode": true,
+        "nodeCount": {
+          "windows": 11,
+          "android": 11
+        },
+        "windowsSurface": "windows-binary-under-wine",
+        "windowsUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) MasterMind/1.0.0 Chrome/130.0.6723.191 Electron/33.4.11 Safari/537.36",
+        "provenance": {
+          "windows": {
+            "runtime": "electron 33.4.11",
+            "isElectron": true,
+            "platform": "Win32",
+            "surface": "windows",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 1,
+            "serverPid": 6279,
+            "actor": "windows-twin",
+            "status": "live"
+          },
+          "android": {
+            "runtime": "chromium 141.0.7390.37",
+            "isElectron": false,
+            "platform": "Linux x86_64",
+            "surface": "android",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 2,
+            "serverPid": 6279,
+            "actor": "android-twin",
+            "status": "live"
+          }
+        },
+        "twoDistinctSockets": true,
+        "cameraFrozen": {
+          "yaw": 0.34,
+          "pitch": 0.16,
+          "dist": 30.15033466227894,
+          "target": [
+            -0.15000000000000036,
+            -3.3499999999999996,
+            1.7499999999999998
+          ]
+        },
+        "everyNodeInFrame": true,
+        "movedNodeCoords": {
+          "id": "s480af97d09",
+          "before": [
+            -6.1,
+            -4.3,
+            -3.1
+          ],
+          "after": [
+            6.558412201890814,
+            -0.3650990043456783,
+            -8.251318211012865
+          ]
+        }
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "twin composite AFTER: an Android drag and edit arriving on Windows, same frozen camera",
+        "surface": "twin",
+        "lens": null,
+        "fnSha": "936d2e118cf8cc23"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:49:04.784Z"
+    },
+    {
       "id": "13",
       "file": "13_finder_prompt.png",
       "title": "Finder prompt export",
@@ -280,13 +420,13 @@
       "fileMtime": "2026-09-04T21:43:02.711Z"
     }
   ],
-  "finishedAt": "2026-09-04T21:46:48.229Z",
+  "finishedAt": "2026-09-04T21:49:06.396Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 763910,
     "sha256": "ba5d534e17c6a91f4c289c7b1bcbf189ffdbda73d309fba5c94dcec6fb46739f"
   },
-  "captured": 7,
+  "captured": 9,
   "total": 20
 }
