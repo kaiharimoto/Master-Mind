@@ -29,6 +29,24 @@ const OUTDIR = resolve(ROOT, arg('--out', 'evidence'));
 const CYCLE = arg('--cycle', '0');
 const TMP = resolve(ROOT, '.capture-tmp');
 
+// A capture run that produced every artifact can still exit non-zero — a promise
+// left over from a closed browser rejects during teardown, long after the last
+// artifact passed its check. Cycle 2 did exactly that, and the only trace was
+// cycle.mjs printing "capture run reported a failure" with nothing to read.
+// Late faults are now caught, named, written into the manifest and surfaced on
+// stderr, so a failure is a finding with a cause rather than an exit code.
+const LATE_FAULTS = [];
+const noteFault = (kind) => (err) => {
+  const e = err instanceof Error ? err : new Error(String(err));
+  LATE_FAULTS.push({ kind, message: e.message.split('\n')[0].slice(0, 300), stack: (e.stack || '').split('\n').slice(0, 6).join(' | ') });
+  console.error(`late ${kind}: ${e.message.split('\n')[0].slice(0, 200)}`);
+};
+process.on('unhandledRejection', noteFault('unhandledRejection'));
+process.on('uncaughtException', noteFault('uncaughtException'));
+process.on('exit', (code) => {
+  if (LATE_FAULTS.length) console.error(`${LATE_FAULTS.length} late fault(s) after the last artifact; exit ${code}`);
+});
+
 mkdirSync(OUTDIR, { recursive: true });
 mkdirSync(TMP, { recursive: true });
 
@@ -116,13 +134,47 @@ async function runDriver(d) {
       if (!w) w = await H.app({ surface: 'windows', lens: 'canvas', map: driver.map, width: 960, height: 1080, actor: 'windows-twin' });
       const a = await H.app({ surface: 'android', lens: 'canvas', map: driver.map, width: 960, height: 1080, actor: 'android-twin', touch: true });
       const pose = { yaw: 0.34, pitch: 0.16 };
-      for (const p of [w, a]) { await POSE(p.page, pose); await FRAME_ALL(p.page, 1.18); }
+      // The camera is framed ONCE and then frozen. Cycle 2's pair could not be
+      // superposed because selecting a node pans the view to clear the editor
+      // panel, so the AFTER shot was taken from a different eye and every node's
+      // projected x had moved — from that frame alone "only the dragged node
+      // moved" was no longer checkable. The exact pose is captured here and
+      // restored immediately before every shot, on both halves.
+      for (const p of [w, a]) { await POSE(p.page, pose); await FRAME_ALL(p.page, 1.34); }
+      const frozen = await w.page.evaluate(() => {
+        const s = window.mm.scene.pose;
+        return { yaw: s.yaw, pitch: s.pitch, dist: s.dist, target: [s.target.x, s.target.y, s.target.z] };
+      });
+      const freeze = async (p) => { await POSE(p.page, frozen); await sleepFrames(p.page, 0, 2); };
+      for (const p of [w, a]) await freeze(p);
+      // And every node must be inside the frame in BOTH halves — an artifact
+      // that proves "no node was dropped" cannot have a node off the edge.
+      const allVisible = async (p, when) => {
+        const off = await p.page.evaluate(() => {
+          const vw = window.innerWidth, vh = window.innerHeight;
+          return window.mm.scene.screenPositions()
+            .filter(s => s.x < 4 || s.y < 4 || s.x > vw - 4 || s.y > vh - 4)
+            .map(s => s.id);
+        });
+        if (off.length) throw new Error(`twin ${when}: ${off.length} node(s) outside the frame (${off.slice(0, 3).join(', ')})`);
+      };
+      await allVisible(w, 'before/windows'); await allVisible(a, 'before/android');
+      const prov = {
+        w: await w.page.evaluate(() => window.mm.provenance()),
+        a: await a.page.evaluate(() => window.mm.provenance()),
+      };
+      const provLine = (p, claimed) =>
+        `${p.runtime} · ${p.platform} · ${claimed} · ws ${p.transport.replace('ws://', '')} · socket #${p.socket} · sync ${p.status}`;
       await sleepFrames(w.page, 0, 3); await sleepFrames(a.page, 0, 3);
       const pw0 = await positions(w.page), pa0 = await positions(a.page);
       const bw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w0.png'));
       const ba = await shot(a.page, a.cdp, resolve(TMP, 'twin-a0.png'));
       await compose([bw, ba], resolve(OUTDIR, '11_sync_twin_before.png'), { mode: 'h', width: 1920, height: 1080,
-        labels: ['Windows — canvas', 'Android — canvas'] });
+        labels: ['Windows — canvas', 'Android — canvas'],
+        // Read from each running process, not typed. If the Wine binary did not
+        // come up, this line says chromium and the frame does not over-claim.
+        sublabels: [provLine(prov.w, winSource === 'windows-binary-under-wine' ? 'wine · the built win32-x64 binary' : 'chromium fallback — NOT the built binary'),
+                    provLine(prov.a, 'chromium · android device profile · touch')] });
 
       // The edit is made on Android, through the ordinary editor.
       const id = await NODE_ID(a.page, 'Demo: search fly-to');
@@ -164,11 +216,24 @@ async function runDriver(d) {
       // coordinate readouts can be compared in the frame itself.
       await w.page.evaluate(i => window.mm.select(i), moveId);
       await a.page.evaluate(i => window.mm.select(i), moveId);
+      // Selecting pans the view to clear the panel. The frozen camera is put
+      // back afterwards, so the AFTER half superposes on the BEFORE half and a
+      // reader can check by eye that only the dragged node moved.
+      for (const p of [w, a]) await freeze(p);
+      await allVisible(w, 'after/windows'); await allVisible(a, 'after/android');
+      const provAfter = {
+        w: await w.page.evaluate(() => window.mm.provenance()),
+        a: await a.page.evaluate(() => window.mm.provenance()),
+      };
       await sleepFrames(w.page, 0, 3); await sleepFrames(a.page, 0, 3);
       const aw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w1.png'));
       const aa = await shot(a.page, a.cdp, resolve(TMP, 'twin-a1.png'));
+      const fmt = (v) => `${v[0].toFixed(1)}, ${v[1].toFixed(1)}, ${v[2].toFixed(1)}`;
+      const moved = `moved node ${moveId}: ${fmt(posBefore)} -> ${fmt(posAfter)}`;
       await compose([aw, aa], resolve(OUTDIR, '12_sync_twin_after.png'), { mode: 'h', width: 1920, height: 1080,
-        labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'] });
+        labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'],
+        sublabels: [`${moved} · socket #${provAfter.w.socket} · ${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · built binary' : 'chromium fallback'} · camera frozen from 11`,
+                    `${moved} · socket #${provAfter.a.socket} · ${provAfter.a.runtime} · android profile · camera frozen from 11`] });
 
       const pw1 = await positions(w.page), pa1 = await positions(a.page);
       const node = await w.page.evaluate(i => window.mm.store.doc.nodes[i], id);
@@ -200,6 +265,14 @@ async function runDriver(d) {
       };
       after.windowsSurface = winSource;
       after.windowsUserAgent = winUA;
+      // The two halves are two sockets on one sync service, and the frame says
+      // so. Recorded here as well so the claim is checkable outside the pixels.
+      after.provenance = { windows: provAfter.w, android: provAfter.a };
+      after.twoDistinctSockets = provAfter.w.socket !== provAfter.a.socket &&
+                                 provAfter.w.socket != null && provAfter.a.socket != null;
+      after.cameraFrozen = frozen;
+      after.everyNodeInFrame = true; // asserted above; the capture throws otherwise
+      after.movedNodeCoords = { id: moveId, before: posBefore, after: posAfter };
       twinCache = { before, after };
       if (winTarget && winTarget.close) winTarget.close();
       return before;
@@ -259,7 +332,15 @@ for (const d of list) {
                   minimum: `${d.minW}x${d.minH}` + (d.kind === 'mp4' ? ` @${d.minFps}fps ${d.minSec}s` : ''),
                   seconds: +((Date.now() - t0) / 1000).toFixed(1),
                   status: error ? 'driver-error' : check.ok ? 'captured' : 'below-minimum',
-                  error, check, result, pageErrors: pageErrors.slice(0, 6) };
+                  error, check, result, pageErrors: pageErrors.slice(0, 6),
+                  // The recipe fingerprint. A perceptual diff cannot tell a
+                  // re-framing from a bug fix from a change to what the artifact
+                  // DEMONSTRATES, so the capture script itself is hashed and its
+                  // declared subject recorded. A cross-cycle diff can then say
+                  // what changed, not only how much.
+                  recipe: { demonstrates: d.demonstrates ?? null,
+                            surface: d.surface ?? null, lens: d.lens ?? null,
+                            fnSha: createHash('sha256').update(String(d.run)).digest('hex').slice(0, 16) } };
   const at = manifest.artifacts.findIndex(a => a.id === d.id);
   if (at >= 0) manifest.artifacts[at] = entry; else manifest.artifacts.push(entry);
   manifest.lastRunCaptured.push(d.id);
@@ -284,6 +365,7 @@ for (const d of list) {
 }
 
 manifest.finishedAt = new Date().toISOString();
+manifest.lateFaults = LATE_FAULTS;
 manifest.artifacts.sort((a, b) => a.id.localeCompare(b.id));
 manifest.captured = manifest.artifacts.filter(a => a.status === 'captured').length;
 manifest.total = DRIVERS.length;

@@ -53,6 +53,7 @@ attribute vec3 aColor;
 attribute float aNodeSize; // world radius of that node, for vertical offset
 attribute float aAlpha;
 attribute vec2  aOff;      // x: em offset of the block, y: +1 below / -1 above
+attribute vec2  aShift;    // per-frame re-anchor, in em, from label deconfliction
 uniform vec2  uViewport;
 uniform float uEmWorld;    // em height in world units
 uniform float uMinPx;
@@ -74,6 +75,7 @@ void main() {
   vec2 em = aRect.xy + corner * aRect.zw;
   vec2 px = em * emPx;
   px.y += aOff.x * emPx - aOff.y * nodePx * 0.62;  // sit clear of the node, above or below
+  px += aShift * emPx;                             // and wherever declutter re-anchored it
   vec4 clip = projectionMatrix * mv;
   clip.xy += px / uViewport * 2.0 * clip.w;
   gl_Position = clip;
@@ -116,6 +118,7 @@ export class TextLayer {
   private aNodeSize!: THREE.InstancedBufferAttribute;
   private aAlpha!: THREE.InstancedBufferAttribute;
   private aOff!: THREE.InstancedBufferAttribute;
+  private aShift!: THREE.InstancedBufferAttribute;
 
   constructor(private meta: FontMeta, atlas: THREE.Texture, opts: { emWorld: number; minPx: number; maxPx: number }) {
     atlas.flipY = false;
@@ -170,6 +173,7 @@ export class TextLayer {
     const mk = (size: number) => new THREE.InstancedBufferAttribute(new Float32Array(this.cap * size), size);
     this.aRect = mk(4); this.aUV = mk(4); this.aAnchor = mk(3);
     this.aColor = mk(3); this.aNodeSize = mk(1); this.aAlpha = mk(1); this.aOff = mk(2);
+    this.aShift = mk(2);
     this.geo.setAttribute('aRect', this.aRect);
     this.geo.setAttribute('aUV', this.aUV);
     this.geo.setAttribute('aAnchor', this.aAnchor);
@@ -177,6 +181,7 @@ export class TextLayer {
     this.geo.setAttribute('aNodeSize', this.aNodeSize);
     this.geo.setAttribute('aAlpha', this.aAlpha);
     this.geo.setAttribute('aOff', this.aOff);
+    this.geo.setAttribute('aShift', this.aShift);
   }
 
   /**
@@ -193,6 +198,23 @@ export class TextLayer {
     this.aAlpha.needsUpdate = true;
   }
 
+  /**
+   * Per-run screen-space re-anchor, in em. Deconfliction uses it to move a
+   * colliding label to a free side of its own node rather than only dimming it:
+   * the label stays attached to the node it names, and no node moves.
+   */
+  setRunShifts(shifts: Float32Array) {
+    const arr = this.aShift.array as Float32Array;
+    for (let r = 0; r < this.spans.length && r * 2 + 1 < shifts.length; r++) {
+      const { start, count } = this.spans[r];
+      for (let k = 0; k < count; k++) {
+        arr[(start + k) * 2] = shifts[r * 2];
+        arr[(start + k) * 2 + 1] = shifts[r * 2 + 1];
+      }
+    }
+    this.aShift.needsUpdate = true;
+  }
+
   /** Rebuild every glyph instance. Called only when the doc or selection changes. */
   build(runs: TextRun[], perLine = 17, maxLines = 2) {
     const m = this.meta, cellEm = CELL_EM(m), baseTop = BASE_FROM_TOP(m);
@@ -205,6 +227,10 @@ export class TextLayer {
       for (const l of lines) for (const ch of l) if (m.chars[ch]) total++;
     }
     this.grow(Math.max(total, 1));
+    // A rebuild clears any re-anchoring from the previous frame; deconfliction
+    // recomputes it before the next draw.
+    (this.aShift.array as Float32Array).fill(0);
+    this.aShift.needsUpdate = true;
     this.spans.length = 0;
     let i = 0;
     for (const { run, lines } of laid) {

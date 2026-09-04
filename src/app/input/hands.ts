@@ -77,6 +77,9 @@ export class HandTracker {
 
   enabled = false;
   status = 'off';
+  /** What the browser says the capture device is. Shown on frame verbatim. */
+  sourceLabel = '';
+  synthetic = false;
   frame: HandFrame = EMPTY_FRAME;
   onFrame: ((f: HandFrame) => void) | null = null;
 
@@ -94,6 +97,12 @@ export class HandTracker {
       this.enabled = false;
       throw e;
     }
+    const track = this.stream.getVideoTracks()[0];
+    this.sourceLabel = track ? track.label : '';
+    // A capture served from a file by the browser's fake device is not a
+    // webcam, and the frame says so rather than implying one. The browser
+    // reports the file path as the track label, which is unambiguous.
+    this.synthetic = /^\/|^[A-Za-z]:\\|\.(y4m|mp4|mjpeg|webm)$|fake|synthetic/i.test(this.sourceLabel);
     video.srcObject = this.stream;
     await video.play();
     this.status = 'loading model…';

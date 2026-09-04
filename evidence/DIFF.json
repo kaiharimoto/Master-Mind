@@ -1,8 +1,16 @@
 {
   "cycle": 2,
-  "previousCycle": 0,
+  "previousCycle": 1,
+  "previousCycleSource": "derived from the snapshot directory being diffed",
   "capturedNow": 20,
-  "capturedPrev": 2,
+  "capturedPrev": 20,
+  "capturedPrevSource": "artifact files actually present in the previous snapshot",
+  "previousManifestSelfReport": {
+    "cycle": 0,
+    "captured": 2
+  },
+  "headerDisagreement": "the previous snapshot describes itself as cycle 0 with 2 captured, but the directory being diffed is cycle 1 holding 20 artifact files; the derived values are used",
+  "rowsVsCapturedPrev": "ok",
   "rows": [
     {
       "id": "01",
@@ -259,6 +267,7 @@
       "19",
       "20"
     ],
-    "missingIds": []
+    "missingIds": [],
+    "substantiveIds": []
   }
 }

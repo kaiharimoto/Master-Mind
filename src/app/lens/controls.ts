@@ -145,7 +145,7 @@ export class Controls {
     } else {
       const n = this.store.node(this.dragging);
       const pos: Vec3 = [world.x, world.y, world.z];
-      if (n && !n.placed) this.store.place(this.dragging, pos, n.label === 'holding' ? '' : n.label);
+      if (n && !n.placed) this.store.place(this.dragging, pos);
       else this.store.move(this.dragging, pos);
     }
     this.scene.markDirty();

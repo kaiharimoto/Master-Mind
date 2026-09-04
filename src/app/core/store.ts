@@ -98,12 +98,15 @@ export class Store {
   // -- placement (explicit user acts only) ---------------------------------
 
   /** Drag out of holding to a permanent spot. The node stays exactly there. */
-  place(id: NodeId, pos: Vec3, label = '') {
+  place(id: NodeId, pos: Vec3, label?: string) {
     const n = this.doc.nodes[id];
     if (!n) return;
+    // 'holding' is a state, not a name. It is cleared on placement so the word
+    // does not outlive the state it described.
+    const nextLabel = label !== undefined ? label : (n.label === 'holding' ? '' : n.label);
     this.commit(ts => ({
       t: 'node.set', id, actor: this.actor, ts,
-      fields: { pos, placed: true, lastTouchedAt: Date.now(), ...(label ? { label } : {}) },
+      fields: { pos, placed: true, lastTouchedAt: Date.now(), label: nextLabel },
     }));
   }
 

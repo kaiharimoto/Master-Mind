@@ -68,8 +68,14 @@ function broadcastMaps() {
 loadAll();
 const wss = new WebSocketServer({ port: PORT, host: '127.0.0.1' });
 
+// Every socket gets a server-assigned number. Two surfaces on one map are two
+// sockets here, and saying which is which lets a composite prove it is showing
+// two connected processes rather than one state rendered twice.
+let connSeq = 0;
+
 wss.on('connection', (ws, req) => {
   const url = new URL(req.url, 'http://x');
+  ws.connId = ++connSeq;
   const mapId = url.searchParams.get('map') || '';
   ws.actor = url.searchParams.get('actor') || 'anon';
   if (!docs.has(mapId)) { ws.send(JSON.stringify({ t: 'error', message: `no such map: ${mapId}` })); ws.close(); return; }
@@ -77,6 +83,7 @@ wss.on('connection', (ws, req) => {
   if (!rooms.has(mapId)) rooms.set(mapId, new Set());
   rooms.get(mapId).add(ws);
   ws.send(JSON.stringify({ t: 'snapshot', doc: docs.get(mapId),
+                           conn: ws.connId, serverPid: process.pid,
                            origin: origin.get(mapId) ?? { from: 'live' } }));
   ws.send(JSON.stringify({ t: 'maps', maps: summaries() }));
 

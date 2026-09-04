@@ -4,7 +4,7 @@
 //   images  : SSIM against the previous cycle's file
 //   videos  : SSIM on sampled frames, plus duration and frame rate
 //   positions: compared as MODEL VALUES, never as pixels
-import { existsSync, readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, statSync, readdirSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
@@ -73,6 +73,7 @@ export async function diffEvidence(curDir, prevDir) {
   const cur = JSON.parse(readFileSync(join(curDir, 'MANIFEST.json'), 'utf8'));
   const prevManifest = existsSync(join(prevDir, 'MANIFEST.json'))
     ? JSON.parse(readFileSync(join(prevDir, 'MANIFEST.json'), 'utf8')) : null;
+  const prevById = new Map((prevManifest?.artifacts ?? []).map(a => [a.id, a]));
   const rows = [];
   for (const a of cur.artifacts) {
     const A = join(curDir, a.file), B = join(prevDir, a.file);
@@ -90,6 +91,27 @@ export async function diffEvidence(curDir, prevDir) {
     }
     row.verdict = row.ssim === null ? 'uncomparable'
       : row.ssim >= row.threshold ? 'unchanged' : 'changed';
+    // A similarity number cannot distinguish a re-framing from a bug fix from a
+    // change to what the artifact demonstrates. The recipe fingerprint can, so
+    // substantive change is named rather than left to a reviewer to notice.
+    const pr = prevById.get(a.id)?.recipe, cr = a.recipe;
+    if (cr && pr) {
+      const notes = [];
+      if (pr.demonstrates !== cr.demonstrates)
+        notes.push(`demonstrates: "${pr.demonstrates ?? '—'}" -> "${cr.demonstrates ?? '—'}"`);
+      if (pr.surface !== cr.surface) notes.push(`surface: ${pr.surface ?? '—'} -> ${cr.surface ?? '—'}`);
+      if (pr.lens !== cr.lens) notes.push(`lens: ${pr.lens ?? '—'} -> ${cr.lens ?? '—'}`);
+      if (pr.fnSha !== cr.fnSha) notes.push(`capture script changed (${pr.fnSha} -> ${cr.fnSha})`);
+      if (notes.length) { row.whatChanged = notes.join('; '); row.substantive = notes.length > 1 || pr.demonstrates !== cr.demonstrates || pr.lens !== cr.lens || pr.surface !== cr.surface; }
+    } else if (cr && prevManifest) {
+      row.whatChanged = 'no recipe fingerprint in the previous set — first cycle with recipe tracking';
+    }
+    // An artifact whose recipe changed but whose pixels did not is not
+    // 'unchanged' in any sense a reviewer cares about.
+    if (row.verdict === 'unchanged' && row.whatChanged && row.substantive) {
+      row.verdict = 'changed';
+      row.why = 'recipe changed: ' + row.whatChanged;
+    }
     // A re-encode that moves the bitrate by more than a quarter is a change
     // even when 20 sampled frames still look alike.
     if (row.verdict === 'unchanged' && Math.abs(row.bitrateDelta ?? 0) > 0.25) {
@@ -120,13 +142,50 @@ export async function diffEvidence(curDir, prevDir) {
 
   const changed = rows.filter(r => r.verdict === 'changed').map(r => r.id);
   const missing = rows.filter(r => r.verdict === 'missing').map(r => r.id);
+
+  // The previous set's header is DERIVED FROM THE SNAPSHOT BEING DIFFED, not
+  // copied from that snapshot's own manifest. Cycle 2's diff inherited cycle
+  // 1's stale 'cycle 0 / 2 captured' header and so misstated the comparison a
+  // reader was being handed, while twenty rows sat underneath it. What the
+  // previous manifest claims about itself is kept alongside, and a disagreement
+  // is reported rather than silently corrected.
+  const dirCycle = /cycle-(\d+)\/?$/.exec(prevDir.replace(/\\/g, '/'));
+  // Counted from the FILES, not from the previous manifest's artifact list —
+  // cycle 1's manifest listed two artifacts while twenty sat beside it, and a
+  // count that trusts the list inherits exactly the error it is meant to catch.
+  const prevFilesOnDisk = existsSync(prevDir)
+    ? readdirSync(prevDir).filter(f => /^\d\d_.*\.(png|mp4)$/.test(f)).length : 0;
+  const previousCycle = dirCycle ? Number(dirCycle[1]) : (prevManifest?.cycle ?? null);
+  const header = {
+    cycle: cur.cycle,
+    previousCycle,
+    previousCycleSource: dirCycle ? 'derived from the snapshot directory being diffed' : 'previous manifest',
+    capturedNow: cur.captured,
+    capturedPrev: prevFilesOnDisk,
+    capturedPrevSource: 'artifact files actually present in the previous snapshot',
+    previousManifestSelfReport: prevManifest
+      ? { cycle: prevManifest.cycle ?? null, captured: prevManifest.captured ?? null }
+      : null,
+  };
+  header.headerDisagreement = prevManifest && (
+    (prevManifest.cycle ?? null) !== previousCycle ||
+    (prevManifest.captured ?? null) !== prevFilesOnDisk)
+    ? `the previous snapshot describes itself as cycle ${prevManifest.cycle ?? '—'} with ` +
+      `${prevManifest.captured ?? '—'} captured, but the directory being diffed is cycle ` +
+      `${previousCycle} holding ${prevFilesOnDisk} artifact files; the derived values are used`
+    : null;
+  header.rowsVsCapturedPrev = rows.filter(r => r.verdict !== 'new').length !== prevFilesOnDisk
+    ? `MISMATCH: ${rows.filter(r => r.verdict !== 'new').length} comparable rows against ` +
+      `${prevFilesOnDisk} previous files`
+    : 'ok';
+
   return {
-    cycle: cur.cycle, previousCycle: prevManifest?.cycle ?? null,
-    capturedNow: cur.captured, capturedPrev: prevManifest?.captured ?? null,
+    ...header,
     rows, positions,
     summary: { unchanged: rows.filter(r => r.verdict === 'unchanged').length,
                changed: changed.length, new: rows.filter(r => r.verdict === 'new').length,
-               missing: missing.length, changedIds: changed, missingIds: missing },
+               missing: missing.length, changedIds: changed, missingIds: missing,
+               substantiveIds: rows.filter(r => r.substantive).map(r => r.id) },
   };
 }
 
@@ -136,7 +195,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const out = await diffEvidence(cur, prev);
   mkdirSync(cur, { recursive: true });
   writeFileSync(join(cur, 'DIFF.json'), JSON.stringify(out, null, 2));
-  for (const r of out.rows) console.log(`  ${r.id}  ${String(r.verdict).padEnd(12)} ssim ${r.ssim === undefined ? '—' : r.ssim?.toFixed(4)} (>= ${r.threshold})`);
+  for (const r of out.rows) console.log(`  ${r.id}  ${String(r.verdict).padEnd(12)} ssim ${r.ssim === undefined ? '—' : r.ssim?.toFixed(4)} (>= ${r.threshold})` +
+    (r.whatChanged ? `\n        ${r.substantive ? 'SUBSTANTIVE — ' : ''}${r.whatChanged}` : ''));
+  if (out.headerDisagreement) console.log(`header: ${out.headerDisagreement}`);
+  if (out.rowsVsCapturedPrev !== 'ok') console.log(`rows: ${out.rowsVsCapturedPrev}`);
   console.log(`positions ${out.positions.compared ? (out.positions.identical ? 'IDENTICAL' : `${out.positions.moved.length} moved`) : 'not compared'}`);
   console.log(JSON.stringify(out.summary));
 }

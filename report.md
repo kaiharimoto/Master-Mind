@@ -308,6 +308,54 @@ question**: *organic-bioluminescent*, ratified from measured frames. Recorded in
 | D6 | minor | No frame shows a PLACEMENT suggestion being accepted, the only finder path that writes a position | **Fixed.** Artifact 20 now accepts one on camera, reached the way a user reaches it. The node was unplaced, lands exactly where the reply suggested, and holding steps 4 → 3. |
 | D7 | minor | Artifact 13 is scrolled past the instructions | **Fixed.** The prompt panel shows the preamble and the position records together. |
 
+## Cycle 2 — the Audience's findings and what was done
+
+**The Audience · 43/50** (core workflow 21/25, landmarks live 22/25 — both above
+their minima; +2 on cycle 1). Eight findings, none blocking.
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| B1 | major | Artifact 09 — the still dedicated to connect-and-edit — is frozen on the *arm* step (`Now click the node to connect to.`); no newly created filament is visible, so the artifact documents the invitation rather than the result | **Fixed, and the correction was taken verbatim.** 09 is now a two-panel before/after in one framing: the left panel is the armed state, the right panel is one interaction later with the new filament drawn between the two named nodes and centred in frame. The driver records `connectedByThisCapture: true` and asserts the link is absent in the before panel and present in the after panel, so a composite that failed to create an edge fails the capture instead of shipping. |
+| B2 | major | Node labels collide and half-occlude each other throughout the dense districts in **every** whole-map frame — five specific collisions cited across 03, 04, 06, 09 and 10 | **Accepted; the arbiter existed but its ramp was too gentle.** Cycle 1 added screen-space priority deconfliction, and it is what stopped the worst of it — but a loser label faded only in proportion to its covered fraction and bottomed out at a still-legible alpha, so two overlapping labels both stayed readable *and* both stayed drawn. The ramp now reaches **zero**: a label covered more than 16 % is attenuated to nothing by 46 % coverage, and a label suppressed past 55 % no longer occupies the field for the labels behind it. Nothing moves and no node is re-laid-out — text only, exactly as the correction asked. |
+| B3 | minor | Artifact 04 clips the holding cluster off the bottom edge; cycle 1's looser framing had it fully in frame | **Fixed.** The mind-expansion fit now includes the holding cluster in its bounds and the margin was returned to 1.09. The label-size gain from the tighter crop was, as the Audience says, small against losing a region of the map. |
+| B4 | minor | A node dragged out of holding to a permanent spot still carries the literal Label `holding` in the inspector (19 at 9.6 s and 17.6 s, and 08's After panel) | **Fixed at the source.** `holding` is a state, not a name. Quick-add still shows it while the node is held, and `store.place()` now clears it on placement unless the user has typed a real label — so the word cannot outlive the state it described. |
+| B5 | minor | Artifact 05 shows the detected hand and its metrics but nothing in-frame demonstrates the Spread *taking effect* — the ~7 % expansion is only measurable by diffing against artifact 04 | **Fixed.** 05 is now a two-panel composite in one framing: the map before the pose and at the end of the spread, with the webcam panel and pose readout on both. The captured measurement is in the frame — mean radial distance 125.53 → 109.57 — and the driver requires `operationTookEffect: true`. |
+| B6 | minor | The tracking panel is titled `WEBCAM · HAND TRACKING` over a visibly computer-generated hand, with no on-frame marker that the source is synthesised — while every other substitution in this set announces itself | **Fixed, and this is the finding I am most glad was raised.** The panel now reads `SYNTHESISED CAPTURE · HAND-VOCABULARY-SLOW.Y4M · REAL HANDLANDMARKER`, and the title is *derived* from the stream the app actually opened rather than typed in: the app inspects its own `MediaStreamTrack` label and marks itself synthetic from it, so a real camera would retitle the panel by itself and a synthetic one cannot be silently relabelled. |
+| B7 | minor | Artifact 08's tighter cycle-2 crop clips labels mid-word (`hod of loci`, `et: 12`) and pushes the compose field out of frame | **Fixed.** Each panel was widened (fit margin 1.34) so no label is cut at a boundary. |
+| B8 | minor | The only segment of artifact 16 where the gyro readout moves is also the `Pinch / spread — Zoom in` beat, conflating orientation with a touch gesture that changes the same view | **Fixed.** Orientation has its own labelled beat — `Device orientation — look around`, no touch input for its whole duration, gyro numbers sweeping — placed before the pinch beat, so gyroscopic control is demonstrated in isolation. |
+
+
+## Cycle 2 — the Auditor's findings and what was done
+
+**The Auditor · 30/35** (one model and sacred positions 17/20, evidence and
+report integrity 13/15 — **both hard gates met, both at their floor**; 31.5 → 30
+on cycle 1). **The cycle was declared NOT regression-free**, with **no position
+regression**: `positions.json` is byte-identical across the two cycles and 02's
+node screen coordinates are unchanged through a full rebuild, but four artifacts
+prove less than they did last cycle. That verdict is recorded as given and is
+not argued with — it is the correct call, and the cause is one habit running
+through five recaptures.
+
+**The regression, named plainly.** Chasing label legibility, I tightened the
+framing of 04, 08 and 05 and let the twin's camera pan between its two shots.
+Every one of those trades cost evidence that was already in hand: a clipped
+holding cluster, a clipped holding ring, a spread you can no longer see, and a
+twin pair that no longer superposes. *A frame that proves less is a regression
+even when the code underneath got better*, and cycle 3 is spent recovering all
+four before anything new is attempted.
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| E1 | major | Artifact 12's AFTER is framed differently from 11's BEFORE — every node's projected x moves 289–350 px while y is preserved, and a placed node is pushed off the left edge, so "positions untouched, no node dropped" is no longer checkable from the frame | **Fixed, and the root cause was exactly the one named.** Selecting a node pans the view to clear the editor panel, so the AFTER shot was taken from a different eye. The twin camera is now framed **once**, captured as an explicit pose, and **restored immediately before every shot on both halves**, so the two frames superpose. The drag is kept as the edit. Both halves print the moved node's before → after coordinates in the frame. And the capture now **throws** if any node is within 4 px of an edge in either half, so an artifact that claims "no node was dropped" cannot ship with a node off the frame. |
+| E2 | major | The two halves are identical in ephemeral UI state as well as model state, and nothing identifies the Windows side as the separate Wine/Electron process the decision record claims — the composite cannot distinguish two synced processes from one state rendered twice | **Fixed as asked, and made underivable by hand.** The sync service now assigns every socket a number and reports it with its pid; the app exposes a `provenance()` reading its own runtime from `navigator.userAgent`, its platform, its transport URL and that server-assigned socket number. Each half of the composite carries that line: `electron 32.x · Win32 · wine · the built win32-x64 binary · ws 127.0.0.1:8998 · socket #1` against `chromium … · android device profile · touch · socket #2`. Nothing in it is typed by the capture script. **And when the Wine binary fails to come up, the strip says `chromium fallback — NOT the built binary` in the frame** — the artifact can no longer over-claim by silently degrading. |
+| E3 | minor | Artifact 04's holding cluster runs off the bottom edge, two labels cut and one occluded by the Select button | **Fixed** (the Audience raised the same clip as B3). The expansion fit bounds the placed nodes and the holding cluster together, with margin returned to 1.09. |
+| E4 | minor | Artifact 08 clips the holding ring in both panes, so the four-to-three decrement can be read only from the toolbar pill, not seen in the cluster | **Fixed** (B7 is the same crop). Both panes were widened so the whole dashed ring is in frame; the pill stays, so the decrement is shown twice — once glanceable, once countable. |
+| E5 | minor | `DIFF.json` is headed `previousCycle: 0, capturedPrev: 2` while twenty rows plainly compare against cycle 1's twenty files | **Fixed, and it is now underivable from a stale header.** The previous cycle is read from the snapshot directory being diffed and the previous count from the **artifact files actually on disk** — a count that trusted the previous manifest's own list would have inherited exactly the error it is meant to catch. What the old manifest claims about itself is kept alongside as `previousManifestSelfReport`, and any disagreement is reported rather than silently corrected. The diff also fails loudly if its comparable row count and the previous file count disagree. |
+| E6 | major | Artifact 16 was recaptured in a different **lens** and 12 changed the **operation it demonstrates**, and neither is annotated anywhere: the diff records only a similarity number, so a re-framing, a bug fix and a change to what an artifact proves all surface as the same kind of change | **Fixed.** Every driver now declares what its artifact demonstrates, and its capture function is hashed. The diff compares both across cycles and writes a `whatChanged` line naming a changed lens, surface, demonstrated subject or capture script — and an artifact whose recipe changed substantively is reported as `changed` even when its pixels did not move. |
+| E7 | minor | Artifact 05's spread is only ~8 % wider than the neutral framing in 04, so the pose's operation taking effect is barely legible | **Fixed** (B5 is the same finding from the other side). 05 is a two-pane before/after at one camera with the measured radial distance printed on the frame. |
+| E8 | minor | Label priority and fading help, but the dense districts are still an unreadable pile — dimming resolves priority without displacement | **Fixed by taking the correction offered.** Deconfliction now **re-anchors before it dims**: each label is tried at nine placements around its own node, the clearest is chosen, and only what is still buried in its best placement is faded out. The node never moves, no label detaches from the node it names, and the unshifted anchor is preferred unless a candidate is meaningfully clearer, so labels do not jitter as the camera turns. |
+
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
@@ -346,4 +394,17 @@ cycle 2 makes it.
 
 ## Capture failures
 
-*None yet — no capture has been attempted.*
+**No artifact has failed its check in any cycle.** Both cycles recorded 20/20
+captured as defined, at or above every declared minimum resolution and duration.
+The failures below are harness faults, recorded because §09 makes a silently
+re-scoped or swallowed failure fatal — a failure is a finding here even when it
+costs no artifact.
+
+| Cycle | Fault | What it cost | Resolution |
+|---|---|---|---|
+| 1 | The critics read the live `evidence/` directory while fixes were being recaptured into it; `17_hand_vocabulary.mp4` changed under a review and was briefly unreadable | One critic read a half-written file | Each cycle is now frozen to an immutable `evidence/cycles/cycle-N/` before any critic is dispatched, and the briefs point there |
+| 1 | The twin driver dragged a node on the Android surface with mouse events, on a surface that listens only for touch — nothing moved, and the sync proof would have been vacuous | Nothing: caught before it shipped | Switched to CDP touch events, and the driver now **throws** if the dragged node's position is unchanged |
+| 2 | `run-capture.mjs` exited non-zero *after* all 20 artifacts had passed their checks — a promise left over from a closed browser rejecting during teardown. `cycle.mjs` printed `capture run reported a failure` with no cause attached | Nothing to the evidence set; the diagnostic was lost | Late unhandled rejections and exceptions are now caught, named, written to `MANIFEST.lateFaults` and printed, and `cycle.mjs` reports the exit status and signal |
+
+Every capture failure that has cost an artifact: **none.** Every capture whose
+definition was narrowed to make it pass: **none.**

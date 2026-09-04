@@ -466,7 +466,7 @@ export class App {
     const g = $('#gesture');
     const touch = TOUCH_VOCAB.find(t => t.id === id);
     const hand = HAND_VOCAB.find(h => h.id === id || `mouse:${h.id}` === id);
-    const name = touch?.name ?? hand?.name ?? id;
+    const name = touch?.name ?? hand?.name ?? (id === 'gyro' ? 'Gyroscope' : id);
     const label = id.startsWith('mouse') ? `${name} (mouse equivalent)` : name;
     g.innerHTML = `<span class="n">${esc(label)}</span> <span class="o">— ${esc(detail)}</span>`;
     g.classList.add('show');
@@ -612,13 +612,21 @@ export class App {
     else {
       if (!p) {
         p = el('div', { id: 'hands', 'data-t': 'hand-panel' });
-        p.innerHTML = `<div class="hd"><span class="dot"></span><span>webcam · hand tracking</span></div>
+        p.innerHTML = `<div class="hd"><span class="dot"></span><span data-t="hand-source">capture · hand tracking</span></div>
           <div id="handwrap"><video id="handvid" data-t="hand-video" muted playsinline></video><canvas id="handlm"></canvas></div>
           <div id="handpose"><div class="p" data-t="hand-pose">—</div><div class="o" data-t="hand-op"></div><div class="g" data-t="hand-geom"></div></div>`;
         document.body.appendChild(p);
       }
       const f = this.hands.frame;
       const v = HAND_VOCAB.find(h => h.id === f.pose);
+      const src = $('[data-t=hand-source]', p);
+      if (src) {
+        const base = (this.hands.sourceLabel || '').split('/').pop() || '';
+        src.textContent = this.hands.synthetic
+          ? `synthesised capture${base ? ` · ${base}` : ''} · real handlandmarker`
+          : 'webcam · hand tracking';
+        src.setAttribute('title', this.hands.sourceLabel || '');
+      }
       $('.dot', p).classList.toggle('live', this.hands.enabled && f.present);
       $('[data-t=hand-pose]', p).textContent = f.present ? (v?.name ?? 'unrecognised') : 'no hand';
       $('[data-t=hand-op]', p).textContent = v ? v.operation.split(' — ')[0] : (f.present ? 'hold a pose' : 'show a hand to the camera');
@@ -774,6 +782,29 @@ export class App {
       sync: this.sync.status, hands: this.hands.status, pose: this.hands.frame.pose,
       suggestions: this.suggestions.length,
       positions: Object.fromEntries(nodeList(doc).map(n => [n.id, n.pos])),
+    };
+  }
+
+  /**
+   * Which process is this, and over which connection. Every field is read from
+   * the running runtime or handed down by the sync service — nothing here is a
+   * constant a capture script could set. A composite of two surfaces can then
+   * show that it holds two connected processes rather than one rendered twice.
+   */
+  provenance() {
+    const ua = navigator.userAgent;
+    const el = /Electron\/([0-9.]+)/.exec(ua);
+    const ch = /Chrome\/([0-9.]+)/.exec(ua);
+    return {
+      runtime: el ? `electron ${el[1]}` : ch ? `chromium ${ch[1]}` : 'unknown runtime',
+      isElectron: !!el,
+      platform: (navigator as unknown as { platform?: string }).platform ?? 'unknown',
+      surface: this.surface,
+      transport: this.sync.url,
+      socket: this.sync.connId,
+      serverPid: this.sync.serverPid,
+      actor: this.sync.actor,
+      status: this.sync.status,
     };
   }
 }

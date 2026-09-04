@@ -120,7 +120,7 @@ export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame 
 }
 
 /** Compose panels with ffmpeg. `mode` is 'h' (side by side) or 'v' (stacked). */
-export async function compose(inputs, out, { mode = 'h', labels = null, width = 1920, height = 1080 } = {}) {
+export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, width = 1920, height = 1080 } = {}) {
   const n = inputs.length;
   const cellW = mode === 'h' ? Math.floor(width / n) : width;
   const cellH = mode === 'h' ? height : Math.floor(height / n);
@@ -128,15 +128,22 @@ export async function compose(inputs, out, { mode = 'h', labels = null, width = 
   for (const i of inputs) args.push('-i', i);
   // Labels live in a strip ABOVE each panel so they never cover the interface
   // the panel is meant to show.
-  const strip = labels ? 46 : 0;
+  const strip = labels ? (sublabels ? 74 : 46) : 0;
   const parts = [];
   for (let i = 0; i < n; i++) {
     let f = `[${i}:v]scale=${cellW}:${cellH - strip}:force_original_aspect_ratio=decrease,` +
             `pad=${cellW}:${cellH}:(ow-iw)/2:${strip}:color=0x120E0B`;
+    const esc = (t) => String(t).replace(/[\\:']/g, m => '\\' + m);
     if (labels && labels[i]) {
-      const txt = String(labels[i]).replace(/[\\:']/g, m => '\\' + m);
       f += `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:` +
-           `text='${txt}':x=20:y=12:fontsize=23:fontcolor=0xEFE6D8`;
+           `text='${esc(labels[i])}':x=20:y=10:fontsize=23:fontcolor=0xEFE6D8`;
+    }
+    // A second line for provenance: which process rendered this panel, over
+    // which transport, and the measured values the panel is being asked to
+    // prove. It is written from what the running app reported, never typed.
+    if (sublabels && sublabels[i]) {
+      f += `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:` +
+           `text='${esc(sublabels[i])}':x=20:y=42:fontsize=17:fontcolor=0xB9AA9B`;
     }
     parts.push(`${f}[v${i}]`);
   }

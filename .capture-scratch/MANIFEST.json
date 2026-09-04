@@ -1,0 +1,85 @@
+{
+  "cycle": 0,
+  "seed": {
+    "epoch": 1787227200000,
+    "rng": 1296913221,
+    "fps": 30
+  },
+  "startedAt": "2026-09-04T21:17:11.528Z",
+  "lastRunAt": "2026-09-04T21:17:56.042Z",
+  "lastRunCaptured": [
+    "05"
+  ],
+  "artifacts": [
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "title": "Hand tracking live",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 11.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 894693,
+        "sha256": "f7c9941b4024b4e5c67870e5affbab8a97770702453ee26643ff75c05a6488f3"
+      },
+      "result": {
+        "pose": "spread",
+        "landmarks": 21,
+        "tipsOut": 4,
+        "fan": 1.014,
+        "confidence": 0.954,
+        "distBefore": 125.53,
+        "distAfter": 109.57,
+        "operationTookEffect": true,
+        "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
+        "declaredSynthetic": true
+      },
+      "pageErrors": [
+        "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+      ],
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:18:07.140Z"
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "title": "Connect and edit",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.7,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 143023,
+        "sha256": "5b3b50d80c4fbd7694b06dd265e90bed46437b27d4205614b844eec850fd08b2"
+      },
+      "result": {
+        "between": [
+          "Koji-cured egg yolk",
+          "Shio koji"
+        ],
+        "linkedBefore": false,
+        "linkedAfter": true,
+        "connectedByThisCapture": true,
+        "nodeCount": 150,
+        "editorOpen": true
+      },
+      "pageErrors": [],
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-04T21:17:24.517Z"
+    }
+  ],
+  "finishedAt": "2026-09-04T21:18:08.543Z",
+  "captured": 2,
+  "total": 20
+}

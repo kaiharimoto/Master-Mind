@@ -58,6 +58,7 @@ export class Scene {
   /** Run order and priority for label deconfliction, rebuilt with the text. */
   private runMeta: { id: NodeId; priority: number; baseAlpha: number }[] = [];
   private runAlphas = new Float32Array(0);
+  private runShifts = new Float32Array(0);
   private dirty = true;
 
   constructor(readonly canvas: HTMLCanvasElement, fontMeta: FontMeta, atlas: THREE.Texture) {
@@ -155,6 +156,7 @@ export class Scene {
     const p = LENS_PROFILE[this.lens];
     this.text.build(runs, p.textPerLine, p.textLines);
     if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
+    if (this.runShifts.length !== this.runMeta.length * 2) this.runShifts = new Float32Array(this.runMeta.length * 2);
 
     // A filament is live when it touches the selection or a search hit.
     const links: LinkInstance[] = [];
@@ -215,12 +217,23 @@ export class Scene {
     const em = 0.92;
 
     type Box = { i: number; x0: number; y0: number; x1: number; y1: number; pri: number; z: number };
+    // A label may be re-anchored to a free side of its OWN node before it is
+    // dimmed. Fading alone left dense districts as a pile of half-lit text;
+    // moving the text to a clear side of the same node keeps it readable and
+    // keeps it attached. The node itself never moves.
+    const CAND: [number, number][] = [
+      [0, 0], [0, -1.30], [0, 1.30],
+      [-0.62, -0.62], [0.62, -0.62], [-0.62, 0.62], [0.62, 0.62],
+      [0, -2.55], [0, 2.55],
+    ];
     const boxes: Box[] = [];
+    const shape: { w: number; h: number; emPx: number; bx0: number; by0: number }[] = [];
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const s = byId.get(meta.id);
       const span = this.text.spans[i];
-      if (!s || !span) { this.runAlphas[i] = 0; continue; }
+      this.runShifts[i * 2] = 0; this.runShifts[i * 2 + 1] = 0;
+      if (!s || !span) { this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0 }; continue; }
       const emPx = Math.min(Math.max(em * s.pxPerWorld, p.textMinPx), p.textMaxPx);
       const nodePx = Math.min(Math.max(s.r / 0.6, p.nodeMinPx), p.nodeMaxPx);
       const w = Math.max(span.widthEm * emPx, 8);
@@ -229,6 +242,7 @@ export class Scene {
       const cy = span.above ? s.y - gap - h * 0.5 : s.y + gap + h * 0.5;
       const sd = span.side ?? 0;
       const x0 = sd === 0 ? s.x - w / 2 : sd < 0 ? s.x - w - emPx * 0.55 : s.x + emPx * 0.55;
+      shape[i] = { w, h, emPx, bx0: x0, by0: cy - h / 2 };
       boxes.push({ i, x0, x1: x0 + w, y0: cy - h / 2, y1: cy + h / 2,
                    pri: meta.priority, z: s.z });
       this.runAlphas[i] = meta.baseAlpha;
@@ -236,24 +250,45 @@ export class Scene {
     boxes.sort((a, b) => a.pri - b.pri || a.z - b.z);
 
     const taken: Box[] = [];
-    for (const b of boxes) {
+    const coverage = (x0: number, y0: number, x1: number, y1: number, area: number) => {
       let covered = 0;
-      const area = Math.max((b.x1 - b.x0) * (b.y1 - b.y0), 1);
       for (const t of taken) {
-        const ox = Math.min(b.x1, t.x1) - Math.max(b.x0, t.x0);
+        const ox = Math.min(x1, t.x1) - Math.max(x0, t.x0);
         if (ox <= 0) continue;
-        const oy = Math.min(b.y1, t.y1) - Math.max(b.y0, t.y0);
+        const oy = Math.min(y1, t.y1) - Math.max(y0, t.y0);
         if (oy <= 0) continue;
         covered += ox * oy;
         if (covered >= area) break;
       }
-      const frac = Math.min(covered / area, 1);
-      // Ignore incidental clipping; fade hard once a label is genuinely buried.
-      const k = frac <= 0.18 ? 1 : Math.max(0.10, 1 - (frac - 0.18) / 0.52);
+      return Math.min(covered / area, 1);
+    };
+    for (const b of boxes) {
+      const sh = shape[b.i];
+      const area = Math.max(sh.w * sh.h, 1);
+      let best = { frac: 1, dx: 0, dy: 0 };
+      for (const [cx, cy] of CAND) {
+        const dx = cx * sh.emPx, dy = cy * sh.emPx;
+        const frac = coverage(sh.bx0 + dx, sh.by0 + dy, sh.bx0 + sh.w + dx, sh.by0 + sh.h + dy, area);
+        // The unshifted anchor is preferred: a candidate only wins if it is
+        // meaningfully clearer, so labels do not jitter between placements.
+        if (frac < best.frac - (cx === 0 && cy === 0 ? 0 : 0.06) ||
+            (cx === 0 && cy === 0 && frac <= best.frac)) best = { frac, dx: cx, dy: cy };
+        if (best.frac <= 0.02) break;
+      }
+      this.runShifts[b.i * 2] = best.dx;
+      this.runShifts[b.i * 2 + 1] = -best.dy;   // screen y grows downward; the shader's y does not
+      const px = { x0: sh.bx0 + best.dx * sh.emPx, y0: sh.by0 + best.dy * sh.emPx };
+      // Ignore incidental clipping; once a label is genuinely buried — even in
+      // its clearest available placement — it is suppressed outright rather
+      // than left as a ghost that still smears the one on top of it. The ramp
+      // is continuous in coverage, so a label recedes as the camera moves.
+      const k = best.frac <= 0.16 ? 1 : Math.max(0, 1 - (best.frac - 0.16) / 0.30);
       this.runAlphas[b.i] = this.runMeta[b.i].baseAlpha * k;
-      if (k > 0.55) taken.push(b);
+      if (k > 0.45) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + sh.w, y1: px.y0 + sh.h,
+                                 pri: b.pri, z: b.z });
     }
     this.text.setRunAlphas(this.runAlphas);
+    this.text.setRunShifts(this.runShifts);
   }
 
   /** Screen-space positions and radii, for picking and for UI anchoring. */

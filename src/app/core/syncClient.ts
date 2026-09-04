@@ -10,7 +10,7 @@ export interface MapSummary { id: string; name: string; nodes: number; lastOpene
 export interface MapOrigin { from: 'seed' | 'live'; file?: string; sha256?: string; }
 
 type ServerMsg =
-  | { t: 'snapshot'; doc: MapDoc; origin?: MapOrigin }
+  | { t: 'snapshot'; doc: MapDoc; origin?: MapOrigin; conn?: number; serverPid?: number }
   | { t: 'op'; op: Op }
   | { t: 'maps'; maps: MapSummary[] }
   | { t: 'error'; message: string };
@@ -21,6 +21,10 @@ export class SyncClient implements Transport {
   private remoteFns: ((op: Op) => void)[] = [];
   private snapFns: ((doc: MapDoc, origin: MapOrigin) => void)[] = [];
   origin: MapOrigin = { from: 'live' };
+  /** The socket number this client was given by the sync service, and the
+   *  service's own pid. Two surfaces on one map are two numbers here. */
+  connId: number | null = null;
+  serverPid: number | null = null;
   private mapsFns: ((m: MapSummary[]) => void)[] = [];
   private statusFns: ((s: SyncStatus, detail: string) => void)[] = [];
   status: SyncStatus = 'offline';
@@ -45,6 +49,8 @@ export class SyncClient implements Transport {
       if (m.t === 'op') for (const f of this.remoteFns) f(m.op);
       else if (m.t === 'snapshot') {
         this.origin = m.origin ?? { from: 'live' };
+        if (m.conn !== undefined) this.connId = m.conn;
+        if (m.serverPid !== undefined) this.serverPid = m.serverPid;
         for (const f of this.snapFns) f(m.doc, this.origin);
       }
       else if (m.t === 'maps') for (const f of this.mapsFns) f(m.maps);

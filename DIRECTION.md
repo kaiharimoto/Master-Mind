@@ -272,3 +272,33 @@ the ordinary DOM, so the app's own input paths execute unchanged.
 
 Recorded as **F-010**. The alternative — shipping 12 fps video — would have
 failed the stated minimum, and dropping the resolution would have failed another.
+
+## D-012 · Labels may be re-anchored; nodes never move  · cycle 2 · SETTLED
+
+Two critics, independently, called dense-district label collision the largest
+remaining legibility cost, and both offered the same class of correction:
+displacement rather than dimming alone. Displacement raises an obvious hazard in
+a build whose central claim is that **a node's position is sacred and written by
+exactly one path** — an explicit user act.
+
+**Decision.** Label *text* may be re-anchored in screen space; a *node* never
+moves for legibility, ever.
+
+The deconflictor tries each label at nine anchors around its own node — its
+authored side, one and two line-heights up or down, and the four diagonals at
+0.62 em — scores each by the fraction a higher-priority label has already
+claimed, and takes the clearest. The unshifted anchor wins ties and is only
+displaced by a candidate that is meaningfully clearer, so a label does not
+jitter between placements as the camera turns. What remains buried in its best
+available placement is faded to nothing, so a suppressed label does not smear
+the one on top of it.
+
+Every anchor is adjacent to the node it names, so no leader lines are needed and
+no label detaches from its subject. The shift lives in a per-frame attribute
+(`aShift`) consumed by the text shader; it never touches `node.pos`, and the
+position ledger the auditor compares is untouched by it — as `positions.json`
+being byte-identical across cycles 1 and 2 already showed while the earlier,
+dimming-only version of this code was live.
+
+**Not a reopening of D-006 or D-007.** The five states keep their signatures and
+recency keeps chroma. This decides only where a label may be drawn.

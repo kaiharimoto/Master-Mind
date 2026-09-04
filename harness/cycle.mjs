@@ -18,7 +18,12 @@ const cycle = Number(process.argv[2] ?? 1);
 const skipCapture = process.argv.includes('--skip-capture');
 const prevDir = resolve(EV, `history/cycle-${cycle - 1}`);
 
-const run = (args) => spawnSync('node', args, { cwd: ROOT, stdio: 'inherit' }).status === 0;
+let lastRun = null;
+const run = (args) => {
+  const r = spawnSync('node', args, { cwd: ROOT, stdio: 'inherit' });
+  lastRun = { status: r.status, signal: r.signal };
+  return r.status === 0;
+};
 
 // 1. Archive whatever is currently in evidence/ as the previous cycle.
 if (!skipCapture && existsSync(join(EV, 'MANIFEST.json'))) {
@@ -35,7 +40,8 @@ if (!skipCapture && existsSync(join(EV, 'MANIFEST.json'))) {
 if (!skipCapture) {
   rmSync(resolve(ROOT, '.capture-tmp'), { recursive: true, force: true });
   if (!run([resolve(ROOT, 'harness/run-capture.mjs'), '--cycle', String(cycle)])) {
-    console.error('capture run reported a failure — continuing so the cycle is still diffable');
+    console.error(`capture run reported a failure (exit ${lastRun.status}${lastRun.signal ? `, signal ${lastRun.signal}` : ''}) ` +
+                  '— continuing so the cycle is still diffable; see MANIFEST.lateFaults');
   }
 }
 

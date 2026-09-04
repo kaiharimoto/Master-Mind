@@ -4,7 +4,8 @@ import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, orient, sleepFrames } from
 
 export default [
 {
-  id: '01', file: '01_maps_home.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '01', file: '01_maps_home.png', kind: 'png',
+  demonstrates: 'maps home: create, rename and delete a map, both seeded maps listed with node counts', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation',
   title: 'Maps home',
   async run(H) {
@@ -35,7 +36,8 @@ export default [
   },
 },
 {
-  id: '02', file: '02_canvas_large_map.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '02', file: '02_canvas_large_map.png', kind: 'png',
+  demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
@@ -46,7 +48,8 @@ export default [
   },
 },
 {
-  id: '03', file: '03_hero_ar_coldstart.png', kind: 'png', minW: 2560, minH: 1440,
+  id: '03', file: '03_hero_ar_coldstart.png', kind: 'png',
+  demonstrates: 'AR lens hero on Android at cold first launch, gyro-oriented vantage', minW: 2560, minH: 1440,
   surface: 'android', map: 'map-fermentation', title: 'Hero — AR projection, cold start',
   coldStart: true,
   async run(H) {
@@ -88,18 +91,22 @@ export default [
   },
 },
 {
-  id: '04', file: '04_mind_expansion.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '04', file: '04_mind_expansion.png', kind: 'png',
+  demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion' });
+    // The holding cluster is part of the map: a tighter crop that clips it
+    // trades a whole region for a few percent of label size.
     await POSE(page, { yaw: 0.30, pitch: 0.16 });
-    await FRAME_ALL(page, 1.03);
+    await FRAME_ALL(page, 1.09);
     await H.shot(page, cdp, H.out(this.file));
     return H.modelStats(page);
   },
 },
 {
-  id: '06', file: '06_holding_cluster.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '06', file: '06_holding_cluster.png', kind: 'png',
+  demonstrates: 'the holding cluster: unplaced nodes in the dashed ring with the holding count', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
@@ -112,7 +119,8 @@ export default [
   },
 },
 {
-  id: '07', file: '07_five_node_states.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '07', file: '07_five_node_states.png', kind: 'png',
+  demonstrates: 'the five node states side by side with the legend', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Five node states staged',
   async run(H) {
     // The small map is used because all five states can coexist in one frame
@@ -147,38 +155,53 @@ export default [
   },
 },
 {
-  id: '09', file: '09_connect_edit.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '09', file: '09_connect_edit.png', kind: 'png',
+  demonstrates: 'connect and edit before/after: a new filament created between two named nodes', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Connect and edit',
   async run(H) {
-    const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
+    const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', width: 960, height: 1080 });
     const A = 'Koji-cured egg yolk', B = 'Shio koji';
     const a = await SELECT(page, A);
     const b = await NODE_ID(page, B);
-    // Connect through the editor's own control, then click the second node —
-    // the same path a user takes.
-    await page.click('[data-t=ed-link]');
     await POSE(page, { yaw: 0.5, pitch: 0.12 });
     await page.evaluate(({ a, b }) => {
-      const d = window.mm.store.doc;
-      const na = d.nodes[a], nb = d.nodes[b];
-      const p = window.mm.scene.pose;
+      const d = window.mm.store.doc, na = d.nodes[a], nb = d.nodes[b], p = window.mm.scene.pose;
       p.target.set((na.pos[0] + nb.pos[0]) / 2, (na.pos[1] + nb.pos[1]) / 2, (na.pos[2] + nb.pos[2]) / 2);
-      p.dist = 22;
+      p.dist = 20;
     }, { a, b });
-    await sleepFrames(page, 0, 2);
+    await page.evaluate(() => window.mm.clearOfPanels());
+    await sleepFrames(page, 0, 3);
+    const linkedBefore = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
+      .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
+    const before = await H.tmpShot(page, cdp, '09a');
+
+    // Connect through the editor's own control and a click on the second node —
+    // the same path a user takes.
+    await page.click('[data-t=ed-link]');
     const s = await SCREEN_OF(page, b);
     await page.mouse.click(s.x, s.y);
     await sleepFrames(page, 0, 2);
     await SELECT(page, A);
-    await sleepFrames(page, 0, 2);
-    await H.shot(page, cdp, H.out(this.file));
-    const linked = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
+    // Clear the transient toast so the frame shows the result, not the prompt
+    // that preceded it.
+    await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
+    await sleepFrames(page, 0, 3);
+    const after = await H.tmpShot(page, cdp, '09b');
+    await H.compose([before, after], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
+      labels: [`Before — “${A}” selected, no link to “${B}”`,
+               `After — the filament exists, editor open on text, colour and label`] });
+
+    const linkedAfter = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
-    return { connected: linked, between: [A, B], editorOpen: true };
+    const moved = await page.evaluate(() => Object.fromEntries(
+      Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos])));
+    return { between: [A, B], linkedBefore, linkedAfter, connectedByThisCapture: !linkedBefore && linkedAfter,
+             nodeCount: Object.keys(moved).length, editorOpen: true };
   },
 },
 {
-  id: '13', file: '13_finder_prompt.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '13', file: '13_finder_prompt.png', kind: 'png',
+  demonstrates: 'the finder prompt export, preamble and position records together', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder prompt export',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
@@ -206,7 +229,8 @@ export default [
   },
 },
 {
-  id: '15', file: '15_settings_gestures.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '15', file: '15_settings_gestures.png', kind: 'png',
+  demonstrates: 'settings and the gesture reference for touch and hand vocabularies', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Settings and gesture reference',
   camera: 'hand-vocabulary',
   async run(H) {

@@ -11,31 +11,50 @@ const script = (steps) => {
 
 export default [
 {
-  id: '05', file: '05_hand_tracking.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '05', file: '05_hand_tracking.png', kind: 'png',
+  demonstrates: 'Windows hand tracking: an open-palm spread shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
   async run(H) {
-    const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', camera: true });
+    // A composite, so the operation's EFFECT is legible in this artifact
+    // rather than only by measuring across two of them.
+    const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion',
+                                        camera: true, width: 960, height: 1080 });
     await POSE(page, { yaw: 0.30, pitch: 0.16 });
-    await FRAME_ALL(page, 1.02);
+    await FRAME_ALL(page, 1.12);
     await page.click('[data-t=hands-chip]');
     await page.waitForFunction(() => window.mm.hands.enabled, null, { timeout: 90000 });
-    // Wait for a real recognised pose that drives a visible operation.
+    await page.waitForFunction(() => window.mm.hands.frame.present, null, { timeout: 90000 });
+    // Hold at the neutral framing with the hand present but before the pose has
+    // acted, so the two panels differ by the operation and nothing else.
+    const distBefore = await page.evaluate(() => window.mm.scene.pose.dist);
+    const before = await H.tmpShot(page, cdp, '05a', 800);
+
     await page.waitForFunction(() => ['spread', 'gather'].includes(window.mm.hands.frame.pose),
                                null, { timeout: 90000 });
-    const before = await page.evaluate(() => window.mm.scene.pose.dist);
-    // Let the recognised pose actually act on the map for a moment.
-    for (let i = 0; i < 45; i++) { await page.evaluate(t => window.mm.renderAt(t), i * 33.3); await page.waitForTimeout(12); }
-    await H.shot(page, cdp, H.out(this.file), 1500);
+    for (let i = 0; i < 70; i++) {
+      await page.evaluate(t => window.mm.renderAt(t), 800 + i * 33.3);
+      await page.waitForTimeout(10);
+    }
+    const after = await H.tmpShot(page, cdp, '05b', 3200);
+    const distAfter = await page.evaluate(() => window.mm.scene.pose.dist);
     const f = await page.evaluate(() => ({ ...window.mm.hands.frame, landmarks: window.mm.hands.frame.landmarks.length }));
-    const after = await page.evaluate(() => window.mm.scene.pose.dist);
+    const v = f.pose === 'spread' ? 'Open palm — spread the map' : 'Gathered hand — gather the map';
+    await H.compose([before, after], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
+      labels: [`Before — hand detected, pose not yet acting  ·  view distance ${distBefore.toFixed(1)}`,
+               `After — ${v}  ·  view distance ${distAfter.toFixed(1)}`] });
+    const src = await page.evaluate(() => ({ label: window.mm.hands.sourceLabel,
+                                             synthetic: window.mm.hands.synthetic }));
     return { pose: f.pose, landmarks: f.landmarks, tipsOut: f.reach, fan: +f.spreadRatio.toFixed(3),
-             confidence: +f.confidence.toFixed(3), distBefore: +before.toFixed(2), distAfter: +after.toFixed(2),
-             operationTookEffect: Math.abs(after - before) > 0.01 };
+             confidence: +f.confidence.toFixed(3),
+             distBefore: +distBefore.toFixed(2), distAfter: +distAfter.toFixed(2),
+             operationTookEffect: Math.abs(distAfter - distBefore) > 0.5,
+             captureSource: src.label, declaredSynthetic: src.synthetic };
   },
 },
 {
-  id: '08', file: '08_placement_endstate.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '08', file: '08_placement_endstate.png', kind: 'png',
+  demonstrates: 'placement before/after: one node leaves holding for a permanent position', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Placement end-state',
   async run(H) {
     // Captured at the panel's own size so the composite needs no downscaling:
@@ -43,7 +62,7 @@ export default [
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-talk',
                                         width: 960, height: 1080 });
     await POSE(page, { yaw: 0.28, pitch: 0.12 });
-    await FRAME_ALL(page, 1.12);
+    await FRAME_ALL(page, 1.34);
     const id = await NODE_ID(page, 'Steal the parking-lot bit');
     await page.evaluate(i => window.mm.select(i), id);
     await sleepFrames(page, 0, 3);
@@ -77,7 +96,8 @@ export default [
   },
 },
 {
-  id: '10', file: '10_search_flyto_end.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '10', file: '10_search_flyto_end.png', kind: 'png',
+  demonstrates: 'search fly-to end-state: the hit centred and wearing the search-hit signature', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
@@ -100,18 +120,21 @@ export default [
   },
 },
 {
-  id: '11', file: '11_sync_twin_before.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '11', file: '11_sync_twin_before.png', kind: 'png',
+  demonstrates: 'twin composite BEFORE: Windows and Android on one map, identical frozen camera', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — before',
   pairWith: '12',
   async run(H) { return H.twin(this, 'before'); },
 },
 {
-  id: '12', file: '12_sync_twin_after.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '12', file: '12_sync_twin_after.png', kind: 'png',
+  demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows, same frozen camera', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — after',
   async run(H) { return H.twin(this, 'after'); },
 },
 {
-  id: '14', file: '14_finder_review.png', kind: 'png', minW: 1920, minH: 1080,
+  id: '14', file: '14_finder_review.png', kind: 'png',
+  demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
@@ -139,7 +162,8 @@ export default [
   },
 },
 {
-  id: '16', file: '16_touch_vocabulary.mp4', kind: 'mp4', minW: 1920, minH: 1080,
+  id: '16', file: '16_touch_vocabulary.mp4', kind: 'mp4',
+  demonstrates: 'Android touch vocabulary in motion inside the AR lens, with an orientation-only beat', minW: 1920, minH: 1080,
   minFps: 24, minSec: 30, surface: 'android', map: 'map-talk', title: 'Touch gesture vocabulary',
   async run(H) {
     // Run the vocabulary inside the AR lens: the touch gestures belong to both
@@ -189,10 +213,17 @@ export default [
             { x: 830 - (k + 1) * 2.2, y: 520 - (k + 1) * 0.8, id: 1 },
             { x: 1090 + (k + 1) * 2.2, y: 560 + (k + 1) * 0.8, id: 2 }] }) })),
       { at: 794, fn: async () => cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }) },
-      // The device is turned: the vantage swings while every node stays where
-      // it is, with the live orientation readout tracking the movement.
-      ...Array.from({ length: 40 }, (_, k) => ({ at: 840 + k * 4, fn: async () =>
-          orient(page, cdp, { alpha: (k + 1) * 1.6, beta: 90 - (k + 1) * 0.55, gamma: 0 }) })),
+      // Orientation gets its own beat, with no touch input in it, so
+      // gyroscopic control is demonstrated on its own rather than entangled
+      // with a gesture that also moves the view. The vantage swings while
+      // every node stays exactly where it is.
+      { at: 830, fn: async () => page.evaluate(() =>
+          window.mm.showGesture('gyro', 'Device orientation — look around')) },
+      ...Array.from({ length: 44 }, (_, k) => ({ at: 836 + k * 4, fn: async () => {
+          if (k % 8 === 0) await page.evaluate(() =>
+            window.mm.showGesture('gyro', 'Device orientation — look around'));
+          await orient(page, cdp, { alpha: (k + 1) * 1.5, beta: 90 - (k + 1) * 0.5, gamma: 0 });
+        } })),
     ];
     await H.record(page, cdp, { out: H.out(this.file), seconds: 34, onFrame: script(steps) });
     const uniq = [...new Set(fired)];
@@ -209,7 +240,8 @@ export default [
   },
 },
 {
-  id: '17', file: '17_hand_vocabulary.mp4', kind: 'mp4', minW: 1920, minH: 1080,
+  id: '17', file: '17_hand_vocabulary.mp4', kind: 'mp4',
+  demonstrates: 'Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents', minW: 1920, minH: 1080,
   minFps: 24, minSec: 24, surface: 'windows', map: 'map-fermentation',
   title: 'Hand gesture vocabulary', camera: 'hand-vocabulary-slow',
   async run(H) {
@@ -265,7 +297,8 @@ export default [
   },
 },
 {
-  id: '18', file: '18_search_flyto.mp4', kind: 'mp4', minW: 1920, minH: 1080,
+  id: '18', file: '18_search_flyto.mp4', kind: 'mp4',
+  demonstrates: 'search fly-to in motion, from whole-map framing to the hit', minW: 1920, minH: 1080,
   minFps: 24, minSec: 10, surface: 'windows', map: 'map-fermentation',
   title: 'Search fly-to in motion',
   async run(H) {
@@ -292,7 +325,8 @@ export default [
   },
 },
 {
-  id: '19', file: '19_capture_place_arc.mp4', kind: 'mp4', minW: 1920, minH: 1080,
+  id: '19', file: '19_capture_place_arc.mp4', kind: 'mp4',
+  demonstrates: 'the capture-place arc in motion: compose, holding, drag out, stays put', minW: 1920, minH: 1080,
   minFps: 24, minSec: 15, surface: 'windows', map: 'map-talk', title: 'Capture-place arc',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-talk' });
@@ -328,7 +362,8 @@ export default [
   },
 },
 {
-  id: '20', file: '20_finder_roundtrip.mp4', kind: 'mp4', minW: 1920, minH: 1080,
+  id: '20', file: '20_finder_roundtrip.mp4', kind: 'mp4',
+  demonstrates: 'the finder round-trip in motion, including a malformed reply and an accepted placement', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
