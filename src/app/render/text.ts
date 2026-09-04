@@ -103,7 +103,18 @@ void main() {
 }`;
 
 /** Where each run's glyphs live in the instance buffer, and how big it is. */
-export interface RunSpan { start: number; count: number; widthEm: number; lines: number; above: boolean; side: -1 | 0 | 1; }
+export interface RunSpan {
+  start: number; count: number; widthEm: number; lines: number; above: boolean; side: -1 | 0 | 1;
+  /**
+   * The run's exact glyph extent in em, relative to its node anchor, in the
+   * shader's own space (+y up) and EXCLUDING the node-radius term — which is
+   * `-vSide * nodePx * 0.62` and depends on screen scale, so the consumer adds
+   * it. Deconfliction models label rectangles from these instead of guessing
+   * from a line count: an approximate model put boxes up to 1.4 em away from
+   * the glyphs actually drawn, and declared two overlapping labels disjoint.
+   */
+  x0Em: number; x1Em: number; y0Em: number; y1Em: number; vSide: number;
+}
 
 export class TextLayer {
   readonly mesh: THREE.Mesh;
@@ -245,6 +256,7 @@ export class TextLayer {
       // Below: block hangs under the node. Above: block sits clear on top of it.
       const emY = above ? 0.55 + (lines.length - 1) * m.lineHeight + 0.30 : -0.92;
       const vSide = above ? -1 : 1;   // which way the block hangs off the node
+      let ex0 = Infinity, ex1 = -Infinity, ey0 = Infinity, ey1 = -Infinity;
       lines.forEach((line, li) => {
         let width = 0;
         for (const ch of line) width += (m.chars[ch]?.adv ?? 0);
@@ -256,7 +268,12 @@ export class TextLayer {
         for (const ch of line) {
           const g = m.chars[ch];
           if (!g) continue;
-          this.aRect.setXYZW(i, pen - m.pad / m.glyph, baseY - (cellEm - baseTop), cellEm, cellEm);
+          const rx = pen - m.pad / m.glyph, ry = baseY - (cellEm - baseTop);
+          if (rx < ex0) ex0 = rx;
+          if (rx + cellEm > ex1) ex1 = rx + cellEm;
+          if (ry < ey0) ey0 = ry;
+          if (ry + cellEm > ey1) ey1 = ry + cellEm;
+          this.aRect.setXYZW(i, rx, ry, cellEm, cellEm);
           this.aUV.setXYZW(i, g.u0, g.v0, g.u1, g.v1);
           this.aAnchor.setXYZ(i, run.anchor.x, run.anchor.y, run.anchor.z);
           this.aColor.setXYZ(i, run.color.r, run.color.g, run.color.b);
@@ -267,8 +284,10 @@ export class TextLayer {
           i++;
         }
       });
+      if (!Number.isFinite(ex0)) { ex0 = ex1 = ey0 = ey1 = 0; }
       this.spans.push({ start: spanStart, count: i - spanStart, widthEm: widest,
-                        lines: lines.length, above, side: run.side ?? 0 });
+                        lines: lines.length, above, side: run.side ?? 0,
+                        x0Em: ex0, x1Em: ex1, y0Em: emY + ey0, y1Em: emY + ey1, vSide });
     }
     for (const a of [this.aRect, this.aUV, this.aAnchor, this.aColor, this.aNodeSize, this.aAlpha, this.aOff]) a.needsUpdate = true;
     this.geo.instanceCount = i;

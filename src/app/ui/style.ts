@@ -55,7 +55,14 @@ body.ar #search{width:300px}
 .row{display:flex;gap:6px;margin-top:12px}
 .row button{flex:1}
 
-#finder{top:56px;left:12px;width:430px;max-height:calc(100vh - 76px);overflow:auto;padding:12px}
+/* The panel never grows past the band between the top bar and the bottom bar,
+   and it does NOT scroll as a whole: the prompt and reply bodies scroll inside
+   it, so Generate / Copy / Parse are on screen whatever the prompt's length. */
+#finder{top:56px;left:12px;width:430px;max-height:calc(100vh - 124px);overflow:hidden;padding:12px;
+  display:flex;flex-direction:column}
+#finder>*{flex:0 0 auto}
+#finder textarea{flex:1 1 auto;min-height:64px}
+#finder .tail{flex:1 1 auto;min-height:0;overflow:auto}
 #finder h3{margin:0 0 8px;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-dim)}
 .sug{border:1px solid var(--line);padding:10px;margin-top:8px;background:var(--panel2)}
 .sug .k{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--hot)}
@@ -110,6 +117,11 @@ tr.map:hover{background:var(--panel)}
   padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}
 #origin.seed{display:block;color:var(--ink-dim);border-color:#3A2F26}
 #origin b{color:var(--ink)}
+#activity{position:fixed;left:12px;top:86px;z-index:24;background:var(--panel);border:1px solid var(--line);
+  padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}
+#activity.show{display:block}
+#activity.remote{border-color:#3A2F26;color:var(--ink-dim)}
+#activity b{color:var(--ink)}
 #lenstag{position:fixed;left:12px;bottom:12px;z-index:24;background:var(--panel);
   border:1px solid var(--line);padding:6px 10px;font-size:11px;letter-spacing:.5px;color:var(--ink-dim)}
 #lenstag b{color:var(--ink);text-transform:uppercase;letter-spacing:.8px}

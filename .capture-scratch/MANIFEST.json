@@ -6,11 +6,83 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T21:17:11.528Z",
-  "lastRunAt": "2026-09-04T21:17:56.042Z",
+  "lastRunAt": "2026-09-04T21:46:45.590Z",
   "lastRunCaptured": [
-    "05"
+    "04"
   ],
   "artifacts": [
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "title": "Canvas at scale",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 313357,
+        "sha256": "bbe46b333fb6d429aadb543c3dc6e33b34bc0711d4a863e589b098e076e3f546"
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "canvas",
+        "surface": "windows",
+        "sync": "live"
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "canvas lens at whole-map framing on Windows, 150 nodes with seed provenance",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "2be50f6227c58941"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-04T21:46:24.319Z"
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "title": "Mind expansion overview",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 333921,
+        "sha256": "46bcdf6bfb320c074d09d5b0b8e118d7c53de3681b99693e0cd63959f7e119f9"
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "expansion",
+        "surface": "windows",
+        "sync": "live"
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "mind-expansion lens, the whole map and the holding cluster on screen at once",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "3aea3c4d4dee4b9e"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:46:46.863Z"
+    },
     {
       "id": "05",
       "file": "05_hand_tracking.png",
@@ -43,8 +115,58 @@
         "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
       ],
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-04T21:18:07.140Z"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "title": "Five node states staged",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 170406,
+        "sha256": "8e20bc3125b2d20a8d36d5751d3f7dadfb7fb4bb63e973db3b309b0422f0d3c6"
+      },
+      "result": {
+        "statesInFrame": [
+          "connected",
+          "plain",
+          "searchHit",
+          "selected",
+          "unplaced"
+        ],
+        "byNode": {
+          "Opening: where did you park?": "plain",
+          "Method of loci": "searchHit",
+          "Lists flatten meaning": "connected",
+          "Positions are the memory": "selected",
+          "Demo: search fly-to": "connected",
+          "Slide budget: 12": "plain",
+          "Closing: build your own": "plain",
+          "Steal the parking-lot bit": "unplaced",
+          "Ask about the demo laptop": "unplaced",
+          "Cut the history section?": "unplaced",
+          "Timebox to 18 minutes": "unplaced"
+        },
+        "ok": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the five node states side by side with the legend",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "4789c920082222d8"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-04T21:41:30.115Z"
     },
     {
       "id": "09",
@@ -77,9 +199,94 @@
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
       "fileMtime": "2026-09-04T21:17:24.517Z"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "title": "Finder prompt export",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 266527,
+        "sha256": "a5d954059d43508289e6dac95263f00fe7e24464614be7f80bbcedc45e3dcb32"
+      },
+      "result": {
+        "promptChars": 2698,
+        "hasPositions": true,
+        "hasInstructions": true,
+        "mentionsUnplaced": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder prompt export, preamble and position records together",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "51e64503fb0a6434"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-04T21:45:56.779Z"
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "title": "Finder review",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 170537,
+        "sha256": "15bcd656e2064b2b75ca499bc9387145baf20299bdc027c2611d88817d9da74e"
+      },
+      "result": {
+        "stagedKinds": [
+          "connection",
+          "connection",
+          "grouping",
+          "placement",
+          "placement"
+        ],
+        "kindsAfterReject": [
+          "connection",
+          "grouping",
+          "placement",
+          "placement"
+        ],
+        "allThreeKinds": true,
+        "rejectedId": "s1",
+        "rejectionLeftNoTrace": true,
+        "rejectedIsGone": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "f6f720db89dbd4c7"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-04T21:43:02.711Z"
     }
   ],
-  "finishedAt": "2026-09-04T21:18:08.543Z",
-  "captured": 2,
+  "finishedAt": "2026-09-04T21:46:48.229Z",
+  "lateFaults": [],
+  "build": {
+    "bundle": "src/dist/app.js",
+    "bytes": 763910,
+    "sha256": "ba5d534e17c6a91f4c289c7b1bcbf189ffdbda73d309fba5c94dcec6fb46739f"
+  },
+  "captured": 7,
   "total": 20
 }

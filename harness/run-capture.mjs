@@ -7,7 +7,7 @@
 import { mkdirSync, writeFileSync, rmSync, existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import stills from './drivers/stills.mjs';
 import motion from './drivers/motion.mjs';
@@ -49,6 +49,25 @@ process.on('exit', (code) => {
 
 mkdirSync(OUTDIR, { recursive: true });
 mkdirSync(TMP, { recursive: true });
+
+// The app is rebuilt from source before anything is captured.
+//
+// Nothing else did this, so a capture could silently run against a bundle older
+// than the code it claims to show — a label fix that was written, typechecked
+// and committed but never built would be reported as "not working" from a frame
+// that never contained it. The bundle's hash goes into the manifest so the set
+// says which build produced it.
+const BUILD = (() => {
+  const r = spawnSync('node', ['build.mjs'], { cwd: resolve(ROOT, 'src'), encoding: 'utf8' });
+  if (r.status !== 0) {
+    console.error(`app build FAILED (exit ${r.status})\n${(r.stderr || r.stdout || '').slice(-1500)}`);
+    process.exit(1);
+  }
+  const bundle = resolve(ROOT, 'src/dist/app.js');
+  const digest = createHash('sha256').update(readFileSync(bundle)).digest('hex');
+  console.log(`app bundle rebuilt: ${(statSync(bundle).size / 1024).toFixed(0)} KB  sha ${digest.slice(0, 12)}`);
+  return { bundle: 'src/dist/app.js', bytes: statSync(bundle).size, sha256: digest };
+})();
 
 const crop = (src, out, x, y, w, h) => new Promise((res, rej) => {
   let e = '';
@@ -366,6 +385,7 @@ for (const d of list) {
 
 manifest.finishedAt = new Date().toISOString();
 manifest.lateFaults = LATE_FAULTS;
+manifest.build = BUILD;
 manifest.artifacts.sort((a, b) => a.id.localeCompare(b.id));
 manifest.captured = manifest.artifacts.filter(a => a.status === 'captured').length;
 manifest.total = DRIVERS.length;

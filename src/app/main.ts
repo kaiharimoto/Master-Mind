@@ -224,8 +224,30 @@ export class App {
       : 'gyro · waiting for orientation';
   }
 
+  /**
+   * The safe area: the fraction of the viewport each edge's chrome occupies,
+   * measured from the elements actually on screen rather than assumed. A map
+   * that "fits" underneath the pose bar does not fit.
+   */
+  private safeInsets() {
+    const h = Math.max(window.innerHeight, 1), w = Math.max(window.innerWidth, 1);
+    const of = (sel: string) => {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e || !e.offsetParent && getComputedStyle(e).position !== 'fixed') return 0;
+      const r = e.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 ? r.height : 0;
+    };
+    // One line of label clearance beyond the bar itself, so text is not cut
+    // against the chrome either.
+    const line = 22;
+    const bottom = Math.max(of('#tools'), of('#lenstag'), of('#argyro'), of('#gesture')) + 12;
+    const top = of('#top');
+    return { top: Math.min((top + line) / h, 0.22), bottom: Math.min((bottom + line) / h, 0.22),
+             left: Math.min(12 / w, 0.05), right: Math.min(12 / w, 0.05) };
+  }
+
   frameAll(margin = 1.04) {
-    const f = this.scene.fitAll(nodeList(this.store.doc), margin);
+    const f = this.scene.fitAll(nodeList(this.store.doc), margin, this.safeInsets());
     this.scene.pose.target.copy(f.target);
     this.scene.pose.dist = f.dist;
     // Bound how far any continuous input can travel from a framed view, so a
@@ -440,6 +462,25 @@ export class App {
     if ($('#settings')) this.renderSyncStatus();
   }
 
+  /**
+   * The first-launch provenance note and the activity chip share the top-left
+   * region with the modal panels. A panel drew across them and left a half
+   * rendered hash fragment on screen, which reads as a rendering bug in an
+   * evidence frame. They are a note about the session, not permanent chrome,
+   * so they stand down while a panel is open rather than being bisected by it.
+   */
+  private panelOpen() {
+    return !!document.querySelector('#finder, #states, .overlay');
+  }
+
+  private reflowSessionChips() {
+    const hide = this.panelOpen();
+    for (const id of ['origin', 'activity']) {
+      const e = document.getElementById(id);
+      if (e) e.style.visibility = hide ? 'hidden' : '';
+    }
+  }
+
   /** Says whether this launch rehydrated from the committed seed or live state. */
   private showOrigin(o: { from: string; file?: string; sha256?: string }) {
     let chip = document.getElementById('origin');
@@ -452,6 +493,26 @@ export class App {
       ? `first launch · restored from the committed seed <b>${esc((o.file ?? '').replace('seeds/', ''))}</b>` +
         (o.sha256 ? ` <span class="mono">${esc(o.sha256.slice(0, 12))}</span>` : '')
       : 'live state';
+  }
+
+  /**
+   * Who last changed this map, and whether the change was made here or arrived
+   * from another surface. On a shared map that is worth knowing on its own; on
+   * two surfaces of one map it is also what distinguishes a propagated change
+   * from the same edit made twice.
+   */
+  private renderActivity() {
+    let chip = document.getElementById('activity');
+    if (!chip) {
+      chip = el('div', { id: 'activity', 'data-t': 'last-change' });
+      document.body.appendChild(chip);
+    }
+    const c = this.store.lastChange;
+    if (!c) { chip.className = ''; chip.textContent = ''; return; }
+    chip.className = 'show' + (c.remote ? ' remote' : '');
+    chip.innerHTML = c.remote
+      ? `last change arrived from <b>${esc(c.actor)}</b> — ${esc(c.what)}`
+      : `last change made here — ${esc(c.what)}`;
   }
 
   toast(msg: string, bad = false) {
@@ -595,6 +656,8 @@ export class App {
     $('[data-t=settings-close]', o).addEventListener('click', () => this.closeOverlays());
     $('[data-t=hand-toggle]', o).addEventListener('click', () => this.toggleHands(!this.handsOn));
     this.renderSyncStatus();
+    this.renderActivity();
+    this.reflowSessionChips();
     this.renderHandPanel();
   }
 
@@ -653,7 +716,7 @@ export class App {
    *  is learnable without leaving the canvas. */
   toggleStates() {
     const p = document.getElementById('states');
-    if (p) { p.remove(); return; }
+    if (p) { p.remove(); this.reflowSessionChips(); return; }
     const rows: [string, string, string][] = [
       ['Plain',                  'bare core, quiet',                    'placed, nothing selected near it'],
       ['Connected to selection', 'one thin outer ring',                 'linked to the node you have selected'],
@@ -666,20 +729,23 @@ export class App {
     n.innerHTML = `<h3 style="margin:0 0 8px;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-dim)">Node states</h3>
       <table>${rows.map(([a, b, c]) => `<tr><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td class="num">${esc(c)}</td></tr>`).join('')}</table>
       <div class="note">Brightness rises down this list; every state also carries its own ring, so the two read together.</div>
+      <div class="note"><b>Colour</b> names the district. <b>Chroma</b> names age: muted = settled, full chroma = recently touched — so the frontier of a map reads as its most saturated region.</div>
       <div class="row"><button data-t="states-close">Close</button></div>`;
     document.body.appendChild(n);
     this.clearOfPanels(this.selected ?? undefined);
-    $('[data-t=states-close]', n).addEventListener('click', () => n.remove());
+    this.reflowSessionChips();
+    $('[data-t=states-close]', n).addEventListener('click', () => { n.remove(); this.reflowSessionChips(); });
   }
 
   // -- finder --------------------------------------------------------------
 
   toggleFinder() {
     const p = document.getElementById('finder');
-    if (p) { p.remove(); return; }
+    if (p) { p.remove(); this.reflowSessionChips(); return; }
     const n = el('div', { class: 'panel', id: 'finder', 'data-t': 'finder' });
     document.body.appendChild(n);
     this.renderFinder();
+    this.reflowSessionChips();
   }
 
   private renderFinder() {
@@ -700,6 +766,7 @@ export class App {
       <label class="note">Paste the AI's reply back here</label>
       <textarea data-t="finder-reply" rows="6" spellcheck="false" placeholder="paste the reply…"></textarea>
       <div class="row"><button data-t="finder-parse">Parse reply</button></div>
+      <div class="tail">
       ${this.lastParse && !this.lastParse.ok ? `<div class="err" data-t="finder-error">${esc(this.lastParse.error ?? 'parse failed')}</div>` : ''}
       ${this.lastParse?.dropped.length ? `<div class="note" data-t="finder-dropped">${this.lastParse.dropped.length} entr${this.lastParse.dropped.length === 1 ? 'y' : 'ies'} rejected: ${esc(this.lastParse.dropped.slice(0, 3).map(d => `${d.what} — ${d.why}`).join(' · '))}</div>` : ''}
       ${this.suggestions.length ? `
@@ -711,7 +778,8 @@ export class App {
           <div class="row"><button data-t="finder-accept">Accept</button><button data-t="finder-reject" class="ghost">Reject</button></div>
         </div>` : ''}
         <div class="note">Staged, one at a time: ${this.suggestions.map(s => s.kind).join(' · ')}</div>
-      ` : ''}`;
+      ` : ''}
+      </div>`;
     ($('[data-t=finder-prompt]', p) as HTMLTextAreaElement).value = keepPrompt;
     ($('[data-t=finder-reply]', p) as HTMLTextAreaElement).value = keepReply;
     $('[data-t=finder-close]', p).addEventListener('click', () => p.remove());
@@ -728,6 +796,17 @@ export class App {
     $('[data-t=finder-parse]', p).addEventListener('click', () => {
       const reply = ($('[data-t=finder-reply]', p) as HTMLTextAreaElement).value;
       this.parseFinderReply(reply);
+    });
+    // A parse result belongs to the text it was produced from. Editing the
+    // reply clears the banner and the staged queue, so an error can never be
+    // read against a reply it did not come from.
+    ($('[data-t=finder-reply]', p) as HTMLTextAreaElement).addEventListener('input', () => {
+      if (!this.lastParse && !this.suggestions.length) return;
+      const keep = ($('[data-t=finder-reply]', p) as HTMLTextAreaElement).value;
+      this.lastParse = null; this.suggestions = []; this.sugIndex = 0;
+      this.renderFinder();
+      const t = document.querySelector('[data-t=finder-reply]') as HTMLTextAreaElement | null;
+      if (t) { t.value = keep; t.focus(); }
     });
     const acc = document.querySelector('[data-t=finder-accept]');
     if (acc) acc.addEventListener('click', () => this.acceptSuggestion());

@@ -99,7 +99,10 @@ export default [
     // The holding cluster is part of the map: a tighter crop that clips it
     // trades a whole region for a few percent of label size.
     await POSE(page, { yaw: 0.30, pitch: 0.16 });
-    await FRAME_ALL(page, 1.09);
+    // The chrome safe area is now reserved inside fitAll itself, so the margin
+    // no longer has to double as clearance for the pose bar: it can be tight
+    // and the map still cannot land under a button.
+    await FRAME_ALL(page, 1.0);
     await H.shot(page, cdp, H.out(this.file));
     return H.modelStats(page);
   },

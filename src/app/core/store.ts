@@ -38,11 +38,39 @@ export class Store {
     return new Store(emptyDoc(id, name, Date.now()), actor);
   }
 
+  /**
+   * The last change that landed, and whether it came from this surface or
+   * arrived from another one. A shared map should say who touched it last;
+   * on two surfaces of one map it is also what tells a propagated change apart
+   * from a locally repeated one.
+   */
+  lastChange: { actor: string; remote: boolean; what: string; at: number } | null = null;
+
+  private describe(op: Op): string {
+    if (op.t === 'node.set') {
+      const f = op.fields as Record<string, unknown>;
+      if ('pos' in f && f.placed === true) return 'placed a node';
+      if ('pos' in f) return 'moved a node';
+      if ('text' in f) return 'edited text';
+      if ('color' in f) return 'changed a colour';
+      if ('label' in f) return 'set a label';
+      return 'edited a node';
+    }
+    if (op.t === 'link.add') return 'connected two nodes';
+    if (op.t === 'link.del') return 'removed a filament';
+    if (op.t === 'node.del') return 'deleted a node';
+    return op.t;
+  }
+
   attach(t: Transport) {
     this.transport = t;
     t.onRemote(op => {
       this.lastTs = Math.max(this.lastTs, op.ts);
-      if (applyOp(this.doc, op)) this.emit(op);
+      if (applyOp(this.doc, op)) {
+        this.lastChange = { actor: op.actor, remote: op.actor !== this.actor,
+                            what: this.describe(op), at: op.ts };
+        this.emit(op);
+      }
     });
   }
   detach() { this.transport = null; }
@@ -60,7 +88,10 @@ export class Store {
   /** The one entry point. Local-first: apply, then publish. */
   commit(mk: (ts: number) => Op): Op {
     const op = mk(this.ts());
-    if (applyOp(this.doc, op)) this.emit(op);
+    if (applyOp(this.doc, op)) {
+      this.lastChange = { actor: op.actor, remote: false, what: this.describe(op), at: op.ts };
+      this.emit(op);
+    }
     this.transport?.send(op);
     return op;
   }

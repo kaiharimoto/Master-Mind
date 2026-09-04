@@ -37,6 +37,29 @@ export function sizeForDegree(deg: number): number {
 
 export interface CameraPose { target: THREE.Vector3; yaw: number; pitch: number; dist: number; }
 
+/**
+ * The settled (least-recent) end of a hue's chroma range, solved so that the
+ * step from settled to freshly-touched is a constant chroma distance across
+ * every hue in the palette rather than a constant saturation number.
+ *
+ * RECENCY_STEP is that distance, in the same units as the shader's mix toward
+ * the hue's own luminance-preserving grey. A hue whose full chroma is smaller
+ * than the step cannot carry it and is floored instead of going achromatic.
+ */
+const RECENCY_STEP = 0.20, SETTLED_FLOOR = 0.28;
+const SETTLED_CACHE = new Map<number, number>();
+function settledSat(c: THREE.Color): number {
+  const key = c.getHex();
+  let v = SETTLED_CACHE.get(key);
+  if (v === undefined) {
+    const lum = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+    const chroma = Math.hypot(c.r - lum, c.g - lum, c.b - lum);
+    v = chroma < 1e-4 ? SETTLED_FLOOR : Math.min(Math.max(1 - RECENCY_STEP / chroma, SETTLED_FLOOR), 0.92);
+    SETTLED_CACHE.set(key, v);
+  }
+  return v;
+}
+
 export class Scene {
   readonly scene = new THREE.Scene();
   readonly camera: THREE.PerspectiveCamera;
@@ -134,17 +157,28 @@ export class Scene {
       posOf.set(n.id, p);
       const size = sizeForDegree(deg.get(n.id) ?? 0);
       // Chroma is the recency channel (D-007). It touches nothing else.
-      // The range was widened from 0.62..1.00 to 0.45..1.00 because at
-      // whole-brain framing the narrower spread was indistinguishable from
-      // depth attenuation. The CHANNEL is unchanged; only its span is.
-      const sat = 0.45 + 0.55 * recencyOf(doc, n);
-      inst.push({ pos: p, color: hue(n.color), state: st, size, sat });
+      //
+      // The span is now NORMALISED PER HUE. A single saturation range gave each
+      // hue a different perceptual step, because mixing toward grey moves a
+      // high-chroma amber much further than a near-achromatic bone: the same
+      // number did not mean the same thing, and the frontier could not be read
+      // off the frame. The settled end of each hue's range is solved so that
+      // settled -> recent is the same chroma DISTANCE for every hue.
+      // The CHANNEL is unchanged; only how its span is computed.
+      const col = hue(n.color), s0 = settledSat(col);
+      const sat = s0 + (1 - s0) * recencyOf(doc, n);
+      inst.push({ pos: p, color: col, state: st, size, sat });
       this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0 });
       // Unplaced nodes sit in a ring. Their labels are pushed to the outward
       // side so they radiate from the holding cluster rather than pile onto it.
       const side: -1 | 0 | 1 = n.placed ? 0 : (n.pos[0] < doc.holding.origin[0] ? -1 : 1);
       runs.push({
-        anchor: p, text: n.text, color: textCol, nodeSizeWorld: size, side,
+        // A search hit wears four ticks at 1.9x its core radius. Anchoring the
+        // label to the core radius put the text straight through the south
+        // tick, so the state signature was overdrawn by its own label. The
+        // label clears the signature, not just the node.
+        anchor: p, text: n.text, color: textCol,
+        nodeSizeWorld: st === 'searchHit' ? size * 1.9 : size, side,
         alpha: st === 'plain' ? 0.86 : 1.0,
         // Deterministic, position-free stagger: half the labels sit above their
         // node, half below. Halves label collisions in dense districts and never
@@ -236,19 +270,28 @@ export class Scene {
       if (!s || !span) { this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0 }; continue; }
       const emPx = Math.min(Math.max(em * s.pxPerWorld, p.textMinPx), p.textMaxPx);
       const nodePx = Math.min(Math.max(s.r / 0.6, p.nodeMinPx), p.nodeMaxPx);
-      const w = Math.max(span.widthEm * emPx, 8);
-      const h = Math.max(span.lines * 1.18 * emPx, 8);
-      const gap = nodePx * 0.62 + emPx * 0.92;
-      const cy = span.above ? s.y - gap - h * 0.5 : s.y + gap + h * 0.5;
-      const sd = span.side ?? 0;
-      const x0 = sd === 0 ? s.x - w / 2 : sd < 0 ? s.x - w - emPx * 0.55 : s.x + emPx * 0.55;
-      shape[i] = { w, h, emPx, bx0: x0, by0: cy - h / 2 };
-      boxes.push({ i, x0, x1: x0 + w, y0: cy - h / 2, y1: cy + h / 2,
-                   pri: meta.priority, z: s.z });
+      // The rectangle is derived from the run's OWN glyph extents, in the
+      // shader's space, so the model and what is drawn cannot drift apart. An
+      // approximation from the line count put boxes as much as 1.4 em from the
+      // glyphs and reported two visibly overlapping labels as disjoint.
+      const node = -span.vSide * nodePx * 0.62;
+      const x0 = s.x + span.x0Em * emPx;
+      const w = Math.max((span.x1Em - span.x0Em) * emPx, 6);
+      // Shader y is up; screen y is down.
+      const y0 = s.y - (span.y1Em * emPx + node);
+      const h = Math.max((span.y1Em - span.y0Em) * emPx, 6);
+      shape[i] = { w, h, emPx, bx0: x0, by0: y0 };
+      boxes.push({ i, x0, x1: x0 + w, y0, y1: y0 + h, pri: meta.priority, z: s.z });
       this.runAlphas[i] = meta.baseAlpha;
     }
     boxes.sort((a, b) => a.pri - b.pri || a.z - b.z);
 
+    // The bright tier is DISJOINT: a label is drawn at full weight only when its
+    // clearest placement overlaps nothing already accepted, so two labels at
+    // full weight can never sit on each other. Everything else ramps to zero by
+    // DIM_MAX. Fewer labels are bright at whole-map framing than a softer rule
+    // would give, which is the honest cost of the invariant.
+    const BRIGHT_MAX = 0, DIM_MAX = 0.30;
     const taken: Box[] = [];
     const coverage = (x0: number, y0: number, x1: number, y1: number, area: number) => {
       let covered = 0;
@@ -273,18 +316,30 @@ export class Scene {
         // meaningfully clearer, so labels do not jitter between placements.
         if (frac < best.frac - (cx === 0 && cy === 0 ? 0 : 0.06) ||
             (cx === 0 && cy === 0 && frac <= best.frac)) best = { frac, dx: cx, dy: cy };
-        if (best.frac <= 0.02) break;
+        if (best.frac <= 0) break;   // already clear of everything accepted
       }
       this.runShifts[b.i * 2] = best.dx;
       this.runShifts[b.i * 2 + 1] = -best.dy;   // screen y grows downward; the shader's y does not
       const px = { x0: sh.bx0 + best.dx * sh.emPx, y0: sh.by0 + best.dy * sh.emPx };
-      // Ignore incidental clipping; once a label is genuinely buried — even in
-      // its clearest available placement — it is suppressed outright rather
-      // than left as a ghost that still smears the one on top of it. The ramp
-      // is continuous in coverage, so a label recedes as the camera moves.
-      const k = best.frac <= 0.16 ? 1 : Math.max(0, 1 - (best.frac - 0.16) / 0.30);
+      // Two tiers, and the bright one is exclusive BY CONSTRUCTION.
+      //
+      // A label is drawn at full weight only if its clearest placement is at
+      // most BRIGHT_MAX covered by everything already accepted — so no two
+      // labels at full weight can overlap, which is the property that makes a
+      // dense district readable rather than merely dimmer. Everything else
+      // ramps down and is gone by DIM_MAX, so a buried label does not survive
+      // as a ghost smearing the one on top of it. Both ramps are continuous in
+      // coverage, so a label recedes as the camera moves; it never pops.
+      // Squared falloff inside the dim tier: gentle at the boundary so nothing
+      // pops as the camera turns, decisive by the time a label is a tenth
+      // covered, so a demoted label stops competing with the one on top of it
+      // instead of smearing it.
+      const t = Math.max(0, 1 - (best.frac - BRIGHT_MAX) / (DIM_MAX - BRIGHT_MAX));
+      const k = best.frac <= BRIGHT_MAX ? 1 : t * t;
       this.runAlphas[b.i] = this.runMeta[b.i].baseAlpha * k;
-      if (k > 0.45) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + sh.w, y1: px.y0 + sh.h,
+      // A label still carrying real weight reserves its rect, so the labels
+      // behind it in priority order are placed around it rather than through it.
+      if (k > 0.42) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + sh.w, y1: px.y0 + sh.h,
                                  pri: b.pri, z: b.z });
     }
     this.text.setRunAlphas(this.runAlphas);
@@ -390,12 +445,25 @@ export class Scene {
    * Solved per bounding-box corner rather than with a bounding sphere, which
    * over-estimates badly for a map that is wide and flat.
    */
-  fitAll(nodes: MMNode[] = this.doc ? nodeList(this.doc) : [], margin = 1.04):
+  fitAll(nodes: MMNode[] = this.doc ? nodeList(this.doc) : [], margin = 1.04,
+         insets: { top?: number; bottom?: number; left?: number; right?: number } = {}):
     { target: THREE.Vector3; dist: number } {
     if (!nodes.length) return { target: new THREE.Vector3(), dist: 60 };
+    // The holding cluster is part of the map, and the dashed boundary is drawn
+    // at the ring's radius — further out than any node inside it. Fitting only
+    // node positions clipped the boundary off the bottom of artifact 04, which
+    // both the Auditor and the Art Director called a regression. The ring's own
+    // extent is fitted with the nodes.
+    const pts: [number, number, number][] = nodes.map(n => [n.pos[0], n.pos[1], n.pos[2]]);
+    const H = this.doc?.holding;
+    if (H) {
+      const [ox, oy, oz] = H.origin, r = H.radius;
+      for (const [dx, dy, dz] of [[r, 0, 0], [-r, 0, 0], [0, r, 0], [0, -r, 0], [0, 0, r], [0, 0, -r]])
+        pts.push([ox + dx, oy + dy, oz + dz]);
+    }
     const min = new THREE.Vector3(Infinity, Infinity, Infinity);
     const max = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
-    for (const n of nodes) { min.min(new THREE.Vector3(...n.pos)); max.max(new THREE.Vector3(...n.pos)); }
+    for (const p of pts) { min.min(new THREE.Vector3(...p)); max.max(new THREE.Vector3(...p)); }
     const target = min.clone().add(max).multiplyScalar(0.5);
     const vFov = (this.camera.fov * Math.PI) / 180;
     const tanV = Math.tan(vFov / 2);
@@ -408,12 +476,24 @@ export class Scene {
     const camUp = new THREE.Vector3().crossVectors(dir, right).normalize();
     // Solved against every node rather than the bounding cube's corners: the
     // cube's corners are empty space, and fitting them wastes a third of the frame.
+    //
+    // Insets are fractions of the viewport reserved for chrome — the pose bar
+    // along the bottom, the toolbar along the top. A point must clear the band
+    // that is actually visible, not the whole frame, so a node can no longer
+    // land underneath a button. Reserving a fraction f on one side shrinks the
+    // usable half-extent on that side to (1 - 2f) of the frustum's.
+    const kTop = Math.max(1 - 2 * (insets.top ?? 0), 0.2);
+    const kBot = Math.max(1 - 2 * (insets.bottom ?? 0), 0.2);
+    const kLeft = Math.max(1 - 2 * (insets.left ?? 0), 0.2);
+    const kRight = Math.max(1 - 2 * (insets.right ?? 0), 0.2);
     let d = 0;
     const u = new THREE.Vector3();
-    for (const n of nodes) {
-      u.set(n.pos[0], n.pos[1], n.pos[2]).sub(target);
+    for (const p of pts) {
+      u.set(p[0], p[1], p[2]).sub(target);
       const ux = u.dot(right), uy = u.dot(camUp), uz = u.dot(dir);
-      d = Math.max(d, Math.abs(ux) / tanH + uz, Math.abs(uy) / tanV + uz);
+      d = Math.max(d,
+        uz + Math.abs(ux) / (tanH * (ux >= 0 ? kRight : kLeft)),
+        uz + Math.abs(uy) / (tanV * (uy >= 0 ? kTop : kBot)));
     }
     return { target, dist: Math.max(d * margin, 6) };
   }

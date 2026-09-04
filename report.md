@@ -356,6 +356,55 @@ four before anything new is attempted.
 | E8 | minor | Label priority and fading help, but the dense districts are still an unreadable pile — dimming resolves priority without displacement | **Fixed by taking the correction offered.** Deconfliction now **re-anchors before it dims**: each label is tried at nine placements around its own node, the clearest is chosen, and only what is still buried in its best placement is faded out. The node never moves, no label detaches from the node it names, and the unshifted anchor is preferred unless a candidate is meaningfully clearer, so labels do not jitter as the camera turns. |
 
 
+## Cycle 2 — the Art Director's findings and what was done
+
+**The Art Director · 13.1/15** (quality compliance 8.5/10, finder round-trip
+4.6/5 — both above their minima; 12.5 → 13.1 on cycle 1). Eight findings, two
+major, none blocking. **The delegated question stays closed:** *"I am not
+reopening anything: D-004 was ruled organic-bioluminescent in cycle 1 and is
+closed, and cycle 2's frames independently confirm the ruling was right."*
+
+The specified world was checked by measurement rather than impression: the
+ground sampled at seven widely separated points across three artifacts is
+exactly `#120E0B` every time, filaments step from (28,23,19) at rest to
+(141,123,107) when carrying state and land on exactly the incident links, and
+two idle frames 2.6 s apart in artifact 20 differ **only** in a toast and three
+symmetric halos on the holding nodes — every placed node bit-identical. The
+avoid-list holds: no drift, no easing, no idle motion, no bloom, no particles.
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| G1 | major | The declutter pass only *demotes* — it does not stop two labels that both survive at full brightness from landing on each other, so the densest districts of 02 still hold three-deep pileups (`Wild` / `Aspergillus` / `Osmotolerance`). "Labels that survive to the bright tier must never overlap another bright label." | **Fixed, and the invariant was taken literally.** Deconfliction now re-anchors before it dims — nine placements around the label's own node — and **full brightness is reserved for a label whose best placement is at most 2 % covered by anything already accepted**. Anything else is in the dimmed tier and ramps to zero. The bright tier is therefore mutually exclusive by construction, not by tuning: a label at full weight cannot be overlapping another at full weight. Fewer labels are bright at whole-map framing than before, which is the honest cost of the invariant. |
+| G2 | major | Artifact 04 does not contain the entire map: the holding ring runs off the bottom, two labels are cut mid-glyph, and the pose bar's Select button sits on a node label | **Fixed as prescribed.** `fitAll` bounds the union of the placed nodes and the holding cluster's origin-plus-radius, and the solve now **insets the viewport by the pose bar's height and one label line** before choosing a distance, so nothing in the map can land under the bar or off an edge. |
+| G3 | minor | In 07 the holding label `Cut the history section?` is dimmed to illegibility beneath `Ask about the demo laptop`, and the south tick of the search-hit signature on `Method of loci` is overdrawn by that node's own label | **Fixed.** A search-hit node's label is offset by the **tick radius** rather than the core radius, so a state signature is never overdrawn by its own text. The holding collision is the G1 case and is resolved by re-anchoring. |
+| G4 | minor | The widened recency chroma is measurable (within-family spread 0.12 → 0.38 coral, 0.07 → 0.29 azure) but a viewer still cannot pick the frontier out of the frame: the same saturation number means different things in the amber and violet families, and nothing tells the viewer chroma encodes age | **Fixed, as a parameter refinement — the channel is untouched.** Chroma is normalised per hue against that hue's own saturation ceiling, so the recency lead is a constant *perceptual* step rather than a constant saturation number. And the States legend now carries the key — `muted = settled · full chroma = recently touched` — so the frame teaches its own channel the way the five state signatures already do. D-007 stands: recency's channel is chroma. |
+| G5 | minor | In 20 at 11.3 s the red `No JSON found` banner is still displayed against a reply box that has already been replaced — the error outlives the input it described | **Fixed.** The parse banner and any staged queue clear on the reply field's `input` event, so a parse result can never be shown against text it was not produced from. |
+| G6 | minor | 13's taller prompt pushes `Parse reply` below the frame edge; cycle 1 showed it | **Fixed.** The finder panel is capped at the viewport minus the top and bottom bars and its body scrolls internally, so Generate / Copy / Parse are on screen regardless of prompt length. |
+| G7 | minor | The seed-provenance banner is bisected by the finder panel and reads as an orphaned fragment `…d6d5b` in 13, 14 and throughout 20 — "a half-rendered hash fragment reads as a rendering bug in an evidence frame" | **Fixed.** The banner is suppressed while a modal panel is open. It is a first-launch provenance note, not a permanent chrome element, and it has no business being half-drawn behind a panel. |
+| G8 | minor | `DIFF.json` declares `previousCycle: 0, capturedPrev: 2` while comparing all 20 against cycle 1 | **Fixed** — the Auditor raised the same header as E5, and the fix derives both values from the snapshot actually being diffed. |
+
+## Cycle 2 — scores
+
+| Critic | Category | Score | Weight | Minimum | |
+|---|---|---:|---:|---:|---|
+| The Audience | 01 Core workflow | 21 | 25 | 20 | above minimum |
+| The Audience | 02 Landmarks live | 22 | 25 | 20 | above minimum · **+2** |
+| The Auditor | 03 One model and sacred positions | 17 | 20 | 17 | at minimum · **hard gate met** · −1 |
+| The Auditor | 04 Evidence and report integrity | 13 | 15 | 13 | at minimum · **hard gate met** · −0.5 |
+| The Art Director | 05 Quality compliance | 8.5 | 10 | 8 | above minimum · **+0.5** |
+| The Art Director | 06 Finder round-trip | 4.6 | 5 | 4 | above minimum · **+0.1** |
+| | **Total** | **86.1** | **100** | | 85 → 86.1 |
+
+**Regression-free: NO.** The Auditor — who alone makes that call — declared the
+cycle not regression-free on the twin composite, and the Art Director
+independently found the same class of loss in artifact 04. **No position
+regression**: `positions.json` is byte-identical across the two cycles.
+
+Cycle 2 therefore fails the exit condition on two counts: 86.1 is below the
+90 threshold, and the run of two consecutive regression-free cycles has not
+started. No critic score has been altered by the builder.
+
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
