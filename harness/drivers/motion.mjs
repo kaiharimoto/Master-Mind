@@ -62,10 +62,29 @@ export default [
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-talk',
                                         width: 960, height: 1080 });
     await POSE(page, { yaw: 0.28, pitch: 0.12 });
-    await FRAME_ALL(page, 1.34);
     const id = await NODE_ID(page, 'Steal the parking-lot bit');
     await page.evaluate(i => window.mm.select(i), id);
+    // Framed AFTER the editor opens, so the fit solves for the band the panel
+    // leaves rather than for the whole viewport. Cycle 2 framed first and let
+    // the panel-clearing pan push the holding ring off the left edge, so the
+    // count decrement could only be read from the toolbar pill.
+    await FRAME_ALL(page, 1.06);
     await sleepFrames(page, 0, 3);
+    // The whole dashed holding ring must be inside the visible band in the
+    // BEFORE pane: this artifact is about a node leaving that ring.
+    const ringVisible = await page.evaluate(() => {
+      const h = window.mm.store.doc.holding, sc = window.mm.scene;
+      const ed = document.getElementById('editor');
+      const lim = ed ? ed.getBoundingClientRect().left - 8 : window.innerWidth;
+      const pts = [[h.radius, 0, 0], [-h.radius, 0, 0], [0, h.radius, 0], [0, -h.radius, 0],
+                   [0, 0, h.radius], [0, 0, -h.radius]]
+        .map(([dx, dy, dz]) => [h.origin[0] + dx, h.origin[1] + dy, h.origin[2] + dz]);
+      return pts.every(p => {
+        const s = sc.project(p);
+        return !!s && s.x > 8 && s.x < lim && s.y > 52 && s.y < window.innerHeight - 30;
+      });
+    });
+    if (!ringVisible) throw new Error('08: the holding ring is not wholly inside the visible band');
     const beforeCount = await page.evaluate(() => window.mm.store.holdingCount());
     const beforePos = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
     const a = await H.tmpShot(page, cdp, '08a');

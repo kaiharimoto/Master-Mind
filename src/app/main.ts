@@ -242,8 +242,18 @@ export class App {
     const line = 22;
     const bottom = Math.max(of('#tools'), of('#lenstag'), of('#argyro'), of('#gesture')) + 12;
     const top = of('#top');
+    // Open panels are chrome too. The editor sits on the right, the legend and
+    // the finder on the left; a map framed to the whole viewport while one is
+    // open is a map with a region behind a panel.
+    let left = 12, right = 12;
+    for (const sel of ['#finder', '#states']) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (e) left = Math.max(left, e.getBoundingClientRect().right + 14);
+    }
+    const ed = document.getElementById('editor');
+    if (ed) right = Math.max(right, w - ed.getBoundingClientRect().left + 14);
     return { top: Math.min((top + line) / h, 0.22), bottom: Math.min((bottom + line) / h, 0.22),
-             left: Math.min(12 / w, 0.05), right: Math.min(12 / w, 0.05) };
+             left: Math.min(left / w, 0.38), right: Math.min(right / w, 0.38) };
   }
 
   frameAll(margin = 1.04) {

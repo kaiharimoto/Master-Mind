@@ -346,6 +346,20 @@ export class Scene {
     this.text.setRunShifts(this.runShifts);
   }
 
+  /**
+   * One world point in screen pixels. The holding boundary is drawn from the
+   * document's ring, not from a node, so anything checking that the ring is on
+   * screen needs to project a point that has no node behind it.
+   */
+  project(p: [number, number, number]): { x: number; y: number; z: number } | null {
+    const el = this.renderer.domElement;
+    const v = new THREE.Vector3(p[0], p[1], p[2]).applyMatrix4(this.camera.matrixWorldInverse);
+    const dist = -v.z;
+    if (dist <= 0.05) return null;
+    v.applyMatrix4(this.camera.projectionMatrix);
+    return { x: (v.x * 0.5 + 0.5) * el.width, y: (1 - (v.y * 0.5 + 0.5)) * el.height, z: dist };
+  }
+
   /** Screen-space positions and radii, for picking and for UI anchoring. */
   screenPositions(): { id: NodeId; x: number; y: number; r: number; z: number; pxPerWorld: number }[] {
     if (this.screenCache.length) return this.screenCache;

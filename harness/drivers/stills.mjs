@@ -167,13 +167,32 @@ export default [
     const a = await SELECT(page, A);
     const b = await NODE_ID(page, B);
     await POSE(page, { yaw: 0.5, pitch: 0.12 });
-    await page.evaluate(({ a, b }) => {
-      const d = window.mm.store.doc, na = d.nodes[a], nb = d.nodes[b], p = window.mm.scene.pose;
-      p.target.set((na.pos[0] + nb.pos[0]) / 2, (na.pos[1] + nb.pos[1]) / 2, (na.pos[2] + nb.pos[2]) / 2);
-      p.dist = 20;
-    }, { a, b });
-    await page.evaluate(() => window.mm.clearOfPanels());
-    await sleepFrames(page, 0, 3);
+    // Both ends of the filament have to be IN the frame and clear of the editor
+    // panel, or the artifact shows an edge arriving from off-screen. The vantage
+    // is pulled back until the two named nodes are both in the visible band —
+    // measured, not guessed, and it throws rather than shipping a frame where
+    // the thing being demonstrated is behind a panel.
+    let framed = null;
+    for (const dist of [20, 26, 32, 40, 50]) {
+      await page.evaluate(({ a, b, dist }) => {
+        const d = window.mm.store.doc, na = d.nodes[a], nb = d.nodes[b], p = window.mm.scene.pose;
+        p.target.set((na.pos[0] + nb.pos[0]) / 2, (na.pos[1] + nb.pos[1]) / 2, (na.pos[2] + nb.pos[2]) / 2);
+        p.dist = dist;
+      }, { a, b, dist });
+      await page.evaluate(() => window.mm.clearOfPanels());
+      await sleepFrames(page, 0, 3);
+      framed = await page.evaluate(({ a, b }) => {
+        const ed = document.getElementById('editor');
+        const lim = ed ? ed.getBoundingClientRect().left - 10 : window.innerWidth;
+        const s = window.mm.scene.screenPositions();
+        const ok = (i) => { const q = s.find(p => p.id === i);
+          return !!q && q.x > 12 && q.x < lim && q.y > 60 && q.y < window.innerHeight - 40; };
+        return { a: ok(a), b: ok(b), lim };
+      }, { a, b });
+      if (framed.a && framed.b) break;
+    }
+    if (!framed || !framed.a || !framed.b)
+      throw new Error(`09: both ends of the connection must be visible and clear of the editor (${JSON.stringify(framed)})`);
     const linkedBefore = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
     const before = await H.tmpShot(page, cdp, '09a');

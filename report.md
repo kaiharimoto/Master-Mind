@@ -224,6 +224,32 @@ regenerating them afterwards fatal to every position-regression claim, and
 `seeds/MANIFEST.json` carries the content hashes that make a silent change
 detectable.
 
+**F-015 · The label deconflictor was arbitrating against rectangles that were
+not where the text is.** Found while responding to cycle 2, not reported by any
+critic. Deconfliction modelled each label's rectangle from its line count and an
+assumed gap below the node. The text shader places glyphs from a baseline, so
+the model sat up to **1.4 em** from the glyphs actually drawn — an `above` label
+was modelled about half an em too high and a `below` label about nine tenths of
+an em too low. Two labels the frame showed printing through each other were
+therefore measured as 33 px apart and declared disjoint: the arbiter was working
+correctly on the wrong geometry.
+**Fix:** each run now records its exact glyph extent in em during the build, in
+the shader's own space, and deconfliction reads that. The model and what is
+drawn cannot drift apart, because they are the same numbers.
+This is the reason two critics could both report label collisions in a cycle
+that had already shipped a deconflictor. **Verified** by measuring the rendered
+frame against the arbiter's own boxes: they now agree.
+
+**F-016 · The capture harness never rebuilt the app.**
+Nothing in `run-capture.mjs` or `cycle.mjs` built the bundle, so a capture could
+run against a `dist/` older than the source it claims to show — a fix that was
+written, typechecked and committed but never built would be reported as "not
+working" from a frame that never contained it. This actually happened during the
+cycle-2 response: a probe of the new deconflictor rendered the old one.
+**Fix:** the harness builds from source before capturing anything, fails the run
+if the build fails, and records the bundle's size and sha256 in the manifest, so
+the evidence set states which build produced it. **Verified.**
+
 ---
 
 ## Deviations ledger
@@ -316,7 +342,7 @@ their minima; +2 on cycle 1). Eight findings, none blocking.
 | # | Severity | Finding | Response |
 |---|---|---|---|
 | B1 | major | Artifact 09 — the still dedicated to connect-and-edit — is frozen on the *arm* step (`Now click the node to connect to.`); no newly created filament is visible, so the artifact documents the invitation rather than the result | **Fixed, and the correction was taken verbatim.** 09 is now a two-panel before/after in one framing: the left panel is the armed state, the right panel is one interaction later with the new filament drawn between the two named nodes and centred in frame. The driver records `connectedByThisCapture: true` and asserts the link is absent in the before panel and present in the after panel, so a composite that failed to create an edge fails the capture instead of shipping. |
-| B2 | major | Node labels collide and half-occlude each other throughout the dense districts in **every** whole-map frame — five specific collisions cited across 03, 04, 06, 09 and 10 | **Accepted; the arbiter existed but its ramp was too gentle.** Cycle 1 added screen-space priority deconfliction, and it is what stopped the worst of it — but a loser label faded only in proportion to its covered fraction and bottomed out at a still-legible alpha, so two overlapping labels both stayed readable *and* both stayed drawn. The ramp now reaches **zero**: a label covered more than 16 % is attenuated to nothing by 46 % coverage, and a label suppressed past 55 % no longer occupies the field for the labels behind it. Nothing moves and no node is re-laid-out — text only, exactly as the correction asked. |
+| B2 | major | Node labels collide and half-occlude each other throughout the dense districts in **every** whole-map frame — five specific collisions cited across 03, 04, 06, 09 and 10 | **Accepted, and the fix went further than the correction asked.** Cycle 1's arbiter only dimmed the loser, so two overlapping labels both stayed readable *and* both stayed drawn. Deconfliction now **re-anchors before it dims** — nine placements around the label's own node — and full brightness is reserved for a label that overlaps **nothing** already accepted, so bright labels are mutually exclusive by construction. What is still covered in its best placement falls off squared and is gone by 30 %. Measured on the 150-node map: **0 bright-on-bright overlaps**, and overlaps among all still-legible labels 42 → 18. Nothing moves and no node is re-laid-out — text only. See F-015 for the modelling bug this uncovered. |
 | B3 | minor | Artifact 04 clips the holding cluster off the bottom edge; cycle 1's looser framing had it fully in frame | **Fixed.** The mind-expansion fit now includes the holding cluster in its bounds and the margin was returned to 1.09. The label-size gain from the tighter crop was, as the Audience says, small against losing a region of the map. |
 | B4 | minor | A node dragged out of holding to a permanent spot still carries the literal Label `holding` in the inspector (19 at 9.6 s and 17.6 s, and 08's After panel) | **Fixed at the source.** `holding` is a state, not a name. Quick-add still shows it while the node is held, and `store.place()` now clears it on placement unless the user has typed a real label — so the word cannot outlive the state it described. |
 | B5 | minor | Artifact 05 shows the detected hand and its metrics but nothing in-frame demonstrates the Spread *taking effect* — the ~7 % expansion is only measurable by diffing against artifact 04 | **Fixed.** 05 is now a two-panel composite in one framing: the map before the pose and at the end of the spread, with the webcam panel and pose readout on both. The captured measurement is in the frame — mean radial distance 125.53 → 109.57 — and the driver requires `operationTookEffect: true`. |
@@ -374,7 +400,7 @@ avoid-list holds: no drift, no easing, no idle motion, no bloom, no particles.
 
 | # | Severity | Finding | Response |
 |---|---|---|---|
-| G1 | major | The declutter pass only *demotes* — it does not stop two labels that both survive at full brightness from landing on each other, so the densest districts of 02 still hold three-deep pileups (`Wild` / `Aspergillus` / `Osmotolerance`). "Labels that survive to the bright tier must never overlap another bright label." | **Fixed, and the invariant was taken literally.** Deconfliction now re-anchors before it dims — nine placements around the label's own node — and **full brightness is reserved for a label whose best placement is at most 2 % covered by anything already accepted**. Anything else is in the dimmed tier and ramps to zero. The bright tier is therefore mutually exclusive by construction, not by tuning: a label at full weight cannot be overlapping another at full weight. Fewer labels are bright at whole-map framing than before, which is the honest cost of the invariant. |
+| G1 | major | The declutter pass only *demotes* — it does not stop two labels that both survive at full brightness from landing on each other, so the densest districts of 02 still hold three-deep pileups (`Wild` / `Aspergillus` / `Osmotolerance`). "Labels that survive to the bright tier must never overlap another bright label." | **Fixed, and the invariant was taken literally.** Deconfliction re-anchors before it dims — nine placements around the label's own node — and **full brightness is reserved for a label whose clearest placement overlaps nothing already accepted**. Not "almost nothing": zero. Anything else is in the dimmed tier and falls off squared to nothing by 30 % coverage. The bright tier is mutually exclusive by construction rather than by tuning. Measured on the 150-node map at whole-map framing: **70 labels bright, 0 bright-on-bright overlaps.** Fewer labels are bright than a softer rule would allow, which is the honest cost of the invariant. |
 | G2 | major | Artifact 04 does not contain the entire map: the holding ring runs off the bottom, two labels are cut mid-glyph, and the pose bar's Select button sits on a node label | **Fixed as prescribed.** `fitAll` bounds the union of the placed nodes and the holding cluster's origin-plus-radius, and the solve now **insets the viewport by the pose bar's height and one label line** before choosing a distance, so nothing in the map can land under the bar or off an edge. |
 | G3 | minor | In 07 the holding label `Cut the history section?` is dimmed to illegibility beneath `Ask about the demo laptop`, and the south tick of the search-hit signature on `Method of loci` is overdrawn by that node's own label | **Fixed.** A search-hit node's label is offset by the **tick radius** rather than the core radius, so a state signature is never overdrawn by its own text. The holding collision is the G1 case and is resolved by re-anchoring. |
 | G4 | minor | The widened recency chroma is measurable (within-family spread 0.12 → 0.38 coral, 0.07 → 0.29 azure) but a viewer still cannot pick the frontier out of the frame: the same saturation number means different things in the amber and violet families, and nothing tells the viewer chroma encodes age | **Fixed, as a parameter refinement — the channel is untouched.** Chroma is normalised per hue against that hue's own saturation ceiling, so the recency lead is a constant *perceptual* step rather than a constant saturation number. And the States legend now carries the key — `muted = settled · full chroma = recently touched` — so the frame teaches its own channel the way the five state signatures already do. D-007 stands: recency's channel is chroma. |

@@ -15,3 +15,4 @@ src/.android-sdk/
 src/.electron-cache/
 src/.mmdata/
 .capture-tmp/
+.capture-scratch/
