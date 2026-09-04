@@ -261,10 +261,88 @@ with what happened to it; none is argued away.
 | 8 | minor | The AR still carries the full desktop toolbar and nothing reads as a handheld surface | **Fixed.** The AR lens now drops the controls that belong to a desk — the capture field, the finder, the maps list — leaving look, search, inspect and capture, with the live orientation readout. |
 | 9 | minor | `17_hand_vocabulary.mp4` changed size twice during the review and was briefly unreadable | **Accepted as a process fault, and fixed at the source.** The critics were reading the live `evidence/` directory while fixes were being recaptured into it. From cycle 2 the set is snapshotted to an immutable `evidence/cycles/cycle-N/` first and the briefs point there, so a recapture can never move under a review. |
 
+## Cycle 1 — scores
+
+| Critic | Category | Score | Weight | Minimum | |
+|---|---|---:|---:|---:|---|
+| The Audience | 01 Core workflow | 21 | 25 | 20 | above minimum |
+| The Audience | 02 Landmarks live | 20 | 25 | 20 | at minimum |
+| The Auditor | 03 One model and sacred positions | 18 | 20 | 17 | above minimum · **hard gate met** |
+| The Auditor | 04 Evidence and report integrity | 13.5 | 15 | 13.5 | at minimum · **hard gate met** |
+| The Art Director | 05 Quality compliance | 8 | 10 | 8 | at minimum |
+| The Art Director | 06 Finder round-trip | 4.5 | 5 | 4 | above minimum |
+| | **Total** | **85** | **100** | | |
+
+The Auditor declared the cycle **regression-free** with **no position
+regression**: the published ledger of 150 + 11 node positions was byte-identical
+to the previous set and agreed to the decimal with four independent on-screen
+coordinate readouts and with the JSON artifact 13 exports.
+
+## Cycle 1 — the Auditor's findings and what was done
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| A1 | major | The twin composite proves sync for a text-and-colour edit only. No artifact shows a node MOVED on one surface arriving at the same coordinates on the other — the mission's own defining claim | **Fixed.** Artifact 12 now drags a named node on the Android surface and shows it arriving on Windows, with both editors left open on the moved node so the two coordinate readouts sit in the frame. The driver asserts that exactly one node moved and every other position is unchanged, and it **throws** if the drag failed to move anything — which caught a real bug on the first attempt: the drag was dispatching mouse events at a surface that only listens for touch, so the proof would have been vacuous. |
+| A2 | major | `MANIFEST.json` is stamped cycle 0, reports 1 of 20 captured, and lists one artifact, while `DIFF.json` claims 20 | **Fixed.** The manifest merges per artifact instead of being overwritten by every partial run, keeps the cycle stamp, records which artifacts a given run recaptured, and states explicitly where a digest is unchanged — so a deterministic re-render can be told from a stale file. |
+| A3 | minor | Nothing evidences the hero's "local state wiped, fresh first launch", and `evidence/coldstart/` is empty | **Fixed, both halves.** The sync service now reports where an open map was loaded from, and the app shows `first launch · restored from the committed seed <file> <sha>` — so the claim is visible in the artifact that makes it. And `src/bootstrap.sh` has been run: see the cold-start section below. |
+| A4 | minor | The hero pulled back far enough that dense districts collapse into overlapping text | **Fixed.** The hero frames one district at reading distance with the holding ring at the edge of frame, rather than the whole brain. |
+| A5 | minor | The states legend clips a node's label | **Fixed.** Any open panel now slides the view so the map's real extent — labels included, since labels are what ends up under a panel — is centred in the band still visible. |
+| A6 | minor | Nothing demonstrates "cluster internal arrangement preserved" after a fist grab | **Fixed.** Artifact 17's tail grabs a named cluster with the mouse, moves it, and reports its internal arrangement before and after. |
+| A7 | minor | Both twin panels are clipped at their outer edges, so the holding counts cannot be compared | **Fixed.** A narrow surface drops the desk-only controls rather than pushing its status chips off the edge. |
+| A8 | minor | The active hands chip renders blank | **Fixed** (same CSS specificity bug the Audience raised). |
+| A9 | minor | Artifact 17 halved in size while being reported unchanged | **Fixed.** The diff records video bitrate and flags a re-encode that moves it by more than a quarter as changed regardless of SSIM. The thresholds now state how they were derived. |
+
+## Cycle 1 — the Art Director's findings and what was done
+
+The Art Director also **ruled the delegated organic-versus-holographic
+question**: *organic-bioluminescent*, ratified from measured frames. Recorded in
+`DIRECTION.md` D-004 and not reopened.
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| D1 | major | Label declutter never reached the Canvas lens; artifact 02 is unreadable at whole-brain zoom | **Was already shared code, not lens-specific — artifact 02 simply had not been recaptured since the change.** Cycle 2 recaptures it. |
+| D2 | major | Holding-cluster labels collide in every frame containing the cluster | **Fixed.** A label on a node in the holding ring is now set to the outward side rather than centred, so the labels radiate instead of stacking. |
+| D3 | minor | The legend clips a node label | **Fixed** (A5). |
+| D4 | minor | The search-hit ticks read as a transform gizmo's drag handles | **Fixed.** Longer, thinner, and tinted from the node's own hue rather than bone white. |
+| D5 | minor | Recency is measurable but does not read against depth attenuation | **Fixed by widening the span, not by changing the channel.** D-007's chroma range moved from 0.62–1.00 to 0.45–1.00. The decision — that recency's channel is chroma — is untouched. |
+| D6 | minor | No frame shows a PLACEMENT suggestion being accepted, the only finder path that writes a position | **Fixed.** Artifact 20 now accepts one on camera, reached the way a user reaches it. The node was unplaced, lands exactly where the reply suggested, and holding steps 4 → 3. |
+| D7 | minor | Artifact 13 is scrolled past the instructions | **Fixed.** The prompt panel shows the preamble and the position records together. |
+
+## Cold-start validation
+
+`bash src/bootstrap.sh`, run end to end with no interactive step:
+
+```
+1/9  system packages          ffmpeg 6.1.1, Xvfb, DejaVu, OpenJDK 21, wine64
+2/9  node                     22.22.2
+3/9  npm dependencies         npm ci against the committed lockfile
+                              three 0.185.1 · @mediapipe/tasks-vision 1.0.1
+4/9  chromium                 installed for Playwright 1.56.1
+5/9  seed fixtures            ok  seeds/map-fermentation.json  150 nodes (8 in holding), 208 links
+                              ok  seeds/map-talk.json           11 nodes (4 in holding), 6 links
+6/9  deterministic assets     SDF atlas 960x800, 112 glyphs · hand clips · 11/11 invariants pass
+7/9  both platform targets    Master Mind.exe 188.8 MB · app-debug.apk 23.1 MB
+8/9  recapture                02, 03, 06, 07 into evidence/coldstart/  — 4/4 as defined
+9/9  position verification    ok  map-fermentation: 150 positions match the committed fixture
+                              ok  map-talk:          11 positions match the committed fixture
+                              161 positions compared as MODEL VALUES, 0 mismatched
+```
+
+No manual step, no interactive prompt, no unset variable, no secret from outside
+the directory. The full log is at `evidence/coldstart/bootstrap.log`.
+
 ## Rebuttals
 
-*None. Every cycle-1 finding was accepted and acted on; no critic score has been
+*None. Every cycle-1 finding was accepted and acted on. No critic score has been
 altered by the builder.*
+
+One finding was **partly declined on the facts rather than on judgement**: D1
+asserted that the label declutter was implemented only in the mind-expansion
+lens. It was not — it lives in the shared renderer and applies to every lens.
+What the Art Director actually observed was true and worth acting on: artifact
+02 was byte-identical to the previous cycle because it had not been recaptured
+since the change landed. The correction is a recapture, not a code change, and
+cycle 2 makes it.
 
 ## Capture failures
 

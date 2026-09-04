@@ -1,0 +1,229 @@
+{
+  "cycle": 1,
+  "previousCycle": 0,
+  "capturedNow": 20,
+  "capturedPrev": 2,
+  "rows": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.995272,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.820244,
+      "verdict": "changed"
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.999695,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.943419,
+      "verdict": "changed"
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.846495,
+      "verdict": "changed"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.843565,
+      "verdict": "changed"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 0.926712,
+      "seconds": {
+        "cur": 34,
+        "prev": 34
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "verdict": "changed"
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.9,
+      "ssim": 0.97978,
+      "seconds": {
+        "cur": 36,
+        "prev": 36
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "verdict": "unchanged"
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.999986,
+      "seconds": {
+        "cur": 13,
+        "prev": 13
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "verdict": "unchanged"
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 1,
+      "seconds": {
+        "cur": 18,
+        "prev": 18
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "verdict": "unchanged"
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "status": "captured",
+      "threshold": 0.95,
+      "ssim": 0.999977,
+      "seconds": {
+        "cur": 26,
+        "prev": 26
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "verdict": "unchanged"
+    }
+  ],
+  "positions": {
+    "compared": true,
+    "moved": [],
+    "added": [],
+    "removed": [],
+    "identical": true
+  },
+  "summary": {
+    "unchanged": 15,
+    "changed": 5,
+    "new": 0,
+    "missing": 0,
+    "changedIds": [
+      "03",
+      "07",
+      "11",
+      "12",
+      "16"
+    ],
+    "missingIds": []
+  }
+}

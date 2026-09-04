@@ -1,0 +1,185 @@
+{
+  "cycle": "cold",
+  "seed": {
+    "epoch": 1787227200000,
+    "rng": 1296913221,
+    "fps": 30
+  },
+  "startedAt": "2026-09-04T21:03:04.024Z",
+  "lastRunAt": "2026-09-04T21:03:04.024Z",
+  "lastRunCaptured": [
+    "02",
+    "03",
+    "06",
+    "07"
+  ],
+  "artifacts": [
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "title": "Canvas at scale",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.5,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 360361,
+        "sha256": "04566cfa785582597690fdb3a916ac01f5ff3e63bdbcf2af7bb3f98034b9ed76"
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "canvas",
+        "surface": "windows",
+        "sync": "live"
+      },
+      "pageErrors": [],
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:03:05.343Z"
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "title": "Hero — AR projection, cold start",
+      "kind": "png",
+      "minimum": "2560x1440",
+      "seconds": 1.8,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 2560,
+        "height": 1440,
+        "bytes": 511469,
+        "sha256": "ac1262f1c874f1e5f349f90f78c162ca740e96989b3050e03e810b40925d4f9f"
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "ar",
+        "surface": "android",
+        "sync": "live",
+        "gyroNeutral": {
+          "alpha": 0,
+          "beta": 90,
+          "gamma": 0
+        },
+        "gyroSent": {
+          "alpha": 34,
+          "beta": 62,
+          "gamma": 6
+        },
+        "gyroReceivedByApp": {
+          "alpha": 34,
+          "beta": 62,
+          "gamma": 6
+        },
+        "poseBefore": {
+          "yaw": 0.6,
+          "pitch": 0.22
+        },
+        "pose": {
+          "yaw": 0.007,
+          "pitch": -0.269
+        },
+        "gyroDroveTheView": true
+      },
+      "pageErrors": [],
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:03:07.127Z"
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "title": "Holding cluster",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 153854,
+        "sha256": "48a5439520c7b69e41d919006dd6440e6899afd06c782bb65ebfb93ec25ebf8b"
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "canvas",
+        "surface": "windows",
+        "sync": "live",
+        "holdingOrigin": [
+          -5,
+          -40,
+          22
+        ],
+        "holdingRadius": 6.6
+      },
+      "pageErrors": [],
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:03:08.583Z"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "title": "Five node states staged",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 164047,
+        "sha256": "449662d301c1d3020154f8451850e7e618c8196d932e53719e1ac29ab37437fd"
+      },
+      "result": {
+        "statesInFrame": [
+          "connected",
+          "plain",
+          "searchHit",
+          "selected",
+          "unplaced"
+        ],
+        "byNode": {
+          "Opening: where did you park?": "plain",
+          "Method of loci": "searchHit",
+          "Lists flatten meaning": "connected",
+          "Positions are the memory": "selected",
+          "Demo: search fly-to": "connected",
+          "Slide budget: 12": "plain",
+          "Closing: build your own": "plain",
+          "Steal the parking-lot bit": "unplaced",
+          "Ask about the demo laptop": "unplaced",
+          "Cut the history section?": "unplaced",
+          "Timebox to 18 minutes": "unplaced"
+        },
+        "ok": true
+      },
+      "pageErrors": [],
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T21:03:09.587Z"
+    }
+  ],
+  "finishedAt": "2026-09-04T21:03:11.304Z",
+  "captured": 4,
+  "total": 20
+}

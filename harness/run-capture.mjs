@@ -136,15 +136,22 @@ async function runDriver(d) {
       const from = await SCREEN_OF(a.page, moveId);
       const posBefore = await a.page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), moveId);
       if (from) {
-        await a.page.mouse.move(from.x, from.y);
-        await a.page.mouse.down();
-        for (let k = 1; k <= 10; k++) {
-          await a.page.mouse.move(from.x + k * 14, from.y - k * 11);
+        // The Android surface listens for TOUCH, not mouse — dispatching mouse
+        // events at it moved nothing and quietly made the proof vacuous.
+        await a.cdp.send('Input.dispatchTouchEvent',
+          { type: 'touchStart', touchPoints: [{ x: from.x, y: from.y, id: 1 }] });
+        for (let k = 1; k <= 12; k++) {
+          await a.cdp.send('Input.dispatchTouchEvent',
+            { type: 'touchMove', touchPoints: [{ x: from.x + k * 13, y: from.y - k * 10, id: 1 }] });
           await sleepFrames(a.page, 0, 1);
         }
-        await a.page.mouse.up();
+        await a.cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
       }
       const posAfter = await a.page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), moveId);
+      if (JSON.stringify(posAfter) === JSON.stringify(posBefore)) {
+        throw new Error('twin: the Android drag did not move the node — the position ' +
+                        'propagation proof would have been vacuous');
+      }
       await w.page.waitForFunction(({ i, p }) => JSON.stringify(window.mm.store.doc.nodes[i].pos) === JSON.stringify(p),
                                    { i: moveId, p: posAfter }, { timeout: 20000 });
       // A concurrent conflict on the same node: Windows writes a different

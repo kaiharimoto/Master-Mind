@@ -1,0 +1,85 @@
+{
+  "cycle": 0,
+  "seed": {
+    "epoch": 1787227200000,
+    "rng": 1296913221,
+    "fps": 30
+  },
+  "startedAt": "2026-09-04T19:46:47.167Z",
+  "artifacts": [
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "title": "Mind expansion overview",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 332987,
+        "sha256": "7f6f9f3d0e9cbf2e3954607fc7977995a6c328ad6c2bbe1f711765ddd2c93097"
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "expansion",
+        "surface": "windows",
+        "sync": "live"
+      },
+      "pageErrors": []
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "title": "Search fly-to end-state",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 4.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 195786,
+        "sha256": "04a5f87673033da2a33ff65be52fb02dffd7d924e1e0bb87a57afb7432dfe65b"
+      },
+      "result": {
+        "query": "grape leaf",
+        "node": "Grape leaf tannin trick",
+        "hits": 1,
+        "homeBefore": [
+          -19.385,
+          -11.154,
+          15.811
+        ],
+        "homeAfter": [
+          -19.385,
+          -11.154,
+          15.811
+        ],
+        "positionUnchanged": true,
+        "cameraTarget": [
+          -19.39,
+          -11.15,
+          15.81
+        ],
+        "endDistance": 12,
+        "centred": {
+          "dx": 0,
+          "dy": 0
+        }
+      },
+      "pageErrors": []
+    }
+  ],
+  "finishedAt": "2026-09-04T19:46:54.000Z",
+  "captured": 2,
+  "total": 20
+}
