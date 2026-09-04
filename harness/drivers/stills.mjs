@@ -2,6 +2,19 @@
 // recipe in docs/capture/<id>.md.
 import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, orient, sleepFrames } from './util.mjs';
 
+/**
+ * Frozen cameras for the two continuous regression instruments.
+ *
+ * Each was derived once with the fit rule its comment names, then written down.
+ * From here a cycle-over-cycle pixel diff of 02 or 04 is itself the proof that
+ * no position moved: if any node's projected pixel shifts, either a position
+ * changed or the camera did, and the camera cannot.
+ */
+export const PIN = {
+  '02': { yaw: 0.42, pitch: 0.20, dist: 120.110861, target: [4.227, -4.996, 0.6945] },
+  '04': { yaw: 0.30, pitch: 0.16, dist: 128.755009, target: [4.227, -4.996, 0.6945] },
+};
+
 export default [
 {
   id: '01', file: '01_maps_home.png', kind: 'png',
@@ -37,74 +50,110 @@ export default [
 },
 {
   id: '02', file: '02_canvas_large_map.png', kind: 'png',
+  requires: { cameraPinned: true, nodes: (n) => n === 150 },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
-    await POSE(page, { yaw: 0.42, pitch: 0.20 });
-    await FRAME_ALL(page, 1.10);
+    // PINNED CAMERA. This artifact and 04 are the continuous cross-cycle
+    // position-regression instruments, and a camera re-derived each run makes
+    // them undiffable: cycle 3's fit changed and 0 of 93 node cores landed
+    // within 1.5 px of their cycle-2 pixels, so the audit had to borrow the
+    // proof from elsewhere. Frozen here, a cycle-over-cycle pixel diff of 02 IS
+    // the position proof. Derived once from frameAll(1.10) at this pose.
+    await POSE(page, PIN['02']);
     await H.shot(page, cdp, H.out(this.file));
-    return H.modelStats(page);
+    return { ...await H.modelStats(page), camera: PIN['02'], cameraPinned: true };
   },
 },
 {
   id: '03', file: '03_hero_ar_coldstart.png', kind: 'png',
-  demonstrates: 'AR lens hero on Android at cold first launch, gyro-oriented vantage', minW: 2560, minH: 1440,
+  demonstrates: 'AR lens hero on Android at cold first launch, one map at two device orientations',
+  minW: 2560, minH: 1440,
   surface: 'android', map: 'map-fermentation', title: 'Hero — AR projection, cold start',
   coldStart: true,
+  requires: { gyroDroveTheView: true, positionsUnchangedBetweenPanels: true, headingChanged: (d) => d > 25 },
   async run(H) {
     // Cold start: the sync service's live data directory is wiped before this
     // driver runs, so the map is read fresh from the committed seed fixture.
-    const { page, cdp } = await H.app({ surface: 'android', lens: 'ar', width: 2560, height: 1440, touch: true });
-    // Two orientations, as a real handheld surface produces: the first
-    // establishes the neutral hold, the second is the user turning the device.
-    // The camera moves only through the app's own deviceorientation listener.
+    //
+    // TWO PANELS, ONE MAP, TWO DEVICE ORIENTATIONS. A single AR still can only
+    // assert that the vantage is gyro-driven — the Audience's cycle-3 finding
+    // was that nothing in the picture showed it. Two panels of the same map at
+    // two headings, with a named node traceable between them and the readout
+    // moving in step, prove it from the frames. No HUD, no horizon, no grid:
+    // the only thing that changes is where the map is seen from.
+    const { page, cdp } = await H.app({ surface: 'android', lens: 'ar', width: 1280, height: 1440, touch: true });
     const poseBefore = await page.evaluate(() => ({ yaw: +window.mm.scene.pose.yaw.toFixed(3),
                                                     pitch: +window.mm.scene.pose.pitch.toFixed(3) }));
-    await orient(page, cdp, { alpha: 0, beta: 90, gamma: 0 });
-    const received = await orient(page, cdp, { alpha: 34, beta: 62, gamma: 6 });
-    // Frame every node, then settle the vantage a little low so the districts
-    // fill the upper frame and the holding cluster sits in the lower frame.
-    // The hero's job is to put a person inside a place they remember, which a
-    // whole-map thumbnail cannot do. Frame ONE district at reading distance
-    // with the holding ring at the edge of frame, not the entire brain.
+    // Frame ONE district at reading distance with the holding ring at the edge
+    // of frame. The hero's job is to put a person inside a place they remember,
+    // which a whole-map thumbnail cannot do.
     await page.evaluate(() => {
       const mm = window.mm, d = mm.store.doc;
       const ns = Object.values(d.nodes).filter(n => n.placed && n.label === 'Lacto-vegetables');
       const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0])
                   .map(v => v / ns.length);
-      const h = d.holding.origin;
-      const p = mm.scene.pose;
+      const h = d.holding.origin, p = mm.scene.pose;
       p.target.set((c[0] * 0.70 + h[0] * 0.30), (c[1] * 0.70 + h[1] * 0.30), (c[2] * 0.70 + h[2] * 0.30));
-      // Far enough to keep the holding ring in frame, close enough to read.
       p.dist = Math.hypot(c[0] - h[0], c[1] - h[1], c[2] - h[2]) * 1.42;
     });
-    await sleepFrames(page, 0, 4);
-    await H.shot(page, cdp, H.out(this.file));
+    const anchorId = await NODE_ID(page, 'Sauerkraut by weight');
+    const panel = async (o, tag) => {
+      // The app's own deviceorientation listener is what moves the camera.
+      const received = await orient(page, cdp, o);
+      await sleepFrames(page, 0, 4);
+      const pose = await page.evaluate(() => ({ yaw: +window.mm.scene.pose.yaw.toFixed(3),
+                                                pitch: +window.mm.scene.pose.pitch.toFixed(3) }));
+      const gyro = await page.evaluate(() => (window.mm.gyro ? { ...window.mm.gyro } : null));
+      const anchor = anchorId ? await SCREEN_OF(page, anchorId) : null;
+      const positions = await H.positions(page);
+      const file = await H.tmpShot(page, cdp, tag);
+      return { received, pose, gyro, anchor: anchor ? { x: Math.round(anchor.x), y: Math.round(anchor.y) } : null,
+               positions, file, sent: o };
+    };
+    // Neutral hold first, so the second panel is a turn from a real rest state.
+    await orient(page, cdp, { alpha: 0, beta: 90, gamma: 0 });
+    const A = await panel({ alpha: 34, beta: 62, gamma: 6 }, '03a');
+    const B = await panel({ alpha: 96, beta: 58, gamma: -4 }, '03b');
+    // The readout the app itself shows: alpha is heading, beta tilt, gamma roll.
+    const hdg = (g) => (g ? Math.round(g.alpha) : null);
+    const cap = (p) => `device heading ${hdg(p.gyro)}° · tilt ${p.gyro ? Math.round(p.gyro.beta) : '—'}° · ` +
+                       `“Sauerkraut by weight” at x=${p.anchor ? p.anchor.x : '—'} px · every node position unchanged`;
+    await H.compose([A.file, B.file], H.out(this.file), { mode: 'h', width: 2560, height: 1440,
+      labels: [`Held at heading ${hdg(A.gyro)}° — the same map`, `Turned to heading ${hdg(B.gyro)}° — the same map, seen from elsewhere`],
+      sublabels: [cap(A), cap(B)] });
+
     const st = await H.modelStats(page);
-    const pose = await page.evaluate(() => ({ yaw: +window.mm.scene.pose.yaw.toFixed(3),
-                                              pitch: +window.mm.scene.pose.pitch.toFixed(3) }));
-    return { ...st, gyroNeutral: { alpha: 0, beta: 90, gamma: 0 },
-             gyroSent: { alpha: 34, beta: 62, gamma: 6 }, gyroReceivedByApp: received,
-             poseBefore, pose,
-             gyroDroveTheView: !!received && (poseBefore.yaw !== pose.yaw || poseBefore.pitch !== pose.pitch) };
+    const same = JSON.stringify(A.positions) === JSON.stringify(B.positions);
+    return { ...st,
+             panels: [{ sent: A.sent, received: A.received, pose: A.pose, anchor: A.anchor },
+                      { sent: B.sent, received: B.received, pose: B.pose, anchor: B.anchor }],
+             poseBefore,
+             gyroDroveTheView: !!A.received && !!B.received &&
+               (A.pose.yaw !== B.pose.yaw || A.pose.pitch !== B.pose.pitch) &&
+               (poseBefore.yaw !== A.pose.yaw || poseBefore.pitch !== A.pose.pitch),
+             headingChanged: Math.abs((hdg(B.gyro) ?? 0) - (hdg(A.gyro) ?? 0)),
+             anchorMovedOnScreen: A.anchor && B.anchor ? Math.abs(B.anchor.x - A.anchor.x) : null,
+             positionsUnchangedBetweenPanels: same };
   },
 },
 {
   id: '04', file: '04_mind_expansion.png', kind: 'png',
+  requires: { cameraPinned: true, nodes: (n) => n === 150 },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion' });
     // The holding cluster is part of the map: a tighter crop that clips it
     // trades a whole region for a few percent of label size.
-    await POSE(page, { yaw: 0.30, pitch: 0.16 });
-    // The chrome safe area is now reserved inside fitAll itself, so the margin
-    // no longer has to double as clearance for the pose bar: it can be tight
-    // and the map still cannot land under a button.
-    await FRAME_ALL(page, 1.0);
+    // PINNED CAMERA, for the same reason as 02. Derived once from
+    // frameAll(1.0) at this pose, with the chrome safe area reserved inside
+    // fitAll, so the whole map and the holding ring are in frame and clear of
+    // the pose bar — and stay exactly there in every future cycle.
+    await POSE(page, PIN['04']);
     await H.shot(page, cdp, H.out(this.file));
-    return H.modelStats(page);
+    return { ...await H.modelStats(page), camera: PIN['04'], cameraPinned: true };
   },
 },
 {
@@ -123,6 +172,9 @@ export default [
 },
 {
   id: '07', file: '07_five_node_states.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { ok: true },
   demonstrates: 'the five node states side by side with the legend', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Five node states staged',
   async run(H) {
@@ -159,6 +211,9 @@ export default [
 },
 {
   id: '09', file: '09_connect_edit.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true },
   demonstrates: 'connect and edit before/after: a new filament created between two named nodes', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Connect and edit',
   async run(H) {
@@ -221,6 +276,9 @@ export default [
 },
 {
   id: '13', file: '13_finder_prompt.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { hasPositions: true, hasInstructions: true, mentionsUnplaced: true },
   demonstrates: 'the finder prompt export, preamble and position records together', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder prompt export',
   async run(H) {

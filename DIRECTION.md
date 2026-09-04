@@ -302,3 +302,53 @@ dimming-only version of this code was live.
 
 **Not a reopening of D-006 or D-007.** The five states keep their signatures and
 recency keeps chroma. This decides only where a label may be drawn.
+
+## D-013 · Node hues render at one reference lightness  · cycle 3 · SETTLED
+
+D-006 declares a luminance ladder — plain 0.50, connected 0.72, unplaced 0.86,
+search hit 0.95, selected 1.00 — and says the states are dual-coded, luminance
+*and* ring. The ladder was applied as a raw multiplier on the authored hue, and
+the authored hues are not lightness-matched: bone (`#E8DCC8`) is about 1.6× as
+luminous as magenta (`#E85C9A`) before any state is applied.
+
+Measured on the rendered frame in cycle 3: **unplaced bone 1.00 (clipping to
+white), search hit 0.74, selected 0.71, connected 0.67, plain bone 0.60, plain
+amber 0.50.** The holding cluster was the brightest thing on screen, brighter
+than the selection, and two *plain* nodes differed by more than the gap between
+connected and selected. The declared ladder was monotonic only inside a single
+hue family; across the map the states were carried by ring geometry alone.
+
+**Decision.** A node is drawn at a shared reference lightness — the least
+luminous hue in the palette, so no hue has to be brightened past what it can
+carry — and the state ladder is applied on top of that. Hue and chroma are
+untouched, `PALETTE` is unchanged, and the editor swatches still show the
+authored colours. Only the lightness a node is *drawn* at is set by its state.
+
+Measured after the change: **selected 0.526, search hit 0.497, unplaced
+0.454–0.461, connected 0.376, plain 0.260–0.265.** Monotonic for every hue, and
+nothing in holding can outshine the selection.
+
+**What it costs, stated plainly.** The whole world is dimmer: the top of the
+ladder sits at 0.53 where it used to reach 0.74, because the ladder can only be
+monotonic across this palette if every hue renders at the dimmest one's level.
+The core's hot centre was broadened to recover some of the loss. Against a
+ground of 0.07 the selection is still a 7.5× step, and the alternative —
+brightening the low-luminance hues by mixing them toward white — would have
+taken chroma away from the recency channel D-007 depends on.
+
+**Not a reopening of D-005 or D-006.** The palette is the same eight hues, and
+the ladder is the same five declared values. This is how they are applied.
+
+## D-014 · Depth attenuates luminance only  · cycle 3 · SETTLED
+
+Distance used to fade a node's **alpha**, blending it toward the ground colour,
+which pulled its hue toward the ground's and compressed saturation by about as
+much as the recency channel spans. Age and distance therefore landed in the same
+numeric range, and the Art Director's measurement found the frontier only 18 %
+more saturated than a settled district — indistinguishable from being nearer.
+
+**Decision.** Distance scales the node's **RGB** and leaves alpha at coverage.
+Uniform RGB scaling leaves `(max−min)/max` exactly where it was, so the entire
+declared chroma range stays reserved for recency (D-007) and depth reads purely
+as lightness. The fade floor was softened from 0.30 to 0.46 to match the change
+of channel.

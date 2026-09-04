@@ -12,6 +12,9 @@ const script = (steps) => {
 export default [
 {
   id: '05', file: '05_hand_tracking.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { operationTookEffect: true, declaredSynthetic: true },
   demonstrates: 'Windows hand tracking: an open-palm spread shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
@@ -54,6 +57,9 @@ export default [
 },
 {
   id: '08', file: '08_placement_endstate.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { placed: true, stableAfterDrop: true },
   demonstrates: 'placement before/after: one node leaves holding for a permanent position', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Placement end-state',
   async run(H) {
@@ -125,6 +131,9 @@ export default [
 },
 {
   id: '10', file: '10_search_flyto_end.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { positionUnchanged: true },
   demonstrates: 'search fly-to end-state: the hit centred and wearing the search-hit signature', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
   async run(H) {
@@ -149,6 +158,9 @@ export default [
 },
 {
   id: '11', file: '11_sync_twin_before.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { positionsIdenticalAcrossSurfaces: true },
   demonstrates: 'twin composite BEFORE: Windows and Android on one map, identical frozen camera', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — before',
   pairWith: '12',
@@ -156,12 +168,20 @@ export default [
 },
 {
   id: '12', file: '12_sync_twin_after.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { positionsIdenticalAcrossSurfaces: true, positionEditPropagated: true, onlyTheDraggedNodeMoved: true,
+              everyOtherPositionUnchanged: true, noNodeDropped: true, editPropagated: true,
+              concurrentConflictKeptBoth: true, bothSurfacesAgreeOnNode: true, twoDistinctSockets: true },
   demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows, same frozen camera', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — after',
   async run(H) { return H.twin(this, 'after'); },
 },
 {
   id: '14', file: '14_finder_review.png', kind: 'png',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { allThreeKinds: true, rejectionLeftNoTrace: true, rejectedIsGone: true },
   demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
   async run(H) {
@@ -191,6 +211,9 @@ export default [
 },
 {
   id: '16', file: '16_touch_vocabulary.mp4', kind: 'mp4',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { tapSelected: true, doubleTapConnected: true, dragPlacedIt: true },
   demonstrates: 'Android touch vocabulary in motion inside the AR lens, with an orientation-only beat', minW: 1920, minH: 1080,
   minFps: 24, minSec: 30, surface: 'android', map: 'map-talk', title: 'Touch gesture vocabulary',
   async run(H) {
@@ -269,6 +292,14 @@ export default [
 },
 {
   id: '17', file: '17_hand_vocabulary.mp4', kind: 'mp4',
+  // Claims this artifact must actually carry. A capture that fails one of them
+  // is a FAILED capture — the auditor found `clusterInternalArrangementPreserved:
+  // false` sitting inside a record whose status read `captured` for two cycles.
+  requires: {
+    clusterMoved: true,
+    clusterInternalArrangementPreserved: true,
+    count: (n) => n >= 4,
+  },
   demonstrates: 'Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents', minW: 1920, minH: 1080,
   minFps: 24, minSec: 24, surface: 'windows', map: 'map-fermentation',
   title: 'Hand gesture vocabulary', camera: 'hand-vocabulary-slow',
@@ -284,8 +315,7 @@ export default [
       setInterval(() => { const f = window.mm.hands.frame; if (f.present) window.__pose(f.pose); }, 120);
     });
     // Cluster arrangement before any grab, so the video's claim is checkable.
-    let grabAnchor = null;
-    const before = await H.clusterShape(page, 'Koji');
+    let grabAnchor = null, before = null, after = null;
     const steps = [
       // Tracking off, then reframe so the mouse-only tail is shown on a
       // composed map rather than wherever the last gesture left the camera.
@@ -294,6 +324,11 @@ export default [
       // Grab one named cluster with the mouse and move it, held long enough
       // that the same members are readable before and after and their spacing
       // can be seen to be unchanged.
+      // The grab beat, on a camera held still for its whole duration so the
+      // cluster is the only thing that moves. The state is sampled immediately
+      // before the grab and immediately after the release — not at the ends of
+      // the take, where the pose beats have moved the camera in between.
+      { at: 820, fn: async () => { before = await H.clusterState(page, 'Koji'); } },
       { at: 830, fn: async () => {
           const id = await NODE_ID(page, 'Koji on pearl barley');
           grabAnchor = await SCREEN_OF(page, id);
@@ -301,27 +336,35 @@ export default [
             await page.mouse.move(grabAnchor.x, grabAnchor.y);
             await page.keyboard.down('Alt');
             await page.mouse.down();
+            // The first move must exceed the tap threshold or no drag starts.
+            await page.mouse.move(grabAnchor.x - 9, grabAnchor.y + 6);
           } } },
       ...Array.from({ length: 26 }, (_, k) => ({ at: 834 + k * 2, fn: async () => {
-          if (grabAnchor) await page.mouse.move(grabAnchor.x - (k + 1) * 5, grabAnchor.y + (k + 1) * 3);
+          if (grabAnchor) await page.mouse.move(grabAnchor.x - 9 - (k + 1) * 5, grabAnchor.y + 6 + (k + 1) * 3);
         } })),
-      { at: 890, fn: async () => { await page.mouse.up(); await page.keyboard.up('Alt'); } },
+      { at: 890, fn: async () => {
+          await page.mouse.up(); await page.keyboard.up('Alt');
+          after = await H.clusterState(page, 'Koji');
+        } },
       { at: 960, fn: async () => page.click('[data-t=tool-spread]') },
       { at: 1000, fn: async () => page.click('[data-t=tool-gather]') },
       { at: 1040, fn: async () => page.click('[data-t=tool-two]') },
     ];
     await H.record(page, cdp, { out: H.out(this.file), seconds: 38, onFrame: script(steps) });
-    const after = await H.clusterShape(page, 'Koji');
-    const centroid = await page.evaluate(() => {
-      const ns = Object.values(window.mm.store.doc.nodes).filter(n => n.placed && n.label === 'Koji');
-      const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0]);
-      return c.map(v => +(v / ns.length).toFixed(3));
-    });
     const uniq = [...new Set(poses)].filter(p => p !== 'none');
+    // "Moved" is a question about the CENTROID; "arrangement preserved" is a
+    // question about each member's offset FROM that centroid. The old check
+    // compared one rounded string for both and could answer neither.
+    const dl = before && after ? H.clusterDelta(before, after) : null;
     return { posesRecognised: uniq, count: uniq.length, samples: poses.length,
-             clusterGrabbed: 'Koji', clusterMoved: before === after && !!grabAnchor,
-             clusterCentroidAfter: centroid,
-             clusterInternalArrangementPreserved: before === after, mouseOnlyTail: true };
+             clusterGrabbed: 'Koji', clusterMembers: before ? before.members.length : 0,
+             clusterCentroidBefore: before ? before.centroid.map(v => +v.toFixed(3)) : null,
+             clusterCentroidAfter: after ? after.centroid.map(v => +v.toFixed(3)) : null,
+             clusterCentroidTravelled: dl ? dl.centroidTravelled : null,
+             clusterMaxMemberDrift: dl ? dl.maxMemberDrift : null,
+             clusterMoved: !!dl && dl.centroidTravelled > 0.5,
+             clusterInternalArrangementPreserved: !!dl && dl.sameMembers && dl.maxMemberDrift < 1e-3,
+             mouseOnlyTail: true };
   },
 },
 {
@@ -354,6 +397,9 @@ export default [
 },
 {
   id: '19', file: '19_capture_place_arc.mp4', kind: 'mp4',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { created: true, placed: true, stayedPut: true },
   demonstrates: 'the capture-place arc in motion: compose, holding, drag out, stays put', minW: 1920, minH: 1080,
   minFps: 24, minSec: 15, surface: 'windows', map: 'map-talk', title: 'Capture-place arc',
   async run(H) {
@@ -391,6 +437,9 @@ export default [
 },
 {
   id: '20', file: '20_finder_roundtrip.mp4', kind: 'mp4',
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { rejectionLeftNoTrace: true },
   demonstrates: 'the finder round-trip in motion, including a malformed reply and an accepted placement', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {

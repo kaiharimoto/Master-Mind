@@ -85,13 +85,38 @@ const modelStats = (page) => page.evaluate(() => {
 });
 
 /** A stable signature of a cluster's internal arrangement, centroid-relative. */
-const clusterShape = (page, label) => page.evaluate(l => {
+/**
+ * A named cluster's membership, centroid and per-member offsets from it.
+ *
+ * This used to return a STRING of offsets rounded to three decimals, and the
+ * driver compared two of those strings with ===. Two things were wrong with
+ * that: a rigid translation can still round differently in the third decimal,
+ * so a preserved arrangement could compare unequal; and "did the cluster move"
+ * is a question about the CENTROID, which a shape string cannot answer at all.
+ * Both are returned as numbers now and compared with a stated tolerance.
+ */
+const clusterState = (page, label) => page.evaluate(l => {
   const ns = Object.values(window.mm.store.doc.nodes).filter(n => n.placed && n.label === l)
     .sort((a, b) => (a.id < b.id ? -1 : 1));
-  if (!ns.length) return '';
+  if (!ns.length) return { members: [], centroid: [0, 0, 0], offsets: [] };
   const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0]).map(v => v / ns.length);
-  return ns.map(n => n.pos.map((v, i) => (v - c[i]).toFixed(3)).join(',')).join('|');
+  return { members: ns.map(n => n.id), centroid: c,
+           offsets: ns.map(n => [n.pos[0] - c[0], n.pos[1] - c[1], n.pos[2] - c[2]]) };
 }, label);
+
+/** How far the cluster travelled, and by how much its internal shape drifted. */
+const clusterDelta = (a, b) => {
+  const sameMembers = a.members.length === b.members.length &&
+                      a.members.every((m, i) => m === b.members[i]);
+  const moved = Math.hypot(b.centroid[0] - a.centroid[0], b.centroid[1] - a.centroid[1],
+                           b.centroid[2] - a.centroid[2]);
+  let drift = 0;
+  if (sameMembers) for (let i = 0; i < a.offsets.length; i++)
+    drift = Math.max(drift, Math.hypot(b.offsets[i][0] - a.offsets[i][0],
+                                       b.offsets[i][1] - a.offsets[i][1],
+                                       b.offsets[i][2] - a.offsets[i][2]));
+  return { sameMembers, centroidTravelled: +moved.toFixed(4), maxMemberDrift: +drift.toFixed(6) };
+};
 
 /** Positions as MODEL VALUES — how regression on positions is judged (§06). */
 const positions = (page) => page.evaluate(() =>
@@ -119,7 +144,7 @@ async function runDriver(d) {
       pages.push(r);
       return r;
     },
-    shot, step, record, compose, crop, modelStats, clusterShape, positions,
+    shot, step, record, compose, crop, modelStats, clusterState, clusterDelta, positions,
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };
@@ -306,6 +331,32 @@ async function runDriver(d) {
   return { result, error, pageErrors: errs };
 }
 
+/**
+ * The claims an artifact's own driver says it must carry.
+ *
+ * Artifact 17 shipped for two cycles reporting
+ * `clusterInternalArrangementPreserved: false` inside a record whose status
+ * read `captured` with `error: null`, because verification only ever checked
+ * resolution, frame rate and duration. A machine-checked claim that came back
+ * false was written into the manifest and then ignored. A driver now names the
+ * result keys that must hold, and a capture that fails one of them is a
+ * FAILED capture — a finding, not a footnote.
+ */
+function checkClaims(d, result) {
+  const req = d.requires;
+  if (!req || !result) return { ok: true, claims: [] };
+  const claims = [], failed = [];
+  for (const [key, want] of Object.entries(req)) {
+    const got = key.split('.').reduce((o, k) => (o == null ? o : o[k]), result);
+    let pass;
+    if (typeof want === 'function') pass = !!want(got);
+    else pass = got === want;
+    claims.push({ claim: key, expected: typeof want === 'function' ? '(predicate)' : want, actual: got, pass });
+    if (!pass) failed.push(`${key} = ${JSON.stringify(got)}`);
+  }
+  return { ok: !failed.length, claims, why: failed.length ? `declared claim(s) not met: ${failed.join('; ')}` : undefined };
+}
+
 async function verify(d, file) {
   if (!existsSync(file)) return { ok: false, why: 'not produced' };
   const info = await probe(file);
@@ -347,11 +398,14 @@ for (const d of list) {
   process.stdout.write(`  ${d.id} ${d.file} … `);
   const { result, error, pageErrors } = await runDriver(d);
   const check = await verify(d, resolve(OUTDIR, d.file));
+  const claims = checkClaims(d, result);
   const entry = { id: d.id, file: d.file, title: d.title, kind: d.kind,
                   minimum: `${d.minW}x${d.minH}` + (d.kind === 'mp4' ? ` @${d.minFps}fps ${d.minSec}s` : ''),
                   seconds: +((Date.now() - t0) / 1000).toFixed(1),
-                  status: error ? 'driver-error' : check.ok ? 'captured' : 'below-minimum',
-                  error, check, result, pageErrors: pageErrors.slice(0, 6),
+                  status: error ? 'driver-error'
+                    : !check.ok ? 'below-minimum'
+                    : !claims.ok ? 'claim-not-met' : 'captured',
+                  error, check, claims, result, pageErrors: pageErrors.slice(0, 6),
                   // The recipe fingerprint. A perceptual diff cannot tell a
                   // re-framing from a bug fix from a change to what the artifact
                   // DEMONSTRATES, so the capture script itself is hashed and its
@@ -365,7 +419,7 @@ for (const d of list) {
   manifest.lastRunCaptured.push(d.id);
   console.log(entry.status === 'captured'
     ? `ok  ${check.width}x${check.height}${check.seconds ? ` ${check.seconds}s @${check.fps}fps` : ''}  ${entry.seconds}s`
-    : `${entry.status.toUpperCase()}  ${error ? error.split('\n')[0].slice(0, 120) : check.why}`);
+    : `${entry.status.toUpperCase()}  ${error ? error.split('\n')[0].slice(0, 120) : (check.why || claims.why)}`);
 }
 // Position snapshot, compared across cycles as model values rather than pixels.
 {

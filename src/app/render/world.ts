@@ -28,6 +28,44 @@ export function hue(key: ColorKey | string): THREE.Color {
   return c;
 }
 
+const lumOf = (c: THREE.Color) => 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+
+/**
+ * The reference lightness every node hue is rendered at before its state
+ * multiplier — the least luminous hue in the palette, so no hue has to be
+ * brightened past what it can carry.
+ */
+export const REF_LUM = Math.min(...Object.values(PALETTE).map(h => lumOf(new THREE.Color(h))));
+
+const NODE_CACHE = new Map<string, THREE.Color>();
+/**
+ * A node's hue at the shared reference lightness.
+ *
+ * The state ladder (STATE_INTENSITY, D-006) was applied as a raw multiplier on
+ * the authored hue, and the authored hues are not lightness-matched: bone is
+ * about 1.6x as luminous as magenta before any state is applied. So an UNPLACED
+ * bone node rendered brighter than a SELECTED coral one and clipped to white,
+ * and the declared ladder was monotonic only inside a single hue family — the
+ * states were being carried by ring geometry alone.
+ *
+ * Equalising lightness first makes the ladder monotonic for every hue: plain
+ * 0.50 through selected 1.00 of the same base, whatever the colour. Hue and
+ * chroma are untouched; PALETTE is unchanged and the UI swatches still show the
+ * authored colours. Only the lightness a node is DRAWN at is set by its state,
+ * which is what D-006 says the channel is for.
+ */
+export function nodeHue(key: ColorKey | string): THREE.Color {
+  const hex = (PALETTE as Record<string, string>)[key] ?? key;
+  let c = NODE_CACHE.get(hex);
+  if (!c) {
+    const base = new THREE.Color(hex);
+    const k = REF_LUM / Math.max(lumOf(base), 1e-4);
+    c = new THREE.Color(base.r * k, base.g * k, base.b * k);
+    NODE_CACHE.set(hex, c);
+  }
+  return c;
+}
+
 const NODE_VERT = /* glsl */`
 precision highp float;
 attribute vec3  iPos;
@@ -58,7 +96,11 @@ void main() {
   vState = iState;
   // Distance fades toward the dark. Never to nothing: no zoom level where
   // quality quietly ends (§01 detail standard).
-  vFade = mix(1.0, 0.30, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
+  // Softer than it was, because this now scales LUMINANCE directly rather than
+  // alpha over a near-black ground: the same floor would have darkened the
+  // world well past where it sat before. Distance still reads, and the state
+  // ladder keeps its full range at every depth.
+  vFade = mix(1.0, 0.46, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
 }`;
 
 const NODE_FRAG = /* glsl */`
@@ -88,7 +130,16 @@ void main() {
 
   // Core: a tight self-luminous disc with a hotter centre and no halo outside it.
   float core = 1.0 - smoothstep(CORE - aa, CORE + aa, r);
-  float hot  = 1.0 + 0.42 * (1.0 - clamp(r / CORE, 0.0, 1.0));
+  // The hot centre. Raised when the palette was lightness-equalised: the ladder
+  // is exact but sits at the least luminous hue's level, and without a stronger
+  // core the nodes read as flat discs rather than as small light sources. The
+  // boost is the same for every state, so the ladder's ordering is untouched.
+  // The hot centre, raised and broadened when the palette was lightness
+  // equalised: the ladder is exact but now sits at the least luminous hue's
+  // level, and a linear falloff put the boost in the innermost pixel or two
+  // only, so the discs read as flat rather than as small light sources. The
+  // boost is identical for every state, so the ladder's ordering is untouched.
+  float hot  = 1.0 + 0.62 * pow(1.0 - clamp(r / CORE, 0.0, 1.0), 0.40);
 
   float ring = 0.0;
   vec3  ringCol = vColor;
@@ -121,7 +172,13 @@ void main() {
   // Colour is NOT pre-multiplied by coverage: alpha carries coverage, and the
   // distance fade rides on alpha so it blends toward the ground colour.
   vec3 col = (vColor * hot * core + ringCol * ring) / max(core + ring, 1e-4);
-  gl_FragColor = vec4(col * intensity, a * vFade);
+  // Distance attenuates LUMINANCE, not alpha. Blending a distant node toward
+  // the ground pulled its colour toward the ground's hue, which compressed
+  // saturation by about as much as the recency channel spans — so age and
+  // distance landed in the same numeric range and could not be told apart by
+  // eye. Scaling RGB uniformly leaves (max-min)/max exactly where it was, so
+  // the whole chroma range stays reserved for recency (D-007).
+  gl_FragColor = vec4(col * intensity * vFade, a);
 }`;
 
 export interface NodeInstance {

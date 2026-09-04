@@ -65,6 +65,7 @@ uniform float uFadeEnd;
 varying vec2  vUV;
 varying vec3  vColor;
 varying float vFade;
+varying float vPx;
 void main() {
   vec4 mv = modelViewMatrix * vec4(aAnchor, 1.0);
   float dist = max(-mv.z, 1e-4);
@@ -82,6 +83,7 @@ void main() {
   vUV = mix(aUV.xy, aUV.zw, vec2(corner.x, 1.0 - corner.y));
   vColor = aColor;
   vFade = aAlpha * mix(1.0, 0.34, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
+  vPx = emPx;
 }`;
 
 const FRAG = /* glsl */`
@@ -91,11 +93,19 @@ uniform vec3 uOutline;
 varying vec2 vUV;
 varying vec3 vColor;
 varying float vFade;
+varying float vPx;
 void main() {
   float s = texture2D(uAtlas, vUV).r;
-  float w = max(fwidth(s), 0.0015);
-  float glyph   = smoothstep(0.5 - w, 0.5 + w, s);
-  float outline = smoothstep(0.5 - 0.13 - w, 0.5 - 0.13 + w, s);
+  // At the small-size clamp a single-channel SDF loses sub-pixel stems — the
+  // 'l' of "Ruhlman", the 'i' of "Miso" — to the alpha threshold, at exactly
+  // the whole-brain zoom the detail standard names. The threshold window widens
+  // and drops slightly as the rendered size approaches the clamp, so thin stems
+  // thicken instead of vanishing. Above ~17 px nothing changes.
+  float small = clamp((17.0 - vPx) / 6.0, 0.0, 1.0);
+  float w = max(fwidth(s) * (1.0 + 0.85 * small), 0.0015);
+  float t = 0.5 - 0.055 * small;
+  float glyph   = smoothstep(t - w, t + w, s);
+  float outline = smoothstep(t - 0.13 - w, t - 0.13 + w, s);
   if (outline < 0.004) discard;
   // Dark rim under the glyph: a contrast device for overlapping text, not glow.
   vec3 col = mix(uOutline, vColor, glyph);

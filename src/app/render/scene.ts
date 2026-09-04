@@ -6,7 +6,7 @@ import {
   nodeList, linkList, recencyOf, resolveStates,
 } from '../core/model.js';
 import {
-  NodeLayer, FilamentLayer, HoldingShell, GROUND, TEXT_COLOR, hue,
+  NodeLayer, FilamentLayer, HoldingShell, GROUND, TEXT_COLOR, nodeHue,
   type NodeInstance, type LinkInstance,
 } from './world.js';
 import { TextLayer, type FontMeta, type TextRun } from './text.js';
@@ -25,7 +25,7 @@ export const LENS_PROFILE: Record<LensKind, LensProfile> = {
   // Everyday editing: comfortable reading, moderate depth.
   canvas:    { nodeMinPx: 15, nodeMaxPx: 84,  textMinPx: 12.5, textMaxPx: 24, textPerLine: 22, textLines: 2, fadeStart: 46, fadeEnd: 250, fov: 52 },
   // Whole-brain: everything on screen at once and still legible at 100+ nodes.
-  expansion: { nodeMinPx: 15, nodeMaxPx: 90,  textMinPx: 11.5, textMaxPx: 22, textPerLine: 26, textLines: 1, fadeStart: 90, fadeEnd: 420, fov: 46 },
+  expansion: { nodeMinPx: 15, nodeMaxPx: 90,  textMinPx: 13.0, textMaxPx: 22, textPerLine: 26, textLines: 1, fadeStart: 90, fadeEnd: 420, fov: 46 },
   // AR: a view-first lens; text a little larger for a handheld surface.
   ar:        { nodeMinPx: 16, nodeMaxPx: 96,  textMinPx: 13.0, textMaxPx: 21, textPerLine: 24, textLines: 1, fadeStart: 34, fadeEnd: 190, fov: 62 },
 };
@@ -165,7 +165,10 @@ export class Scene {
       // off the frame. The settled end of each hue's range is solved so that
       // settled -> recent is the same chroma DISTANCE for every hue.
       // The CHANNEL is unchanged; only how its span is computed.
-      const col = hue(n.color), s0 = settledSat(col);
+      // The node is drawn at the shared reference lightness so the state ladder
+      // is monotonic across hues (D-013); the authored hue is what the editor
+      // swatches and the district colour still mean.
+      const col = nodeHue(n.color), s0 = settledSat(col);
       const sat = s0 + (1 - s0) * recencyOf(doc, n);
       inst.push({ pos: p, color: col, state: st, size, sat });
       this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0 });
@@ -256,9 +259,13 @@ export class Scene {
     // moving the text to a clear side of the same node keeps it readable and
     // keeps it attached. The node itself never moves.
     const CAND: [number, number][] = [
-      [0, 0], [0, -1.30], [0, 1.30],
+      [0, 0],
+      [0, -1.30], [0, 1.30],
       [-0.62, -0.62], [0.62, -0.62], [-0.62, 0.62], [0.62, 0.62],
       [0, -2.55], [0, 2.55],
+      [-1.45, 0], [1.45, 0],
+      [-1.30, -1.30], [1.30, -1.30], [-1.30, 1.30], [1.30, 1.30],
+      [0, -3.80], [0, 3.80],
     ];
     const boxes: Box[] = [];
     const shape: { w: number; h: number; emPx: number; bx0: number; by0: number }[] = [];
@@ -293,6 +300,25 @@ export class Scene {
     // would give, which is the honest cost of the invariant.
     const BRIGHT_MAX = 0, DIM_MAX = 0.30;
     const taken: Box[] = [];
+    // Node markers are occluders too: text landing on a disc is as unreadable as
+    // text landing on other text. They are scored as a PREFERENCE rather than as
+    // occupancy — a candidate over a marker loses to a clear one, but a label
+    // does not get demoted merely for grazing a dot, which would silence a lot
+    // of names in the dense districts for no legibility gain.
+    const discs = scr.map(q => ({ id: q.id, x0: q.x - q.r, x1: q.x + q.r, y0: q.y - q.r, y1: q.y + q.r }));
+    const discCover = (ownId: NodeId, x0: number, y0: number, x1: number, y1: number, area: number) => {
+      let c = 0;
+      for (const d of discs) {
+        if (d.id === ownId) continue;
+        const ox = Math.min(x1, d.x1) - Math.max(x0, d.x0);
+        if (ox <= 0) continue;
+        const oy = Math.min(y1, d.y1) - Math.max(y0, d.y0);
+        if (oy <= 0) continue;
+        c += ox * oy;
+        if (c >= area) break;
+      }
+      return Math.min(c / area, 1);
+    };
     const coverage = (x0: number, y0: number, x1: number, y1: number, area: number) => {
       let covered = 0;
       for (const t of taken) {
@@ -308,15 +334,18 @@ export class Scene {
     for (const b of boxes) {
       const sh = shape[b.i];
       const area = Math.max(sh.w * sh.h, 1);
-      let best = { frac: 1, dx: 0, dy: 0 };
+      let best = { frac: 1, score: 2, dx: 0, dy: 0 };
       for (const [cx, cy] of CAND) {
         const dx = cx * sh.emPx, dy = cy * sh.emPx;
-        const frac = coverage(sh.bx0 + dx, sh.by0 + dy, sh.bx0 + sh.w + dx, sh.by0 + sh.h + dy, area);
+        const x0 = sh.bx0 + dx, y0 = sh.by0 + dy;
+        const frac = coverage(x0, y0, x0 + sh.w, y0 + sh.h, area);
+        // Text-on-text decides the tier; text-on-marker only breaks ties.
+        const score = frac + 0.34 * discCover(this.runMeta[b.i].id, x0, y0, x0 + sh.w, y0 + sh.h, area);
         // The unshifted anchor is preferred: a candidate only wins if it is
         // meaningfully clearer, so labels do not jitter between placements.
-        if (frac < best.frac - (cx === 0 && cy === 0 ? 0 : 0.06) ||
-            (cx === 0 && cy === 0 && frac <= best.frac)) best = { frac, dx: cx, dy: cy };
-        if (best.frac <= 0) break;   // already clear of everything accepted
+        if (score < best.score - (cx === 0 && cy === 0 ? 0 : 0.06) ||
+            (cx === 0 && cy === 0 && score <= best.score)) best = { frac, score, dx: cx, dy: cy };
+        if (best.score <= 0) break;   // clear of every label and every marker
       }
       this.runShifts[b.i * 2] = best.dx;
       this.runShifts[b.i * 2 + 1] = -best.dy;   // screen y grows downward; the shader's y does not
@@ -337,9 +366,11 @@ export class Scene {
       const t = Math.max(0, 1 - (best.frac - BRIGHT_MAX) / (DIM_MAX - BRIGHT_MAX));
       const k = best.frac <= BRIGHT_MAX ? 1 : t * t;
       this.runAlphas[b.i] = this.runMeta[b.i].baseAlpha * k;
-      // A label still carrying real weight reserves its rect, so the labels
-      // behind it in priority order are placed around it rather than through it.
-      if (k > 0.42) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + sh.w, y1: px.y0 + sh.h,
+      // ANY label that is drawn at all reserves its rect. Reserving only the
+      // ones above a weight threshold let two suppressed labels be placed on
+      // top of each other — the faded tier was not deconflicted against itself,
+      // so ghost strokes still crossed foreground text.
+      if (k > 0.02) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + sh.w, y1: px.y0 + sh.h,
                                  pri: b.pri, z: b.z });
     }
     this.text.setRunAlphas(this.runAlphas);
