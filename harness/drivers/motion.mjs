@@ -1,5 +1,5 @@
 // Sync, flow and video artifacts.
-import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, touch, sleepFrames } from './util.mjs';
+import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, touch, sleepFrames, orient } from './util.mjs';
 import { ORDER as REPLIES } from '../fixtures/replies.mjs';
 
 /** Turn a list of {at, fn} into an onFrame callback for record(). */
@@ -141,7 +141,10 @@ export default [
   id: '16', file: '16_touch_vocabulary.mp4', kind: 'mp4', minW: 1920, minH: 1080,
   minFps: 24, minSec: 30, surface: 'android', map: 'map-talk', title: 'Touch gesture vocabulary',
   async run(H) {
-    const { page, cdp } = await H.app({ surface: 'android', lens: 'canvas', map: 'map-talk', touch: true });
+    // Run the vocabulary inside the AR lens: the touch gestures belong to both
+    // Android lenses, and this is the take that shows AR in motion.
+    const { page, cdp } = await H.app({ surface: 'android', lens: 'ar', map: 'map-talk', touch: true });
+    await orient(page, cdp, { alpha: 0, beta: 90, gamma: 0 });
     await POSE(page, { yaw: 0.30, pitch: 0.14 });
     await FRAME_ALL(page, 1.18);
     // Screen positions come from the camera matrices, which only update during
@@ -182,14 +185,22 @@ export default [
             { x: 830 - (k + 1) * 2.2, y: 520 - (k + 1) * 0.8, id: 1 },
             { x: 1090 + (k + 1) * 2.2, y: 560 + (k + 1) * 0.8, id: 2 }] }) })),
       { at: 794, fn: async () => cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }) },
+      // The device is turned: the vantage swings while every node stays where
+      // it is, with the live orientation readout tracking the movement.
+      ...Array.from({ length: 40 }, (_, k) => ({ at: 840 + k * 4, fn: async () =>
+          orient(page, cdp, { alpha: (k + 1) * 1.6, beta: 90 - (k + 1) * 0.55, gamma: 0 }) })),
     ];
     await H.record(page, cdp, { out: H.out(this.file), seconds: 34, onFrame: script(steps) });
     const uniq = [...new Set(fired)];
+    const gyroEnd = await page.evaluate(() => (window.mm.gyro ? { ...window.mm.gyro } : null));
+    const poseEnd = await page.evaluate(() => ({ yaw: +window.mm.scene.pose.yaw.toFixed(3),
+                                                 pitch: +window.mm.scene.pose.pitch.toFixed(3) }));
     const linked = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a: idA, b: idB });
     const placed = newId ? await page.evaluate(i => !!(window.mm.store.doc.nodes[i] || {}).placed, newId) : false;
-    return { gesturesFired: uniq, count: uniq.length, quickAddedNode: newId,
+    return { lens: 'ar', gesturesFired: uniq, count: uniq.length, quickAddedNode: newId,
              tapSelected: A && B ? true : false, doubleTapConnected: linked, dragPlacedIt: placed,
+             gyroEnd, poseEnd,
              holding: await page.evaluate(() => window.mm.store.holdingCount()) };
   },
 },

@@ -82,7 +82,7 @@ export default [
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion' });
     await POSE(page, { yaw: 0.30, pitch: 0.16 });
-    await FRAME_ALL(page, 1.12);
+    await FRAME_ALL(page, 1.03);
     await H.shot(page, cdp, H.out(this.file));
     return H.modelStats(page);
   },

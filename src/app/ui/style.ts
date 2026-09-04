@@ -15,8 +15,11 @@ button,input,textarea,select{font:inherit;color:var(--ink);background:var(--pane
   border:1px solid var(--line);padding:6px 10px;outline:none}
 button{cursor:pointer}
 button:hover{background:#2B231C}
-button.on{background:var(--hot);color:#1A1206;border-color:var(--hot)}
 button.ghost{background:transparent}
+/* after .ghost, so a ghost button that is ON still paints its background and
+   does not end up with near-black text on the dark ground */
+button.on,button.ghost.on{background:var(--hot);color:#1A1206;border-color:var(--hot)}
+span.chip.on{border-color:var(--hot);color:var(--ink)}
 input:focus,textarea:focus{border-color:#4A3E34}
 textarea{resize:none;width:100%;font:11px/1.4 "DejaVu Sans Mono",monospace}
 
@@ -24,6 +27,10 @@ textarea{resize:none;width:100%;font:11px/1.4 "DejaVu Sans Mono",monospace}
   gap:8px;padding:0 12px;background:var(--panel);border-bottom:1px solid var(--line);z-index:20}
 #top .name{font-weight:bold;letter-spacing:.2px;margin-right:4px;white-space:nowrap}
 #top .sp{flex:1}
+body.ar #capture,body.ar [data-t=open-finder],body.ar [data-t=open-maps],
+body.ar [data-t=open-states]{display:none}
+body.ar #top{height:40px}
+body.ar #search{width:300px}
 .tabs{display:flex;border:1px solid var(--line)}
 .tabs button{border:0;border-right:1px solid var(--line);padding:6px 12px;background:transparent}
 .tabs button:last-child{border-right:0}
@@ -98,7 +105,7 @@ tr.map:hover{background:var(--panel)}
   border:1px solid var(--line);padding:6px 10px;font-size:11px;letter-spacing:.5px;color:var(--ink-dim)}
 #lenstag b{color:var(--ink);text-transform:uppercase;letter-spacing:.8px}
 
-#tools{position:fixed;left:212px;bottom:12px;z-index:26;display:none;gap:6px}
+#tools{position:fixed;left:252px;bottom:12px;z-index:26;display:none;gap:6px}
 #tools.show{display:flex}
 #tools button{min-width:78px}
 .mono{font-family:"DejaVu Sans Mono",monospace;font-size:11px}

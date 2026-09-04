@@ -98,8 +98,13 @@ void main() {
   gl_FragColor = vec4(col, outline * vFade);
 }`;
 
+/** Where each run's glyphs live in the instance buffer, and how big it is. */
+export interface RunSpan { start: number; count: number; widthEm: number; lines: number; above: boolean; }
+
 export class TextLayer {
   readonly mesh: THREE.Mesh;
+  /** One entry per run, in the order build() received them. */
+  readonly spans: RunSpan[] = [];
   private geo: THREE.InstancedBufferGeometry;
   private cap = 0;
   private aRect!: THREE.InstancedBufferAttribute;
@@ -172,6 +177,20 @@ export class TextLayer {
     this.geo.setAttribute('aOff', this.aOff);
   }
 
+  /**
+   * Per-run alpha, written straight into the instance buffer. Used by the
+   * screen-space label deconfliction so a lower-priority label recedes behind
+   * a higher-priority one instead of overprinting it.
+   */
+  setRunAlphas(alphas: Float32Array) {
+    const arr = this.aAlpha.array as Float32Array;
+    for (let r = 0; r < this.spans.length && r < alphas.length; r++) {
+      const { start, count } = this.spans[r];
+      for (let k = 0; k < count; k++) arr[start + k] = alphas[r];
+    }
+    this.aAlpha.needsUpdate = true;
+  }
+
   /** Rebuild every glyph instance. Called only when the doc or selection changes. */
   build(runs: TextRun[], perLine = 17, maxLines = 2) {
     const m = this.meta, cellEm = CELL_EM(m), baseTop = BASE_FROM_TOP(m);
@@ -184,8 +203,16 @@ export class TextLayer {
       for (const l of lines) for (const ch of l) if (m.chars[ch]) total++;
     }
     this.grow(Math.max(total, 1));
+    this.spans.length = 0;
     let i = 0;
     for (const { run, lines } of laid) {
+      const spanStart = i;
+      let widest = 0;
+      for (const l of lines) {
+        let w = 0;
+        for (const ch of l) w += (m.chars[ch]?.adv ?? 0);
+        if (w > widest) widest = w;
+      }
       const above = !!run.above;
       // Below: block hangs under the node. Above: block sits clear on top of it.
       const emY = above ? 0.55 + (lines.length - 1) * m.lineHeight + 0.30 : -0.92;
@@ -209,6 +236,8 @@ export class TextLayer {
           i++;
         }
       });
+      this.spans.push({ start: spanStart, count: i - spanStart, widthEm: widest,
+                        lines: lines.length, above });
     }
     for (const a of [this.aRect, this.aUV, this.aAnchor, this.aColor, this.aNodeSize, this.aAlpha, this.aOff]) a.needsUpdate = true;
     this.geo.instanceCount = i;

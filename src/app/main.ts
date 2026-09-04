@@ -195,6 +195,10 @@ export class App {
     this.scene.applyLens(k);
     for (const l of this.lenses()) $(`[data-t=lens-${l}]`).classList.toggle('on', l === k);
     $('#tools').classList.toggle('show', k === 'expansion');
+    // AR is a view-and-refind lens on a handheld surface: the controls that
+    // belong to a desk - the capture field, the finder, the maps list - are not
+    // shown there. What remains is look, search, inspect and capture.
+    document.body.classList.toggle('ar', k === 'ar');
     this.controls.gyroDriven = k === 'ar';
     if (k === 'ar') this.controls.resetGyroBase();
     $('#lenstag').innerHTML =
@@ -246,9 +250,26 @@ export class App {
   }
 
   select(id: NodeId | null) {
+    const opening = id !== null && this.selected === null;
     this.selected = id;
     this.scene.setSelection(id);
     this.renderEditor();
+    // The editor sits over the right of the world. When it opens, slide the
+    // view so the node being edited is centred in what is still visible,
+    // rather than hidden behind the panel.
+    if (opening) this.centreForPanel(id!);
+  }
+
+  private centreForPanel(id: NodeId) {
+    const panel = document.getElementById('editor');
+    if (!panel) return;
+    const el = this.scene.renderer.domElement;
+    const scale = el.width / Math.max(window.innerWidth, 1);
+    const occluded = (panel.getBoundingClientRect().width + 24) * scale;
+    const s = this.scene.screenPositions().find(q => q.id === id);
+    if (!s) return;
+    const wanted = (el.width - occluded) / 2;
+    this.controls.panTarget(s.x - wanted, 0);
   }
 
   search(q: string) {
@@ -263,7 +284,9 @@ export class App {
     if (!this.hits.length) return;
     if (step) this.hitIndex = (this.hitIndex + step + this.hits.length) % this.hits.length;
     const id = this.hits[this.hitIndex];
-    this.select(id);
+    // Deliberately does NOT select: the node you flew to wears the search-hit
+    // signature, which is the state the flight was about. Clicking selects it.
+    this.select(null);
     this.controls.flyTo(id, 1300, this.lens === 'expansion' ? 15 : 12);
   }
 

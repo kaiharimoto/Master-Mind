@@ -53,8 +53,24 @@ writeFileSync(join(EV, 'DIFF.json'), JSON.stringify(diff, null, 2));
 console.log(`diff vs cycle-${cycle - 1}: ${JSON.stringify(diff.summary)}`);
 console.log(`positions: ${diff.positions.compared ? (diff.positions.identical ? 'IDENTICAL' : `${diff.positions.moved.length} MOVED`) : 'no previous set'}`);
 
-// 5. Critic briefs.
-const briefs = buildBriefs(cycle, EV, prevDir);
+// 5. Freeze the set the critics read.
+//
+// In cycle 1 the critics read the live evidence/ directory while fixes were
+// being recaptured into it, and one of them opened a half-written file. A
+// cycle's set is now snapshotted to an immutable directory first, and the
+// briefs point THERE — so the builder can keep working without moving the
+// ground under a review.
+const frozen = resolve(EV, `cycles/cycle-${cycle}`);
+rmSync(frozen, { recursive: true, force: true });
+mkdirSync(frozen, { recursive: true });
+for (const f of readdirSync(EV)) {
+  if (['history', 'coldstart', 'critic-briefs', 'cycles'].includes(f)) continue;
+  cpSync(join(EV, f), join(frozen, f), { recursive: true });
+}
+console.log(`froze the cycle-${cycle} set at evidence/cycles/cycle-${cycle}`);
+
+// 6. Critic briefs, pointed at the frozen set.
+const briefs = buildBriefs(cycle, frozen, prevDir);
 console.log('critic briefs:');
 for (const b of briefs) console.log('  ' + b.replace(ROOT + '/', ''));
 

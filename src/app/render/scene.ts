@@ -54,7 +54,10 @@ export class Scene {
   private doc: MapDoc | null = null;
   private selected: NodeId | null = null;
   private hits = new Set<NodeId>();
-  private screenCache: { id: NodeId; x: number; y: number; r: number; z: number }[] = [];
+  private screenCache: { id: NodeId; x: number; y: number; r: number; z: number; pxPerWorld: number }[] = [];
+  /** Run order and priority for label deconfliction, rebuilt with the text. */
+  private runMeta: { id: NodeId; priority: number; baseAlpha: number }[] = [];
+  private runAlphas = new Float32Array(0);
   private dirty = true;
 
   constructor(readonly canvas: HTMLCanvasElement, fontMeta: FontMeta, atlas: THREE.Texture) {
@@ -117,6 +120,11 @@ export class Scene {
     const ns = nodeList(doc);
     const inst: NodeInstance[] = [];
     const runs: TextRun[] = [];
+    // Lower number wins a collision. Nearer nodes break ties, per frame.
+    const PRIORITY: Record<NodeState, number> = {
+      selected: 0, searchHit: 1, unplaced: 2, connected: 3, plain: 4,
+    };
+    this.runMeta = [];
     const posOf = new Map<NodeId, THREE.Vector3>();
     const textCol = new THREE.Color(TEXT_COLOR);
     for (const n of ns) {
@@ -127,6 +135,7 @@ export class Scene {
       // Chroma is the recency channel (D-007). It touches nothing else.
       const sat = 0.62 + 0.38 * recencyOf(doc, n);
       inst.push({ pos: p, color: hue(n.color), state: st, size, sat });
+      this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0 });
       runs.push({
         anchor: p, text: n.text, color: textCol, nodeSizeWorld: size,
         alpha: st === 'plain' ? 0.86 : 1.0,
@@ -139,6 +148,7 @@ export class Scene {
     this.nodes.build(inst);
     const p = LENS_PROFILE[this.lens];
     this.text.build(runs, p.textPerLine, p.textLines);
+    if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
 
     // A filament is live when it touches the selection or a search hit.
     const links: LinkInstance[] = [];
@@ -171,12 +181,75 @@ export class Scene {
     if (this.dirty) this.rebuild();
     this.nodes.setTime(this.clock);
     this.applyPose();
+    this.deconflictLabels();
     this.renderer.render(this.scene, this.camera);
     this.screenCache = [];
   }
 
+  /**
+   * Screen-space label deconfliction.
+   *
+   * Labels are laid out from world positions, so in a dense district they
+   * overprint each other and the one thought you flew in to read can be the one
+   * you cannot. This walks them in priority order — selected, search hit,
+   * unplaced, connected to selection, plain, nearest first within a rank — and
+   * fades a label in proportion to how much of it a higher-priority label has
+   * already claimed.
+   *
+   * It fades rather than hides: nothing ever pops out of existence, and a
+   * crowded label recedes instead of disappearing.
+   */
+  private deconflictLabels() {
+    const doc = this.doc;
+    if (!doc || !this.runMeta.length) return;
+    const p = LENS_PROFILE[this.lens];
+    const scr = this.screenPositions();
+    if (!scr.length) return;
+    const byId = new Map(scr.map(s => [s.id, s]));
+    const em = 0.92;
+
+    type Box = { i: number; x0: number; y0: number; x1: number; y1: number; pri: number; z: number };
+    const boxes: Box[] = [];
+    for (let i = 0; i < this.runMeta.length; i++) {
+      const meta = this.runMeta[i];
+      const s = byId.get(meta.id);
+      const span = this.text.spans[i];
+      if (!s || !span) { this.runAlphas[i] = 0; continue; }
+      const emPx = Math.min(Math.max(em * s.pxPerWorld, p.textMinPx), p.textMaxPx);
+      const nodePx = Math.min(Math.max(s.r / 0.6, p.nodeMinPx), p.nodeMaxPx);
+      const w = Math.max(span.widthEm * emPx, 8);
+      const h = Math.max(span.lines * 1.18 * emPx, 8);
+      const gap = nodePx * 0.62 + emPx * 0.92;
+      const cy = span.above ? s.y - gap - h * 0.5 : s.y + gap + h * 0.5;
+      boxes.push({ i, x0: s.x - w / 2, x1: s.x + w / 2, y0: cy - h / 2, y1: cy + h / 2,
+                   pri: meta.priority, z: s.z });
+      this.runAlphas[i] = meta.baseAlpha;
+    }
+    boxes.sort((a, b) => a.pri - b.pri || a.z - b.z);
+
+    const taken: Box[] = [];
+    for (const b of boxes) {
+      let covered = 0;
+      const area = Math.max((b.x1 - b.x0) * (b.y1 - b.y0), 1);
+      for (const t of taken) {
+        const ox = Math.min(b.x1, t.x1) - Math.max(b.x0, t.x0);
+        if (ox <= 0) continue;
+        const oy = Math.min(b.y1, t.y1) - Math.max(b.y0, t.y0);
+        if (oy <= 0) continue;
+        covered += ox * oy;
+        if (covered >= area) break;
+      }
+      const frac = Math.min(covered / area, 1);
+      // Ignore incidental clipping; fade hard once a label is genuinely buried.
+      const k = frac <= 0.18 ? 1 : Math.max(0.10, 1 - (frac - 0.18) / 0.52);
+      this.runAlphas[b.i] = this.runMeta[b.i].baseAlpha * k;
+      if (k > 0.55) taken.push(b);
+    }
+    this.text.setRunAlphas(this.runAlphas);
+  }
+
   /** Screen-space positions and radii, for picking and for UI anchoring. */
-  screenPositions(): { id: NodeId; x: number; y: number; r: number; z: number }[] {
+  screenPositions(): { id: NodeId; x: number; y: number; r: number; z: number; pxPerWorld: number }[] {
     if (this.screenCache.length) return this.screenCache;
     const doc = this.doc;
     if (!doc) return [];
@@ -189,7 +262,7 @@ export class Scene {
       deg.set(l.b, (deg.get(l.b) ?? 0) + 1);
     }
     const v = new THREE.Vector3();
-    const out: { id: NodeId; x: number; y: number; r: number; z: number }[] = [];
+    const out: { id: NodeId; x: number; y: number; r: number; z: number; pxPerWorld: number }[] = [];
     const projScale = this.camera.projectionMatrix.elements[5];
     for (const n of nodeList(doc)) {
       v.set(n.pos[0], n.pos[1], n.pos[2]).applyMatrix4(this.camera.matrixWorldInverse);
@@ -198,7 +271,8 @@ export class Scene {
       const pxPerWorld = h * projScale * 0.5 / dist;
       const half = Math.min(Math.max(sizeForDegree(deg.get(n.id) ?? 0) * pxPerWorld, p.nodeMinPx), p.nodeMaxPx);
       v.applyMatrix4(this.camera.projectionMatrix);
-      out.push({ id: n.id, x: (v.x * 0.5 + 0.5) * w, y: (1 - (v.y * 0.5 + 0.5)) * h, r: half * 0.6, z: dist });
+      out.push({ id: n.id, x: (v.x * 0.5 + 0.5) * w, y: (1 - (v.y * 0.5 + 0.5)) * h,
+                 r: half * 0.6, z: dist, pxPerWorld });
     }
     this.screenCache = out;
     return out;

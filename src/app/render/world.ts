@@ -104,11 +104,13 @@ void main() {
     float dash = smoothstep(0.0, 0.05, f) * (1.0 - smoothstep(0.50, 0.55, f));
     ring = band(r, CORE * 1.70, 0.030, aa) * dash;
   } else if (st == 3) {                            // search hit: four ticks
-    float radial = smoothstep(CORE * 1.86 - aa, CORE * 1.86 + aa, r)
-                 * (1.0 - smoothstep(CORE * 2.36 - aa, CORE * 2.36 + aa, r));
+    // Long and thin, so they read as marks pointing at the node rather than as
+    // four little squares sitting beside it.
+    float radial = smoothstep(CORE * 1.72 - aa, CORE * 1.72 + aa, r)
+                 * (1.0 - smoothstep(CORE * 2.62 - aa, CORE * 2.62 + aa, r));
     float f = fract(u * 4.0);
     float d = min(f, 1.0 - f);
-    ring = radial * (1.0 - smoothstep(0.055, 0.095, d));
+    ring = radial * (1.0 - smoothstep(0.022, 0.042, d));
     ringCol = vec3(0.955, 0.918, 0.862);
   }
 

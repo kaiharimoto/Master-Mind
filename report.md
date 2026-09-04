@@ -243,9 +243,28 @@ No artifact ordinal, filename, definition or minimum resolution has been changed
 
 ---
 
+## Cycle 1 — critic findings and what was done
+
+**The Audience · 41/50** (core workflow 21/25, landmarks live 20/25 — both at or
+above their minima). Nine findings, one blocking. Every one is recorded here
+with what happened to it; none is argued away.
+
+| # | Severity | Finding | Response |
+|---|---|---|---|
+| 1 | blocking | Artifact 03's status read `gyro · waiting for orientation` while the badge claimed `gyro-oriented`, and no artifact showed AR in motion | **Fixed, two parts.** F-014: Chromium's DevTools sensor override silently delivers nothing here, so the harness now dispatches a real `DeviceOrientationEvent` and then *asks the app what it received*. The hero records orientation sent, orientation received, and pose before and after. And artifact 16 — the Android take in motion — now runs **inside the AR lens** and turns the device through 64° of yaw mid-take, so the vantage swinging while every node stays put is visible in one clip. |
+| 2 | major | Artifact 17 announced "grab the nearest cluster" and "gather the map" over an empty canvas for most of the take | **Fixed.** A held pose was applying its zoom every frame, walking the camera off the map within seconds. Continuous hand operations are now rate-limited on the app clock and distance is clamped to a band around the framed view. Recaptured: the map is present in every sampled frame. |
+| 3 | major | The active hand-tracking chip rendered near-black on a dark fill and was unreadable | **Fixed.** `button.ghost` was declared after `button.on` with equal specificity, so a ghost button that was *on* kept a transparent background and got the dark on-state text colour. |
+| 4 | major | Labels overprint each other in every dense frame — in artifact 10 the very node the search flew to was the one you could not read | **Fixed, and it is the largest change of the cycle.** The renderer now deconflicts labels in screen space every frame: they are walked in priority order — selected, search hit, unplaced, connected, plain, nearest first within a rank — and a label fades in proportion to how much of it a higher-priority label has already claimed. It fades rather than hides, so nothing pops out of existence. |
+| 5 | minor | The flown-to node wore the *selected* ring, not the search-hit signature the build documents | **Fixed.** Fly-to no longer selects. The node you flew to wears the search-hit ticks — which is the state the flight was about — and clicking is what selects. The ticks were also made long and thin so they read as marks pointing at the node rather than four small squares. |
+| 6 | minor | The editor panel occludes world text at the right edge | **Fixed.** Opening the editor now slides the view so the node being edited is centred in what remains visible. |
+| 7 | minor | The lens badge was clipped mid-word by the Grab button | **Fixed.** The tool row starts clear of the badge. |
+| 8 | minor | The AR still carries the full desktop toolbar and nothing reads as a handheld surface | **Fixed.** The AR lens now drops the controls that belong to a desk — the capture field, the finder, the maps list — leaving look, search, inspect and capture, with the live orientation readout. |
+| 9 | minor | `17_hand_vocabulary.mp4` changed size twice during the review and was briefly unreadable | **Accepted as a process fault, and fixed at the source.** The critics were reading the live `evidence/` directory while fixes were being recaptured into it. From cycle 2 the set is snapshotted to an immutable `evidence/cycles/cycle-N/` first and the briefs point there, so a recapture can never move under a review. |
+
 ## Rebuttals
 
-*None yet — no critic has scored a cycle.*
+*None. Every cycle-1 finding was accepted and acted on; no critic score has been
+altered by the builder.*
 
 ## Capture failures
 
