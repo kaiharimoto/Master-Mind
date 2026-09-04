@@ -74,14 +74,23 @@ each other: a Unity Android player cannot be executed (no KVM), a Unity Windows
 player cannot be executed (no Wine), and both would be software-rendered if they
 could. Artifacts 03, 05, 11, 12, 16, 17, 18, 19 and 20 all require a *running*
 build.
-**Not attempted, and not claimed:** Unity licence activation. Activation
-requires a Unity ID this session does not hold, but that was not tested, and the
-substitution does not rest on it — the hardware blockers above are sufficient on
-their own. Stating otherwise would be the kind of unearned claim §09 calls
-forgery.
-*Status at time of writing:* a full 4.42 GB editor download was started in the
-background purely to put an attempt on the record; its outcome is appended below
-when it completes.
+**Licence: attempted and verified, not assumed.** The full 4.42 GB editor was
+downloaded, extracted and executed in this container. Raw log excerpts are in
+`docs/evidence-notes/unity-probe.md`. Result:
+
+- `./Editor/Unity -version` → `6000.0.83f1`. It runs.
+- `-createManualActivationFile` → succeeds, writes `Unity_v6000.0.83f1.alf`
+  (committed alongside the note). Turning that into a `.ulf` requires signing
+  in at `license.unity3d.com` with a Unity ID this session does not hold.
+- `-batchmode -nographics -quit -createProject` → **exit 198**:
+  `[Licensing::Client] Error: Code 404 ... Found 0 entitlement groups and 0 free
+  entitlements matching requested entitlement ids` and
+  `No valid Unity Editor license found. Please activate your license.`
+
+So the licence wall is real and was hit, not presumed. It is nonetheless *not*
+the load-bearing blocker: even with a licence, F-002/F-003/F-007 mean neither
+built target could be executed to capture live evidence. The 13 GB working copy
+was deleted after the probe to reclaim disk.
 **Substitution:** one TypeScript + Three.js/WebGL2 codebase, Electron for the
 Windows target and Capacitor for the Android target. See `DIRECTION.md` D-001.
 
