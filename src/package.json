@@ -1,0 +1,12 @@
+{
+  "name": "master-mind",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mediapipe/tasks-vision": "1.0.1",
+    "esbuild": "0.28.2",
+    "three": "0.185.1",
+    "ws": "8.21.3"
+  }
+}
