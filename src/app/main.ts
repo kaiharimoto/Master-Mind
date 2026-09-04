@@ -59,7 +59,7 @@ export class App {
   frozenClock: number | null = null;
   /** When set, the app runs on virtual time: deterministic, frame-stepped capture. */
   virtualNow: number | null = null;
-  private uiUntil = { toast: 0, gesture: 0 };
+  private uiUntil = { toast: 0, gesture: 0, turning: 0 };
   ready = false;
   private raf = 0;
   private lastGesture = { id: '', detail: '', at: 0 };
@@ -185,7 +185,14 @@ export class App {
     // DeviceOrientationEvent; nothing else feeds the camera in AR.
     window.addEventListener('deviceorientation', (e) => {
       if (this.lens !== 'ar' || e.alpha === null) return;
+      const prev = this.gyro;
       this.gyro = { alpha: e.alpha ?? 0, beta: e.beta ?? 90, gamma: e.gamma ?? 0 };
+      // While the device is actually turning, the readout comes forward. It is
+      // the one input in the vocabulary that is not a touch, and at the scale a
+      // reviewer reads a contact sheet at, a small chip at the frame edge was
+      // indistinguishable from a pan. It settles back on its own.
+      if (prev && Math.abs(this.gyro.alpha - prev.alpha) + Math.abs(this.gyro.beta - prev.beta) > 1.5)
+        this.uiUntil.turning = this.now() + 1400;
       this.controls.applyOrientation(this.gyro.alpha, this.gyro.beta, this.gyro.gamma);
       this.renderGyro();
     });
@@ -219,6 +226,7 @@ export class App {
     g.classList.toggle('show', this.lens === 'ar');
     if (this.lens !== 'ar') return;
     const o = this.gyro;
+    g.classList.toggle('turning', this.now() < this.uiUntil.turning);
     g.innerHTML = o
       ? `gyro live · heading <b>${o.alpha.toFixed(0)}°</b> · tilt <b>${o.beta.toFixed(0)}°</b> · roll <b>${o.gamma.toFixed(0)}°</b>`
       : 'gyro · waiting for orientation';
@@ -718,8 +726,13 @@ export class App {
       $('.dot', p).classList.toggle('live', this.hands.enabled && f.present);
       $('[data-t=hand-pose]', p).textContent = f.present ? (v?.name ?? 'unrecognised') : 'no hand';
       $('[data-t=hand-op]', p).textContent = v ? v.operation.split(' — ')[0] : (f.present ? 'hold a pose' : 'show a hand to the camera');
+      // The view distance travels with the pose, so spread, gather and grab are
+      // distinguishable as numbers even at a framing where the map is too small
+      // to read node names — which is the framing those operations need in
+      // order to have room to happen at all.
       $('[data-t=hand-geom]', p).textContent =
-        `tips out ${f.reach}  fan ${f.spreadRatio.toFixed(2)}  extended ${f.extended}  conf ${f.confidence.toFixed(2)}`;
+        `tips out ${f.reach}  fan ${f.spreadRatio.toFixed(2)}  extended ${f.extended}  ` +
+        `conf ${f.confidence.toFixed(2)}  view ${this.scene.pose.dist.toFixed(1)}`;
     }
     // The same toggle and the same live status, surfaced in the top bar so the
     // map and the tracker's state can be read in one glance.

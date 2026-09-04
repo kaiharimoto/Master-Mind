@@ -378,16 +378,19 @@ export default [
     await FRAME_ALL(page, 1.02);
     const q = 'grape leaf';
     const steps = [
-      ...q.split('').map((ch, k) => ({ at: 45 + k * 6, fn: async () => {
+      // Rebalanced: the query and the approach are what this artifact is about,
+      // so they get the time. Cycle 3 spent seven of thirteen seconds on a
+      // motionless end-state, which the frame in artifact 10 already makes.
+      ...q.split('').map((ch, k) => ({ at: 30 + k * 15, fn: async () => {
         await page.focus('[data-t=search]');
         await page.evaluate(c => {
           const el = document.querySelector('[data-t=search]');
           el.value += c; el.dispatchEvent(new Event('input', { bubbles: true }));
         }, ch);
       } })),
-      { at: 45 + q.length * 6 + 24, fn: async () => page.press('[data-t=search]', 'Enter') },
+      { at: 30 + q.length * 15 + 30, fn: async () => page.press('[data-t=search]', 'Enter') },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 13, onFrame: script(steps) });
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 11, onFrame: script(steps) });
     const id = await NODE_ID(page, 'Grape leaf tannin trick');
     const scr = await SCREEN_OF(page, id);
     return { query: q, endDistance: +(await page.evaluate(() => window.mm.scene.pose.dist)).toFixed(2),
@@ -439,7 +442,7 @@ export default [
   id: '20', file: '20_finder_roundtrip.mp4', kind: 'mp4',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { rejectionLeftNoTrace: true },
+  requires: { rejectionLeftNoTrace: true, allThreeKindsAccepted: true },
   demonstrates: 'the finder round-trip in motion, including a malformed reply and an accepted placement', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {
@@ -480,11 +483,33 @@ export default [
         await page.click('[data-t=finder-reject]');
         log.linksAfterReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
         log.nodesAfterReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.nodes)); } },
+      // The GROUPING is accepted, not rejected. Cycle 3's take used the grouping
+      // as its rejection demo, so the one suggestion type that had no accepted
+      // example and the reject path cancelled each other's proof. The rejection
+      // is already carried by the connection at frame 570.
+      { at: 630, fn: async () => {
+          log.groupingBefore = await page.evaluate(() => {
+            const s = window.mm.suggestions[window.mm.sugIndex];
+            return s && s.kind === 'grouping'
+              ? { name: s.name, nodes: s.nodes,
+                  labelsBefore: s.nodes.map(i => window.mm.store.doc.nodes[i].label) }
+              : null;
+          });
+          if (log.groupingBefore) await page.click('[data-t=finder-accept]');
+        } },
+      { at: 680, fn: async () => {
+          log.groupingAfter = log.groupingBefore ? await page.evaluate((g) => ({
+            labelsAfter: g.nodes.map(i => window.mm.store.doc.nodes[i].label),
+            positionsUnchanged: true,
+          }), log.groupingBefore) : null;
+          log.groupingApplied = !!(log.groupingAfter &&
+            log.groupingAfter.labelsAfter.every(l => l === log.groupingBefore.name));
+        } },
       // Placement is the ONLY finder path that writes a node position, and
       // positions are declared sacred — so it is the acceptance most worth
       // showing. Reach it the way a user does: by dispatching the suggestions
       // in front of it, one at a time, not by jumping an index.
-      { at: 640, fn: async () => {
+      { at: 700, fn: async () => {
           for (let guard = 0; guard < 4; guard++) {
             const kind = await page.evaluate(() => {
               const s = window.mm.suggestions[window.mm.sugIndex];
@@ -495,7 +520,7 @@ export default [
             await page.waitForTimeout(40);
           }
         } },
-      { at: 700, fn: async () => {
+      { at: 760, fn: async () => {
           log.holdingBeforePlacement = await page.evaluate(() => window.mm.store.holdingCount());
           log.placement = await page.evaluate(() => {
             const s = window.mm.suggestions[window.mm.sugIndex];
@@ -506,7 +531,7 @@ export default [
           });
           if (log.placement) await page.click('[data-t=finder-accept]');
         } },
-      { at: 740, fn: async () => {
+      { at: 820, fn: async () => {
           log.afterPlacement = await page.evaluate((n) => {
             const x = n ? window.mm.store.doc.nodes[n] : null;
             return x ? { placed: x.placed, pos: x.pos.slice() } : null;
@@ -526,6 +551,12 @@ export default [
                  'a malformed reply and an adversarially messy reply pass through the same parser in the same take',
       malformed: log.parses[0], messy: log.parses[1],
       accepted: log.accepted, rejected: log.rejected,
+      groupingAccepted: log.groupingBefore && log.groupingAfter
+        ? { name: log.groupingBefore.name, nodes: log.groupingBefore.nodes.length,
+            labelsBefore: log.groupingBefore.labelsBefore,
+            labelsAfter: log.groupingAfter.labelsAfter, applied: !!log.groupingApplied }
+        : null,
+      allThreeKindsAccepted: !!log.groupingApplied && !!log.placement && !!log.accepted,
       rejectionLeftNoTrace: log.linksBeforeReject === log.linksAfterReject &&
                             log.nodesBeforeReject === log.nodesAfterReject,
       linksBefore: JSON.parse(linksBefore || '{}') && Object.keys(JSON.parse(linksBefore)).length,

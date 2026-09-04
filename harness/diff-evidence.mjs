@@ -102,9 +102,20 @@ export async function diffEvidence(curDir, prevDir) {
       if (pr.surface !== cr.surface) notes.push(`surface: ${pr.surface ?? '—'} -> ${cr.surface ?? '—'}`);
       if (pr.lens !== cr.lens) notes.push(`lens: ${pr.lens ?? '—'} -> ${cr.lens ?? '—'}`);
       if (pr.fnSha !== cr.fnSha) notes.push(`capture script changed (${pr.fnSha} -> ${cr.fnSha})`);
+      if (notes.length) notes.push(`demonstrates now: "${cr.demonstrates ?? '—'}"`);
       if (notes.length) { row.whatChanged = notes.join('; '); row.substantive = notes.length > 1 || pr.demonstrates !== cr.demonstrates || pr.lens !== cr.lens || pr.surface !== cr.surface; }
     } else if (cr && prevManifest) {
-      row.whatChanged = 'no recipe fingerprint in the previous set — first cycle with recipe tracking';
+      // No baseline fingerprint to compare against. Rather than degrade to one
+      // uninformative string for every row — which is what cycle 3's diff did,
+      // reporting nothing substantive in a cycle where three artifacts were
+      // visibly redesigned — fall back to an SSIM band and say so.
+      const margin = row.ssim === undefined || row.ssim === null ? null : row.threshold - row.ssim;
+      row.whatChanged = margin === null
+        ? `no recipe fingerprint in the previous set, and no similarity to fall back on; demonstrates: "${cr.demonstrates ?? '—'}"`
+        : margin > 0.05
+          ? `no recipe fingerprint in the previous set; ssim ${row.ssim.toFixed(3)} is ${margin.toFixed(3)} below its threshold — provisionally SUBSTANTIVE, inspect. demonstrates: "${cr.demonstrates ?? '—'}"`
+          : `no recipe fingerprint in the previous set; ssim ${row.ssim.toFixed(3)} within ${Math.abs(margin).toFixed(3)} of its threshold — cosmetic or unchanged. demonstrates: "${cr.demonstrates ?? '—'}"`;
+      if (margin !== null && margin > 0.05) row.substantive = true;
     }
     // An artifact whose recipe changed but whose pixels did not is not
     // 'unchanged' in any sense a reviewer cares about.

@@ -100,7 +100,11 @@ void main() {
   // alpha over a near-black ground: the same floor would have darkened the
   // world well past where it sat before. Distance still reads, and the state
   // ladder keeps its full range at every depth.
-  vFade = mix(1.0, 0.46, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
+  // A LANDMARK FLOOR. Distant districts have to stay readable as landmarks —
+  // at the end of a fly-to, the surrounding map is the thing that tells you
+  // where the thought lives, and it had fallen to near-ground. A step above the
+  // ground, not at it.
+  vFade = mix(1.0, 0.55, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
 }`;
 
 const NODE_FRAG = /* glsl */`

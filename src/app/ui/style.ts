@@ -98,7 +98,10 @@ tr.map:hover{background:var(--panel)}
 #handpose .o{color:var(--ink-dim);font-size:12px}
 #handpose .g{color:var(--ink-faint);font-size:10px;font-family:"DejaVu Sans Mono",monospace;margin-top:3px}
 
-#gesture{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:26;
+/* Clear of the mouse-equivalent bar, which sits at bottom:12 on the same
+   centre line and was drawing over the operation caption's lower half — in the
+   one still where that caption should be the most legible thing on screen. */
+#gesture{position:fixed;left:50%;transform:translateX(-50%);bottom:64px;z-index:27;
   background:var(--panel);border:1px solid var(--line);padding:9px 16px;display:none}
 #gesture.show{display:block}
 #gesture .n{font-weight:bold;color:var(--hot)}
@@ -113,6 +116,10 @@ tr.map:hover{background:var(--panel)}
   padding:7px 11px;font-size:11px;letter-spacing:.4px;color:var(--ink-dim);display:none}
 #argyro.show{display:block}
 #argyro b{color:var(--ink);font-family:"DejaVu Sans Mono",monospace}
+/* Turning: the readout comes forward while the device is actually moving. */
+#argyro.turning{padding:12px 18px;font-size:17px;letter-spacing:.6px;color:var(--ink);
+  border-color:var(--hot)}
+#argyro.turning b{font-size:24px}
 #origin{position:fixed;left:12px;top:56px;z-index:24;background:var(--panel);border:1px solid var(--line);
   padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}
 #origin.seed{display:block;color:var(--ink-dim);border-color:#3A2F26}

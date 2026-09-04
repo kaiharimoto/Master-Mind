@@ -273,7 +273,13 @@ async function runDriver(d) {
       const aw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w1.png'));
       const aa = await shot(a.page, a.cdp, resolve(TMP, 'twin-a1.png'));
       const fmt = (v) => `${v[0].toFixed(1)}, ${v[1].toFixed(1)}, ${v[2].toFixed(1)}`;
-      const moved = `moved node ${moveId}: ${fmt(posBefore)} -> ${fmt(posAfter)}`;
+      // EVERY edit in the beat is named. The take also recolours and retexts a
+      // second node on Android while Windows relabels that same node — that is
+      // what exercises property-level last-writer-wins — and cycle 3's caption
+      // mentioned only the drag, so a reader diffing 11 against 12 found a hue
+      // change nobody had declared.
+      const moved = `Android dragged ${moveId} ${fmt(posBefore)} -> ${fmt(posAfter)}; ` +
+                    `Android retexted+recoloured “Demo: search fly-to” while Windows relabelled it — both kept`;
       await compose([aw, aa], resolve(OUTDIR, '12_sync_twin_after.png'), { mode: 'h', width: 1920, height: 1080,
         labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'],
         sublabels: [`${moved} · socket #${provAfter.w.socket} · ${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · built binary' : 'FALLBACK — not the built binary'} · camera frozen from 11`,
