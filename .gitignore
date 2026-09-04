@@ -3,3 +3,8 @@ src/node_modules/
 probe/
 *.log
 .DS_Store
+
+harness/clips/*.y4m
+harness/clips/frame-sample.png
+.mmdata*/
+src/dist/

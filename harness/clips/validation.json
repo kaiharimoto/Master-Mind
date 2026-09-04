@@ -1,0 +1,55 @@
+{
+  "clip": "harness/clips/validate.y4m",
+  "variant": {
+    "scale": 0.365,
+    "rotAmp": 14,
+    "drift": 0.085,
+    "bgShift": 1
+  },
+  "order": [
+    "two",
+    "gather",
+    "spread",
+    "fist"
+  ],
+  "detectionRate": 0.99,
+  "poseAccuracy": 1,
+  "rows": [
+    {
+      "pose": "two",
+      "correct": 125,
+      "frames": 125,
+      "rate": 1,
+      "saw": {
+        "two": 125
+      }
+    },
+    {
+      "pose": "gather",
+      "correct": 90,
+      "frames": 90,
+      "rate": 1,
+      "saw": {
+        "gather": 90
+      }
+    },
+    {
+      "pose": "spread",
+      "correct": 72,
+      "frames": 72,
+      "rate": 1,
+      "saw": {
+        "spread": 72
+      }
+    },
+    {
+      "pose": "fist",
+      "correct": 71,
+      "frames": 71,
+      "rate": 1,
+      "saw": {
+        "fist": 71
+      }
+    }
+  ]
+}

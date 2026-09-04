@@ -128,6 +128,42 @@ pipeline or virtual device is ever driven by more than one process at a time.
 A background *file download* is not a build pipeline and is not counted as
 parallelism.
 
+**F-010 · The app renders ~12 fps at 1920×1080 here; video is frame-stepped.**
+Measured with the real app under load (orbiting the 150-node map): 12.5 fps at
+1920×1080, 13.8 at 1280×720, 14.7 at 960×540 — nearly resolution-independent,
+so the cost is Chromium's compositing of a software-rasterised surface, not fill
+rate. Disabling MSAA and the preserved drawing buffer bought about 20 %.
+The evidence set requires ≥24 fps at 1920×1080.
+**Substitution:** videos are rendered frame-accurate on the app's own virtual
+clock at 30 fps and encoded from those frames (`DIRECTION.md` D-011). Every
+frame is really rendered by the running app from the live model; interactions
+are dispatched as ordinary DOM events between frames. Nothing is interpolated
+and nothing is cut — only the wall-clock pace of recording differs.
+**Interactive frame rate is reported honestly here rather than implied away:**
+on real hardware with a GPU this app would not be near that limit, but in this
+container it is about 12 fps. **Verified.**
+
+**F-011 · The fourth hand pose was chosen by measurement, not preference.**
+A pinch cannot be proven through this environment's camera: with the clip
+synthesised (F-004), MediaPipe reported the thumb and index 0.49–0.76 hand-spans
+apart across six geometries that rendered them touching, and never classified a
+pinch reliably. A single pointing finger was also unstable — MediaPipe read the
+raised digit as the thumb.
+**Resolution:** the select/confirm slot is filled by a **two-finger V**. §07
+names the four *operations*, not the poses, so this is a design choice inside
+the brief rather than a change to it — and it is recorded rather than quietly
+made. See `DIRECTION.md` D-010 for the measured separation and the held-out
+validation (99.0 % detection, 100 % pose accuracy on a clip the thresholds were
+not derived from). **Verified.**
+
+**F-012 · Seed fixtures were finalised before the first capture, then frozen.**
+The seeds were regenerated three times during STEP 02 while node spacing and
+district colours were settled — all before any artifact existed and before any
+review cycle. From the first capture onward they are frozen: §09 makes
+regenerating them afterwards fatal to every position-regression claim, and
+`seeds/MANIFEST.json` carries the content hashes that make a silent change
+detectable.
+
 ---
 
 ## Deviations ledger
@@ -139,6 +175,8 @@ parallelism.
 | 3 | Firebase managed tier | Local WebSocket sync service, same semantics | F-006 | Hosting substitution |
 | 4 | Physical/`v4l2loopback` webcam | Chromium fake capture device + real MediaPipe | F-004 | Environment substitution |
 | 5 | AR Foundation / ARCore on device | Device-profile surface with real gyro + touch injection | F-003 | Environment substitution |
+| 6 | ≥24 fps realtime video | Frame-accurate rendering on the app's virtual clock at 30 fps | F-010 | Capture-method substitution |
+| 7 | (poses unnamed by the brief) Pinch | Two-finger V for select/confirm | F-011 | Design choice, measured |
 
 No artifact ordinal, filename, definition or minimum resolution has been changed.
 

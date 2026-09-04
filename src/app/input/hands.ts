@@ -14,12 +14,12 @@ export interface HandFrame {
   x: number; y: number;
   landmarks: { x: number; y: number; z: number }[];
   confidence: number;
-  extended: number; spreadRatio: number; pinchRatio: number;
+  extended: number; spreadRatio: number; pinchRatio: number; reach: number;
 }
 
 export const EMPTY_FRAME: HandFrame = {
   present: false, pose: 'none', x: 0.5, y: 0.5, landmarks: [],
-  confidence: 0, extended: 0, spreadRatio: 0, pinchRatio: 0,
+  confidence: 0, extended: 0, spreadRatio: 0, pinchRatio: 0, reach: 0,
 };
 
 const TIP = [4, 8, 12, 16, 20], PIP = [3, 6, 10, 14, 18];
@@ -32,8 +32,8 @@ const dist = (a: LM, b: LM) => Math.hypot(a.x - b.x, a.y - b.y);
  * Normalised by hand span (wrist -> middle MCP), so it is scale-invariant and
  * the thresholds are geometric rather than tuned to any particular clip.
  */
-export function classify(lm: LM[]): { pose: HandPoseId; extended: number; spreadRatio: number; pinchRatio: number } {
-  if (lm.length < 21) return { pose: 'none', extended: 0, spreadRatio: 0, pinchRatio: 0 };
+export function classify(lm: LM[]): { pose: HandPoseId; extended: number; spreadRatio: number; pinchRatio: number; reach: number } {
+  if (lm.length < 21) return { pose: 'none', extended: 0, spreadRatio: 0, pinchRatio: 0, reach: 0 };
   const wrist = lm[0];
   const span = Math.max(dist(wrist, lm[9]), 1e-4);
 
@@ -49,14 +49,21 @@ export function classify(lm: LM[]): { pose: HandPoseId; extended: number; spread
   for (let i = 1; i < 5; i++) for (let j = i + 1; j < 5; j++) { spread += dist(lm[TIP[i]], lm[TIP[j]]); pairs++; }
   const spreadRatio = spread / pairs / span;
   const pinchRatio = dist(lm[4], lm[8]) / span;
+  // How many fingertips reach beyond 1.5 hand-spans from the wrist. This is
+  // the primary discriminator because it does not depend on WHICH digit the
+  // model believes is raised — an identification MediaPipe is unreliable
+  // about, while the count is not.
+  let reach = 0;
+  for (let f = 0; f < 5; f++) if (dist(wrist, lm[TIP[f]]) / span > 1.5) reach++;
 
   let pose: HandPoseId;
-  if (pinchRatio < 0.32 && isExt[2] && isExt[3]) pose = 'pinch';
-  else if (extended <= 1) pose = 'fist';
-  else if (extended >= 4 && spreadRatio >= 0.52) pose = 'spread';
-  else if (extended >= 3 && spreadRatio < 0.40) pose = 'gather';
+  // Four or more tips out: an open hand. Fanned or adducted splits it, and the
+  // split sits midway between the two geometries with wide margin either side.
+  if (reach >= 4) pose = spreadRatio >= 0.62 ? 'spread' : 'gather';
+  else if (reach >= 2) pose = 'two';
+  else if (reach <= 1 && extended <= 2) pose = 'fist';
   else pose = 'none';
-  return { pose, extended, spreadRatio, pinchRatio };
+  return { pose, extended, spreadRatio, pinchRatio, reach };
 }
 
 export class HandTracker {
@@ -133,7 +140,7 @@ export class HandTracker {
         present: true, pose: stable, x: palm.x, y: palm.y,
         landmarks: lms.map(p => ({ x: p.x, y: p.y, z: p.z })),
         confidence: res.handedness?.[0]?.[0]?.score ?? 0,
-        extended: c.extended, spreadRatio: c.spreadRatio, pinchRatio: c.pinchRatio,
+        extended: c.extended, spreadRatio: c.spreadRatio, pinchRatio: c.pinchRatio, reach: c.reach,
       };
     }
     this.onFrame?.(this.frame);

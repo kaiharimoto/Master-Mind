@@ -18,7 +18,7 @@ export const TOUCH_VOCAB: TouchGesture[] = [
   { id: 'pinch',      name: 'Pinch / spread',   how: 'Two fingers, pinch or spread',       operation: 'Zoom the view in or out', span: 'navigation' },
 ];
 
-export type HandPoseId = 'fist' | 'spread' | 'gather' | 'pinch' | 'none';
+export type HandPoseId = 'fist' | 'spread' | 'gather' | 'two' | 'none';
 
 export interface HandPose {
   id: Exclude<HandPoseId, 'none'>; name: string; how: string;
@@ -36,8 +36,8 @@ export const HAND_VOCAB: HandPose[] = [
   { id: 'gather', name: 'Gathered hand', how: 'Fingers extended but held together, tips touching',
     operation: 'Gather the map — pull the whole brain back in',
     mouse: 'Scroll down, or press Gather' },
-  { id: 'pinch',  name: 'Pinch',         how: 'Thumb and index tip touching, other fingers out',
-    operation: 'Select or confirm what is under the pointer',
+  { id: 'two',    name: 'Two fingers',   how: 'Index and middle extended in a V, ring and little finger curled in',
+    operation: 'Select or confirm the node the hand is over',
     mouse: 'Left click, or press Select' },
 ];
 

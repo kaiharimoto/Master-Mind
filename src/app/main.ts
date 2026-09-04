@@ -57,6 +57,9 @@ export class App {
   handsOn = false;
   /** Frozen clock for diffable captures. When null, the wall clock runs. */
   frozenClock: number | null = null;
+  /** When set, the app runs on virtual time: deterministic, frame-stepped capture. */
+  virtualNow: number | null = null;
+  private uiUntil = { toast: 0, gesture: 0 };
   ready = false;
   private raf = 0;
   private lastGesture = { id: '', detail: '', at: 0 };
@@ -93,6 +96,7 @@ export class App {
       onGestureFired: (id, detail) => this.showGesture(id, detail),
       onDragEnd: () => this.refresh(),
     });
+    this.controls.now = () => this.now();
     this.hands = new HandTracker('./assets/mp-wasm', './assets/hand_landmarker.task');
     this.hands.onFrame = f => this.onHand(f);
 
@@ -262,7 +266,7 @@ export class App {
     this.showGesture(byMouse ? `mouse:${pose}` : pose, p.operation.split(' — ')[0]);
     if (pose === 'spread') this.controls.zoom(byMouse ? 1 / 1.12 : 0.985);
     else if (pose === 'gather') this.controls.zoom(byMouse ? 1.12 : 1.015);
-    else if (pose === 'pinch') {
+    else if (pose === 'two') {
       const c = this.scene.renderer.domElement;
       const sx = f ? (1 - f.x) * c.width : c.width / 2, sy = f ? f.y * c.height : c.height / 2;
       this.select(this.scene.pick(sx, sy, 26));
@@ -313,13 +317,32 @@ export class App {
 
   // -- render loop ---------------------------------------------------------
 
-  private loop = () => {
-    this.controls.tickFly();
-    this.scene.clock = this.frozenClock ?? performance.now() / 1000;
+  now(): number { return this.virtualNow ?? performance.now(); }
+
+  /** One frame: timers, fly-to, then draw. Identical for live and stepped runs. */
+  renderFrame() {
+    const t = this.now();
+    this.controls.tickTimers(t);
+    this.controls.tickFly(t);
+    this.tickUi(t);
+    this.scene.clock = this.frozenClock ?? t / 1000;
     this.scene.render();
+  }
+
+  /** Render at a given virtual time. The capture harness steps this at 1/30 s. */
+  renderAt(ms: number) { this.virtualNow = ms; this.renderFrame(); }
+
+  private tickUi(t: number) {
+    if (this.uiUntil.toast && t >= this.uiUntil.toast) { $('#toast').className = ''; this.uiUntil.toast = 0; }
+    if (this.uiUntil.gesture && t >= this.uiUntil.gesture) { $('#gesture').classList.remove('show'); this.uiUntil.gesture = 0; }
+  }
+
+  private loop = () => {
+    this.renderFrame();
     this.raf = requestAnimationFrame(this.loop);
   };
   stop() { cancelAnimationFrame(this.raf); }
+  start() { cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(this.loop); }
 
   // -- chrome refresh ------------------------------------------------------
 
@@ -337,8 +360,7 @@ export class App {
     const t = $('#toast');
     t.textContent = msg;
     t.className = 'show' + (bad ? ' bad' : '');
-    window.clearTimeout((t as any)._h);
-    (t as any)._h = window.setTimeout(() => { t.className = ''; }, bad ? 9000 : 4200);
+    this.uiUntil.toast = this.now() + (bad ? 9000 : 4200);
   }
 
   showGesture(id: string, detail: string) {
@@ -350,8 +372,7 @@ export class App {
     const label = id.startsWith('mouse') ? `${name} (mouse equivalent)` : name;
     g.innerHTML = `<span class="n">${esc(label)}</span> <span class="o">— ${esc(detail)}</span>`;
     g.classList.add('show');
-    window.clearTimeout((g as any)._h);
-    (g as any)._h = window.setTimeout(() => g.classList.remove('show'), 2600);
+    this.uiUntil.gesture = this.now() + 2600;
   }
   get lastGestureFired() { return this.lastGesture; }
 
@@ -504,7 +525,7 @@ export class App {
       $('[data-t=hand-pose]', p).textContent = f.present ? (v?.name ?? 'unrecognised') : 'no hand';
       $('[data-t=hand-op]', p).textContent = v ? v.operation.split(' — ')[0] : (f.present ? 'hold a pose' : 'show a hand to the camera');
       $('[data-t=hand-geom]', p).textContent =
-        `extended ${f.extended}  spread ${f.spreadRatio.toFixed(2)}  pinch ${f.pinchRatio.toFixed(2)}  conf ${f.confidence.toFixed(2)}`;
+        `tips out ${f.reach}  fan ${f.spreadRatio.toFixed(2)}  extended ${f.extended}  conf ${f.confidence.toFixed(2)}`;
     }
     const b = document.querySelector('[data-t=hand-toggle]');
     if (b) { b.textContent = `Hand tracking: ${this.handsOn ? 'on' : 'off'}`; b.classList.toggle('on', this.handsOn); }

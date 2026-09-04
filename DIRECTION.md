@@ -187,3 +187,57 @@ place, no bounce, no node motion that the user did not directly cause.
 Node positions change on exactly one code path: an explicit user drag or a
 user-accepted finder placement suggestion. That path is the only writer of
 `node.pos` in the entire codebase, and it is asserted by test.
+
+---
+
+## D-010 · Fourth hand pose: pinch → two fingers  · cycle 0 · SETTLED
+
+§07's Windows hand family names the four **operations** (grab a cluster, spread,
+gather, select/confirm) and requires poses "physically distinct enough for a
+webcam to tell apart reliably". The pose that fills the select/confirm slot was
+chosen by measurement, not preference.
+
+A pinch was tried first and does not survive this environment's camera. With no
+real webcam (F-004), the clip is synthesised, and MediaPipe consistently refuses
+to see a synthetic thumb-to-index contact: across six geometries it reported the
+thumb and index tips 0.49–0.76 hand-spans apart when they were rendered
+touching, and classified the pose as an open hand. A single raised finger fared
+no better — MediaPipe identified the raised digit as the thumb and its reach
+readings ranged 0.99–3.08, overlapping a closed fist.
+
+**Decision: a two-finger V** — index and middle extended, ring and little finger
+curled. Measured against real MediaPipe output, the four poses separate with no
+overlap at all:
+
+| Pose | Fingertips beyond 1.5 hand-spans | Fan (mean pairwise tip distance / span) |
+|---|---:|---|
+| open palm, fanned | 4 | 0.95 – 1.08 |
+| gathered hand | 4 | 0.35 – 0.40 |
+| two fingers | 2 | — |
+| closed fist | 0 | — |
+
+The classifier therefore counts **how many fingertips reach past 1.5 hand-spans**
+and, for open hands, how fanned they are. It never asks *which* digit is raised
+— the one thing MediaPipe is unreliable about here.
+
+Validated on a **held-out clip** the thresholds were not derived from (different
+hand scale, 14° rotation instead of 5°, different drift, different background,
+poses in a different order): **99.0 % detection, 100 % pose accuracy**
+(`harness/validate-poses.mjs`, results in `harness/clips/validation.json`).
+
+## D-011 · Video is rendered frame-accurate on the app's own clock  · cycle 0 · SETTLED
+
+Measured in this container: the app produces about **12 frames per second** of
+wall clock at 1920×1080 under the software rasteriser (F-002). The evidence set
+requires ≥24 fps.
+
+**Decision.** The app carries a virtual clock. `App.renderAt(ms)` renders exactly
+one frame at a given time; the capture harness steps it at a fixed 1/30 s and
+encodes the frames. Every frame in every video is really rendered by the running
+app from the live model — nothing is interpolated, tweened, or cut. What differs
+from a realtime recording is only how fast the wall clock ran while it was made.
+Interactions (touch events, clicks, typing) are dispatched between steps through
+the ordinary DOM, so the app's own input paths execute unchanged.
+
+Recorded as **F-010**. The alternative — shipping 12 fps video — would have
+failed the stated minimum, and dropping the resolution would have failed another.

@@ -20,12 +20,16 @@ export class Controls {
   private dragCluster: NodeId[] | null = null;
   private dragLast = new THREE.Vector3();
   private downAt = { x: 0, y: 0, t: 0 };
+  private lpFired = false;
   private lastTapId: NodeId | null = null;
   private lastTapT = 0;
   private linkFrom: NodeId | null = null;
   private orbiting = false;
   private pinchDist = 0;
-  private lpTimer: number | null = null;
+  private lp: { x: number; y: number; at: number } | null = null;
+  /** Supplied by the app: virtual time during capture, wall clock otherwise. */
+  now: () => number = () => performance.now();
+  longPressMs = 500;
   /** Set while a fly-to is in flight. */
   private fly: { from: { t: THREE.Vector3; yaw: number; pitch: number; d: number };
                  to:   { t: THREE.Vector3; yaw: number; pitch: number; d: number };
@@ -39,6 +43,19 @@ export class Controls {
   constructor(private scene: Scene, private store: Store, private hooks: ControlHooks) {}
 
   get linkArmed() { return this.linkFrom; }
+
+  /**
+   * Time-based input that must not depend on wall clock: the long-press that
+   * fires quick-add. Called once per rendered frame.
+   */
+  tickTimers(nowMs = this.now()) {
+    if (this.lp && nowMs - this.lp.at >= this.longPressMs) {
+      const { x, y } = this.lp;
+      this.lp = null; this.orbiting = false; this.lpFired = true;
+      this.hooks.onGestureFired('longpress', 'Quick-add into holding');
+      this.hooks.onQuickAdd({ x, y });
+    }
+  }
   clearLink() { this.linkFrom = null; }
 
   // -- camera --------------------------------------------------------------
@@ -189,7 +206,7 @@ export class Controls {
   // -- touch (Android) -----------------------------------------------------
 
   attachTouch(el: HTMLElement) {
-    const cancelLp = () => { if (this.lpTimer !== null) { clearTimeout(this.lpTimer); this.lpTimer = null; } };
+    const cancelLp = () => { this.lp = null; };
 
     el.addEventListener('touchstart', e => {
       e.preventDefault();
@@ -207,12 +224,7 @@ export class Controls {
       } else {
         this.orbiting = true;
         // Long-press on empty space is the capture gesture.
-        cancelLp();
-        this.lpTimer = window.setTimeout(() => {
-          this.lpTimer = null; this.orbiting = false;
-          this.hooks.onGestureFired('longpress', 'Quick-add into holding');
-          this.hooks.onQuickAdd({ x, y });
-        }, 500);
+        this.lp = { x, y, at: this.now() };
       }
     }, { passive: false });
 
@@ -243,7 +255,8 @@ export class Controls {
     el.addEventListener('touchend', e => {
       e.preventDefault();
       cancelLp();
-      const moved = this.dragging !== null;
+      const moved = this.dragging !== null || this.lpFired;
+      this.lpFired = false;
       const now = performance.now();
       const t = e.changedTouches[0];
       const [x, y] = this.toCanvas(el, t.clientX, t.clientY);

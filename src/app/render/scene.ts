@@ -60,8 +60,10 @@ export class Scene {
   constructor(readonly canvas: HTMLCanvasElement, fontMeta: FontMeta, atlas: THREE.Texture) {
     THREE.ColorManagement.enabled = false;
     this.renderer = new THREE.WebGLRenderer({
-      canvas, antialias: true, alpha: false, powerPreference: 'high-performance',
-      preserveDrawingBuffer: true,
+      // MSAA on a CPU rasteriser costs more than it buys: node rings and SDF
+      // text are already analytically antialiased in their own shaders.
+      canvas, antialias: false, alpha: false, powerPreference: 'high-performance',
+      preserveDrawingBuffer: false,
     });
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     this.renderer.setPixelRatio(1);
