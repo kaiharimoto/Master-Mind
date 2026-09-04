@@ -48,19 +48,20 @@ export async function openBrowser(extraArgs = []) {
 
 export async function openApp(browser, S, {
   surface = 'windows', map = 'map-fermentation', width = 1920, height = 1080,
-  account = 'kai@master-mind.local', actor = null, lens = null, fresh = true,
+  account = 'kai@master-mind.local', actor = null, lens = null, touch = false,
+  camera = false,
 } = {}) {
   const ctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1,
-    permissions: [], bypassCSP: true });
-  if (fresh) await ctx.clearCookies();
+    hasTouch: touch, isMobile: false, permissions: camera ? ['camera'] : [], bypassCSP: true });
   await ctx.addInitScript(INIT);
   const page = await ctx.newPage();
   const errs = [];
   page.on('pageerror', e => errs.push(e.message));
-  page.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 200)); });
-  const q = `&surface=${surface}&map=${map}&account=${encodeURIComponent(account)}` +
-            (actor ? `&actor=${encodeURIComponent(actor)}` : `&actor=${surface}-fixed`);
-  await page.goto(S.url(q).replace('index.html?', `index.html?map=${map}&`));
+  page.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 220)); });
+  const url = `http://127.0.0.1:${S.httpPort}/index.html?port=${S.wsPort}` +
+    `&surface=${surface}&map=${encodeURIComponent(map)}` +
+    `&account=${encodeURIComponent(account)}&actor=${encodeURIComponent(actor || surface + '-fixed')}`;
+  await page.goto(url);
   await page.waitForFunction(() => window.mm && window.mm.ready, null, { timeout: 60000 });
   const cdp = await ctx.newCDPSession(page);
   if (lens) await page.evaluate(l => window.mm.setLens(l), lens);

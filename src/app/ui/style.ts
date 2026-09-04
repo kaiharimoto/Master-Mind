@@ -90,11 +90,15 @@ tr.map:hover{background:var(--panel)}
 #toast.show{display:block}
 #toast.bad{border-color:var(--bad);color:var(--bad)}
 
+#argyro{position:fixed;right:12px;bottom:12px;z-index:25;background:var(--panel);border:1px solid var(--line);
+  padding:7px 11px;font-size:11px;letter-spacing:.4px;color:var(--ink-dim);display:none}
+#argyro.show{display:block}
+#argyro b{color:var(--ink);font-family:"DejaVu Sans Mono",monospace}
 #lenstag{position:fixed;left:12px;bottom:12px;z-index:24;background:var(--panel);
   border:1px solid var(--line);padding:6px 10px;font-size:11px;letter-spacing:.5px;color:var(--ink-dim)}
 #lenstag b{color:var(--ink);text-transform:uppercase;letter-spacing:.8px}
 
-#tools{position:fixed;left:50%;transform:translateX(-50%);bottom:66px;z-index:26;display:none;gap:6px}
+#tools{position:fixed;left:212px;bottom:12px;z-index:26;display:none;gap:6px}
 #tools.show{display:flex}
 #tools button{min-width:78px}
 .mono{font-family:"DejaVu Sans Mono",monospace;font-size:11px}

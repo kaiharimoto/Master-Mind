@@ -64,6 +64,7 @@ export class App {
   private raf = 0;
   private lastGesture = { id: '', detail: '', at: 0 };
   private handGrab: { ids: NodeId[]; x: number; y: number } | null = null;
+  private gyro: { alpha: number; beta: number; gamma: number } | null = null;
 
   constructor(surface: Surface) { this.surface = surface; }
 
@@ -122,12 +123,15 @@ export class App {
       <span class="sp"></span>
       <input id="search" data-t="search" placeholder="search this map…">
       <span class="chip" data-t="holding-chip">holding <b data-t="holding-count">0</b></span>
+      <button data-t="hands-chip" class="ghost" title="Hand tracking toggle and live status">Hands: off</button>
+      <button data-t="open-states" class="ghost">States</button>
       <button data-t="open-finder" class="ghost">Finder</button>
       <button data-t="open-maps" class="ghost">Maps</button>
       <button data-t="open-settings" class="ghost">Settings</button>`;
     document.body.append(top,
       el('div', { id: 'lenstag', 'data-t': 'lens-tag' }),
       el('div', { id: 'gesture', 'data-t': 'gesture-hud' }),
+      el('div', { id: 'argyro', 'data-t': 'ar-gyro' }),
       el('div', { id: 'toast', 'data-t': 'toast' }),
       el('div', { id: 'tools', 'data-t': 'tools' }));
 
@@ -135,6 +139,8 @@ export class App {
     $<HTMLInputElement>('#capture').addEventListener('keydown', e => {
       if (e.key === 'Enter') this.quickAdd($<HTMLInputElement>('#capture').value);
     });
+    $('[data-t=open-states]').addEventListener('click', () => this.toggleStates());
+    $('[data-t=hands-chip]').addEventListener('click', () => this.toggleHands(!this.handsOn));
     $('[data-t=open-maps]').addEventListener('click', () => this.openMapsHome());
     $('[data-t=open-settings]').addEventListener('click', () => this.openSettings());
     $('[data-t=open-finder]').addEventListener('click', () => this.toggleFinder());
@@ -152,7 +158,8 @@ export class App {
     // operable if tracking misbehaves live (§07/05).
     const tools = $('#tools');
     for (const p of HAND_VOCAB) {
-      const b = el('button', { 'data-t': `tool-${p.id}`, title: p.mouse }, p.name.replace('Closed ', '').replace('Gathered hand', 'Gather').replace('Open palm', 'Spread'));
+      const SHORT: Record<string, string> = { fist: 'Grab', spread: 'Spread', gather: 'Gather', two: 'Select' };
+      const b = el('button', { 'data-t': `tool-${p.id}`, title: `${p.name} — ${p.mouse}` }, SHORT[p.id] ?? p.name);
       b.addEventListener('click', () => this.runHandOperation(p.id, true));
       tools.appendChild(b);
     }
@@ -172,7 +179,9 @@ export class App {
     // DeviceOrientationEvent; nothing else feeds the camera in AR.
     window.addEventListener('deviceorientation', (e) => {
       if (this.lens !== 'ar' || e.alpha === null) return;
-      this.controls.applyOrientation(e.alpha ?? 0, e.beta ?? 90, e.gamma ?? 0);
+      this.gyro = { alpha: e.alpha ?? 0, beta: e.beta ?? 90, gamma: e.gamma ?? 0 };
+      this.controls.applyOrientation(this.gyro.alpha, this.gyro.beta, this.gyro.gamma);
+      this.renderGyro();
     });
   }
 
@@ -189,7 +198,20 @@ export class App {
       `<b>${this.surface === 'windows' ? 'Windows' : 'Android'}</b> · <b>${k === 'expansion' ? 'mind expansion' : k}</b>` +
       (k === 'ar' ? ' · gyro-oriented' : '');
     if (k === 'expansion') this.frameAll();
+    this.renderGyro();
     this.scene.markDirty();
+  }
+
+  /** Live orientation readout: what the AR lens is actually being pointed at. */
+  private renderGyro() {
+    const g = document.getElementById('argyro');
+    if (!g) return;
+    g.classList.toggle('show', this.lens === 'ar');
+    if (this.lens !== 'ar') return;
+    const o = this.gyro;
+    g.innerHTML = o
+      ? `gyro live · heading <b>${o.alpha.toFixed(0)}°</b> · tilt <b>${o.beta.toFixed(0)}°</b> · roll <b>${o.gamma.toFixed(0)}°</b>`
+      : 'gyro · waiting for orientation';
   }
 
   frameAll(margin = 1.04) {
@@ -242,8 +264,13 @@ export class App {
 
   async toggleHands(on: boolean) {
     this.handsOn = on;
+    // The panel carries the <video> the tracker attaches the stream to, so it
+    // has to exist before the tracker starts.
+    this.renderHandPanel();
     if (on) {
-      try { await this.hands.start($<HTMLVideoElement>('#handvid')); }
+      const v = document.getElementById('handvid') as HTMLVideoElement | null;
+      if (!v) { this.handsOn = false; this.toast('Hand tracking unavailable: no video surface', true); return; }
+      try { await this.hands.start(v); }
       catch (e) { this.handsOn = false; this.toast(`Hand tracking unavailable: ${(e as Error).message}`, true); }
     } else this.hands.stop();
     this.renderHandPanel();
@@ -527,10 +554,42 @@ export class App {
       $('[data-t=hand-geom]', p).textContent =
         `tips out ${f.reach}  fan ${f.spreadRatio.toFixed(2)}  extended ${f.extended}  conf ${f.confidence.toFixed(2)}`;
     }
+    // The same toggle and the same live status, surfaced in the top bar so the
+    // map and the tracker's state can be read in one glance.
+    const chip = document.querySelector('[data-t=hands-chip]');
+    if (chip) {
+      const f = this.hands.frame;
+      const v2 = HAND_VOCAB.find(h => h.id === f.pose);
+      chip.textContent = `Hands: ${this.handsOn ? 'on' : 'off'}` +
+        (this.handsOn ? ` · ${this.hands.status}${f.present && v2 ? ` · ${v2.name}` : ''}` : '');
+      chip.classList.toggle('on', this.handsOn && this.hands.enabled);
+    }
     const b = document.querySelector('[data-t=hand-toggle]');
     if (b) { b.textContent = `Hand tracking: ${this.handsOn ? 'on' : 'off'}`; b.classList.toggle('on', this.handsOn); }
     const st = document.querySelector('[data-t=hand-status]');
     if (st) st.textContent = `status: ${this.hands.status}` + (this.hands.frame.present ? ` · ${this.hands.frame.pose}` : '');
+  }
+
+  /** The node-state legend. The five signatures, named, so the map's language
+   *  is learnable without leaving the canvas. */
+  toggleStates() {
+    const p = document.getElementById('states');
+    if (p) { p.remove(); return; }
+    const rows: [string, string, string][] = [
+      ['Plain',                  'bare core, quiet',                    'placed, nothing selected near it'],
+      ['Connected to selection', 'one thin outer ring',                 'linked to the node you have selected'],
+      ['Unplaced, in holding',   'dashed ring, slow pulse of light',    'captured but not yet given a home'],
+      ['Search hit',             'four ticks at north, east, south, west', 'matches the current search'],
+      ['Selected',               'solid heavy ring',                    'the node you are working on'],
+    ];
+    const n = el('div', { class: 'panel', id: 'states', 'data-t': 'states-legend',
+                          style: 'top:56px;left:12px;width:590px;padding:12px' });
+    n.innerHTML = `<h3 style="margin:0 0 8px;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-dim)">Node states</h3>
+      <table>${rows.map(([a, b, c]) => `<tr><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td class="num">${esc(c)}</td></tr>`).join('')}</table>
+      <div class="note">Brightness rises down this list; every state also carries its own ring, so the two read together.</div>
+      <div class="row"><button data-t="states-close">Close</button></div>`;
+    document.body.appendChild(n);
+    $('[data-t=states-close]', n).addEventListener('click', () => n.remove());
   }
 
   // -- finder --------------------------------------------------------------

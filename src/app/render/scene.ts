@@ -27,7 +27,7 @@ export const LENS_PROFILE: Record<LensKind, LensProfile> = {
   // Whole-brain: everything on screen at once and still legible at 100+ nodes.
   expansion: { nodeMinPx: 15, nodeMaxPx: 90,  textMinPx: 11.5, textMaxPx: 22, textPerLine: 26, textLines: 1, fadeStart: 90, fadeEnd: 420, fov: 46 },
   // AR: a view-first lens; text a little larger for a handheld surface.
-  ar:        { nodeMinPx: 16, nodeMaxPx: 96,  textMinPx: 14.0, textMaxPx: 28, textPerLine: 20, textLines: 2, fadeStart: 34, fadeEnd: 190, fov: 62 },
+  ar:        { nodeMinPx: 16, nodeMaxPx: 96,  textMinPx: 13.0, textMaxPx: 21, textPerLine: 24, textLines: 1, fadeStart: 34, fadeEnd: 190, fov: 62 },
 };
 
 /** Node size varies with connection degree — a real signal, not decoration. */
