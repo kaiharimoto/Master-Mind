@@ -11,9 +11,10 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 |---|---|
 | Phase | review |
 | Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
-| Review cycle | 1 captured; critics running |
-| Rubric score | not yet scored by any critic |
+| Review cycle | 2 captured and frozen; critics running |
+| Rubric score | **85 / 100** at cycle 1 — no category below its minimum, both hard gates met |
 | Artifacts captured | **20 of 20, all as defined** |
+| Cold start | **passed** — 161 positions verified against the committed fixtures as model values |
 
 ## Completed
 
@@ -71,8 +72,30 @@ stationary press being treated as a drag; the long-press timer never cancelling
 during an orbit; the packaged Electron path bug; the DevTools sensor override
 not delivering orientation (F-014).*
 
+## Cycle 1 result
+
+| Category | Score | Weight | Minimum |
+|---|---:|---:|---:|
+| 01 Core workflow | 21 | 25 | 20 |
+| 02 Landmarks live | 20 | 25 | 20 |
+| 03 One model and sacred positions (hard gate) | 18 | 20 | 17 |
+| 04 Evidence and report integrity (hard gate) | 13.5 | 15 | 13.5 |
+| 05 Quality compliance | 8 | 10 | 8 |
+| 06 Finder round-trip | 4.5 | 5 | 4 |
+| **Total** | **85** | **100** | |
+
+Regression-free, no position regression. Nineteen findings across the three
+critics; every one is recorded in `report.md` with what was done. All are fixed
+in cycle 2 except one that was a recapture rather than a code change.
+
+The Art Director ruled the delegated organic-versus-holographic question:
+**organic-bioluminescent**, recorded in `DIRECTION.md` D-004 and not reopened.
+
 ## NEXT ACTION
 
-Recapture artifact 17 with the bounded hand zoom, then read the three critic
-reports for cycle 1, record their scores and findings in `report.md`, and open
-cycle 2 against the worst-scoring category.
+Read the three cycle-2 critic reports, record scores and findings in
+`report.md`, and open cycle 3 against whichever category is furthest from its
+weight. The gap to the 90/100 exit threshold is 5 points, and the cycle-1
+findings driving it — label collision at whole-brain zoom, AR shown only as a
+still, the missing cross-surface position edit, the missing placement
+acceptance — are all addressed in the cycle-2 set.
