@@ -26,15 +26,22 @@ export const SCREEN_OF = (page, id) => page.evaluate(i => {
   return s ? { x: s.x, y: s.y, r: s.r } : null;
 }, id);
 
-/** Real gyro: browser sensor override where available, a real DOM event otherwise. */
+/**
+ * Real gyro. The browser's sensor override is tried first; if the app does not
+ * actually receive an orientation from it, a real DeviceOrientationEvent is
+ * dispatched instead. Either way the app's own `deviceorientation` listener is
+ * what moves the camera - nothing writes the pose directly.
+ */
 export async function orient(page, cdp, { alpha, beta, gamma }) {
-  try {
-    await cdp.send('DeviceOrientation.setDeviceOrientationOverride', { alpha, beta, gamma });
-  } catch {
-    await page.evaluate(o => window.dispatchEvent(
-      new DeviceOrientationEvent('deviceorientation', { alpha: o.alpha, beta: o.beta, gamma: o.gamma, absolute: true })
-    ), { alpha, beta, gamma });
-  }
+  // The browser's sensor override is asked for first, but it does not deliver
+  // deviceorientation events in this headless build, so a real
+  // DeviceOrientationEvent is always dispatched as well. The app's own
+  // listener is what moves the camera either way; nothing writes the pose.
+  try { await cdp.send('DeviceOrientation.setDeviceOrientationOverride', { alpha, beta, gamma }); }
+  catch { /* the DOM event below is the path that actually carries it */ }
+  await page.evaluate(o => window.dispatchEvent(new DeviceOrientationEvent('deviceorientation',
+    { alpha: o.alpha, beta: o.beta, gamma: o.gamma, absolute: true })), { alpha, beta, gamma });
+  return page.evaluate(() => (window.mm.gyro ? { ...window.mm.gyro } : null));
 }
 
 /** Touch primitives dispatched through the browser's real input pipeline. */

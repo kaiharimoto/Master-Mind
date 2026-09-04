@@ -37,8 +37,18 @@ async function ssimImages(a, b) {
   return m ? Number(m[1]) : null;
 }
 
+/**
+ * Videos are diffed through their contact sheets — the same 20 timestamped
+ * frames a critic inspects. Decoding two full takes frame by frame costs
+ * minutes per artifact on a CPU-only box and tells you nothing the sheets do
+ * not. Duration and frame rate are compared exactly, separately.
+ */
 async function ssimVideos(a, b) {
-  const r = await run('ffmpeg', ['-i', a, '-i', b, '-lavfi', 'ssim', '-f', 'null', '-']);
+  const sa = a.replace(/([^/]+)\.mp4$/, 'sheets/$1_sheet.png');
+  const sb = b.replace(/([^/]+)\.mp4$/, 'sheets/$1_sheet.png');
+  if (existsSync(sa) && existsSync(sb)) return ssimImages(sa, sb);
+  const r = await run('ffmpeg', ['-i', a, '-i', b, '-lavfi',
+    'ssim', '-t', '4', '-f', 'null', '-']);
   const m = /All:([0-9.]+)/.exec(r.err);
   return m ? Number(m[1]) : null;
 }

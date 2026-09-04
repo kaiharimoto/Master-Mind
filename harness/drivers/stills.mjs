@@ -53,20 +53,27 @@ export default [
     // Cold start: the sync service's live data directory is wiped before this
     // driver runs, so the map is read fresh from the committed seed fixture.
     const { page, cdp } = await H.app({ surface: 'android', lens: 'ar', width: 2560, height: 1440, touch: true });
-    await orient(page, cdp, { alpha: 38, beta: 74, gamma: 4 });
-    await FRAME_ALL(page, 1.06);
-    // Drop the vantage so the districts fill the upper frame and the holding
-    // cluster sits in the lower frame, as the artifact requires.
-    await page.evaluate(() => {
-      const p = window.mm.scene.pose;
-      const h = window.mm.store.doc.holding;
-      p.target.y = (p.target.y + h.origin[1]) / 2 - 1;
-      p.dist *= 0.86;
-    });
+    // Two orientations, as a real handheld surface produces: the first
+    // establishes the neutral hold, the second is the user turning the device.
+    // The camera moves only through the app's own deviceorientation listener.
+    const poseBefore = await page.evaluate(() => ({ yaw: +window.mm.scene.pose.yaw.toFixed(3),
+                                                    pitch: +window.mm.scene.pose.pitch.toFixed(3) }));
+    await orient(page, cdp, { alpha: 0, beta: 90, gamma: 0 });
+    const received = await orient(page, cdp, { alpha: 34, beta: 62, gamma: 6 });
+    // Frame every node, then settle the vantage a little low so the districts
+    // fill the upper frame and the holding cluster sits in the lower frame.
+    // fitAll already includes the holding cluster, so no extra shift is needed:
+    // pulling the target down only opened a dead band under the map.
+    await FRAME_ALL(page, 1.05);
     await sleepFrames(page, 0, 4);
     await H.shot(page, cdp, H.out(this.file));
     const st = await H.modelStats(page);
-    return { ...st, gyro: { alpha: 38, beta: 74, gamma: 4 } };
+    const pose = await page.evaluate(() => ({ yaw: +window.mm.scene.pose.yaw.toFixed(3),
+                                              pitch: +window.mm.scene.pose.pitch.toFixed(3) }));
+    return { ...st, gyroNeutral: { alpha: 0, beta: 90, gamma: 0 },
+             gyroSent: { alpha: 34, beta: 62, gamma: 6 }, gyroReceivedByApp: received,
+             poseBefore, pose,
+             gyroDroveTheView: !!received && (poseBefore.yaw !== pose.yaw || poseBefore.pitch !== pose.pitch) };
   },
 },
 {

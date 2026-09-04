@@ -211,7 +211,10 @@ export default [
     // Cluster arrangement before any grab, so the video's claim is checkable.
     const before = await H.clusterShape(page, 'Koji');
     const steps = [
-      { at: 780, fn: async () => { await page.click('[data-t=hands-chip]'); } },   // tracking OFF
+      // Tracking off, then reframe so the mouse-only tail is shown on a
+      // composed map rather than wherever the last gesture left the camera.
+      { at: 780, fn: async () => { await page.click('[data-t=hands-chip]'); } },
+      { at: 795, fn: async () => page.evaluate(() => window.mm.frameAll(1.02)) },
       { at: 810, fn: async () => page.click('[data-t=tool-fist]') },
       { at: 870, fn: async () => page.click('[data-t=tool-spread]') },
       { at: 930, fn: async () => page.click('[data-t=tool-gather]') },

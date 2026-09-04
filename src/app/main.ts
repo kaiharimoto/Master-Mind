@@ -64,7 +64,10 @@ export class App {
   private raf = 0;
   private lastGesture = { id: '', detail: '', at: 0 };
   private handGrab: { ids: NodeId[]; x: number; y: number } | null = null;
-  private gyro: { alpha: number; beta: number; gamma: number } | null = null;
+  /** Rate limit for continuous hand operations, on the app clock. */
+  private lastHandOp = 0;
+  /** Last orientation the app actually received. Public so a capture can verify it. */
+  gyro: { alpha: number; beta: number; gamma: number } | null = null;
 
   constructor(surface: Surface) { this.surface = surface; }
 
@@ -218,6 +221,10 @@ export class App {
     const f = this.scene.fitAll(nodeList(this.store.doc), margin);
     this.scene.pose.target.copy(f.target);
     this.scene.pose.dist = f.dist;
+    // Bound how far any continuous input can travel from a framed view, so a
+    // held gesture cannot walk the camera off the map.
+    this.controls.minDist = Math.max(f.dist * 0.22, 4);
+    this.controls.maxDist = f.dist * 2.1;
   }
 
   resize() {
@@ -291,9 +298,16 @@ export class App {
   runHandOperation(pose: Exclude<HandPoseId, 'none'>, byMouse: boolean, f?: HandFrame) {
     const p = HAND_VOCAB.find(h => h.id === pose)!;
     this.showGesture(byMouse ? `mouse:${pose}` : pose, p.operation.split(' — ')[0]);
-    if (pose === 'spread') this.controls.zoom(byMouse ? 1 / 1.12 : 0.985);
-    else if (pose === 'gather') this.controls.zoom(byMouse ? 1.12 : 1.015);
-    else if (pose === 'two') {
+    // A held pose is a continuous instruction, not a per-frame one: applying it
+    // every frame would walk the camera off the map within a second or two.
+    const now = this.now();
+    const throttled = !byMouse && now - this.lastHandOp < 250;
+    if (pose === 'spread' || pose === 'gather') {
+      if (throttled) return;
+      this.lastHandOp = now;
+      this.controls.zoom(pose === 'spread' ? (byMouse ? 1 / 1.12 : 0.985)
+                                           : (byMouse ? 1.12 : 1.015));
+    } else if (pose === 'two') {
       const c = this.scene.renderer.domElement;
       const sx = f ? (1 - f.x) * c.width : c.width / 2, sy = f ? f.y * c.height : c.height / 2;
       this.select(this.scene.pick(sx, sy, 26));
@@ -301,7 +315,9 @@ export class App {
       const c = this.scene.renderer.domElement;
       const sx = f ? (1 - f.x) * c.width : c.width / 2, sy = f ? f.y * c.height : c.height / 2;
       if (!this.handGrab) {
-        const id = this.scene.pick(sx, sy, 90) ?? this.selected;
+        // Only grab what the hand is actually over. A fist in empty space does
+        // nothing, rather than dragging whatever happened to be selected.
+        const id = this.scene.pick(sx, sy, 70);
         if (!id) return;
         this.handGrab = { ids: this.controls.clusterOf(id), x: sx, y: sy };
         return;

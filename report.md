@@ -156,6 +156,18 @@ The Android SDK is installed non-interactively (licences accepted by piping
 
 The Windows binary also **runs** (F-007). The APK does not and cannot: F-003.
 
+**F-014 · Chromium's DevTools sensor override does not deliver orientation here.**
+`DeviceOrientation.setDeviceOrientationOverride` is accepted by the browser but
+no `deviceorientation` event reaches the page in this headless build — verified
+by asking the app what it had received after the call (it had received nothing).
+**Substitution:** the harness dispatches a real `DeviceOrientationEvent`, and
+the app's own `deviceorientation` listener is what moves the camera. Nothing
+writes the camera pose directly. Artifact 03 records the orientation sent, the
+orientation the app reports receiving, and the pose before and after, so the
+claim "gyro-oriented" is checkable rather than asserted: the vantage moves from
+yaw 0.600 / pitch 0.220 to yaw 0.007 / pitch −0.269 purely through that
+listener. **Verified.**
+
 **F-008 · Capture toolchain is present and sufficient.**
 Chromium 1194 with WebGL2 under SwiftShader (verified by a live probe returning
 `WebGL 2.0 (OpenGL ES 3.0 Chromium)`), Playwright 1.56.1, a Playwright-bundled

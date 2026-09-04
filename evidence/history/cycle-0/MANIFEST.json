@@ -1,0 +1,74 @@
+{
+  "cycle": 0,
+  "seed": {
+    "epoch": 1787227200000,
+    "rng": 1296913221,
+    "fps": 30
+  },
+  "startedAt": "2026-09-04T18:58:08.804Z",
+  "artifacts": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "title": "Maps home",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 2,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 151947,
+        "sha256": "df5fe0809abdf887c065298fdc2e29681a6e636ab901361003dd9586020b0ea3"
+      },
+      "result": {
+        "maps": {
+          "map-talk": 11,
+          "map-fermentation": 150
+        },
+        "note": "create/rename/delete driven through the real buttons; three states composited"
+      },
+      "pageErrors": []
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "title": "Placement end-state",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.7,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 193910,
+        "sha256": "5e6dad50551bcadc877c11afa04939a880794fb4adfeae6998b63be18fbffbb3"
+      },
+      "result": {
+        "node": "Steal the parking-lot bit",
+        "beforeCount": 4,
+        "afterCount": 3,
+        "placed": true,
+        "beforePos": [
+          2.056,
+          -10.26,
+          3.869
+        ],
+        "afterPos": [
+          5.477644722998346,
+          -4.037178722118398,
+          2.1043416418594205
+        ],
+        "stableAfterDrop": true
+      },
+      "pageErrors": []
+    }
+  ],
+  "finishedAt": "2026-09-04T18:58:13.904Z",
+  "captured": 2,
+  "total": 20
+}

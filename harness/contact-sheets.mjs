@@ -2,7 +2,7 @@
 // Video artifacts are judged from their frames. This lays each video out as a
 // timestamped contact sheet so a critic can inspect what the take actually
 // shows, rather than take anyone's word for it.
-import { readdirSync, mkdirSync, existsSync } from 'node:fs';
+import { readdirSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
@@ -24,16 +24,21 @@ export async function sheet(video, out, { cols = 4, rows = 5 } = {}) {
     p.stdout.on('data', d => o += d);
     p.on('close', () => res(Number(o.trim()) || 1));
   });
-  const step = dur / n;
-  // Sample n frames evenly, stamp each with its timestamp, tile them.
+  // Grab each frame with an INPUT seek — decoding the whole file to sample 20
+  // frames costs minutes on a CPU-only box, seeking costs seconds.
   const font = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
-  await sh(['-y', '-i', video, '-vf',
-    `select='not(mod(n\\,${Math.max(1, Math.floor(dur * 30 / n))}))',` +
-    `scale=480:270,` +
-    `drawtext=fontfile=${font}:text='%{eif\\:t\\:d}s':x=8:y=8:fontsize=22:fontcolor=0xEFE6D8:box=1:boxcolor=0x120E0B@0.85:boxborderw=6,` +
-    `tile=${cols}x${rows}:margin=6:padding=4:color=0x120E0B`,
-    '-frames:v', '1', '-vsync', '0', out]);
-  void step;
+  const tmp = out + '.frames';
+  mkdirSync(tmp, { recursive: true });
+  const times = Array.from({ length: n }, (_, i) => (i + 0.5) * (dur / n));
+  await Promise.all(times.map((t, i) => sh(['-y', '-ss', t.toFixed(3), '-i', video,
+    '-frames:v', '1', '-vf',
+    `scale=480:270,drawtext=fontfile=${font}:text='${t.toFixed(1)}s':x=8:y=8:` +
+    `fontsize=22:fontcolor=0xEFE6D8:box=1:boxcolor=0x120E0B@0.85:boxborderw=6`,
+    join(tmp, `f${String(i).padStart(3, '0')}.png`)])));
+  await sh(['-y', '-framerate', '1', '-i', join(tmp, 'f%03d.png'),
+    '-vf', `tile=${cols}x${rows}:margin=6:padding=4:color=0x120E0B`,
+    '-frames:v', '1', out]);
+  rmSync(tmp, { recursive: true, force: true });
   return out;
 }
 
