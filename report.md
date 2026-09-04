@@ -431,6 +431,73 @@ Cycle 2 therefore fails the exit condition on two counts: 86.1 is below the
 started. No critic score has been altered by the builder.
 
 
+## Cycle 3 — what changed, and what it cost
+
+Cycle 3 is a repair cycle. The Auditor declared cycle 2 not regression-free on
+the twin composite, and the Art Director found the same class of loss in
+artifact 04; both are recovered here, along with every other finding from the
+three cycle-2 critics. **20/20 captured as defined. Positions IDENTICAL** —
+`positions.json` is byte-identical to cycles 1 and 2, so three full rebuilds
+have moved nothing.
+
+**The renderer.** Two critics reported label collisions in a cycle that had
+already shipped a deconflictor, which meant the deconflictor was wrong rather
+than absent. It was: it modelled label rectangles from a line count and an
+assumed gap, and that model sat up to 1.4 em from the glyphs actually drawn
+(F-015). Runs now carry their exact extent, measured during the build in the
+shader's own space. On top of the corrected geometry the arbiter re-anchors
+before it dims — nine placements around the label's own node — and reserves full
+brightness for a label that overlaps *nothing* already accepted.
+
+Measured on the 150-node map at whole-map framing:
+
+| | cycle 2 rule | cycle 3 rule |
+|---|---:|---:|
+| labels at full brightness | 81 | 70 |
+| **bright-on-bright overlaps** | **8** | **0** |
+| overlapping pairs among all legible labels | 42 | 18 |
+| worst single overlap | 254 px² | 137 px² |
+
+Eleven labels lost their full brightness. That is the price of the invariant and
+it is worth stating plainly rather than reporting only the improvement.
+
+**Framing.** `fitAll` now bounds the placed nodes together with the holding
+ring's own radius, and reserves the measured height and width of the chrome —
+the bars *and any open panel* — before solving for distance. An open panel is
+chrome: a map framed to the whole viewport with the editor open is a map with a
+region behind a panel, which is exactly how cycle 2 lost the holding ring from
+08 and put the far end of 09's new filament off the edge. Three artifacts now
+**assert** what they are meant to show and fail the capture otherwise:
+
+- **08** throws unless the whole dashed holding ring is inside the visible band,
+  and unless the dropped node lands clear of the editor.
+- **09** throws unless both named nodes are in the band the editor leaves.
+- **11 / 12** throw if any node is within 4 px of a frame edge in either half.
+
+**The twin.** The camera is framed once, captured as an explicit pose and
+restored before every shot on both halves, so 11 and 12 superpose. Each half
+carries a provenance line read from its own running process. In this run:
+
+```
+Windows — electron 33.4.11 · Win32 · wine · the built binary · socket #1 on 127.0.0.1:8871
+Android — chromium 141.0.7390.37 · Linux x86_64 · android device profile · touch · socket #2
+```
+
+Two runtimes, two sockets, one sync service (pid 5461). If the Wine binary fails
+to come up the strip reads `FALLBACK — NOT the built binary`, so the artifact
+cannot over-claim by silently degrading.
+
+**Evidence integrity.** `DIFF.json` derives the previous cycle from the snapshot
+directory and the previous count from the artifact files on disk, keeps the old
+manifest's self-description alongside, and reports a disagreement rather than
+correcting it silently. This cycle: `previousCycle 2`, `capturedPrev 20`,
+`headerDisagreement: null`, `rowsVsCapturedPrev: ok`. Every driver now declares
+what its artifact demonstrates and hashes its capture function, so from cycle 4
+a diff can name a changed lens, surface, subject or script instead of reporting
+a bare similarity number. And the harness builds the app before capturing
+anything and records the bundle hash (F-016) — nothing did this before, and a
+capture could run against a bundle older than the code it claimed to show.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
