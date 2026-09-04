@@ -38,7 +38,10 @@ export default [
   id: '08', file: '08_placement_endstate.png', kind: 'png', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Placement end-state',
   async run(H) {
-    const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-talk' });
+    // Captured at the panel's own size so the composite needs no downscaling:
+    // both halves are full resolution and the holding count stays readable.
+    const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-talk',
+                                        width: 960, height: 1080 });
     await POSE(page, { yaw: 0.28, pitch: 0.12 });
     await FRAME_ALL(page, 1.12);
     const id = await NODE_ID(page, 'Steal the parking-lot bit');
@@ -49,7 +52,7 @@ export default [
     const a = await H.tmpShot(page, cdp, '08a');
 
     const from = await SCREEN_OF(page, id);
-    const to = { x: from.x + 300, y: from.y - 330 };
+    const to = { x: from.x + 200, y: from.y - 330 };
     await page.mouse.move(from.x, from.y);
     await page.mouse.down();
     for (let k = 1; k <= 14; k++) {

@@ -126,14 +126,17 @@ export async function compose(inputs, out, { mode = 'h', labels = null, width = 
   const cellH = mode === 'h' ? height : Math.floor(height / n);
   const args = ['-y'];
   for (const i of inputs) args.push('-i', i);
+  // Labels live in a strip ABOVE each panel so they never cover the interface
+  // the panel is meant to show.
+  const strip = labels ? 46 : 0;
   const parts = [];
   for (let i = 0; i < n; i++) {
-    let f = `[${i}:v]scale=${cellW}:${cellH}:force_original_aspect_ratio=decrease,` +
-            `pad=${cellW}:${cellH}:(ow-iw)/2:(oh-ih)/2:color=0x120E0B`;
+    let f = `[${i}:v]scale=${cellW}:${cellH - strip}:force_original_aspect_ratio=decrease,` +
+            `pad=${cellW}:${cellH}:(ow-iw)/2:${strip}:color=0x120E0B`;
     if (labels && labels[i]) {
-      const txt = labels[i].replace(/[\\:']/g, m => '\\' + m);
+      const txt = String(labels[i]).replace(/[\\:']/g, m => '\\' + m);
       f += `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:` +
-           `text='${txt}':x=18:y=14:fontsize=24:fontcolor=0xEFE6D8:box=1:boxcolor=0x191410@0.94:boxborderw=10`;
+           `text='${txt}':x=20:y=12:fontsize=23:fontcolor=0xEFE6D8`;
     }
     parts.push(`${f}[v${i}]`);
   }

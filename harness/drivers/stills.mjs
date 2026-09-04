@@ -15,13 +15,16 @@ export default [
     await page.fill('[data-t=maps-new-name]', 'Sprint retro');
     await page.click('[data-t=maps-create]');
     await page.waitForFunction(() => document.body.innerText.includes('Sprint retro'), null, { timeout: 15000 });
+    await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const a = await H.tmpShot(page, cdp, '01a');
     const id = await page.evaluate(() => (window.mm.maps.find(m => m.name === 'Sprint retro') || {}).id);
     await page.evaluate(i => window.mm.sync.request({ t: 'maps.rename', id: i, name: 'Retro — sprint 14' }), id);
     await page.waitForFunction(() => document.body.innerText.includes('Retro — sprint 14'), null, { timeout: 15000 });
+    await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const b = await H.tmpShot(page, cdp, '01b');
     await page.evaluate(i => window.mm.sync.request({ t: 'maps.delete', id: i }), id);
     await page.waitForFunction(() => !document.body.innerText.includes('Retro — sprint 14'), null, { timeout: 15000 });
+    await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const c = await H.tmpShot(page, cdp, '01c');
     const crop = async (src, tag) => H.crop(src, H.tmp(`01-${tag}.png`), 0, 40, 1920, 360);
     const panels = [await crop(a, 'a'), await crop(b, 'b'), await crop(c, 'c')];
