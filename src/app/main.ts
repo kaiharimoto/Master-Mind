@@ -256,6 +256,21 @@ export class App {
              left: Math.min(left / w, 0.38), right: Math.min(right / w, 0.38) };
   }
 
+  /**
+   * Frame a chosen set of nodes rather than the whole map, in the band the open
+   * panels leave. Framing everything and then panning to clear a panel centres
+   * the MAP in that band, which is not the same as putting the two nodes you
+   * are working on in it.
+   */
+  frameNodes(ids: NodeId[], margin = 1.3) {
+    const doc = this.store.doc;
+    const ns = ids.map(i => doc.nodes[i]).filter(Boolean);
+    if (!ns.length) return;
+    const f = this.scene.fitAll(ns, margin, this.safeInsets(), false);
+    this.scene.pose.target.copy(f.target);
+    this.scene.pose.dist = f.dist;
+  }
+
   frameAll(margin = 1.04) {
     const f = this.scene.fitAll(nodeList(this.store.doc), margin, this.safeInsets());
     this.scene.pose.target.copy(f.target);

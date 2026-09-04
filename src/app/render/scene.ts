@@ -460,7 +460,8 @@ export class Scene {
    * over-estimates badly for a map that is wide and flat.
    */
   fitAll(nodes: MMNode[] = this.doc ? nodeList(this.doc) : [], margin = 1.04,
-         insets: { top?: number; bottom?: number; left?: number; right?: number } = {}):
+         insets: { top?: number; bottom?: number; left?: number; right?: number } = {},
+         withHolding = true):
     { target: THREE.Vector3; dist: number } {
     if (!nodes.length) return { target: new THREE.Vector3(), dist: 60 };
     // The holding cluster is part of the map, and the dashed boundary is drawn
@@ -469,7 +470,9 @@ export class Scene {
     // both the Auditor and the Art Director called a regression. The ring's own
     // extent is fitted with the nodes.
     const pts: [number, number, number][] = nodes.map(n => [n.pos[0], n.pos[1], n.pos[2]]);
-    const H = this.doc?.holding;
+    // Only when the whole map is being framed. Fitting a chosen pair of nodes
+    // must not silently also fit the holding ring on the other side of the map.
+    const H = withHolding ? this.doc?.holding : null;
     if (H) {
       const [ox, oy, oz] = H.origin, r = H.radius;
       for (const [dx, dy, dz] of [[r, 0, 0], [-r, 0, 0], [0, r, 0], [0, -r, 0], [0, 0, r], [0, 0, -r]])

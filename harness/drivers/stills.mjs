@@ -173,13 +173,11 @@ export default [
     // measured, not guessed, and it throws rather than shipping a frame where
     // the thing being demonstrated is behind a panel.
     let framed = null;
-    for (const dist of [20, 26, 32, 40, 50]) {
-      await page.evaluate(({ a, b, dist }) => {
-        const d = window.mm.store.doc, na = d.nodes[a], nb = d.nodes[b], p = window.mm.scene.pose;
-        p.target.set((na.pos[0] + nb.pos[0]) / 2, (na.pos[1] + nb.pos[1]) / 2, (na.pos[2] + nb.pos[2]) / 2);
-        p.dist = dist;
-      }, { a, b, dist });
-      await page.evaluate(() => window.mm.clearOfPanels());
+    for (const margin of [1.5, 1.9, 2.4, 3.0, 3.8]) {
+      // Framed on the TWO nodes, in the band the editor leaves. Framing the
+      // whole map and then panning to clear the panel centres the map in that
+      // band, which is not the same as putting these two nodes in it.
+      await page.evaluate(({ a, b, margin }) => window.mm.frameNodes([a, b], margin), { a, b, margin });
       await sleepFrames(page, 0, 3);
       framed = await page.evaluate(({ a, b }) => {
         const ed = document.getElementById('editor');

@@ -16,3 +16,4 @@ src/.electron-cache/
 src/.mmdata/
 .capture-tmp/
 .capture-scratch/
+.toolchain/

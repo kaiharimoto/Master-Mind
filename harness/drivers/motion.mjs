@@ -90,7 +90,13 @@ export default [
     const a = await H.tmpShot(page, cdp, '08a');
 
     const from = await SCREEN_OF(page, id);
-    const to = { x: from.x + 200, y: from.y - 330 };
+    // Dropped clear of the editor panel: a node placed underneath the panel
+    // makes the artifact's own subject the one thing you cannot see.
+    const edLeft = await page.evaluate(() => {
+      const e = document.getElementById('editor');
+      return e ? e.getBoundingClientRect().left : window.innerWidth;
+    });
+    const to = { x: Math.min(from.x + 200, edLeft - 150), y: from.y - 330 };
     await page.mouse.move(from.x, from.y);
     await page.mouse.down();
     for (let k = 1; k <= 14; k++) {
@@ -99,6 +105,9 @@ export default [
     }
     await page.mouse.up();
     await sleepFrames(page, 0, 4);
+    const landed = await SCREEN_OF(page, id);
+    if (!landed || landed.x > edLeft - 60)
+      throw new Error(`08: the dropped node landed under the editor panel (x ${landed && landed.x} vs panel ${edLeft})`);
     const b = await H.tmpShot(page, cdp, '08b');
     await H.compose([a, b], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
       labels: [`Before — unplaced, waiting in holding (${beforeCount})`,
