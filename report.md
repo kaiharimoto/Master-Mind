@@ -498,6 +498,63 @@ a bare similarity number. And the harness builds the app before capturing
 anything and records the bundle hash (F-016) — nothing did this before, and a
 capture could run against a bundle older than the code it claimed to show.
 
+## Cycle 3 — the critics' findings and what was done
+
+**Total 88.0/100 · every category above its minimum · REGRESSION-FREE · no
+position regression.** 85 → 86.1 → 88.0. The Auditor, who alone makes the call,
+declared the cycle regression-free; all three critics independently reported no
+position regression, and `positions.json` is byte-identical across all four
+cycles.
+
+| Critic | Category | Cycle 2 | Cycle 3 | Weight | Minimum | |
+|---|---|---:|---:|---:|---:|---|
+| The Audience | 01 Core workflow | 21 | **22** | 25 | 20 | +1 |
+| The Audience | 02 Landmarks live | 22 | 22 | 25 | 20 | — |
+| The Auditor | 03 One model and sacred positions | 17 | **17.5** | 20 | 17 | +0.5 · **hard gate met** |
+| The Auditor | 04 Evidence and report integrity | 13 | **13.5** | 15 | 13 | +0.5 · **hard gate met** |
+| The Art Director | 05 Quality compliance | 8.5 | 8.5 | 10 | 8 | — |
+| The Art Director | 06 Finder round-trip | 4.6 | **4.5** | 5 | 4 | −0.1 |
+| | **Total** | 86.1 | **88.0** | 100 | | |
+
+Sixteen findings: none blocking, four major, twelve minor. Every one is recorded
+below with what happened to it.
+
+### The four major findings
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| H1 | Auditor · a17 | `clusterMoved: false, clusterInternalArrangementPreserved: false` sat inside a record whose status read `captured` with `error: null`, for **two consecutive cycles**, against a guarantee the settings reference states in words | **Fixed, and the answer is not what the finding assumed.** The grab always *did* translate the cluster rigidly: measured properly, the centroid travelled **17.28 units** and the maximum per-member drift across **16 members** is **exactly 0.000000**. What was broken was the *check*. It compared a single string of offsets rounded to three decimals, and used that one comparison to answer both "did the cluster move" (a question about the centroid, which a shape string cannot answer at all) and "was its arrangement kept". So it could answer neither, and it reported a false negative. **And the harness shipped it**, because verification only ever looked at resolution, frame rate and duration. Both questions are now measured as numbers with stated tolerances, sampled either side of the grab beat rather than at the ends of the take — and see the general fix below. |
+| H2 | Auditor · a02 | 02 and 04 — the two artifacts the rubric names as the continuous cross-cycle position instruments — were reframed between cycles: 0 of 93 and 1 of 123 node cores landed within 1.5 px of their previous pixels, so neither could be position-diffed from the frames | **Fixed exactly as prescribed.** Both cameras are **pinned** to a constant (yaw, pitch, distance, target), recorded in the driver and in the manifest, derived once from the fit rule each comment names. A cycle-over-cycle pixel diff of 02 or 04 is now itself the position proof: if a node's projected pixel moves, either a position changed or the camera did, and the camera cannot. Verified — the pinned pose reproduces cycle 3's frames byte-identically. |
+| H3 | Audience · a03 | The AR hero is a dark field of nodes marked as AR only by a tab and two text chips; nothing *in the picture* shows the map being oriented by the device | **Fixed, and the correction was taken verbatim.** 03 is now two panels of the same map at two device orientations — heading 34° and heading 96° — with the readouts moving in step, the anchor node `Sauerkraut by weight` traceable between them (**x = 314 px → x = 431 px**), and a caption on each panel stating that every node position is unchanged. The capture **throws** unless the heading actually changed by more than 25° and the two panels' positions are identical. No HUD, no horizon, no grid: the only thing that changes is where the map is seen from. |
+| H4 | Art Director · a07 | The luminance ladder **inverts across hues**: unplaced bone clips to white at 1.00 while the selected node sits at 0.71, and two *plain* nodes differ by more than the gap between connected and selected. The states are carried by ring geometry alone, not by the distinct luminous signature the specification asks for | **Fixed at the root, and it costs something.** The ladder was a raw multiplier on hues that are not lightness-matched — bone is ~1.6× as luminous as magenta before any state applies. A node is now drawn at a shared reference lightness and the ladder applied on top. Measured after: **selected 0.526 > search hit 0.497 > unplaced 0.454–0.461 > connected 0.376 > plain 0.260–0.265** — monotonic for every hue, and nothing in holding can outshine the selection. The cost, stated plainly: the world is dimmer, because the ladder can only be monotonic across this palette if every hue renders at the dimmest one's level. `DIRECTION.md` D-013 records the trade and why the alternative — brightening the dark hues toward white — was rejected: it would have taken chroma away from the recency channel D-007 depends on. |
+
+**The general fix behind H1.** A driver now **declares the claims its artifact
+must carry**, and a capture that fails one is a **failed capture** — a finding,
+not a footnote. Fourteen of the twenty artifacts declare theirs: that the gyro
+drove the view, that the pose operation took effect, that the dropped node is
+placed and stayed put, that the filament was created by this capture, that the
+twin's two surfaces agree and sit on two distinct sockets, that all three finder
+suggestion kinds were accepted. This is the class of fault §09 calls fatal, and
+one instance of it went undetected for two cycles because nothing was looking.
+
+### The twelve minor findings
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| H5 | Audience · a10 | At the fly-to end-state every node outside the hit's own district has fallen to near-ground luminance — the surrounding map is the thing that tells you where the thought lives | **Fixed.** Depth now attenuates **luminance rather than alpha** (D-014) and the floor was raised, so distant districts keep a landmark step above the ground instead of blending into it. |
+| H6 | Auditor · a18 | 18 is 13 s but the fly-to completes by 5.5 s; twelve of twenty sampled frames are an identical motionless end-state | **Fixed.** The take was rebalanced onto the query and the approach — typing at 15 frames per character, then the flight — and shortened to 11 s with a 2.8 s tail. The end-state claim is already made in full resolution by artifact 10. |
+| H7 | Audience · a05 | The orange operation caption is overlapped by the mouse-equivalent button row, which cuts off its lower half — in the single most important hand-tracking still | **Fixed.** The caption sits clear of the tool row rather than sharing its band. |
+| H8 | Art Director · a02 | Two *suppressed* labels can still be placed on top of each other: the faded tier is not deconflicted against itself, so ghost strokes cross foreground text | **Fixed.** Every label that is drawn at all now reserves its rectangle, so the faded tier is arbitrated against itself. Reserving only labels above a weight threshold was what let two ghosts land together. |
+| H9 | Audience · a04 | A visible minority of labels are faded to near-nothing in the dense districts, and the arbiter does not treat the node markers themselves as occluders | **Partly fixed, and one half of it declined on the merits.** Node discs are now scored as a **placement preference** — a candidate over a marker loses to a clear one — rather than as occupancy, which would have silenced many more names for no legibility gain. The candidate set went from nine anchors to seventeen, so fewer labels are suppressed at all. **The request for a floor under fully-suppressed labels is declined**: the Art Director asked, in the same cycle, for suppression to reach zero so a buried label leaves no stroke, and that invariant is what makes the dense districts readable. Reducing the number of suppressions is the way to serve both, and is what was done. |
+| H10 | Art Director · a04 | Thin vertical glyph stems disappear at the whole-brain zoom — `Ruhlman` renders as `Ruh:man`, `Miso` as `M:so` — at exactly the zoom the detail standard names | **Fixed.** The SDF alpha threshold window widens and drops slightly as the rendered size approaches the clamp, so thin stems thicken instead of vanishing; above ~17 px nothing changes. The expansion lens's text floor was also raised from 11.5 px to 13 px. |
+| H11 | Art Director · a02 | Recency chroma is measurable but cannot be separated from depth by eye: distance compresses saturation by about as much as the channel spans | **Fixed as prescribed** (D-014). Distance scales RGB uniformly, which leaves `(max−min)/max` exactly where it was, so the whole declared chroma range is reserved for recency and depth reads purely as lightness. |
+| H12 | Art Director · a20 | The GROUPING card is the one suggestion type that is *rejected* rather than accepted, so the grouping type and the reject path cancel each other's proof | **Fixed exactly as prescribed.** The grouping is accepted — two nodes' labels go `arc`/`ground` → `Framing` on camera — and the rejection is carried by a connection, which is equally checkable. The artifact now **requires** `allThreeKindsAccepted`. |
+| H13 | Auditor · a12 | 12's after-frame carries a teal→magenta hue change that no caption accounts for | **Fixed.** The caption names every edit in the beat: the Android drag with its coordinates, and the concurrent retext/recolour on Android against the relabel on Windows that exercises property-level last-writer-wins. As the Auditor says, naming the second edit turns an unexplained delta into the strongest evidence in the set for LWW. |
+| H14 | Auditor · a13 | `DIFF.json` gives all 19 changed artifacts the identical `whatChanged` string and reports nothing substantive, in a cycle where three artifacts were visibly redesigned | **Fixed.** With no baseline fingerprint the diff now falls back to an **SSIM band** — anything more than 0.05 below its own threshold is flagged *provisionally substantive, inspect* — and every row names the artifact's declared subject. From cycle 4 the fingerprints exist on both sides and the diff reports real recipe changes. |
+| H15 | Audience · a16 | The gyroscope segment's heading/tilt/roll readout is unresolvable at contact-sheet scale, so a gyro-driven vantage cannot be told from another pan | **Fixed.** The readout **comes forward while the device is actually turning** and settles back on its own. It is the one input in the vocabulary that is not a touch, and it now survives downsampling. |
+| H16 | Audience · a17 | Through the pose section the map is too small for node labels, so spread, gather and grab read as a slight change of scale rather than as distinguishable operations | **Fixed by making the operation legible as a number.** The hand panel carries the live **view distance** alongside the pose and its metrics, the way artifact 05's before/after readout does for a single pose — so the three map-scale operations are distinguishable at the framing they need in order to have room to happen at all. |
+
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
@@ -523,8 +580,34 @@ the directory. The full log is at `evidence/coldstart/bootstrap.log`.
 
 ## Rebuttals
 
-*None. Every cycle-1 finding was accepted and acted on. No critic score has been
-altered by the builder.*
+**Cycles 1 and 2: none.** Every finding was accepted and acted on.
+
+**Cycle 3: one finding declined in part, on the merits, and one correction
+declined in favour of the same critic's own stricter alternative.**
+
+*H9 — the Audience asked for a floor under fully-suppressed labels so a name is
+never entirely absent at whole-map framing. The Art Director, in the same cycle,
+asked for the opposite: that suppression reach alpha 0 so a buried label leaves
+no stroke at all (H8).* The two cannot both hold. I followed the Art Director,
+because the invariant that makes a dense district readable is that nothing is
+drawn where it cannot be read, and a floor under buried labels is exactly the
+ghosting the Art Director measured. The Audience's underlying concern — that too
+many names vanish — was addressed the other way: the candidate anchor set went
+from nine placements to seventeen, so fewer labels reach the suppressed tier at
+all. Node markers were added as a placement *preference* rather than as
+occupancy for the same reason: scoring them as hard occupancy would have
+silenced many more names for no legibility gain.
+
+*H1 — the Auditor's root-cause reading was that the grab beat "appears not to
+actually translate the cluster".* It did. Measured properly, the centroid
+travelled 17.28 units and the maximum per-member drift across 16 members is
+exactly 0.000000 — a rigid translation, which is what the settings reference
+promises. The observation was right and the finding was worth every point it
+cost: a false flag was sitting inside a record marked `captured`. But the fault
+was in the check, not in the behaviour, and the record says so rather than
+claiming a fix to something that was never broken.
+
+**No critic score has been altered by the builder.**
 
 One finding was **partly declined on the facts rather than on judgement**: D1
 asserted that the label declutter was implemented only in the mind-expansion
