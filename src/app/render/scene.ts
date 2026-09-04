@@ -23,11 +23,11 @@ export interface LensProfile {
 
 export const LENS_PROFILE: Record<LensKind, LensProfile> = {
   // Everyday editing: comfortable reading, moderate depth.
-  canvas:    { nodeMinPx: 13, nodeMaxPx: 190, textMinPx: 12.5, textMaxPx: 40, textPerLine: 17, textLines: 2, fadeStart: 46, fadeEnd: 250, fov: 52 },
+  canvas:    { nodeMinPx: 15, nodeMaxPx: 84,  textMinPx: 12.5, textMaxPx: 24, textPerLine: 22, textLines: 2, fadeStart: 46, fadeEnd: 250, fov: 52 },
   // Whole-brain: everything on screen at once and still legible at 100+ nodes.
-  expansion: { nodeMinPx: 15, nodeMaxPx: 150, textMinPx: 11.5, textMaxPx: 30, textPerLine: 26, textLines: 1, fadeStart: 90, fadeEnd: 420, fov: 46 },
+  expansion: { nodeMinPx: 15, nodeMaxPx: 90,  textMinPx: 11.5, textMaxPx: 22, textPerLine: 26, textLines: 1, fadeStart: 90, fadeEnd: 420, fov: 46 },
   // AR: a view-first lens; text a little larger for a handheld surface.
-  ar:        { nodeMinPx: 14, nodeMaxPx: 200, textMinPx: 14.0, textMaxPx: 44, textPerLine: 15, textLines: 2, fadeStart: 34, fadeEnd: 190, fov: 62 },
+  ar:        { nodeMinPx: 16, nodeMaxPx: 96,  textMinPx: 14.0, textMaxPx: 28, textPerLine: 20, textLines: 2, fadeStart: 34, fadeEnd: 190, fov: 62 },
 };
 
 /** Node size varies with connection degree — a real signal, not decoration. */

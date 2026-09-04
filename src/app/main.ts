@@ -1,0 +1,643 @@
+// Master Mind — application shell.
+//
+// One live map state; three lenses over it; two surfaces. The surface decides
+// which lenses exist: Windows gets canvas + mind expansion, Android gets canvas
+// + AR. Both run this same bundle.
+import * as THREE from 'three';
+import {
+  type MapDoc, type NodeId, type ColorKey, COLOR_KEYS, PALETTE,
+  holdingNodes, searchMatches, nodeList,
+} from './core/model.js';
+import { Store, newId } from './core/store.js';
+import { SyncClient, type MapSummary } from './core/syncClient.js';
+import { Scene, type LensKind } from './render/scene.js';
+import { TEXT_COLOR } from './render/world.js';
+import { Controls } from './lens/controls.js';
+import { HandTracker, type HandFrame } from './input/hands.js';
+import { TOUCH_VOCAB, HAND_VOCAB, type HandPoseId } from './input/vocab.js';
+import { buildPrompt, parseReply, applySuggestion, describe, type Suggestion, type ParseResult } from './finder/finder.js';
+import { CSS } from './ui/style.js';
+
+type Surface = 'windows' | 'android';
+
+const $ = <T extends HTMLElement = HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector(sel) as T;
+const el = (tag: string, attrs: Record<string, string> = {}, html = '') => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  if (html) n.innerHTML = html;
+  return n;
+};
+const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+const ago = (t: number) => {
+  const m = Math.max(0, Math.round((Date.now() - t) / 60000));
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `${h} h ago`;
+  const d = Math.round(h / 24);
+  return d < 30 ? `${d} d ago` : `${Math.round(d / 30)} mo ago`;
+};
+
+export class App {
+  surface: Surface;
+  lens: LensKind = 'canvas';
+  scene!: Scene;
+  store!: Store;
+  sync!: SyncClient;
+  controls!: Controls;
+  hands!: HandTracker;
+
+  maps: MapSummary[] = [];
+  selected: NodeId | null = null;
+  hits: NodeId[] = [];
+  hitIndex = 0;
+  suggestions: Suggestion[] = [];
+  sugIndex = 0;
+  lastParse: ParseResult | null = null;
+  handsOn = false;
+  /** Frozen clock for diffable captures. When null, the wall clock runs. */
+  frozenClock: number | null = null;
+  ready = false;
+  private raf = 0;
+  private lastGesture = { id: '', detail: '', at: 0 };
+  private handGrab: { ids: NodeId[]; x: number; y: number } | null = null;
+
+  constructor(surface: Surface) { this.surface = surface; }
+
+  lenses(): LensKind[] { return this.surface === 'windows' ? ['canvas', 'expansion'] : ['canvas', 'ar']; }
+
+  async boot(opts: { mapId: string; wsUrl: string; account: string; actor: string }) {
+    document.head.appendChild(el('style', {}, CSS));
+    document.body.appendChild(el('canvas', { id: 'world' }));
+    this.buildChrome();
+
+    const meta = await (await fetch('./assets/font-sdf.json')).json();
+    const atlas = await new Promise<THREE.Texture>((res, rej) =>
+      new THREE.TextureLoader().load('./assets/font-sdf.png', res, undefined, rej));
+    this.scene = new Scene($('#world') as HTMLCanvasElement, meta, atlas);
+
+    const doc: MapDoc = await (await fetch(`./maps/${opts.mapId}.json`)).json();
+    this.store = new Store(doc, opts.actor);
+    this.sync = new SyncClient(opts.wsUrl, opts.actor, opts.account);
+    this.sync.onSnapshot(d => { this.store.replaceDoc(d); this.scene.setDoc(d); this.refresh(); this.frameAll(); });
+    this.sync.onMaps(m => { this.maps = m; if ($('#maps')) this.renderMaps(); });
+    this.sync.onStatus(() => this.renderSyncStatus());
+    this.store.attach(this.sync);
+    this.store.subscribe(() => { this.scene.markDirty(); this.refresh(); });
+    this.sync.connect(opts.mapId);
+
+    this.scene.setDoc(this.store.doc);
+    this.controls = new Controls(this.scene, this.store, {
+      onSelect: id => this.select(id),
+      onQuickAdd: () => this.quickAdd(''),
+      onGestureFired: (id, detail) => this.showGesture(id, detail),
+      onDragEnd: () => this.refresh(),
+    });
+    this.hands = new HandTracker('./assets/mp-wasm', './assets/hand_landmarker.task');
+    this.hands.onFrame = f => this.onHand(f);
+
+    this.setLens(this.lenses()[0]);
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+    this.attachInput();
+    this.frameAll();
+    this.refresh();
+    this.loop();
+    this.ready = true;
+  }
+
+  // -- chrome --------------------------------------------------------------
+
+  private buildChrome() {
+    const top = el('div', { id: 'top' });
+    top.innerHTML = `
+      <span class="name" data-t="map-name"></span>
+      <span class="tabs" data-t="lens-tabs"></span>
+      <input id="capture" data-t="capture-text" placeholder="type a thought…" size="22">
+      <button data-t="capture" title="One action: lands in holding, unplaced">+ Capture</button>
+      <span class="sp"></span>
+      <input id="search" data-t="search" placeholder="search this map…">
+      <span class="chip" data-t="holding-chip">holding <b data-t="holding-count">0</b></span>
+      <button data-t="open-finder" class="ghost">Finder</button>
+      <button data-t="open-maps" class="ghost">Maps</button>
+      <button data-t="open-settings" class="ghost">Settings</button>`;
+    document.body.append(top,
+      el('div', { id: 'lenstag', 'data-t': 'lens-tag' }),
+      el('div', { id: 'gesture', 'data-t': 'gesture-hud' }),
+      el('div', { id: 'toast', 'data-t': 'toast' }),
+      el('div', { id: 'tools', 'data-t': 'tools' }));
+
+    $('[data-t=capture]').addEventListener('click', () => this.quickAdd($<HTMLInputElement>('#capture').value));
+    $<HTMLInputElement>('#capture').addEventListener('keydown', e => {
+      if (e.key === 'Enter') this.quickAdd($<HTMLInputElement>('#capture').value);
+    });
+    $('[data-t=open-maps]').addEventListener('click', () => this.openMapsHome());
+    $('[data-t=open-settings]').addEventListener('click', () => this.openSettings());
+    $('[data-t=open-finder]').addEventListener('click', () => this.toggleFinder());
+    const s = $<HTMLInputElement>('#search');
+    s.addEventListener('input', () => this.search(s.value));
+    s.addEventListener('keydown', e => { if (e.key === 'Enter') this.flyToHit(e.shiftKey ? -1 : +1); });
+
+    const tabs = $('[data-t=lens-tabs]');
+    for (const k of this.lenses()) {
+      const b = el('button', { 'data-t': `lens-${k}` }, k === 'expansion' ? 'Mind expansion' : k === 'ar' ? 'AR' : 'Canvas');
+      b.addEventListener('click', () => this.setLens(k));
+      tabs.appendChild(b);
+    }
+    // Mouse equivalents for every hand operation, so mind expansion stays fully
+    // operable if tracking misbehaves live (§07/05).
+    const tools = $('#tools');
+    for (const p of HAND_VOCAB) {
+      const b = el('button', { 'data-t': `tool-${p.id}`, title: p.mouse }, p.name.replace('Closed ', '').replace('Gathered hand', 'Gather').replace('Open palm', 'Spread'));
+      b.addEventListener('click', () => this.runHandOperation(p.id, true));
+      tools.appendChild(b);
+    }
+  }
+
+  private attachInput() {
+    const c = $('#world');
+    if (this.surface === 'windows') this.controls.attachMouse(c);
+    else this.controls.attachTouch(c);
+    window.addEventListener('keydown', e => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'n' || e.key === 'N') { e.preventDefault(); this.quickAdd(''); }
+      if (e.key === 'Escape') { this.select(null); this.closeOverlays(); }
+    });
+    // Gyroscopic orientation for the AR lens. The app listens for the real
+    // DeviceOrientationEvent; nothing else feeds the camera in AR.
+    window.addEventListener('deviceorientation', (e) => {
+      if (this.lens !== 'ar' || e.alpha === null) return;
+      this.controls.applyOrientation(e.alpha ?? 0, e.beta ?? 90, e.gamma ?? 0);
+    });
+  }
+
+  // -- lens ----------------------------------------------------------------
+
+  setLens(k: LensKind) {
+    this.lens = k;
+    this.scene.applyLens(k);
+    for (const l of this.lenses()) $(`[data-t=lens-${l}]`).classList.toggle('on', l === k);
+    $('#tools').classList.toggle('show', k === 'expansion');
+    this.controls.gyroDriven = k === 'ar';
+    if (k === 'ar') this.controls.resetGyroBase();
+    $('#lenstag').innerHTML =
+      `<b>${this.surface === 'windows' ? 'Windows' : 'Android'}</b> · <b>${k === 'expansion' ? 'mind expansion' : k}</b>` +
+      (k === 'ar' ? ' · gyro-oriented' : '');
+    if (k === 'expansion') this.frameAll();
+    this.scene.markDirty();
+  }
+
+  frameAll(margin = 1.04) {
+    const f = this.scene.fitAll(nodeList(this.store.doc), margin);
+    this.scene.pose.target.copy(f.target);
+    this.scene.pose.dist = f.dist;
+  }
+
+  resize() {
+    const w = Math.floor(window.innerWidth), h = Math.floor(window.innerHeight);
+    this.scene.setSize(w, h);
+    const c = $('#world');
+    c.style.width = w + 'px'; c.style.height = h + 'px';
+  }
+
+  // -- actions -------------------------------------------------------------
+
+  quickAdd(text: string) {
+    const t = (text || '').trim();
+    const id = this.store.quickAdd(t || 'New thought');
+    $<HTMLInputElement>('#capture').value = '';
+    this.select(id);
+    this.toast(`Captured into holding — ${this.store.holdingCount()} waiting. Drag it out to place it.`);
+    return id;
+  }
+
+  select(id: NodeId | null) {
+    this.selected = id;
+    this.scene.setSelection(id);
+    this.renderEditor();
+  }
+
+  search(q: string) {
+    this.hits = searchMatches(this.store.doc, q).map(n => n.id);
+    this.hitIndex = 0;
+    this.scene.setHits(this.hits);
+    this.refresh();
+  }
+
+  /** Search flies the view to the node in its actual place, in every lens. */
+  flyToHit(step = 0) {
+    if (!this.hits.length) return;
+    if (step) this.hitIndex = (this.hitIndex + step + this.hits.length) % this.hits.length;
+    const id = this.hits[this.hitIndex];
+    this.select(id);
+    this.controls.flyTo(id, 1300, this.lens === 'expansion' ? 15 : 12);
+  }
+
+  // -- hand tracking -------------------------------------------------------
+
+  async toggleHands(on: boolean) {
+    this.handsOn = on;
+    if (on) {
+      try { await this.hands.start($<HTMLVideoElement>('#handvid')); }
+      catch (e) { this.handsOn = false; this.toast(`Hand tracking unavailable: ${(e as Error).message}`, true); }
+    } else this.hands.stop();
+    this.renderHandPanel();
+  }
+
+  private onHand(f: HandFrame) {
+    this.drawLandmarks(f);
+    this.renderHandPanel();
+    if (!f.present || f.pose === 'none') { this.handGrab = null; return; }
+    this.runHandOperation(f.pose, false, f);
+  }
+
+  /**
+   * The four map-scale operations. Reached identically from a recognised hand
+   * pose and from its mouse equivalent — one implementation, so a live demo
+   * never depends on tracking succeeding.
+   */
+  runHandOperation(pose: Exclude<HandPoseId, 'none'>, byMouse: boolean, f?: HandFrame) {
+    const p = HAND_VOCAB.find(h => h.id === pose)!;
+    this.showGesture(byMouse ? `mouse:${pose}` : pose, p.operation.split(' — ')[0]);
+    if (pose === 'spread') this.controls.zoom(byMouse ? 1 / 1.12 : 0.985);
+    else if (pose === 'gather') this.controls.zoom(byMouse ? 1.12 : 1.015);
+    else if (pose === 'pinch') {
+      const c = this.scene.renderer.domElement;
+      const sx = f ? (1 - f.x) * c.width : c.width / 2, sy = f ? f.y * c.height : c.height / 2;
+      this.select(this.scene.pick(sx, sy, 26));
+    } else if (pose === 'fist') {
+      const c = this.scene.renderer.domElement;
+      const sx = f ? (1 - f.x) * c.width : c.width / 2, sy = f ? f.y * c.height : c.height / 2;
+      if (!this.handGrab) {
+        const id = this.scene.pick(sx, sy, 90) ?? this.selected;
+        if (!id) return;
+        this.handGrab = { ids: this.controls.clusterOf(id), x: sx, y: sy };
+        return;
+      }
+      // Rigid translation: every member moves by the same delta, so the
+      // cluster's internal arrangement is preserved exactly.
+      const anchor = this.store.node(this.handGrab.ids[0]);
+      if (!anchor) { this.handGrab = null; return; }
+      const at = new THREE.Vector3(...anchor.pos);
+      const from = this.scene.screenToWorld(this.handGrab.x, this.handGrab.y, at);
+      const to = this.scene.screenToWorld(sx, sy, at);
+      const d = to.sub(from);
+      if (d.length() > 0.02) {
+        this.store.moveCluster(this.handGrab.ids, [d.x, d.y, d.z]);
+        this.handGrab.x = sx; this.handGrab.y = sy;
+      }
+    }
+    this.scene.markDirty();
+  }
+
+  private drawLandmarks(f: HandFrame) {
+    const cv = document.getElementById('handlm') as HTMLCanvasElement | null;
+    if (!cv) return;
+    if (cv.width !== 288) { cv.width = 288; cv.height = 216; }
+    const g = cv.getContext('2d')!;
+    g.clearRect(0, 0, cv.width, cv.height);
+    if (!f.present) return;
+    const EDGES = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],
+                   [9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
+    const X = (p: {x:number}) => (1 - p.x) * cv.width, Y = (p: {y:number}) => p.y * cv.height;
+    g.strokeStyle = '#FFB020'; g.lineWidth = 2;
+    for (const [a, b] of EDGES) {
+      const p = f.landmarks[a], q = f.landmarks[b];
+      if (!p || !q) continue;
+      g.beginPath(); g.moveTo(X(p), Y(p)); g.lineTo(X(q), Y(q)); g.stroke();
+    }
+    g.fillStyle = '#EFE6D8';
+    for (const p of f.landmarks) { g.beginPath(); g.arc(X(p), Y(p), 2.6, 0, 7); g.fill(); }
+  }
+
+  // -- render loop ---------------------------------------------------------
+
+  private loop = () => {
+    this.controls.tickFly();
+    this.scene.clock = this.frozenClock ?? performance.now() / 1000;
+    this.scene.render();
+    this.raf = requestAnimationFrame(this.loop);
+  };
+  stop() { cancelAnimationFrame(this.raf); }
+
+  // -- chrome refresh ------------------------------------------------------
+
+  refresh() {
+    $('[data-t=map-name]').textContent = this.store.doc.name;
+    $('[data-t=holding-count]').textContent = String(this.store.holdingCount());
+    const chip = $('[data-t=holding-chip]');
+    chip.classList.toggle('on', this.store.holdingCount() > 0);
+    this.renderEditor();
+    if ($('#finder')) this.renderFinder();
+    if ($('#settings')) this.renderSyncStatus();
+  }
+
+  toast(msg: string, bad = false) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.className = 'show' + (bad ? ' bad' : '');
+    window.clearTimeout((t as any)._h);
+    (t as any)._h = window.setTimeout(() => { t.className = ''; }, bad ? 9000 : 4200);
+  }
+
+  showGesture(id: string, detail: string) {
+    this.lastGesture = { id, detail, at: performance.now() };
+    const g = $('#gesture');
+    const touch = TOUCH_VOCAB.find(t => t.id === id);
+    const hand = HAND_VOCAB.find(h => h.id === id || `mouse:${h.id}` === id);
+    const name = touch?.name ?? hand?.name ?? id;
+    const label = id.startsWith('mouse') ? `${name} (mouse equivalent)` : name;
+    g.innerHTML = `<span class="n">${esc(label)}</span> <span class="o">— ${esc(detail)}</span>`;
+    g.classList.add('show');
+    window.clearTimeout((g as any)._h);
+    (g as any)._h = window.setTimeout(() => g.classList.remove('show'), 2600);
+  }
+  get lastGestureFired() { return this.lastGesture; }
+
+  // -- node editor ---------------------------------------------------------
+
+  private renderEditor() {
+    const existing = document.getElementById('editor');
+    const n = this.selected ? this.store.node(this.selected) : undefined;
+    if (!n) { existing?.remove(); return; }
+    const panel = existing ?? (() => { const p = el('div', { class: 'panel', id: 'editor', 'data-t': 'editor' }); document.body.appendChild(p); return p; })();
+    const armed = this.controls.linkArmed === n.id;
+    panel.innerHTML = `
+      <h3>Node${n.placed ? '' : ' · unplaced, in holding'}</h3>
+      <label>Text</label><input data-t="ed-text" value="${esc(n.text)}">
+      <label>Label</label><input data-t="ed-label" value="${esc(n.label)}">
+      <label>Colour</label><div class="swatches" data-t="ed-colours">
+        ${COLOR_KEYS.map(k => `<button class="sw${k === n.color ? ' on' : ''}" data-t="ed-colour-${k}" style="background:${PALETTE[k]}" title="${k}"></button>`).join('')}
+      </div>
+      <div class="row">
+        <button data-t="ed-link" class="${armed ? 'on' : ''}">${armed ? 'Pick a node…' : 'Connect'}</button>
+        <button data-t="ed-flyto">Fly to</button>
+      </div>
+      <div class="row"><button data-t="ed-delete">Delete</button><button data-t="ed-close">Close</button></div>
+      <div class="note mono">${n.id} · ${n.pos.map(v => v.toFixed(1)).join(', ')}</div>`;
+    const id = n.id;
+    $<HTMLInputElement>('[data-t=ed-text]', panel).addEventListener('input', e => this.store.setText(id, (e.target as HTMLInputElement).value));
+    $<HTMLInputElement>('[data-t=ed-label]', panel).addEventListener('input', e => this.store.setLabel(id, (e.target as HTMLInputElement).value));
+    for (const k of COLOR_KEYS) $(`[data-t=ed-colour-${k}]`, panel).addEventListener('click', () => this.store.setColor(id, k as ColorKey));
+    $('[data-t=ed-link]', panel).addEventListener('click', () => { this.controls.armLink(id); this.toast('Now click the node to connect to.'); this.renderEditor(); });
+    $('[data-t=ed-flyto]', panel).addEventListener('click', () => this.controls.flyTo(id));
+    $('[data-t=ed-delete]', panel).addEventListener('click', () => { this.store.remove(id); this.select(null); });
+    $('[data-t=ed-close]', panel).addEventListener('click', () => this.select(null));
+  }
+
+  // -- overlays ------------------------------------------------------------
+
+  closeOverlays() { for (const id of ['maps', 'settings']) document.getElementById(id)?.remove(); }
+
+  openMapsHome() {
+    this.closeOverlays();
+    const o = el('div', { class: 'overlay', id: 'maps', 'data-t': 'maps-home' });
+    document.body.appendChild(o);
+    this.sync.request({ t: 'maps.list' });
+    this.renderMaps();
+  }
+
+  private renderMaps() {
+    const o = document.getElementById('maps');
+    if (!o) return;
+    o.innerHTML = `
+      <button class="close" data-t="maps-close">Close</button>
+      <h1>Maps</h1><p class="sub">Unlimited maps. Open one to reach every lens on this surface.</p>
+      <div class="row" style="max-width:520px;margin:0 0 16px">
+        <input data-t="maps-new-name" placeholder="name a new map…" style="flex:2">
+        <button data-t="maps-create" style="flex:0 0 auto">Create map</button>
+      </div>
+      <table><thead><tr><th>Map</th><th>Nodes</th><th>Last opened</th><th style="width:210px"></th></tr></thead>
+      <tbody>${this.maps.map(m => `
+        <tr class="map maprow" data-t="map-row-${m.id}">
+          <td>${esc(m.name)}</td>
+          <td class="num" data-t="map-nodes-${m.id}">${m.nodes}</td>
+          <td class="num">${ago(m.lastOpenedAt)}</td>
+          <td><div style="display:flex;gap:5px">
+            <button data-t="map-open-${m.id}">Open</button>
+            <button data-t="map-rename-${m.id}" class="ghost">Rename</button>
+            <button data-t="map-delete-${m.id}" class="ghost">Delete</button>
+          </div></td></tr>`).join('')}</tbody></table>`;
+    $('[data-t=maps-close]', o).addEventListener('click', () => this.closeOverlays());
+    $('[data-t=maps-create]', o).addEventListener('click', () => {
+      const name = $<HTMLInputElement>('[data-t=maps-new-name]', o).value.trim() || 'Untitled map';
+      this.sync.request({ t: 'maps.create', id: newId('map-'), name });
+      this.toast(`Created “${name}”.`);
+    });
+    for (const m of this.maps) {
+      $(`[data-t=map-open-${m.id}]`, o).addEventListener('click', () => this.openMap(m.id));
+      $(`[data-t=map-rename-${m.id}]`, o).addEventListener('click', () => {
+        const name = window.prompt('Rename map', m.name);
+        if (name) this.sync.request({ t: 'maps.rename', id: m.id, name });
+      });
+      $(`[data-t=map-delete-${m.id}]`, o).addEventListener('click', () => {
+        this.sync.request({ t: 'maps.delete', id: m.id });
+        this.toast(`Deleted “${m.name}”.`);
+      });
+    }
+  }
+
+  openMap(id: string) {
+    this.closeOverlays();
+    this.select(null);
+    this.sync.close();
+    this.sync.connect(id);
+    this.store.touchOpened();
+  }
+
+  openSettings() {
+    this.closeOverlays();
+    const o = el('div', { class: 'overlay', id: 'settings', 'data-t': 'settings' });
+    o.innerHTML = `
+      <button class="close" data-t="settings-close">Close</button>
+      <h1>Settings</h1><p class="sub">The controls that keep the tool honest and demoable.</p>
+      <h2>Hand tracking</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button data-t="hand-toggle">Hand tracking: off</button>
+        <span class="chip" data-t="hand-status">status: off</span>
+        <span class="note">Webcam only — no special hardware. Every hand operation also has a mouse equivalent.</span>
+      </div>
+      <h2>Account and sync</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="chip">signed in as <b data-t="account">—</b></span>
+        <span class="chip" data-t="sync-status">sync: —</span>
+        <span class="note">All maps sync: positions, text, colours, labels, connections and holding state.</span>
+      </div>
+      <h2>Touch gestures — Android</h2>
+      <table data-t="touch-reference"><thead><tr><th>Gesture</th><th>How</th><th>Operation</th><th>Spans</th></tr></thead><tbody>
+      ${TOUCH_VOCAB.map(g => `<tr><td><b>${esc(g.name)}</b></td><td>${esc(g.how)}</td><td>${esc(g.operation)}</td><td class="num">${g.span}</td></tr>`).join('')}
+      </tbody></table>
+      <h2>Hand poses — Windows, mind expansion</h2>
+      <table data-t="hand-reference"><thead><tr><th>Pose</th><th>How</th><th>Operation</th><th>Mouse equivalent</th></tr></thead><tbody>
+      ${HAND_VOCAB.map(g => `<tr><td><b>${esc(g.name)}</b></td><td>${esc(g.how)}</td><td>${esc(g.operation)}</td><td>${esc(g.mouse)}</td></tr>`).join('')}
+      </tbody></table>`;
+    document.body.appendChild(o);
+    $('[data-t=settings-close]', o).addEventListener('click', () => this.closeOverlays());
+    $('[data-t=hand-toggle]', o).addEventListener('click', () => this.toggleHands(!this.handsOn));
+    this.renderSyncStatus();
+    this.renderHandPanel();
+  }
+
+  private renderSyncStatus() {
+    const o = document.getElementById('settings');
+    if (!o) return;
+    $('[data-t=account]', o).textContent = this.sync.account;
+    const s = $('[data-t=sync-status]', o);
+    s.innerHTML = `sync: <b>${this.sync.status}</b> — ${esc(this.sync.detail)}`;
+  }
+
+  private renderHandPanel() {
+    let p = document.getElementById('hands');
+    if (!this.handsOn && !this.hands.enabled) { p?.remove(); }
+    else {
+      if (!p) {
+        p = el('div', { id: 'hands', 'data-t': 'hand-panel' });
+        p.innerHTML = `<div class="hd"><span class="dot"></span><span>webcam · hand tracking</span></div>
+          <div id="handwrap"><video id="handvid" data-t="hand-video" muted playsinline></video><canvas id="handlm"></canvas></div>
+          <div id="handpose"><div class="p" data-t="hand-pose">—</div><div class="o" data-t="hand-op"></div><div class="g" data-t="hand-geom"></div></div>`;
+        document.body.appendChild(p);
+      }
+      const f = this.hands.frame;
+      const v = HAND_VOCAB.find(h => h.id === f.pose);
+      $('.dot', p).classList.toggle('live', this.hands.enabled && f.present);
+      $('[data-t=hand-pose]', p).textContent = f.present ? (v?.name ?? 'unrecognised') : 'no hand';
+      $('[data-t=hand-op]', p).textContent = v ? v.operation.split(' — ')[0] : (f.present ? 'hold a pose' : 'show a hand to the camera');
+      $('[data-t=hand-geom]', p).textContent =
+        `extended ${f.extended}  spread ${f.spreadRatio.toFixed(2)}  pinch ${f.pinchRatio.toFixed(2)}  conf ${f.confidence.toFixed(2)}`;
+    }
+    const b = document.querySelector('[data-t=hand-toggle]');
+    if (b) { b.textContent = `Hand tracking: ${this.handsOn ? 'on' : 'off'}`; b.classList.toggle('on', this.handsOn); }
+    const st = document.querySelector('[data-t=hand-status]');
+    if (st) st.textContent = `status: ${this.hands.status}` + (this.hands.frame.present ? ` · ${this.hands.frame.pose}` : '');
+  }
+
+  // -- finder --------------------------------------------------------------
+
+  toggleFinder() {
+    const p = document.getElementById('finder');
+    if (p) { p.remove(); return; }
+    const n = el('div', { class: 'panel', id: 'finder', 'data-t': 'finder' });
+    document.body.appendChild(n);
+    this.renderFinder();
+  }
+
+  private renderFinder() {
+    const p = document.getElementById('finder');
+    if (!p) return;
+    const cur = this.suggestions[this.sugIndex];
+    const keepPrompt = ($('[data-t=finder-prompt]', p) as HTMLTextAreaElement | null)?.value ?? '';
+    const keepReply = ($('[data-t=finder-reply]', p) as HTMLTextAreaElement | null)?.value ?? '';
+    p.innerHTML = `
+      <h3>Connection finder · JSON prompt harness</h3>
+      <div class="row" style="margin-top:0">
+        <button data-t="finder-generate">Generate prompt</button>
+        <button data-t="finder-copy" class="ghost">Copy</button>
+        <button data-t="finder-close" class="ghost" style="flex:0 0 70px">Close</button>
+      </div>
+      <label class="note">Paste-ready prompt — carries the map JSON including every position</label>
+      <textarea data-t="finder-prompt" rows="7" spellcheck="false"></textarea>
+      <label class="note">Paste the AI's reply back here</label>
+      <textarea data-t="finder-reply" rows="6" spellcheck="false" placeholder="paste the reply…"></textarea>
+      <div class="row"><button data-t="finder-parse">Parse reply</button></div>
+      ${this.lastParse && !this.lastParse.ok ? `<div class="err" data-t="finder-error">${esc(this.lastParse.error ?? 'parse failed')}</div>` : ''}
+      ${this.lastParse?.dropped.length ? `<div class="note" data-t="finder-dropped">${this.lastParse.dropped.length} entr${this.lastParse.dropped.length === 1 ? 'y' : 'ies'} rejected: ${esc(this.lastParse.dropped.slice(0, 3).map(d => `${d.what} — ${d.why}`).join(' · '))}</div>` : ''}
+      ${this.suggestions.length ? `
+        <div class="note" data-t="finder-progress">Suggestion ${this.sugIndex + 1} of ${this.suggestions.length} · nothing is applied until you accept</div>
+        ${cur ? `<div class="sug" data-t="finder-current">
+          <div class="k" data-t="finder-kind">${cur.kind}</div>
+          <div class="d">${esc(describe(cur, this.store.doc))}</div>
+          <div class="w">${esc(cur.why || '—')}</div>
+          <div class="row"><button data-t="finder-accept">Accept</button><button data-t="finder-reject" class="ghost">Reject</button></div>
+        </div>` : ''}
+        <div class="note">Staged, one at a time: ${this.suggestions.map(s => s.kind).join(' · ')}</div>
+      ` : ''}`;
+    ($('[data-t=finder-prompt]', p) as HTMLTextAreaElement).value = keepPrompt;
+    ($('[data-t=finder-reply]', p) as HTMLTextAreaElement).value = keepReply;
+    $('[data-t=finder-close]', p).addEventListener('click', () => p.remove());
+    $('[data-t=finder-generate]', p).addEventListener('click', () => {
+      ($('[data-t=finder-prompt]', p) as HTMLTextAreaElement).value = buildPrompt(this.store.doc);
+      this.toast('Prompt built from the current map — paste it into any AI chat.');
+    });
+    $('[data-t=finder-copy]', p).addEventListener('click', async () => {
+      const t = ($('[data-t=finder-prompt]', p) as HTMLTextAreaElement);
+      t.select();
+      try { await navigator.clipboard.writeText(t.value); this.toast('Prompt copied.'); }
+      catch { document.execCommand('copy'); this.toast('Prompt copied.'); }
+    });
+    $('[data-t=finder-parse]', p).addEventListener('click', () => {
+      const reply = ($('[data-t=finder-reply]', p) as HTMLTextAreaElement).value;
+      this.parseFinderReply(reply);
+    });
+    const acc = document.querySelector('[data-t=finder-accept]');
+    if (acc) acc.addEventListener('click', () => this.acceptSuggestion());
+    const rej = document.querySelector('[data-t=finder-reject]');
+    if (rej) rej.addEventListener('click', () => this.rejectSuggestion());
+  }
+
+  parseFinderReply(reply: string) {
+    const r = parseReply(reply, this.store.doc);
+    this.lastParse = r;
+    if (!r.ok) {
+      // A parse failure shows a visible error and changes nothing.
+      this.suggestions = []; this.sugIndex = 0;
+      this.toast(r.error ?? 'Could not read that reply. Nothing was changed.', true);
+    } else {
+      this.suggestions = r.suggestions; this.sugIndex = 0;
+      this.toast(`${r.suggestions.length} suggestions staged. Nothing is applied until you accept.`);
+    }
+    this.renderFinder();
+    return r;
+  }
+
+  acceptSuggestion() {
+    const s = this.suggestions[this.sugIndex];
+    if (!s) return;
+    applySuggestion(this.store, s);
+    this.toast(`Applied: ${describe(s, this.store.doc)}`);
+    this.suggestions.splice(this.sugIndex, 1);
+    if (this.sugIndex >= this.suggestions.length) this.sugIndex = Math.max(0, this.suggestions.length - 1);
+    this.scene.markDirty();
+    this.renderFinder();
+  }
+
+  rejectSuggestion() {
+    const s = this.suggestions[this.sugIndex];
+    if (!s) return;
+    // Rejection leaves no trace: the suggestion is dropped and nothing is written.
+    this.suggestions.splice(this.sugIndex, 1);
+    if (this.sugIndex >= this.suggestions.length) this.sugIndex = Math.max(0, this.suggestions.length - 1);
+    this.toast('Rejected — no trace left on the map.');
+    this.renderFinder();
+  }
+
+  // -- introspection for the capture harness -------------------------------
+
+  stats() {
+    const doc = this.store.doc;
+    return {
+      map: doc.id, name: doc.name, lens: this.lens, surface: this.surface,
+      nodes: Object.keys(doc.nodes).length, links: Object.keys(doc.links).length,
+      holding: holdingNodes(doc).length, selected: this.selected, hits: this.hits.length,
+      sync: this.sync.status, hands: this.hands.status, pose: this.hands.frame.pose,
+      suggestions: this.suggestions.length,
+      positions: Object.fromEntries(nodeList(doc).map(n => [n.id, n.pos])),
+    };
+  }
+}
+
+declare global { interface Window { mm: App; TEXT_COLOR: string } }
+
+const params = new URLSearchParams(location.search);
+const surface = (params.get('surface') === 'android' ? 'android' : 'windows') as Surface;
+const app = new App(surface);
+window.mm = app;
+window.TEXT_COLOR = TEXT_COLOR;
+app.boot({
+  mapId: params.get('map') || 'map-fermentation',
+  wsUrl: params.get('ws') || `ws://127.0.0.1:${params.get('port') || 8788}`,
+  account: params.get('account') || 'kai@master-mind.local',
+  actor: params.get('actor') || `${surface}-${Math.random().toString(36).slice(2, 8)}`,
+}).catch(e => {
+  document.body.appendChild(el('pre', { style: 'color:#FF6B4A;padding:24px' }, String(e && e.stack || e)));
+});

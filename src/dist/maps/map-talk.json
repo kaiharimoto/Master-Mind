@@ -1,0 +1,210 @@
+{
+ "id": "map-talk",
+ "name": "Talk — spatial memory",
+ "createdAt": 1784968800000,
+ "lastOpenedAt": 1787215200000,
+ "nodes": {
+  "se318fc2f75": {
+   "id": "se318fc2f75",
+   "text": "Opening: where did you park?",
+   "label": "arc",
+   "color": "amber",
+   "pos": [
+    -7.4,
+    3.1,
+    0.6
+   ],
+   "placed": true,
+   "createdAt": 1784968800000,
+   "lastTouchedAt": 1784968800000
+  },
+  "s0915039278": {
+   "id": "s0915039278",
+   "text": "Method of loci",
+   "label": "ground",
+   "color": "violet",
+   "pos": [
+    -2.6,
+    6.4,
+    -2.2
+   ],
+   "placed": true,
+   "createdAt": 1785055200000,
+   "lastTouchedAt": 1785055200000
+  },
+  "s8341efc5bb": {
+   "id": "s8341efc5bb",
+   "text": "Lists flatten meaning",
+   "label": "ground",
+   "color": "violet",
+   "pos": [
+    1.9,
+    4.2,
+    2.8
+   ],
+   "placed": true,
+   "createdAt": 1785400800000,
+   "lastTouchedAt": 1785400800000
+  },
+  "s7427082a98": {
+   "id": "s7427082a98",
+   "text": "Positions are the memory",
+   "label": "spine",
+   "color": "coral",
+   "pos": [
+    0.4,
+    0.2,
+    -0.7
+   ],
+   "placed": true,
+   "createdAt": 1785573600000,
+   "lastTouchedAt": 1785573600000
+  },
+  "s1020961add": {
+   "id": "s1020961add",
+   "text": "Demo: search fly-to",
+   "label": "demo",
+   "color": "teal",
+   "pos": [
+    5.8,
+    -1.6,
+    1.4
+   ],
+   "placed": true,
+   "createdAt": 1786264800000,
+   "lastTouchedAt": 1786264800000
+  },
+  "s480af97d09": {
+   "id": "s480af97d09",
+   "text": "Slide budget: 12",
+   "label": "admin",
+   "color": "bone",
+   "pos": [
+    -6.1,
+    -4.3,
+    -3.1
+   ],
+   "placed": true,
+   "createdAt": 1786524000000,
+   "lastTouchedAt": 1786524000000
+  },
+  "s88f833ea80": {
+   "id": "s88f833ea80",
+   "text": "Closing: build your own",
+   "label": "arc",
+   "color": "amber",
+   "pos": [
+    7.1,
+    4.9,
+    -2.4
+   ],
+   "placed": true,
+   "createdAt": 1786783200000,
+   "lastTouchedAt": 1786783200000
+  },
+  "sec77dd4720": {
+   "id": "sec77dd4720",
+   "text": "Steal the parking-lot bit",
+   "label": "holding",
+   "color": "bone",
+   "pos": [
+    2.056,
+    -10.26,
+    3.869
+   ],
+   "placed": false,
+   "createdAt": 1787180640000,
+   "lastTouchedAt": 1787180640000
+  },
+  "se26200e96b": {
+   "id": "se26200e96b",
+   "text": "Ask about the demo laptop",
+   "label": "holding",
+   "color": "bone",
+   "pos": [
+    -0.869,
+    -10.568,
+    5.056
+   ],
+   "placed": false,
+   "createdAt": 1787120160000,
+   "lastTouchedAt": 1787120160000
+  },
+  "s87556d505c": {
+   "id": "s87556d505c",
+   "text": "Cut the history section?",
+   "label": "holding",
+   "color": "bone",
+   "pos": [
+    -2.056,
+    -9.919,
+    2.131
+   ],
+   "placed": false,
+   "createdAt": 1787197920000,
+   "lastTouchedAt": 1787197920000
+  },
+  "s13669df17f": {
+   "id": "s13669df17f",
+   "text": "Timebox to 18 minutes",
+   "label": "holding",
+   "color": "bone",
+   "pos": [
+    0.869,
+    -8.496,
+    0.944
+   ],
+   "placed": false,
+   "createdAt": 1787007840000,
+   "lastTouchedAt": 1787007840000
+  }
+ },
+ "links": {
+  "l8e6ea9f780": {
+   "id": "l8e6ea9f780",
+   "a": "s0915039278",
+   "b": "se318fc2f75",
+   "createdAt": 1786178400000
+  },
+  "l1bfa48e93e": {
+   "id": "l1bfa48e93e",
+   "a": "s0915039278",
+   "b": "s7427082a98",
+   "createdAt": 1786178400000
+  },
+  "l0f3f4d6f78": {
+   "id": "l0f3f4d6f78",
+   "a": "s7427082a98",
+   "b": "s8341efc5bb",
+   "createdAt": 1786178400000
+  },
+  "l85e27e5b69": {
+   "id": "l85e27e5b69",
+   "a": "s1020961add",
+   "b": "s7427082a98",
+   "createdAt": 1786178400000
+  },
+  "l99c4c790ac": {
+   "id": "l99c4c790ac",
+   "a": "s1020961add",
+   "b": "s88f833ea80",
+   "createdAt": 1786178400000
+  },
+  "lbfb39796d7": {
+   "id": "lbfb39796d7",
+   "a": "s480af97d09",
+   "b": "se318fc2f75",
+   "createdAt": 1786178400000
+  }
+ },
+ "holding": {
+  "origin": [
+   0,
+   -9.5,
+   3
+  ],
+  "radius": 3.6
+ },
+ "clocks": {},
+ "removedLinks": {}
+}
