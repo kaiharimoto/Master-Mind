@@ -1,0 +1,22 @@
+[
+  {
+    "file": "seeds/map-fermentation.json",
+    "id": "map-fermentation",
+    "name": "Fermentation notebook",
+    "nodes": 150,
+    "placed": 142,
+    "holding": 8,
+    "links": 208,
+    "sha256": "c07e1945f72cb5a0d9e3c24a14f5480fb1f12641ca6822d8c6ef643e660e99fb"
+  },
+  {
+    "file": "seeds/map-talk.json",
+    "id": "map-talk",
+    "name": "Talk — spatial memory",
+    "nodes": 11,
+    "placed": 7,
+    "holding": 4,
+    "links": 6,
+    "sha256": "ca06ee0d6d5bf8c799f360b75d959c6fd42ef20d6d91b750177d1deaf27b3d57"
+  }
+]
