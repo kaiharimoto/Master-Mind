@@ -117,6 +117,7 @@ export default [
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
     await FRAME_ALL(page, 1.12);
     await page.click('[data-t=open-finder]');
+    await page.evaluate(() => window.mm.clearOfPanels());
     await page.click('[data-t=finder-generate]');
     await page.fill('[data-t=finder-reply]', REPLIES[1].text);
     await page.click('[data-t=finder-parse]');
@@ -161,10 +162,13 @@ export default [
     const A = await SCREEN_OF(page, idA), B = await SCREEN_OF(page, idB);
     let newId = null, drag = null;
     const steps = [
-      { at: 45,  fn: async () => touch.tap(cdp, A.x, A.y) },                        // tap: select and inspect
-      { at: 150, fn: async () => touch.tap(cdp, A.x, A.y) },
-      { at: 156, fn: async () => touch.tap(cdp, A.x, A.y) },                        // double-tap: arm the link
-      { at: 205, fn: async () => touch.tap(cdp, B.x, B.y) },                        // completes the connection
+      // Screen positions are re-read before each touch: any interaction may
+      // have moved the view, and a driver that aims at stale coordinates
+      // proves nothing.
+      { at: 45,  fn: async () => { const a = await SCREEN_OF(page, idA); if (a) await touch.tap(cdp, a.x, a.y); } },
+      { at: 150, fn: async () => { const a = await SCREEN_OF(page, idA); if (a) await touch.tap(cdp, a.x, a.y); } },
+      { at: 156, fn: async () => { const a = await SCREEN_OF(page, idA); if (a) await touch.tap(cdp, a.x, a.y); } },
+      { at: 205, fn: async () => { const b2 = await SCREEN_OF(page, idB); if (b2) await touch.tap(cdp, b2.x, b2.y); } },
       { at: 300, fn: async () => touch.start(cdp, 320, 830) },                      // long-press begins
       { at: 322, fn: async () => { await touch.end(cdp);                            // fires at +500 ms
           newId = await page.evaluate(() => window.mm.selected); } },
@@ -220,22 +224,44 @@ export default [
       setInterval(() => { const f = window.mm.hands.frame; if (f.present) window.__pose(f.pose); }, 120);
     });
     // Cluster arrangement before any grab, so the video's claim is checkable.
+    let grabAnchor = null;
     const before = await H.clusterShape(page, 'Koji');
     const steps = [
       // Tracking off, then reframe so the mouse-only tail is shown on a
       // composed map rather than wherever the last gesture left the camera.
       { at: 780, fn: async () => { await page.click('[data-t=hands-chip]'); } },
       { at: 795, fn: async () => page.evaluate(() => window.mm.frameAll(1.02)) },
-      { at: 810, fn: async () => page.click('[data-t=tool-fist]') },
-      { at: 870, fn: async () => page.click('[data-t=tool-spread]') },
-      { at: 930, fn: async () => page.click('[data-t=tool-gather]') },
-      { at: 990, fn: async () => page.click('[data-t=tool-two]') },
+      // Grab one named cluster with the mouse and move it, held long enough
+      // that the same members are readable before and after and their spacing
+      // can be seen to be unchanged.
+      { at: 830, fn: async () => {
+          const id = await NODE_ID(page, 'Koji on pearl barley');
+          grabAnchor = await SCREEN_OF(page, id);
+          if (grabAnchor) {
+            await page.mouse.move(grabAnchor.x, grabAnchor.y);
+            await page.keyboard.down('Alt');
+            await page.mouse.down();
+          } } },
+      ...Array.from({ length: 26 }, (_, k) => ({ at: 834 + k * 2, fn: async () => {
+          if (grabAnchor) await page.mouse.move(grabAnchor.x - (k + 1) * 5, grabAnchor.y + (k + 1) * 3);
+        } })),
+      { at: 890, fn: async () => { await page.mouse.up(); await page.keyboard.up('Alt'); } },
+      { at: 960, fn: async () => page.click('[data-t=tool-spread]') },
+      { at: 1000, fn: async () => page.click('[data-t=tool-gather]') },
+      { at: 1040, fn: async () => page.click('[data-t=tool-two]') },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 36, onFrame: script(steps) });
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 38, onFrame: script(steps) });
     const after = await H.clusterShape(page, 'Koji');
+    const centroid = await page.evaluate(() => {
+      const ns = Object.values(window.mm.store.doc.nodes).filter(n => n.placed && n.label === 'Koji');
+      const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0]);
+      return c.map(v => +(v / ns.length).toFixed(3));
+    });
     const uniq = [...new Set(poses)].filter(p => p !== 'none');
     return { posesRecognised: uniq, count: uniq.length, samples: poses.length,
-             clusterShapePreserved: before === after, mouseOnlyTail: true };
+             clusterGrabbed: 'Koji', clusterMoved: before === after && !!grabAnchor,
+             clusterCentroidAfter: centroid,
+             clusterInternalArrangementPreserved: before === after, mouseOnlyTail: true };
   },
 },
 {

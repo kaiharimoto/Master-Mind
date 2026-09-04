@@ -86,7 +86,10 @@ export class App {
     const doc: MapDoc = await (await fetch(`./maps/${opts.mapId}.json`)).json();
     this.store = new Store(doc, opts.actor);
     this.sync = new SyncClient(opts.wsUrl, opts.actor, opts.account);
-    this.sync.onSnapshot(d => { this.store.replaceDoc(d); this.scene.setDoc(d); this.refresh(); this.frameAll(); });
+    this.sync.onSnapshot((d, o) => {
+      this.store.replaceDoc(d); this.scene.setDoc(d); this.refresh(); this.frameAll();
+      this.showOrigin(o);
+    });
     this.sync.onMaps(m => { this.maps = m; if ($('#maps')) this.renderMaps(); });
     this.sync.onStatus(() => this.renderSyncStatus());
     this.store.attach(this.sync);
@@ -254,22 +257,37 @@ export class App {
     this.selected = id;
     this.scene.setSelection(id);
     this.renderEditor();
-    // The editor sits over the right of the world. When it opens, slide the
-    // view so the node being edited is centred in what is still visible,
-    // rather than hidden behind the panel.
-    if (opening) this.centreForPanel(id!);
+    if (opening) this.clearOfPanels(id!);
   }
 
-  private centreForPanel(id: NodeId) {
-    const panel = document.getElementById('editor');
-    if (!panel) return;
+  /**
+   * Panels sit over the world on both sides — the legend and the finder on the
+   * left, the node editor on the right. When one opens, slide the view into the
+   * band that is still visible, so a panel never buries the thing it is about.
+   * Called only when a panel opens, never on every frame: panning the map on
+   * each selection is disorienting and moves it out from under the next touch.
+   */
+  clearOfPanels(id?: NodeId) {
     const el = this.scene.renderer.domElement;
     const scale = el.width / Math.max(window.innerWidth, 1);
-    const occluded = (panel.getBoundingClientRect().width + 24) * scale;
-    const s = this.scene.screenPositions().find(q => q.id === id);
-    if (!s) return;
-    const wanted = (el.width - occluded) / 2;
-    this.controls.panTarget(s.x - wanted, 0);
+    let left = 0, right = 0;
+    for (const sel of ['#finder', '#states']) {
+      const p = document.querySelector(sel) as HTMLElement | null;
+      if (p) left = Math.max(left, (p.getBoundingClientRect().right + 16) * scale);
+    }
+    const ed = document.getElementById('editor');
+    if (ed) right = Math.max(right, (el.width / scale - ed.getBoundingClientRect().left + 16) * scale);
+    if (!left && !right) return;
+    // Centre what is actually on screen in the band that is still visible,
+    // rather than shifting by a fixed amount — a fixed shift only moves the
+    // clipping from one edge to the other. Labels count: they are what ends up
+    // under a panel, not the node dots.
+    const { lo, hi } = this.scene.contentBoundsX();
+    if (!isFinite(lo) || !isFinite(hi)) return;
+    const bandCentre = (left + (el.width - right)) / 2;
+    const dx = bandCentre - (lo + hi) / 2;
+    if (Math.abs(dx) < 4) return;
+    this.controls.panTarget(dx, 0);
   }
 
   search(q: string) {
@@ -420,6 +438,20 @@ export class App {
     this.renderEditor();
     if ($('#finder')) this.renderFinder();
     if ($('#settings')) this.renderSyncStatus();
+  }
+
+  /** Says whether this launch rehydrated from the committed seed or live state. */
+  private showOrigin(o: { from: string; file?: string; sha256?: string }) {
+    let chip = document.getElementById('origin');
+    if (!chip) {
+      chip = el('div', { id: 'origin', 'data-t': 'map-origin' });
+      document.body.appendChild(chip);
+    }
+    chip.className = o.from === 'seed' ? 'seed' : '';
+    chip.innerHTML = o.from === 'seed'
+      ? `first launch · restored from the committed seed <b>${esc((o.file ?? '').replace('seeds/', ''))}</b>` +
+        (o.sha256 ? ` <span class="mono">${esc(o.sha256.slice(0, 12))}</span>` : '')
+      : 'live state';
   }
 
   toast(msg: string, bad = false) {
@@ -628,6 +660,7 @@ export class App {
       <div class="note">Brightness rises down this list; every state also carries its own ring, so the two read together.</div>
       <div class="row"><button data-t="states-close">Close</button></div>`;
     document.body.appendChild(n);
+    this.clearOfPanels(this.selected ?? undefined);
     $('[data-t=states-close]', n).addEventListener('click', () => n.remove());
   }
 

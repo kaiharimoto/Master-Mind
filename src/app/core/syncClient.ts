@@ -6,8 +6,11 @@ export type SyncStatus = 'offline' | 'connecting' | 'live' | 'error';
 
 export interface MapSummary { id: string; name: string; nodes: number; lastOpenedAt: number; createdAt: number; }
 
+/** Where the open map was loaded from. A cold start reads the committed seed. */
+export interface MapOrigin { from: 'seed' | 'live'; file?: string; sha256?: string; }
+
 type ServerMsg =
-  | { t: 'snapshot'; doc: MapDoc }
+  | { t: 'snapshot'; doc: MapDoc; origin?: MapOrigin }
   | { t: 'op'; op: Op }
   | { t: 'maps'; maps: MapSummary[] }
   | { t: 'error'; message: string };
@@ -16,7 +19,8 @@ export class SyncClient implements Transport {
   private ws: WebSocket | null = null;
   private queue: Op[] = [];
   private remoteFns: ((op: Op) => void)[] = [];
-  private snapFns: ((doc: MapDoc) => void)[] = [];
+  private snapFns: ((doc: MapDoc, origin: MapOrigin) => void)[] = [];
+  origin: MapOrigin = { from: 'live' };
   private mapsFns: ((m: MapSummary[]) => void)[] = [];
   private statusFns: ((s: SyncStatus, detail: string) => void)[] = [];
   status: SyncStatus = 'offline';
@@ -39,7 +43,10 @@ export class SyncClient implements Transport {
     ws.onmessage = ev => {
       const m: ServerMsg = JSON.parse(ev.data as string);
       if (m.t === 'op') for (const f of this.remoteFns) f(m.op);
-      else if (m.t === 'snapshot') for (const f of this.snapFns) f(m.doc);
+      else if (m.t === 'snapshot') {
+        this.origin = m.origin ?? { from: 'live' };
+        for (const f of this.snapFns) f(m.doc, this.origin);
+      }
       else if (m.t === 'maps') for (const f of this.mapsFns) f(m.maps);
       else if (m.t === 'error') this.setStatus('error', m.message);
     };
@@ -54,7 +61,7 @@ export class SyncClient implements Transport {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) this.ws.send(JSON.stringify(msg));
   }
   onRemote(fn: (op: Op) => void) { this.remoteFns.push(fn); }
-  onSnapshot(fn: (doc: MapDoc) => void) { this.snapFns.push(fn); }
+  onSnapshot(fn: (doc: MapDoc, origin: MapOrigin) => void) { this.snapFns.push(fn); }
   onMaps(fn: (m: MapSummary[]) => void) { this.mapsFns.push(fn); }
   onStatus(fn: (s: SyncStatus, d: string) => void) { this.statusFns.push(fn); fn(this.status, this.detail); }
   private setStatus(s: SyncStatus, d: string) {

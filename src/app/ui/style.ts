@@ -31,6 +31,11 @@ body.ar #capture,body.ar [data-t=open-finder],body.ar [data-t=open-maps],
 body.ar [data-t=open-states]{display:none}
 body.ar #top{height:40px}
 body.ar #search{width:300px}
+@media (max-width:1200px){
+  #capture,[data-t=open-finder],[data-t=open-maps],[data-t=open-states]{display:none}
+  #search{width:150px}
+  #top{gap:6px;padding:0 8px}
+}
 .tabs{display:flex;border:1px solid var(--line)}
 .tabs button{border:0;border-right:1px solid var(--line);padding:6px 12px;background:transparent}
 .tabs button:last-child{border-right:0}
@@ -101,6 +106,10 @@ tr.map:hover{background:var(--panel)}
   padding:7px 11px;font-size:11px;letter-spacing:.4px;color:var(--ink-dim);display:none}
 #argyro.show{display:block}
 #argyro b{color:var(--ink);font-family:"DejaVu Sans Mono",monospace}
+#origin{position:fixed;left:12px;top:56px;z-index:24;background:var(--panel);border:1px solid var(--line);
+  padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}
+#origin.seed{display:block;color:var(--ink-dim);border-color:#3A2F26}
+#origin b{color:var(--ink)}
 #lenstag{position:fixed;left:12px;bottom:12px;z-index:24;background:var(--panel);
   border:1px solid var(--line);padding:6px 10px;font-size:11px;letter-spacing:.5px;color:var(--ink-dim)}
 #lenstag b{color:var(--ink);text-transform:uppercase;letter-spacing:.8px}

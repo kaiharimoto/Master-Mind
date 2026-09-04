@@ -4,7 +4,7 @@
 // before it is accepted.
 //
 //   node harness/run-capture.mjs [--only 01,02] [--out evidence] [--cycle N]
-import { mkdirSync, writeFileSync, rmSync, existsSync, readFileSync, readdirSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync, existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
@@ -13,7 +13,7 @@ import stills from './drivers/stills.mjs';
 import motion from './drivers/motion.mjs';
 import { openBrowser, openApp, shot, step, record, compose, grab, probe, sha, launch, SEED, INIT_SCRIPT } from './capture.mjs';
 import { y4m } from './clips-to-y4m.mjs';
-import { POSE, FRAME_ALL, NODE_ID, SELECT, sleepFrames } from './drivers/util.mjs';
+import { POSE, FRAME_ALL, NODE_ID, SELECT, SCREEN_OF, sleepFrames } from './drivers/util.mjs';
 import { windowsTarget } from './win-target.mjs';
 import { chromium } from 'playwright';
 
@@ -129,19 +129,39 @@ async function runDriver(d) {
       await a.page.evaluate(i => window.mm.select(i), id);
       await a.page.fill('[data-t=ed-text]', 'Demo: search fly-to — live');
       await a.page.click('[data-t=ed-colour-magenta]');
+      // And a POSITION is moved on Android by a real drag, because "positions
+      // are identical across devices" is the mission's defining claim and a
+      // text-and-colour edit does not test it.
+      const moveId = await NODE_ID(a.page, 'Slide budget: 12');
+      const from = await SCREEN_OF(a.page, moveId);
+      const posBefore = await a.page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), moveId);
+      if (from) {
+        await a.page.mouse.move(from.x, from.y);
+        await a.page.mouse.down();
+        for (let k = 1; k <= 10; k++) {
+          await a.page.mouse.move(from.x + k * 14, from.y - k * 11);
+          await sleepFrames(a.page, 0, 1);
+        }
+        await a.page.mouse.up();
+      }
+      const posAfter = await a.page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), moveId);
+      await w.page.waitForFunction(({ i, p }) => JSON.stringify(window.mm.store.doc.nodes[i].pos) === JSON.stringify(p),
+                                   { i: moveId, p: posAfter }, { timeout: 20000 });
       // A concurrent conflict on the same node: Windows writes a different
       // property at the same moment. Property-level LWW must keep both.
       await w.page.evaluate(i => { window.mm.select(i); window.mm.store.setLabel(i, 'demo'); }, id);
       await w.page.waitForFunction(i => window.mm.store.doc.nodes[i].text === 'Demo: search fly-to — live',
                                    id, { timeout: 20000 });
       await a.page.waitForFunction(i => window.mm.store.doc.nodes[i].label === 'demo', id, { timeout: 20000 });
-      await w.page.evaluate(() => window.mm.select(null));
-      await a.page.evaluate(() => window.mm.select(null));
+      // Both editors are left open on the node that was MOVED, so the two
+      // coordinate readouts can be compared in the frame itself.
+      await w.page.evaluate(i => window.mm.select(i), moveId);
+      await a.page.evaluate(i => window.mm.select(i), moveId);
       await sleepFrames(w.page, 0, 3); await sleepFrames(a.page, 0, 3);
       const aw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w1.png'));
       const aa = await shot(a.page, a.cdp, resolve(TMP, 'twin-a1.png'));
       await compose([aw, aa], resolve(OUTDIR, '12_sync_twin_after.png'), { mode: 'h', width: 1920, height: 1080,
-        labels: ['Windows — after the Android edit', 'Android — where the edit was made'] });
+        labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'] });
 
       const pw1 = await positions(w.page), pa1 = await positions(a.page);
       const node = await w.page.evaluate(i => window.mm.store.doc.nodes[i], id);
@@ -152,9 +172,18 @@ async function runDriver(d) {
         positionsIdenticalAcrossSurfaces: same(pw0, pa0),
         nodeCount: { windows: Object.keys(pw0).length, android: Object.keys(pa0).length },
       };
+      const movedOnly = (before0, after0) => {
+        const ks = new Set([...Object.keys(before0), ...Object.keys(after0)]);
+        const moved = [...ks].filter(k => JSON.stringify(before0[k]) !== JSON.stringify(after0[k]));
+        return moved;
+      };
       const after = {
         positionsIdenticalAcrossSurfaces: same(pw1, pa1),
-        positionsUnchangedByTheEdit: same(pw0, pw1) && same(pa0, pa1),
+        movedNode: moveId, movedFrom: posBefore, movedTo: posAfter,
+        positionEditPropagated: same(pw1[moveId], posAfter) && same(pa1[moveId], posAfter),
+        onlyTheDraggedNodeMoved: JSON.stringify(movedOnly(pw0, pw1)) === JSON.stringify([moveId]) &&
+                                 JSON.stringify(movedOnly(pa0, pa1)) === JSON.stringify([moveId]),
+        everyOtherPositionUnchanged: Object.keys(pw0).every(k => k === moveId ? true : same(pw0[k], pw1[k])),
         noNodeDropped: Object.keys(pw1).length === Object.keys(pw0).length &&
                        Object.keys(pa1).length === Object.keys(pa0).length,
         editPropagated: node.text === 'Demo: search fly-to — live' && node.color === 'magenta',
@@ -198,7 +227,21 @@ async function verify(d, file) {
 }
 
 const list = DRIVERS.filter(d => !ONLY.length || ONLY.includes(d.id));
-const manifest = { cycle: Number(CYCLE), seed: SEED, startedAt: new Date().toISOString(), artifacts: [] };
+
+// The manifest MERGES. A partial run (--only) used to overwrite the whole
+// record, so the file could claim one artifact was captured while twenty were
+// present. Now each entry is replaced in place and the rest are kept, with the
+// cycle stamp carried forward unless this run names one.
+const manPath = resolve(OUTDIR, 'MANIFEST.json');
+const prior = existsSync(manPath) ? JSON.parse(readFileSync(manPath, 'utf8')) : null;
+const manifest = {
+  cycle: CYCLE === '0' && prior ? prior.cycle : (Number.isNaN(Number(CYCLE)) ? CYCLE : Number(CYCLE)),
+  seed: SEED,
+  startedAt: prior?.startedAt ?? new Date().toISOString(),
+  lastRunAt: new Date().toISOString(),
+  lastRunCaptured: [],
+  artifacts: prior?.artifacts ? [...prior.artifacts] : [],
+};
 console.log(`capturing ${list.length} artifact(s) into ${OUTDIR}`);
 for (const d of list) {
   const t0 = Date.now();
@@ -210,7 +253,9 @@ for (const d of list) {
                   seconds: +((Date.now() - t0) / 1000).toFixed(1),
                   status: error ? 'driver-error' : check.ok ? 'captured' : 'below-minimum',
                   error, check, result, pageErrors: pageErrors.slice(0, 6) };
-  manifest.artifacts.push(entry);
+  const at = manifest.artifacts.findIndex(a => a.id === d.id);
+  if (at >= 0) manifest.artifacts[at] = entry; else manifest.artifacts.push(entry);
+  manifest.lastRunCaptured.push(d.id);
   console.log(entry.status === 'captured'
     ? `ok  ${check.width}x${check.height}${check.seconds ? ` ${check.seconds}s @${check.fps}fps` : ''}  ${entry.seconds}s`
     : `${entry.status.toUpperCase()}  ${error ? error.split('\n')[0].slice(0, 120) : check.why}`);
@@ -232,7 +277,19 @@ for (const d of list) {
 }
 
 manifest.finishedAt = new Date().toISOString();
+manifest.artifacts.sort((a, b) => a.id.localeCompare(b.id));
 manifest.captured = manifest.artifacts.filter(a => a.status === 'captured').length;
 manifest.total = DRIVERS.length;
-writeFileSync(resolve(OUTDIR, 'MANIFEST.json'), JSON.stringify(manifest, null, 2));
-console.log(`\n${manifest.captured}/${list.length} captured as defined`);
+// Deterministic seeding means an untouched artifact re-renders byte-identically.
+// Say so explicitly, so an auditor can tell a real re-render from a stale file.
+for (const a of manifest.artifacts) {
+  const f = resolve(OUTDIR, a.file);
+  if (!existsSync(f)) continue;
+  const digest = sha(f);
+  a.digestUnchangedFromPreviousRun = a.check && a.check.sha256 === digest ? true : undefined;
+  a.capturedInThisRun = manifest.lastRunCaptured.includes(a.id);
+  a.fileMtime = new Date(statSync(f).mtimeMs).toISOString();
+}
+writeFileSync(manPath, JSON.stringify(manifest, null, 2));
+console.log(`\n${manifest.captured}/${manifest.total} in the manifest captured as defined ` +
+            `(${manifest.lastRunCaptured.length} recaptured in this run)`);

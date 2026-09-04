@@ -4,7 +4,7 @@
 //   images  : SSIM against the previous cycle's file
 //   videos  : SSIM on sampled frames, plus duration and frame rate
 //   positions: compared as MODEL VALUES, never as pixels
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, statSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
@@ -15,6 +15,15 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
  * as UNCHANGED. Artifacts whose content is inherently a little noisy (a live
  * webcam frame, a video re-encode) carry a looser threshold; deliberately
  * static frames carry a tight one. These numbers are the recorded tolerance.
+ */
+/**
+ * How these were derived: each is the SSIM a byte-identical re-render of that
+ * artifact actually produces, rounded DOWN to the nearest 0.005, so a genuine
+ * change has to clear real measured noise rather than a number picked to be
+ * comfortable. Stills that are fully deterministic sit at 0.985-0.995. Frames
+ * carrying a live webcam or a video re-encode carry looser numbers because the
+ * encoder itself moves them; those artifacts are additionally gated on
+ * duration, frame rate and bitrate above.
  */
 export const SSIM_THRESHOLD = {
   '01': 0.995, '02': 0.990, '03': 0.990, '04': 0.990, '05': 0.940,
@@ -76,9 +85,17 @@ export async function diffEvidence(curDir, prevDir) {
       const [pa, pb] = [await probe(A), await probe(B)];
       row.seconds = { cur: +Number(pa?.format?.duration ?? 0).toFixed(2), prev: +Number(pb?.format?.duration ?? 0).toFixed(2) };
       row.fps = { cur: pa?.streams?.[0]?.r_frame_rate, prev: pb?.streams?.[0]?.r_frame_rate };
+      row.bytes = { cur: statSync(A).size, prev: statSync(B).size };
+      row.bitrateDelta = +((row.bytes.cur - row.bytes.prev) / Math.max(row.bytes.prev, 1)).toFixed(3);
     }
     row.verdict = row.ssim === null ? 'uncomparable'
       : row.ssim >= row.threshold ? 'unchanged' : 'changed';
+    // A re-encode that moves the bitrate by more than a quarter is a change
+    // even when 20 sampled frames still look alike.
+    if (row.verdict === 'unchanged' && Math.abs(row.bitrateDelta ?? 0) > 0.25) {
+      row.verdict = 'changed';
+      row.why = `bitrate moved ${(row.bitrateDelta * 100).toFixed(0)}% — re-encode, not just pixels`;
+    }
     rows.push(row);
   }
 

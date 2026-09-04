@@ -62,9 +62,20 @@ export default [
     const received = await orient(page, cdp, { alpha: 34, beta: 62, gamma: 6 });
     // Frame every node, then settle the vantage a little low so the districts
     // fill the upper frame and the holding cluster sits in the lower frame.
-    // fitAll already includes the holding cluster, so no extra shift is needed:
-    // pulling the target down only opened a dead band under the map.
-    await FRAME_ALL(page, 1.05);
+    // The hero's job is to put a person inside a place they remember, which a
+    // whole-map thumbnail cannot do. Frame ONE district at reading distance
+    // with the holding ring at the edge of frame, not the entire brain.
+    await page.evaluate(() => {
+      const mm = window.mm, d = mm.store.doc;
+      const ns = Object.values(d.nodes).filter(n => n.placed && n.label === 'Lacto-vegetables');
+      const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0])
+                  .map(v => v / ns.length);
+      const h = d.holding.origin;
+      const p = mm.scene.pose;
+      p.target.set((c[0] * 0.70 + h[0] * 0.30), (c[1] * 0.70 + h[1] * 0.30), (c[2] * 0.70 + h[2] * 0.30));
+      // Far enough to keep the holding ring in frame, close enough to read.
+      p.dist = Math.hypot(c[0] - h[0], c[1] - h[1], c[2] - h[2]) * 1.42;
+    });
     await sleepFrames(page, 0, 4);
     await H.shot(page, cdp, H.out(this.file));
     const st = await H.modelStats(page);
@@ -113,6 +124,8 @@ export default [
     await SELECT(page, 'Positions are the memory');
     await POSE(page, { yaw: 0.30, pitch: 0.13 });
     await FRAME_ALL(page, 1.10);
+    // Framing resets the target, so clear the panels AFTER it, not before.
+    await page.evaluate(() => window.mm.clearOfPanels());
     await sleepFrames(page, 0, 3);
     await H.shot(page, cdp, H.out(this.file), 1600);   // mid-pulse for the unplaced state
     const states = await page.evaluate(() => {

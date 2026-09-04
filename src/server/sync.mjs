@@ -6,6 +6,7 @@
 //   - conflict resolution NEVER drops a node and NEVER re-lays-out anything
 import { WebSocketServer } from 'ws';
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -27,20 +28,25 @@ mkdirSync(DATA, { recursive: true });
 
 const docs = new Map();      // mapId -> MapDoc
 const rooms = new Map();     // mapId -> Set<ws>
+const origin = new Map();    // mapId -> { from: 'seed'|'live', file, sha256 }
 
 function loadAll() {
   // Committed seed fixtures are the source of truth on a cold start. They are
   // never generated at runtime (§09) — only read.
   for (const f of readdirSync(SEEDS)) {
     if (!f.endsWith('.json') || f === 'MANIFEST.json') continue;
-    const doc = JSON.parse(readFileSync(resolve(SEEDS, f), 'utf8'));
+    const raw = readFileSync(resolve(SEEDS, f), 'utf8');
+    const doc = JSON.parse(raw);
     docs.set(doc.id, doc);
+    origin.set(doc.id, { from: 'seed', file: `seeds/${f}`,
+                         sha256: createHash('sha256').update(raw).digest('hex') });
   }
   if (existsSync(DATA)) {
     for (const f of readdirSync(DATA)) {
       if (!f.endsWith('.json')) continue;
       const doc = JSON.parse(readFileSync(resolve(DATA, f), 'utf8'));
       docs.set(doc.id, doc);   // live state wins over the pristine seed
+      origin.set(doc.id, { from: 'live', file: `${DATA}/${f}` });
     }
   }
 }
@@ -70,7 +76,8 @@ wss.on('connection', (ws, req) => {
   ws.mapId = mapId;
   if (!rooms.has(mapId)) rooms.set(mapId, new Set());
   rooms.get(mapId).add(ws);
-  ws.send(JSON.stringify({ t: 'snapshot', doc: docs.get(mapId) }));
+  ws.send(JSON.stringify({ t: 'snapshot', doc: docs.get(mapId),
+                           origin: origin.get(mapId) ?? { from: 'live' } }));
   ws.send(JSON.stringify({ t: 'maps', maps: summaries() }));
 
   ws.on('message', (raw) => {

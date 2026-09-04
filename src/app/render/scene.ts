@@ -278,6 +278,27 @@ export class Scene {
     return out;
   }
 
+  /**
+   * Horizontal extent of everything drawn, labels included. Node positions
+   * alone under-report it: a label is far wider than the node it belongs to,
+   * and it is the label that ends up under a panel.
+   */
+  contentBoundsX(): { lo: number; hi: number } {
+    const p = LENS_PROFILE[this.lens];
+    let lo = Infinity, hi = -Infinity;
+    const byId = new Map(this.screenPositions().map(s => [s.id, s]));
+    for (let i = 0; i < this.runMeta.length; i++) {
+      const s = byId.get(this.runMeta[i].id);
+      const span = this.text.spans[i];
+      if (!s) continue;
+      const emPx = Math.min(Math.max(0.92 * s.pxPerWorld, p.textMinPx), p.textMaxPx);
+      const half = Math.max(span ? (span.widthEm * emPx) / 2 : 0, s.r);
+      lo = Math.min(lo, s.x - half);
+      hi = Math.max(hi, s.x + half);
+    }
+    return { lo, hi };
+  }
+
   pick(sx: number, sy: number, slopPx = 10): NodeId | null {
     let best: NodeId | null = null, bestD = Infinity, bestZ = Infinity;
     for (const s of this.screenPositions()) {
