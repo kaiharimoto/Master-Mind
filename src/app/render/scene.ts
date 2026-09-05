@@ -547,7 +547,15 @@ export class Scene {
           // label that could only be placed 20 % buried would win over the same
           // label shortened and completely clear, and then be dimmed for being
           // buried — losing both the words and the legibility.
-          const score = 6 * frac + shortPenalty + 0.22 * away;
+          // COVERAGE DOMINATES ABSOLUTELY. The comment below has said so since
+          // cycle 5 and the weight of 6 did not deliver it: a held label's
+          // distance penalty could outscore a half-buried placement, so the
+          // label took the buried anchor and the legibility floor then cut it
+          // to nothing — a name dropped in a frame that was 97 % empty. At
+          // 1000, any clear placement beats any covered one, and length and
+          // distance decide only among the clear ones, which is what the rule
+          // was always meant to say.
+          const score = 1000 * frac + shortPenalty + 0.22 * away;
           // The unshifted, full-length anchor is preferred: a candidate only
           // wins if it is meaningfully clearer, so labels do not jitter.
           const home = cx === 0 && cy === 0 && !cand.vis;
@@ -599,8 +607,13 @@ export class Scene {
       // ones above a weight threshold let two suppressed labels be placed on
       // top of each other — the faded tier was not deconflicted against itself,
       // so ghost strokes still crossed foreground text.
-      if (k > 0.02) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h,
-                                 pri: b.pri, z: b.z });
+      // Reserved only if it is DRAWN. The test used the pre-floor weight, so a
+      // label the legibility floor had just cut to nothing still occupied its
+      // rectangle and pushed other names off the map for room it was not
+      // using.
+      if (this.runAlphas[b.i] > 0.02)
+        taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h,
+                     pri: b.pri, z: b.z });
       // Where this label was actually DRAWN, in canvas pixels. Anything that
       // has to reason about a node's footprint on screen — a crop that must
       // not cut a name in half, a hit test, a safe area — needs the label's
@@ -612,14 +625,17 @@ export class Scene {
     this.text.setRunShifts(this.runShifts, this.runEllipsisDx);
     // Counted only for nodes actually ON SCREEN. A node behind the camera has no
     // label to hide, and counting it would overstate what the view is omitting.
+    // Counted from the same map the frame is drawn from, so the number the
+    // chrome prints and the labels that are actually missing cannot disagree.
     this.suppressed = 0;
     this.suppressedIds.length = 0;
-    for (let i = 0; i < this.runAlphas.length; i++) {
-      if (this.runAlphas[i] > 0.02) continue;
-      const q = byId.get(this.runMeta[i].id);
+    for (const meta of this.runMeta) {
+      const r = this.labelRects.get(meta.id);
+      if (r && r.alpha > 0.02) continue;
+      const q = byId.get(meta.id);
       if (q && q.x >= 0 && q.y >= 0 && q.x <= VW && q.y <= VH) {
         this.suppressed++;
-        this.suppressedIds.push(this.runMeta[i].id);
+        this.suppressedIds.push(meta.id);
       }
     }
   }

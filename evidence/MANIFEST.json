@@ -6,9 +6,12 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T05:23:26.386Z",
+  "lastRunAt": "2026-09-05T05:26:26.257Z",
   "lastRunCaptured": [
-    "14"
+    "02",
+    "04",
+    "06",
+    "10"
   ],
   "artifacts": [
     {
@@ -56,15 +59,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.5,
+      "seconds": 1.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 455297,
-        "sha256": "d00ea58ffac201b6ebac02f56bc50ab40c49fc5f695bf73d69f81399333378ba"
+        "bytes": 468586,
+        "sha256": "0be8eef01db57c20d756a3e8d9b2fc96053b0cd938264075023c34e7b0e529c1"
       },
       "claims": {
         "ok": true,
@@ -105,7 +108,7 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 12,
+          "labelsHidden": 0,
           "unlabelledListed": 0,
           "mapName": "Fermentation notebook"
         },
@@ -120,9 +123,9 @@
           ]
         },
         "cameraPinned": true,
-        "labelsAudited": 138,
+        "labelsAudited": 150,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Brettanomyces",
+        "labelWorstOverhangOn": "Acetobacter aceti",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -137,8 +140,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:13:27.633Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:26:27.633Z"
     },
     {
       "id": "03",
@@ -260,15 +263,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 1.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 499625,
-        "sha256": "e90b4fdda123e6a9d37b24dd15cf33bebc8f688fc70c0c07aa0cae2d91bfb0f6"
+        "bytes": 510932,
+        "sha256": "7f506867915dc9f57563e7a9b93dbaaee78f475d4ee26a2eb6eef180ce7e3e98"
       },
       "claims": {
         "ok": true,
@@ -315,8 +318,8 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 6,
-          "unlabelledListed": 6,
+          "labelsHidden": 0,
+          "unlabelledListed": 0,
           "mapName": "Fermentation notebook"
         },
         "camera": {
@@ -330,9 +333,9 @@
           ]
         },
         "cameraPinned": true,
-        "labelsAudited": 144,
+        "labelsAudited": 150,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Homofermentative",
+        "labelWorstOverhangOn": "Heterofermentative",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -442,8 +445,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:13:29.253Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:26:29.149Z"
     },
     {
       "id": "05",
@@ -510,15 +513,15 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3,
+      "seconds": 2.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 179216,
-        "sha256": "a3715ca85f693c89addeefe8d62927f16658c105bcf10eb70b793db1d35aa531"
+        "bytes": 225361,
+        "sha256": "ee6d267b937a82eaee49f519ae95ba765731e0b13abfaa3d67c3f6189ab2a44a"
       },
       "claims": {
         "ok": true,
@@ -557,6 +560,12 @@
         "lens": "canvas",
         "surface": "windows",
         "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 0,
+          "unlabelledListed": 0,
+          "mapName": "Fermentation notebook"
+        },
         "holdingOrigin": [
           -5,
           -40,
@@ -581,17 +590,17 @@
           },
           {
             "text": "Nixtamal plus koji",
-            "own": 25.9,
+            "own": 38.7,
             "nearestIsOwn": false,
             "hasLeader": true,
-            "margin": 3.2
+            "margin": 11.1
           },
           {
             "text": "Sour cherry kvass",
-            "own": 21.6,
+            "own": 39,
             "nearestIsOwn": true,
             "hasLeader": false,
-            "margin": 106.1
+            "margin": 109
           },
           {
             "text": "Coffee cherry cascara ferment?",
@@ -602,10 +611,10 @@
           },
           {
             "text": "Recalibrate the pH meter",
-            "own": 17.3,
-            "nearestIsOwn": true,
-            "hasLeader": false,
-            "margin": 27.2
+            "own": 34,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 4.4
           },
           {
             "text": "Read the succession paper",
@@ -616,10 +625,10 @@
           },
           {
             "text": "Black garlic: 60C for 40 days",
-            "own": 10.2,
-            "nearestIsOwn": true,
-            "hasLeader": false,
-            "margin": 8.1
+            "own": 132.3,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 53.5
           },
           {
             "text": "Preserved lemon, batch 3",
@@ -629,8 +638,8 @@
             "margin": 51.8
           }
         ],
-        "heldLabelsNearestOwnNode": 6,
-        "heldLabelsWithLeader": 2,
+        "heldLabelsNearestOwnNode": 4,
+        "heldLabelsWithLeader": 4,
         "everyHeldLabelAttributable": true,
         "holdingRingFillsFrame": true,
         "everyHeldNodeInFrame": true,
@@ -645,8 +654,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:41:52.389Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:26:32.057Z"
     },
     {
       "id": "07",
@@ -902,15 +911,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 5.6,
+      "seconds": 5.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 345318,
-        "sha256": "f219d7e143aa7472cbbe06c6c3cbfa3d07cc7e184856decb859eccc21c425d63"
+        "bytes": 349819,
+        "sha256": "4a408d8d5f40492f1038bbe19c1542126add73531e89e8e1208b5543f482638d"
       },
       "claims": {
         "ok": true,
@@ -999,8 +1008,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:17:19.529Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:26:37.581Z"
     },
     {
       "id": "11",
@@ -1486,7 +1495,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T05:23:28.873Z"
     },
     {
@@ -2073,12 +2082,12 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T05:23:30.559Z",
+  "finishedAt": "2026-09-05T05:26:39.416Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 790171,
-    "sha256": "abf08f7af4979f1345dfc0a7dc038e4df8bfa589a42385b390c8f646bd74a821"
+    "bytes": 790174,
+    "sha256": "f8115e7863e8811a91e9d481776f7884df0d231189b47036e5af34d169697ad1"
   },
   "captured": 20,
   "total": 20
