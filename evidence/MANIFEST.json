@@ -6,9 +6,11 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T03:17:19.304Z",
+  "lastRunAt": "2026-09-05T03:30:30.102Z",
   "lastRunCaptured": [
-    "07"
+    "02",
+    "04",
+    "10"
   ],
   "artifacts": [
     {
@@ -55,15 +57,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.4,
+      "seconds": 1.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 350517,
-        "sha256": "23e617e5f66db866c0821159aa075be9b6cdae236f19847a05e7620ae8a7d202"
+        "bytes": 349310,
+        "sha256": "227d9c7d6b47cba2a7589b6033f9c424e0285a05b26d22b1ec33f099b7651a64"
       },
       "claims": {
         "ok": true,
@@ -78,6 +80,12 @@
             "claim": "nodes",
             "expected": "(predicate)",
             "actual": 150,
+            "pass": true
+          },
+          {
+            "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
             "pass": true
           }
         ]
@@ -100,18 +108,23 @@
             0.6945
           ]
         },
-        "cameraPinned": true
+        "cameraPinned": true,
+        "labelsAudited": 117,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Coffee cherry cascara ferment?",
+        "labelArbiterAgreesWithDraw": true
       },
       "pageErrors": [],
       "recipe": {
         "demonstrates": "canvas lens at whole-map framing on Windows, 150 nodes with seed provenance",
         "surface": "windows",
         "lens": null,
-        "fnSha": "e78dba1ab8559b1b"
+        "fnSha": "c2b3f01dd66d3be6"
       },
+      "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:15:25.312Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:30:31.512Z"
     },
     {
       "id": "03",
@@ -228,15 +241,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 1.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 393247,
-        "sha256": "033e7c8f285a308e8285a1bc3f433d7f824f8d2499aadf9785b5e325c6ee5159"
+        "bytes": 389272,
+        "sha256": "b7a0f7b7ca86adcf3413def35655ba5859fc0b42100e224908d54492ce221449"
       },
       "claims": {
         "ok": true,
@@ -251,6 +264,12 @@
             "claim": "nodes",
             "expected": "(predicate)",
             "actual": 150,
+            "pass": true
+          },
+          {
+            "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
             "pass": true
           }
         ]
@@ -273,18 +292,23 @@
             0.6945
           ]
         },
-        "cameraPinned": true
+        "cameraPinned": true,
+        "labelsAudited": 120,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Recalibrate the pH meter",
+        "labelArbiterAgreesWithDraw": true
       },
       "pageErrors": [],
       "recipe": {
         "demonstrates": "mind-expansion lens, the whole map and the holding cluster on screen at once",
         "surface": "windows",
         "lens": null,
-        "fnSha": "45fc3b745339efe7"
+        "fnSha": "f7e7a992ad0cd188"
       },
+      "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:15:26.944Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:30:32.880Z"
     },
     {
       "id": "05",
@@ -484,7 +508,7 @@
         "fnSha": "1cb30f7bbb2450f4"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T03:17:20.188Z"
     },
     {
@@ -493,15 +517,15 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.7,
+      "seconds": 1.8,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 199400,
-        "sha256": "bb6f7158343e1f98123698b21b449fd0476c1cf61c6a65ed9dc704fc58068ae0"
+        "bytes": 193654,
+        "sha256": "21fd8d8260133a54b2189314f83711d3e4117303122dd6e4c1720e01670a95f0"
       },
       "claims": {
         "ok": true,
@@ -514,6 +538,12 @@
           },
           {
             "claim": "stableAfterDrop",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "cameraFrozenAcrossPanels",
             "expected": true,
             "actual": true,
             "pass": true
@@ -535,18 +565,20 @@
           4.587178802023548,
           2.022677780267024
         ],
-        "stableAfterDrop": true
+        "stableAfterDrop": true,
+        "cameraFrozenAcrossPanels": true
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "placement before/after: one node leaves holding for a permanent position",
+        "demonstrates": "placement before/after under one frozen camera: one node leaves holding for a permanent position and every other node projects to the same point",
         "surface": "windows",
         "lens": null,
-        "fnSha": "9bc0947274688e11"
+        "fnSha": "44bb27a07e81dc26"
       },
+      "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:44:52.821Z"
+      "fileMtime": "2026-09-05T03:21:07.805Z"
     },
     {
       "id": "09",
@@ -633,8 +665,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 211282,
-        "sha256": "b0ee9ded1884cf193dd8cf98565975fbc15ab2551c6e4c1a24c9d59da440aeaf"
+        "bytes": 217833,
+        "sha256": "c327d1ec31f5af921538e5614b1b3310e199a2b9d5e934b418a1eff4ee148de5"
       },
       "claims": {
         "ok": true,
@@ -644,28 +676,60 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "severalHitsShown",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "severalHitsMatched",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "flownHitCentred",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
       "result": {
-        "query": "grape leaf",
-        "node": "Grape leaf tannin trick",
-        "hits": 1,
+        "query": "koji",
+        "node": "Koji-kin sourcing",
+        "hits": 19,
+        "labelsAudited": 40,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Ask M about her crock",
+        "labelArbiterAgreesWithDraw": true,
+        "flownHitCentred": true,
+        "hitsInFrame": 13,
+        "severalHitsShown": true,
+        "severalHitsMatched": true,
         "homeBefore": [
-          -19.385,
-          -11.154,
-          15.811
+          16.511,
+          12.545,
+          -9.513
         ],
         "homeAfter": [
-          -19.385,
-          -11.154,
-          15.811
+          16.511,
+          12.545,
+          -9.513
         ],
         "positionUnchanged": true,
         "cameraTarget": [
-          -19.39,
-          -11.15,
-          15.81
+          16.51,
+          12.55,
+          -9.51
         ],
         "endDistance": 12,
         "centred": {
@@ -675,14 +739,15 @@
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "search fly-to end-state: the hit centred and wearing the search-hit signature",
+        "demonstrates": "search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it",
         "surface": "windows",
         "lens": null,
-        "fnSha": "46386ffedf70b395"
+        "fnSha": "f0f9bd4216282901"
       },
+      "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:45:00.548Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:30:38.052Z"
     },
     {
       "id": "11",
@@ -1545,12 +1610,79 @@
       "fileMtime": "2026-09-05T01:54:57.650Z"
     }
   ],
-  "finishedAt": "2026-09-05T03:17:21.736Z",
+  "staleFromEarlierCycles": [
+    {
+      "id": "01",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "03",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "05",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "06",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "07",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "09",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "11",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "12",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "13",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "14",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "15",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "16",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "17",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "18",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "19",
+      "capturedInCycle": "unknown"
+    },
+    {
+      "id": "20",
+      "capturedInCycle": "unknown"
+    }
+  ],
+  "allCapturedInThisCycle": false,
+  "finishedAt": "2026-09-05T03:30:39.533Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 779951,
-    "sha256": "f7d0f546cae5f1c6a7897e6035480f496350ab912954767e65c02ce3a41b5e6c"
+    "bytes": 781456,
+    "sha256": "f91a2c4e7658b54957eca26364ed4a6133e3f9e2565c0c51bd3d3ae75c5175f2"
   },
   "captured": 20,
   "total": 20

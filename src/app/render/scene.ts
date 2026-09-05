@@ -84,7 +84,7 @@ export class Scene {
   private hits = new Set<NodeId>();
   private screenCache: { id: NodeId; x: number; y: number; r: number; z: number; pxPerWorld: number }[] = [];
   /** Run order and priority for label deconfliction, rebuilt with the text. */
-  private runMeta: { id: NodeId; priority: number; baseAlpha: number }[] = [];
+  private runMeta: { id: NodeId; priority: number; baseAlpha: number; nodeSizeWorld: number }[] = [];
   private runAlphas = new Float32Array(0);
   private runShifts = new Float32Array(0);
   private runVisible = new Int32Array(0);
@@ -184,7 +184,19 @@ export class Scene {
       const col = stateColour(n.color, st), s0 = settledSat(hue(n.color));
       const sat = s0 + (1 - s0) * recencyOf(doc, n);
       inst.push({ pos: p, color: col, state: st, size, sat });
-      this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0 });
+      // The label's OWN clearance radius, carried alongside the run.
+      //
+      // A search hit's label is pushed out to 1.9x the core so it clears the
+      // signature's ticks (below). The deconflictor derived its clearance from
+      // screenPositions() instead, which reports the CORE — so during a search
+      // every hit's label was drawn as much as 40 px from the rectangle the
+      // arbiter had reserved for it, and two labels the arbiter had certified
+      // as disjoint landed on top of each other: 'Barley miso, 18 months'
+      // overprinted by 'Amazake' in cycle 7's artifact 10. Same class as F-015,
+      // in the one case F-015 did not cover.
+      const labelSize = st === 'searchHit' ? size * 1.9 : size;
+      this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0,
+                          nodeSizeWorld: labelSize });
       // Unplaced nodes sit in a ring. Their labels are pushed to the outward
       // side so they radiate from the holding cluster rather than pile onto it.
       const side: -1 | 0 | 1 = n.placed ? 0 : (n.pos[0] < doc.holding.origin[0] ? -1 : 1);
@@ -194,7 +206,7 @@ export class Scene {
         // tick, so the state signature was overdrawn by its own label. The
         // label clears the signature, not just the node.
         anchor: p, text: n.text, color: textCol,
-        nodeSizeWorld: st === 'searchHit' ? size * 1.9 : size, side,
+        nodeSizeWorld: labelSize, side,
         alpha: st === 'plain' ? 0.86 : 1.0,
         // Deterministic, position-free stagger: half the labels sit above their
         // node, half below. Halves label collisions in dense districts and never
@@ -331,7 +343,9 @@ export class Scene {
       this.runShifts[i * 2] = 0; this.runShifts[i * 2 + 1] = 0;
       if (!s || !span) { this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0 }; continue; }
       const emPx = Math.min(Math.max(em * s.pxPerWorld, p.textMinPx), p.textMaxPx);
-      const nodePx = Math.min(Math.max(s.r / 0.6, p.nodeMinPx), p.nodeMaxPx);
+      // The SHADER's formula, on the run's own clearance radius — not the core
+      // radius screenPositions() reports.
+      const nodePx = Math.min(Math.max(meta.nodeSizeWorld * s.pxPerWorld, p.nodeMinPx), p.nodeMaxPx);
       // The rectangle is derived from the run's OWN glyph extents, in the
       // shader's space, so the model and what is drawn cannot drift apart. An
       // approximation from the line count put boxes as much as 1.4 em from the
@@ -542,6 +556,32 @@ export class Scene {
    * frame that was drawn rather than an estimate of it.
    */
   labelRects = new Map<NodeId, { x0: number; y0: number; x1: number; y1: number; alpha: number }>();
+
+  /**
+   * Does the arbiter's reserved rectangle contain the glyphs that were drawn?
+   *
+   * Reported as the worst gap in pixels over every visible label. Zero means
+   * every label is inside the box that was reserved for it, which is the
+   * property the whole deconfliction rests on: a certified-disjoint bright tier
+   * means nothing if the boxes are not where the text is.
+   */
+  labelDrawAudit(): { checked: number; worstGapPx: number; worst: string | null } {
+    const scr = this.screenPositions();
+    const byId = new Map(scr.map(s => [s.id, s]));
+    let worst = 0, worstId: string | null = null, checked = 0;
+    for (let i = 0; i < this.runMeta.length; i++) {
+      const meta = this.runMeta[i];
+      const res = this.labelRects.get(meta.id);
+      const s = byId.get(meta.id);
+      if (!res || !s || res.alpha <= 0.02) continue;
+      const drawn = this.text.drawnRect(i, s.x, s.y, s.pxPerWorld);
+      if (!drawn) continue;
+      checked++;
+      const gap = Math.max(res.x0 - drawn.x0, drawn.x1 - res.x1, res.y0 - drawn.y0, drawn.y1 - res.y1);
+      if (gap > worst) { worst = gap; worstId = meta.id; }
+    }
+    return { checked, worstGapPx: Number(worst.toFixed(2)), worst: worstId };
+  }
 
   /**
    * One world point in screen pixels. The holding boundary is drawn from the

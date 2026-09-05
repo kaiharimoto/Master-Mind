@@ -585,7 +585,14 @@ for (const d of list) {
                   // what changed, not only how much.
                   recipe: { demonstrates: d.demonstrates ?? null,
                             surface: d.surface ?? null, lens: d.lens ?? null,
-                            fnSha: createHash('sha256').update(String(d.run)).digest('hex').slice(0, 16) } };
+                            fnSha: createHash('sha256').update(String(d.run)).digest('hex').slice(0, 16) },
+                  // WHICH CYCLE THIS FILE CAME FROM. capturedInThisRun answers a
+                  // narrower question — a cycle is several runs, since a single
+                  // artifact is often recaptured while its driver is worked on —
+                  // so it could not tell a reader whether a frozen set was
+                  // captured wholly inside the cycle it is filed under. Stamped
+                  // per artifact, so a stale one is named rather than inferred.
+                  capturedInCycle: manifest.cycle };
   const at = manifest.artifacts.findIndex(a => a.id === d.id);
   if (at >= 0) manifest.artifacts[at] = entry; else manifest.artifacts.push(entry);
   manifest.lastRunCaptured.push(d.id);
@@ -593,6 +600,12 @@ for (const d of list) {
     ? `ok  ${check.width}x${check.height}${check.seconds ? ` ${check.seconds}s @${check.fps}fps` : ''}  ${entry.seconds}s`
     : `${entry.status.toUpperCase()}  ${error ? error.split('\n')[0].slice(0, 120) : (check.why || claims.why)}`);
 }
+// Was the whole set captured inside the cycle it is filed under?
+manifest.staleFromEarlierCycles = manifest.artifacts
+  .filter(a => a.capturedInCycle !== manifest.cycle)
+  .map(a => ({ id: a.id, capturedInCycle: a.capturedInCycle ?? 'unknown' }));
+manifest.allCapturedInThisCycle = manifest.staleFromEarlierCycles.length === 0;
+
 // Position snapshot, compared across cycles as model values rather than pixels.
 {
   const dataDir = resolve(TMP, 'data-pos');

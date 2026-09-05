@@ -30,6 +30,24 @@ export const PIN = {
   '04': { yaw: 0.30, pitch: 0.16, dist: 128.755009, target: [4.227, -4.996, 0.6945] },
 };
 
+/**
+ * Every label the frame draws must lie inside the rectangle the deconfliction
+ * arbiter reserved for it. The bright tier's disjointness — the property that
+ * makes a dense district readable — is a claim about those rectangles, and it
+ * says nothing at all if the glyphs are somewhere else. Twice now they were:
+ * F-015 (rectangle estimated from a line count) and F-025 (a search hit's label
+ * is pushed clear of its signature, and the arbiter measured the core).
+ */
+const labelAudit = async (page) => {
+  const a = await page.evaluate(() => {
+    const r = window.mm.scene.labelDrawAudit();
+    return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null };
+  });
+  return { labelsAudited: a.checked, labelWorstOverhangPx: a.worstGapPx,
+           labelWorstOverhangOn: a.worstText,
+           labelArbiterAgreesWithDraw: a.checked > 0 && a.worstGapPx === 0 };
+};
+
 export default [
 {
   id: '01', file: '01_maps_home.png', kind: 'png',
@@ -65,7 +83,7 @@ export default [
 },
 {
   id: '02', file: '02_canvas_large_map.png', kind: 'png',
-  requires: { cameraPinned: true, nodes: (n) => n === 150 },
+  requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
@@ -78,7 +96,8 @@ export default [
     // the position proof. Derived once from frameAll(1.10) at this pose.
     await POSE(page, PIN['02']);
     await H.shot(page, cdp, H.out(this.file));
-    return { ...await H.modelStats(page), camera: PIN['02'], cameraPinned: true };
+    return { ...await H.modelStats(page), camera: PIN['02'], cameraPinned: true,
+             ...(await labelAudit(page)) };
   },
 },
 {
@@ -168,7 +187,7 @@ export default [
 },
 {
   id: '04', file: '04_mind_expansion.png', kind: 'png',
-  requires: { cameraPinned: true, nodes: (n) => n === 150 },
+  requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {
@@ -181,7 +200,8 @@ export default [
     // the pose bar — and stay exactly there in every future cycle.
     await POSE(page, PIN['04']);
     await H.shot(page, cdp, H.out(this.file));
-    return { ...await H.modelStats(page), camera: PIN['04'], cameraPinned: true };
+    return { ...await H.modelStats(page), camera: PIN['04'], cameraPinned: true,
+             ...(await labelAudit(page)) };
   },
 },
 {

@@ -69,12 +69,27 @@ export class Controls {
   zoom(factor: number) {
     this.scene.pose.dist = clamp(this.scene.pose.dist * factor, this.minDist, this.maxDist);
   }
+  /**
+   * Pan the view by a distance in SCREEN PIXELS.
+   *
+   * The conversion is the projection's own, not a tuned constant: world units
+   * per pixel is dist / (viewportHeight * projection[1][1] * 0.5), the inverse
+   * of the pxPerWorld every shader and every screen-space measurement in the
+   * app already uses. The previous factor of dist * 0.0016 was about twice the
+   * true scale at the default field of view, so a caller asking to clear a
+   * panel by 1266 px moved the map by 2500 and threw the view somewhere else
+   * entirely — which is most of what the whole-map jump on opening the editor
+   * actually was.
+   */
   panTarget(dx: number, dy: number) {
     const p = this.scene.pose, cp = Math.cos(p.pitch);
     const dir = new THREE.Vector3(cp * Math.sin(p.yaw), Math.sin(p.pitch), cp * Math.cos(p.yaw));
     const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), dir).normalize();
     const up = new THREE.Vector3().crossVectors(dir, right).normalize();
-    const k = p.dist * 0.0016;
+    const el = this.scene.renderer.domElement;
+    const proj = this.scene.camera.projectionMatrix.elements[5];
+    const pxPerWorld = el.height * proj * 0.5 / Math.max(p.dist, 1e-4);
+    const k = 1 / Math.max(pxPerWorld, 1e-6);
     p.target.addScaledVector(right, -dx * k).addScaledVector(up, dy * k);
   }
 

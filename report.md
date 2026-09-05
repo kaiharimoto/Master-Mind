@@ -713,6 +713,122 @@ cores, erasing the quietest state in the frame.
 | K19 | Art Director · a20 | Each contact-sheet tile is 486 px, so the holding badge is unreadable in every tile and the decrement has to be inferred | **Fixed as prescribed.** Sheets are 2×10 at 960 px tiles. The badge, the toasts and the prompt text are all readable. |
 
 
+## Cycle 6 — the critics' findings and what was done
+
+**Total 88.0/100 · every category above its minimum · REGRESSION-FREE · no
+position regression · 20/20 captured as defined · zero declared-claim
+failures.** 85.5 → 88.0.
+
+| Critic | Category | C5 | C6 | Weight | Minimum | |
+|---|---|---:|---:|---:|---:|---|
+| The Audience | 01 Core workflow | 21 | 21.5 | 25 | 20 | +0.5 |
+| The Audience | 02 Landmarks live | 22 | 22.5 | 25 | 20 | +0.5 |
+| The Auditor | 03 One model and sacred positions | 17 | 17.5 | 20 | 17 | +0.5 · **hard gate met** |
+| The Auditor | 04 Evidence and report integrity | 13 | 13.5 | 15 | 13 | +0.5 · **hard gate met** |
+| The Art Director | 05 Quality compliance | 8 | 8.5 | 10 | 8 | +0.5 |
+| The Art Director | 06 Finder round-trip | 4.5 | 4.5 | 5 | 4 | — |
+| | **Total** | 85.5 | **88.0** | 100 | | |
+
+**A process fault in this cycle, recorded rather than tidied away.** The three
+critics' verdicts were returned into the conversation and never written to
+disk. When the context was cut, the verbatim reports were gone; the scores, the
+category splits and the findings below survived only because they had been
+carried forward in the progress state. Nothing here is reconstructed from
+memory of wording — the findings are stated as findings, and only the phrases
+preserved verbatim in that carried-forward state are quoted. **From cycle 7 each
+critic's verdict is written to `evidence/critics/<role>-cycle-N.md` as it is
+received, before any response is written to it**, so a builder cannot be the
+only copy of a score he is not allowed to alter (§09).
+
+### The three majors
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| L1 | Auditor · a17 | The contact sheets stamp their timestamp at the top-left of every tile, over the app's own top bar | **Fixed.** The timestamp sits in a 44 px gutter *under* each tile. The map name, the holding count and the sync state are legible in all twenty tiles of every sheet. |
+| L2 | Auditor + Art Director · a14 | The finder-review still draws three full app frames at half scale and leaves its bottom **43 %** (rows 616–1079, measured) black | **Fixed, and it turned up two defects.** The artifact is now two rows: the three whole frames, and under them the same three moments cropped to the pair each panel is about. Building it exposed **F-021** and **F-022** below. |
+| L3 | Auditor · a12 | The twin is never *shown* at 150-node scale — the check runs on the same two sockets every cycle and reaches the frame only as the words *"not shown on screen"* | **Fixed as prescribed.** Artifact 12 carries a second row: both surfaces on the 150-node map under one camera copied from the Windows side, each printing its own position-ledger digest. The two ledgers are byte-identical, and the artifact **requires** `bigMapShownOnBothSurfaces` and `bigMapLedgersIdentical`. |
+
+### The minors
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| L4 | all three · a02/a03/a04 | Labels are cut mid-word with no elision mark — *"Starte", "Whole g", "Bulk"* — so *"a viewer cannot tell a short thought from a truncated one"* | **Fixed as prescribed.** Shortening cuts at a **word boundary** and appends the ellipsis glyph there, and a label drawn whole is no longer faded at its tail. Measured over the 37 shortened runs in artifact 04's frame: zero vertical mismatches, ellipsis 0.28–0.64 em after the last surviving glyph in every one. Two placement faults found by probing the instance buffer rather than by eye — the ellipsis carried the below-node block offset unconditionally, and its left edge was recorded in a different coordinate basis from the cut points. |
+| L5 | Audience · a08/a09/a17 | The mouse-equivalent caption reads **"mouse-alt-drag — the mouse-alt-drag equivalent"** | **Fixed.** Only a hand pose actually *stood in for* by the mouse gets the equivalence clause; the desk's own inputs are named from a vocabulary table — `Alt-drag`, `Scroll up` — rather than by echoing an event id. |
+| L6 | Art Director · a02 | Depth attenuation eats the rung spacing: a connected teal at **0.223** against a plain violet at **0.146**, a spread of 0.077 where the ladder is built on steps of 0.11 | **Fixed at the mechanism — D-016.** Distance may darken a node by at most 0.55 of the gap down to the rung *below its own state*, so the five bands are **disjoint**: whatever two nodes' distances are, a connected node is lighter than every plain node, and so on up the ladder. Depth still costs luminance only and still never touches alpha, so D-014 is bounded, not reopened. |
+| L7 | Auditor · a08 | The two panels are not demonstrably camera-frozen, so a reader cannot tell the placement from a re-framing | **Fixed.** 08 records every node's projected point except the dragged one, before and after, and **requires** `cameraFrozenAcrossPanels`. |
+| L8 | Auditor · a09 | Opening the editor re-frames the whole map by about 120 px | **Fixed, and the cause was a bug — F-024.** The pan now moves the least that clears the panel rather than re-centring, and `panTarget` converts screen pixels through the projection instead of a tuned constant that was about twice the true scale. Measured at whole-map framing on both maps: **0.0 px** of movement on opening the editor, with the selected node clear of the panel. |
+| L9 | Auditor · manifest | `capturedInThisRun` cannot answer whether a frozen set was captured wholly inside the cycle it is filed under | **Fixed.** Every artifact carries `capturedInCycle`, and the manifest carries `allCapturedInThisCycle` and names any stale rows. |
+| L10 | Audience · a10 | The search artifact only ever shows a **single** hit, so the state that exists to tell candidates apart is never shown telling anything apart | **Fixed.** The query matches 19 nodes, 13 of them in the final frame, and the artifact **requires** `severalHitsMatched`, `severalHitsShown` and `flownHitCentred`. Rebuilding it exposed **F-025**. |
+
+## Cycle 7 — findings from the work itself
+
+Six findings came out of cycle 7's own work rather than from a critic. Four are
+recorded because a capture **failed** on them, which §09 makes a finding rather
+than something to route around.
+
+**F-020 — a declared claim that asserted more than it meant.** Artifact 14's
+first `cameraFrozenAcrossPanels` claim compared `screenPositions()` records
+verbatim. A node's marker radius is derived from its degree, so accepting a
+connection legitimately grows both endpoints, and the capture failed. The claim
+was always about the camera; comparing the radius made it assert something else.
+It now compares projected points. Recorded because the failure is the finding —
+the narrowing is of a claim that was mis-stated, not of the artifact.
+
+**F-021 — a true flag about the wrong suggestion.** Artifact 14 read
+`rejectedId` from `suggestions[0]` **before** the accept click, so it held the
+id of the **accepted** suggestion; `rejectedIsGone` then passed because that
+suggestion had been accepted. This is the same class as F-018: a machine-checked
+claim whose subject was not what its name said. The rejected suggestion is now
+read off the card immediately before it is rejected, and a new claim,
+`rejectedPairUnjoined`, checks the model holds no link between the pair it
+named. Shipped as `captured` in cycles 5 and 6.
+
+**F-022 — a bar that could not be met, restated with its reason.** The detail
+row's first magnification bar was ×1.0 — the app at its own pixels — and the
+capture failed on it: the rejected pair spans **722 px of a 1280 px frame**, so
+no 640 px panel can hold both endpoints at that scale. Moving those nodes, or
+rejecting a more conveniently placed suggestion instead, would be arranging the
+take to suit the frame. The bar is restated as *strictly closer than the frame
+above it*, every panel prints its own magnification and crop rectangle, and the
+failure is recorded here rather than erased by the restatement.
+
+**F-023 — a recorded decision the code had stopped matching.** D-015's rung
+table in `DIRECTION.md` still carried the cycle-4 numbers (0.30 / 0.44 / 0.57 /
+0.69 / 0.80) after cycle 5 lowered the whole ladder to 0.26 / 0.37 / 0.48 / 0.59
+/ 0.70 to buy chroma back on the top rungs. For two cycles the recorded decision
+and the running code disagreed. D-015 now carries a dated amendment recording
+the change and its reason; the original decision is left standing rather than
+edited. From cycle 7 the numbers are **measured off artifact 07's own frame**,
+so the prose and the pixels cannot drift again: 0.288 / 0.425 / 0.562 / 0.676 /
+0.801, minimum step 0.114, widest within-rung scatter 0.028, and the capture
+fails if the ladder stops climbing or a step stops clearing that scatter.
+
+**F-024 — a pan calibrated by a tuned constant.** `panTarget` converted screen
+pixels to world units with `dist * 0.0016`, about **twice** the true scale at
+this field of view. A caller asking to clear a panel by 1266 px moved the map by
+2500 and threw the view somewhere else — most of what L8's whole-map jump
+actually was. It now uses the projection's own `pxPerWorld`, the same conversion
+every shader and screen-space measurement in the app already uses.
+
+**F-025 — the arbiter and the draw disagreed again.** A search hit's label is
+pushed out to **1.9×** the core radius so it clears the signature's ticks, but
+the deconflictor derived its clearance from `screenPositions()`, which reports
+the core. During a search, every hit's label was drawn as much as 40 px from the
+rectangle reserved for it, and two labels the arbiter had certified as disjoint
+landed on top of each other — *"Barley miso, 18 months"* overprinted by
+*"Amazake"* in artifact 10. Same class as F-015, in the one case F-015 did not
+cover.
+
+The fix is the rectangle; the **guard** is new. `Scene.labelDrawAudit()`
+recomputes, from the instance attributes and uniforms the vertex shader reads,
+the box each label is actually drawn into, and reports the worst overhang past
+its reservation. Artifacts 02, 04 and 10 carry it as a declared claim, so a
+frame where the arbiter is reasoning about a layout other than the one drawn is
+a **failed capture**. Measured after the fix: 117, 120 and 40 labels audited,
+worst overhang **0.00 px** in all three. It also caught a second, smaller
+disagreement on the way — a shortened run reserved the ellipsis's advance where
+the drawn cell is wider, leaving glyphs 1.63 px outside their own reservation.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
@@ -798,7 +914,7 @@ cycle 2 makes it.
 
 ## Capture failures
 
-**Four capture failures have occurred, in cycles 5 and 6.** Every one was
+**Six capture failures have occurred, in cycles 5, 6 and 7.** Every one was
 recorded by the harness as `driver-error` or `claim-not-met` rather than passed
 off as captured, every one was fixed at its cause, and every one was recaptured
 before the set was frozen. Three of the four were caught by machinery that
@@ -812,6 +928,8 @@ when nothing is lost by it.
 
 | Cycle | Fault | What it cost | Resolution |
 |---|---|---|---|
+| 7 | Artifact 14 recorded **`claim-not-met`** on `cameraFrozenAcrossPanels`, a claim that compared whole `screenPositions()` records including a degree-derived marker radius that legitimately grows when a link lands | One artifact, one run, before the set was frozen | The claim compares projected points. Recorded as F-020 — the claim was mis-stated, and the failure is the finding |
+| 7 | Artifact 14 recorded **`claim-not-met`** on `detailIsMagnified` at a ×1.0 bar that the geometry of this map cannot meet | One artifact, one run, before the set was frozen | The bar is restated as *strictly closer than the frame above it*, with its reason and every panel's measured magnification on the artifact. The take was **not** rearranged to meet the original bar. Recorded as F-022 |
 | 6 | The Wine target was closed on the twin's success path only. When the twin driver threw mid-sequence, the Windows binary, `wineserver` and Xvfb stayed alive and the capture process finished its work and then **never exited** — which reads as a slow capture rather than a leak | Cycle 6's first run hung after capturing; killed and re-run | The target is closed in a `finally`, so the platform boundary is torn down whether the take succeeds or fails |
 | 6 | Artifact 12's caption referenced a binding declared after it, so the twin sequence threw. Artifact 11 recorded `driver-error`; artifact 12 recorded **`claim-not-met`**, listing all nine of its declared claims as unmet | Two artifacts in cycle 6's first run; both recaptured before the set was frozen | The after-positions are read before the caption that prints them. **This is the declared-claim gate doing its job**: without it, artifact 12 would have been recorded `captured` with nine `undefined` claims inside it — exactly the fault F-018 describes |
 | 6 | `compose` refused a caption whose longest clause had no break point, failing the capture rather than clipping it | One artifact, one run | `wrapCaption` breaks on separators first and then on spaces, so it does not depend on the caller having put separators in the right places |

@@ -60,8 +60,8 @@ export default [
   id: '08', file: '08_placement_endstate.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { placed: true, stableAfterDrop: true },
-  demonstrates: 'placement before/after: one node leaves holding for a permanent position', minW: 1920, minH: 1080,
+  requires: { placed: true, stableAfterDrop: true, cameraFrozenAcrossPanels: true },
+  demonstrates: 'placement before/after under one frozen camera: one node leaves holding for a permanent position and every other node projects to the same point', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Placement end-state',
   async run(H) {
     // Captured at the panel's own size so the composite needs no downscaling:
@@ -94,6 +94,14 @@ export default [
     if (!ringVisible) throw new Error('08: the holding ring is not wholly inside the visible band');
     const beforeCount = await page.evaluate(() => window.mm.store.holdingCount());
     const beforePos = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
+    // The two panes are a before/after of ONE node. If the camera moved between
+    // them, every other node moved on screen too, and a reader comparing the
+    // panes cannot tell which movement is the placement. Projected points of
+    // every node except the dragged one, before and after.
+    const OTHERS = () => page.evaluate((skip) => JSON.stringify(
+      window.mm.scene.screenPositions().filter(p => p.id !== skip)
+        .map(p => [p.id, +p.x.toFixed(2), +p.y.toFixed(2)])), id);
+    const othersBefore = await OTHERS();
     const a = await H.tmpShot(page, cdp, '08a');
 
     const from = await SCREEN_OF(page, id);
@@ -115,6 +123,7 @@ export default [
     const landed = await SCREEN_OF(page, id);
     if (!landed || landed.x > edLeft - 60)
       throw new Error(`08: the dropped node landed under the editor panel (x ${landed && landed.x} vs panel ${edLeft})`);
+    const othersAfter = await OTHERS();
     const b = await H.tmpShot(page, cdp, '08b');
     await H.compose([a, b], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
       labels: [`Before — unplaced, waiting in holding (${beforeCount})`,
@@ -127,31 +136,65 @@ export default [
     const settled = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
     return { node: 'Steal the parking-lot bit', beforeCount, afterCount,
              placed: await page.evaluate(i => window.mm.store.doc.nodes[i].placed, id),
-             beforePos, afterPos, stableAfterDrop: JSON.stringify(afterPos) === JSON.stringify(settled) };
+             beforePos, afterPos, stableAfterDrop: JSON.stringify(afterPos) === JSON.stringify(settled),
+             cameraFrozenAcrossPanels: othersBefore === othersAfter };
   },
 },
 {
   id: '10', file: '10_search_flyto_end.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { positionUnchanged: true },
-  demonstrates: 'search fly-to end-state: the hit centred and wearing the search-hit signature', minW: 1920, minH: 1080,
+  requires: { positionUnchanged: true, severalHitsShown: true, severalHitsMatched: true,
+              flownHitCentred: true, labelArbiterAgreesWithDraw: true },
+  demonstrates: 'search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
     await POSE(page, { yaw: 0.42, pitch: 0.20 });
     await FRAME_ALL(page, 1.02);
-    const id = await NODE_ID(page, 'Grape leaf tannin trick');
-    const home = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
-    await page.fill('[data-t=search]', 'grape leaf');
+    // A query with MORE THAN ONE HIT. 'grape leaf' matched exactly one node, so
+    // the artifact that carries search never showed the search-hit state doing
+    // the thing it exists for — telling several candidates apart at once — and
+    // the 'next hit' affordance had nothing to step through.
+    const QUERY = 'koji';
+    await page.fill('[data-t=search]', QUERY);
     await page.press('[data-t=search]', 'Enter');
+    // WHICH node the app flew to, read from the app. Naming it in advance and
+    // measuring the centring against that name reported dx -341, dy 465 for a
+    // flight that had in fact landed dead centre on a different hit.
+    const id = await page.evaluate(() => window.mm.hits[window.mm.hitIndex]);
+    const home = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
     let t = 0;
     for (let i = 0; i < 55; i++) { await page.evaluate(x => window.mm.renderAt(x), t); t += 33.3; }
     await H.shot(page, cdp, H.out(this.file), t);
     const after = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
     const pose = await page.evaluate(() => ({ t: window.mm.scene.pose.target.toArray(), d: window.mm.scene.pose.dist }));
     const scr = await SCREEN_OF(page, id);
-    return { query: 'grape leaf', node: 'Grape leaf tannin trick', hits: await page.evaluate(() => window.mm.hits.length),
+    // How many of the hits a reader can actually SEE at the end of the flight.
+    const hitsInFrame = await page.evaluate(() => {
+      const el = window.mm.scene.renderer.domElement;
+      const hits = new Set(window.mm.hits);
+      return window.mm.scene.screenPositions()
+        .filter(p => hits.has(p.id) && p.x > 0 && p.y > 0 && p.x < el.width && p.y < el.height).length;
+    });
+    const hitCount = await page.evaluate(() => window.mm.hits.length);
+    // The search state is exactly where the arbiter and the draw disagreed
+    // (F-025), so this artifact audits it too.
+    const audit = await page.evaluate(() => {
+      const r = window.mm.scene.labelDrawAudit();
+      return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null };
+    });
+    const nodeText = await page.evaluate(i => window.mm.store.doc.nodes[i].text, id);
+    return { query: QUERY, node: nodeText, hits: hitCount,
+             labelsAudited: audit.checked, labelWorstOverhangPx: audit.worstGapPx,
+             labelWorstOverhangOn: audit.worstText,
+             labelArbiterAgreesWithDraw: audit.checked > 0 && audit.worstGapPx === 0,
+             // The flight ends ON the hit, not near it.
+             flownHitCentred: !!scr && Math.abs(scr.x - 960) < 40 && Math.abs(scr.y - 540) < 40,
+             hitsInFrame,
+             // The frame must show the search-hit state on more than one node,
+             // or it is a fly-to artifact wearing a search artifact's name.
+             severalHitsShown: hitsInFrame >= 2, severalHitsMatched: hitCount >= 3,
              homeBefore: home, homeAfter: after, positionUnchanged: JSON.stringify(home) === JSON.stringify(after),
              cameraTarget: pose.t.map(v => +v.toFixed(2)), endDistance: +pose.d.toFixed(2),
              centred: scr ? { dx: Math.round(scr.x - 960), dy: Math.round(scr.y - 540) } : null };

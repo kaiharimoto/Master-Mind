@@ -375,14 +375,34 @@ export class App {
     const ed = document.getElementById('editor');
     if (ed) right = Math.max(right, (el.width / scale - ed.getBoundingClientRect().left + 16) * scale);
     if (!left && !right) return;
-    // Centre what is actually on screen in the band that is still visible,
-    // rather than shifting by a fixed amount — a fixed shift only moves the
-    // clipping from one edge to the other. Labels count: they are what ends up
-    // under a panel, not the node dots.
+    // Move the LEAST that clears the panel, not enough to re-centre.
+    //
+    // Centring the whole map in the remaining band shifted a 150-node view by
+    // about 120 px for the sake of opening one node's editor. Nothing had
+    // moved — the camera panned — but a reader cannot tell those apart by eye,
+    // and a map that jumps when you select something in it reads as a map whose
+    // positions are not sacred. Labels count in the bounds: they are what ends
+    // up under a panel, not the node dots.
     const { lo, hi } = this.scene.contentBoundsX();
     if (!isFinite(lo) || !isFinite(hi)) return;
-    const bandCentre = (left + (el.width - right)) / 2;
-    const dx = bandCentre - (lo + hi) / 2;
+    const bandLo = left, bandHi = el.width - right;
+    let dx = 0;
+    if (hi - lo <= bandHi - bandLo) {
+      // The content fits beside the panels: nudge it in, no further.
+      if (lo < bandLo) dx = bandLo - lo;
+      else if (hi > bandHi) dx = bandHi - hi;
+    } else {
+      // It does not fit. Then the only thing that must be clear is the node the
+      // panel is about; the rest of the map stays where the reader left it.
+      const s = id ? this.scene.screenPositions().find(p => p.id === id) : undefined;
+      const r = id ? this.scene.labelRects.get(id) : undefined;
+      const nlo = Math.min(s ? s.x - s.r : Infinity, r ? r.x0 : Infinity);
+      const nhi = Math.max(s ? s.x + s.r : -Infinity, r ? r.x1 : -Infinity);
+      if (!isFinite(nlo) || !isFinite(nhi)) {
+        dx = (bandLo + bandHi) / 2 - (lo + hi) / 2;
+      } else if (nlo < bandLo) dx = bandLo - nlo;
+      else if (nhi > bandHi) dx = bandHi - nhi;
+    }
     if (Math.abs(dx) < 4) return;
     this.controls.panTarget(dx, 0);
   }

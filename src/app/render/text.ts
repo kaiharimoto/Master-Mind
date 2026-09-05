@@ -207,6 +207,45 @@ export class TextLayer {
 
   get material() { return this.mesh.material as THREE.ShaderMaterial; }
 
+  /**
+   * The screen rectangle a run's glyphs are ACTUALLY drawn into, computed from
+   * the instance attributes and the uniforms the vertex shader reads — not from
+   * the span geometry the arbiter reasons about.
+   *
+   * The two have now disagreed twice: once because the rectangle was estimated
+   * from a line count (F-015), and once because a search hit's label is pushed
+   * out past its core and the arbiter measured the core. Both times the effect
+   * was labels certified as disjoint landing on top of each other. This is the
+   * audit that can tell, per frame, whether the arbiter is reasoning about the
+   * frame that is drawn.
+   */
+  drawnRect(run: number, nodeScreenX: number, nodeScreenY: number, pxPerWorld: number) {
+    const sp = this.spans[run];
+    if (!sp) return null;
+    const u = this.material.uniforms;
+    const emPx = Math.min(Math.max(u.uEmWorld.value * pxPerWorld, u.uMinPx.value), u.uMaxPx.value);
+    const R = this.aRect.array as Float32Array, S = this.aShift.array as Float32Array;
+    const A = this.aAlpha.array as Float32Array, O = this.aOff.array as Float32Array;
+    const N = this.aNodeSize.array as Float32Array;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (let k = 0; k < sp.count; k++) {
+      const j = sp.start + k;
+      if (A[j] <= 0.01) continue;
+      const nodePx = Math.min(Math.max(N[j] * pxPerWorld, u.uNodeMinPx.value), u.uNodeMaxPx.value);
+      const gx0 = nodeScreenX + (R[j * 4] + S[j * 2]) * emPx;
+      const gx1 = gx0 + R[j * 4 + 2] * emPx;
+      // Shader y is up; screen y is down.
+      const top = nodeScreenY -
+        ((R[j * 4 + 1] + R[j * 4 + 3]) * emPx + O[j * 2] * emPx - O[j * 2 + 1] * nodePx * 0.62 + S[j * 2 + 1] * emPx);
+      const bot = top + R[j * 4 + 3] * emPx;
+      if (gx0 < x0) x0 = gx0;
+      if (gx1 > x1) x1 = gx1;
+      if (top < y0) y0 = top;
+      if (bot > y1) y1 = bot;
+    }
+    return Number.isFinite(x0) ? { x0, y0, x1, y1 } : null;
+  }
+
   setViewport(w: number, h: number) { this.material.uniforms.uViewport.value.set(w, h); }
   setNodePx(min: number, max: number) {
     this.material.uniforms.uNodeMinPx.value = min;
@@ -375,7 +414,12 @@ export class TextLayer {
           // Recorded as the PEN, the same basis as glyphRight, so the shift that
           // moves it back to a cut point is exact rather than a pad off.
           ellipsisLeft = pen;
-          ellipsisW = g.adv;
+          // The CELL width, not the advance: a shortened run's reserved width is
+          // built from pen positions, and the drawn cell overhangs the pen by
+          // the atlas padding. Reserving the advance left the drawn glyphs
+          // 1.6 px outside their own reservation — small, but the arbiter's
+          // guarantee is that they are inside it.
+          ellipsisW = cellEm;
           this.aRect.setXYZW(i, rx, ry, cellEm, cellEm);
           this.aUV.setXYZW(i, g.u0, g.v0, g.u1, g.v1);
           this.aAnchor.setXYZ(i, run.anchor.x, run.anchor.y, run.anchor.z);
