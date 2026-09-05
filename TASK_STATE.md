@@ -11,7 +11,7 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 |---|---|
 | Phase | review |
 | Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
-| Review cycle | **8 captured and frozen**; critics running against `evidence/cycles/cycle-8/` |
+| Review cycle | **8 captured and frozen.** Audience returned 42/50 and is answered in full; Auditor running; Art Director not yet dispatched (§04 requires strictly sequential dispatch) |
 | Rubric score | **82.0 / 100** at cycle 7 — **category 05 below its minimum (6 against 8)**, both hard gates met |
 | Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 (cycles 1–7) |
 | Artifacts captured | **20 of 20, all as defined**, in every frozen cycle |

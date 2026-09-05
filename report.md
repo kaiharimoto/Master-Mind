@@ -1044,6 +1044,49 @@ not reopened.
 | B6/B7 | Auditor · DIFF.json | The diff never names a real pixel change and its buckets total 19 of 20 | **Both fixed.** Each artifact records the counters its own chrome printed and the diff compares them as first-class fields; the buckets sum to the set size. |
 | C9 | Art Director · a13 | The map is clipped by the finder panel | **Fixed.** The map is framed after the panel reaches its final width, and the artifact requires that no label sits under the panel. |
 
+## Cycle 8 — the Audience's findings and what was done
+
+Cycle 8 captured 20 of 20. Its Audience verdict is in
+`evidence/critics/audience-cycle-8.md`, verbatim, recovered from the subagent's
+own transcript after it was nearly lost to a context cut for the second time in
+this run — the failure `evidence/critics/README.md` was written about after
+cycle 6, repeated. **Categories 01 and 02 scored 21 and 21, 42 of 50, both above
+their minimums.** Its comparison section is void: it rested on the corrupted
+cycle-7 baseline (F-030). Its findings about the cycle-8 files stand, and every
+one of them was reproduced by measurement before anything was changed.
+
+The pattern across all four is one thing. **Three claims on those frames were
+true and did not mean what I read them as meaning.**
+`labelArbiterAgreesWithDraw` compares a label's reserved box against its own
+drawn box. `everyLabelInsideTheFrame` compares that box against the viewport.
+Neither compares one label against another, and neither asks whether the node a
+label names can be seen. I had summarised the pair as *"150 drawn, zero hidden,
+zero overlaps"*, which the evidence never supported.
+
+| # | Critic · artifact | Finding | Measured, then done |
+|---|---|---|---|
+| A1 | Audience · a04 | 43 of 150 labels truncated to an ellipsis, and pairs of names running together | **Reproduced, both parts, and both fixed.** 42 truncated on my own rebuild — the critic's count was right. Overlapping pairs measured **0**, so the reading was not overlap: the tightest pair on 04 sits **0.06 px** apart and on 10 exactly **0.00 px**, "Rye starts fastest" against "Autolyse 40 min", two of the labels the critic named. The arbiter's only separation guarantee was that boxes do not intersect. Occupancy now runs on the box grown by a gutter, and the dim tier — the band in which a label was drawn *on top of* another — is gone: a label is drawn only when its best placement intrudes on nothing. Tightest gap on 04 is now **2.38 px**, on 10 **8.22 px**, with 0 overlapping pairs. |
+| A1b | Audience · a04 | The frame declares "0 labels hidden" while 43 names are cut | **Fixed.** A name cut to "Coffee cherry cascara…" is as unrecoverable as one never drawn. The chip names both omissions — "3 labels hidden · 44 shortened at this zoom" — counted from the alpha buffer the shader draws from. The harness read the first integer in that chip and would have reported 44 *hidden* on a frame that hides none; it matches by word now. |
+| A3 | Audience · a06/a10 | Labels drawn for nodes whose markers are not visible | **Reproduced and worse than reported, then fixed.** Measured off the captured PNG by a sampler sharing no code with the renderer: artifact 10 drew **18 of its 38 labels for nodes projecting outside the frame** — 47 % of its text unattached — and artifact 06, 9 of 24. A name is drawn only when the mark it names is **wholly** on screen; the first version of that gate tested the node's *centre* and passed a 16 px marker at y = 4 px whose peak luminance measured 0.0815 against a ground of 0.0815. Both artifacts are now at 0 unattached names. |
+| A4 | Audience · a10 | Search lights nodes whose visible words do not contain the query, with nothing saying why | **Fixed.** Search reads the district label as well as the text, which is right and was invisible. The frame prints `19 hits · 6 in the text · 13 in the label "Koji"`. Pinned top-right it was drawn under the editor — which the flight opens every time, because flying to a hit selects it — so it is measured under the search box and shifted clear of any open panel. |
+| A2 | Audience · a03 | The hero asserts a 271 px travel for a node it truncates to "Sauerkraut by…" and does not mark | **Fixed.** **Keep in view** is a real control in the node editor: a kept thought is ringed, named in full, placed before every other label and never dropped, and it survives a turn of the device. The hero uses it the way a person would — tap, press, tap away. `anchorNamedInBothPanels` is declared and read off the chrome in each panel. Travel measures 271 px (125, −240), unchanged. |
+| A5 | Audience · a05 | The synthesised hand is an illustration, not a photograph | **Open, and declared.** The substitution is stated on the frame and the recognised-pose path is real (D-003); rendering the Y4M from photographic frames is a capture-asset change, recorded rather than done. |
+
+Three claims are declared as a result — `noTwoDrawnLabelsOverlap`,
+`everyDrawnLabelHasAVisibleMarker`, `searchMatchReasonShown` — on artifacts 04,
+06 and 10. Each was **measured failing on the cycle-8 frames first**, so they
+gate a fixed fault rather than describing what the code already did.
+
+One threshold moved, and it is worth saying why rather than only that. The
+marker-visibility bar was 1.6:1 and one plain node measured 1.55. Before
+accepting or dismissing that I worked out what the palette can deliver: the
+lowest rung sits at luminance 0.26, depth fades it to 0.172, and against the
+0.10 ground that is 1.48:1 at best. **A distant plain node cannot reach 1.6:1 by
+construction** — the bar was failing the ladder, not measuring visibility. It is
+the palette's own floor less a tolerance, 1.45, with the derivation written
+where the number is. It still catches what it was built for: the clipped marker
+scored 1.00 and an off-frame node scores 0.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
