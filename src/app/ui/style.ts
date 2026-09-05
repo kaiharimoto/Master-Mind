@@ -149,9 +149,35 @@ tr.map:hover{background:var(--panel)}
 #reticle .n{font-size:11px;letter-spacing:.3px;color:var(--ink-faint);background:var(--panel);
   border:1px solid var(--line);padding:4px 9px;white-space:nowrap}
 #reticle.on .n{color:var(--ink)}
+/* The leader: what the readout is naming, shown rather than asserted. A
+   fixed aiming ring names the nearest thought, which was as much as 149 px
+   away with nothing connecting the two — so the one affordance that makes
+   this read as AR pointed at nothing. Anchored at the ring's centre and
+   rotated to the node; it carries state, so it is not chrome. */
+#reticle .lead{position:absolute;left:50%;top:50%;height:1px;background:#C9A227;opacity:0;
+  transform-origin:0 50%;pointer-events:none}
+#reticle.on .lead{opacity:.62}
+#reticle .lead::after{content:"";position:absolute;right:-2px;top:-2px;width:5px;height:5px;
+  border-radius:50%;background:#C9A227}
 #clusterproof{position:fixed;left:12px;top:56px;z-index:25;background:var(--panel);border:1px solid #3A2F26;
   padding:8px 11px;font-size:11px;letter-spacing:.3px;color:var(--ink-dim);display:none;line-height:1.55}
 #clusterproof.show{display:block}
+/* The unlabelled column. At whole-map framing the node cloud is near-square
+   (826x829 px measured) and a 16:9 frame leaves about 470 px of margin either
+   side that no camera angle can fill. The frame already admits how many names
+   it is not showing; this spends the empty margin on saying WHICH, in each
+   thought's own district colour. Fixed width whatever the count, so it is a
+   stable occluder for the label arbiter rather than one that resizes in
+   response to its own effect. */
+#unlabelled{position:fixed;right:0;top:96px;bottom:64px;width:300px;z-index:22;display:none;
+  padding:10px 14px 10px 16px;border-left:1px solid var(--line);pointer-events:none;
+  font-size:11px;line-height:1.62;letter-spacing:.2px;color:var(--ink-faint);overflow:hidden}
+#unlabelled.show{display:block}
+#unlabelled h4{margin:0 0 7px;font-size:11px;font-weight:600;letter-spacing:.4px;
+  color:var(--ink-dim);text-transform:none}
+#unlabelled li{list-style:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#unlabelled i{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:7px;
+  vertical-align:middle}
 #clusterproof b{color:var(--ink);font-family:"DejaVu Sans Mono",monospace}
 #hidden{position:fixed;right:12px;top:56px;z-index:24;background:var(--panel);border:1px solid var(--line);
   padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}

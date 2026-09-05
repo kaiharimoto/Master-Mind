@@ -243,22 +243,43 @@ export class App {
     if (this.lens !== 'ar') { r?.remove(); return; }
     if (!r) {
       r = el('div', { id: 'reticle', 'data-t': 'ar-reticle' });
-      r.innerHTML = '<div class="x"></div><div class="n" data-t="reticle-node"></div>';
+      r.innerHTML = '<div class="lead" data-t="reticle-lead"></div>' +
+                    '<div class="x"></div><div class="n" data-t="reticle-node"></div>';
       document.body.appendChild(r);
     }
     const el0 = this.scene.renderer.domElement;
     const cx = el0.width / 2, cy = el0.height / 2;
-    let best: { id: string; d: number } | null = null;
+    let best: { id: string; d: number; x: number; y: number } | null = null;
     for (const s of this.scene.screenPositions()) {
       const d = Math.hypot(s.x - cx, s.y - cy);
-      if (!best || d < best.d) best = { id: s.id, d };
+      if (!best || d < best.d) best = { id: s.id, d, x: s.x, y: s.y };
     }
-    const n = best ? this.store.doc.nodes[best.id] : null;
+    const reach = el0.width * 0.22;
+    const on = !!best && best.d < reach;
+    const n = on ? this.store.doc.nodes[best!.id] : null;
     const label = $('[data-t=reticle-node]', r);
-    r.classList.toggle('on', !!n && best!.d < el0.width * 0.22);
-    label.textContent = n && best!.d < el0.width * 0.22
+    r.classList.toggle('on', on);
+    label.textContent = n
       ? `${n.text}${n.placed ? '' : ' · in holding'}`
       : 'pointing at open space';
+    // DRAW THE ASSOCIATION. The ring is fixed at the frame's centre — that is
+    // what an aiming reticle is — but the readout names the NEAREST thought,
+    // which measured as much as 149 px away with nothing joining the two, so
+    // the chip appeared to name a node the ring was plainly not on. The leader
+    // runs from the ring's edge to the node the chip names.
+    const lead = $('[data-t=reticle-lead]', r) as HTMLElement;
+    const dpr = el0.width / Math.max(window.innerWidth, 1);
+    if (on && best) {
+      const dx = (best.x - cx) / dpr, dy = (best.y - cy) / dpr;
+      const len = Math.hypot(dx, dy);
+      const RING = 13;                       // the ring's own radius, in CSS px
+      lead.style.width = `${Math.max(len - RING, 0).toFixed(1)}px`;
+      lead.style.transform = `rotate(${(Math.atan2(dy, dx) * 180 / Math.PI).toFixed(2)}deg) ` +
+                             `translateX(${RING}px)`;
+      lead.style.opacity = len > RING + 4 ? '' : '0';
+    } else {
+      lead.style.width = '0px';
+    }
   }
 
   /** Live orientation readout: what the AR lens is actually being pointed at. */
@@ -624,6 +645,43 @@ export class App {
     // draw over it rather than being clipped to "1 label hid".
     chip.className = n > 0 && !this.panelOpen() && !this.rightPanelOpen() ? 'show' : '';
     chip.textContent = n > 0 ? `${n} label${n === 1 ? '' : 's'} hidden at this zoom — move closer to read them` : '';
+    this.renderUnlabelled();
+  }
+
+  /**
+   * The names the frame could not label, listed in the margin it cannot fill.
+   *
+   * At whole-map framing the node cloud is near-square — 826x829 px measured on
+   * the 150-node map — so a 16:9 frame leaves about 470 px of empty margin on
+   * each side that no camera angle can fill without cropping the map. The badge
+   * above says how many thoughts are unlabelled; this says which, in each
+   * thought's own district colour, so "the whole map at once" means every
+   * thought is accounted for rather than every thought is drawn.
+   *
+   * Only in the whole-map lens, only when nothing else is using the margin.
+   */
+  private renderUnlabelled() {
+    let col = document.getElementById('unlabelled');
+    if (!col) {
+      col = el('div', { id: 'unlabelled', 'data-t': 'unlabelled-list' });
+      document.body.appendChild(col);
+    }
+    const ids = this.scene.suppressedIds;
+    const show = this.lens === 'expansion' && ids.length > 0 &&
+                 !this.panelOpen() && !this.rightPanelOpen();
+    col.className = show ? 'show' : '';
+    if (!show) { col.innerHTML = ''; return; }
+    // As many as the column can hold, longest-settled first so the order is a
+    // property of the map rather than of the arbiter's iteration.
+    const rows = Math.max(1, Math.floor((col.clientHeight - 26) / 18));
+    const named = ids.map(i => this.store.doc.nodes[i]).filter(Boolean)
+      .sort((a, b) => a.createdAt - b.createdAt);
+    const shown = named.slice(0, rows);
+    const rest = named.length - shown.length;
+    col.innerHTML =
+      `<h4>${named.length} thought${named.length === 1 ? '' : 's'} on screen without room for a label</h4>` +
+      shown.map(n => `<li><i style="background:${PALETTE[n.color as ColorKey] ?? '#8A7C70'}"></i>${esc(n.text)}</li>`).join('') +
+      (rest > 0 ? `<li style="opacity:.6">…and ${rest} more</li>` : '');
   }
 
   /**
@@ -645,6 +703,16 @@ export class App {
     chip.innerHTML =
       `cluster <b>${esc(m.label)}</b> · ${m.members} nodes moved together<br>` +
       `travelled <b>${m.travelled.toFixed(2)}</b> · internal arrangement drift <b>${m.drift.toFixed(6)}</b>`;
+    // Stack under the seed-provenance chip rather than on top of it. Both were
+    // pinned to the same corner, so the cluster proof covered the line naming
+    // the committed seed the map was restored from — one piece of evidence
+    // hiding another.
+    // offsetParent is null for a position:fixed element, which is what #origin
+    // is — testing it left the chip exactly where it had been.
+    const above = document.getElementById('origin');
+    const shown = above && getComputedStyle(above).display !== 'none';
+    const r = shown ? above!.getBoundingClientRect() : null;
+    chip.style.top = r && r.height > 1 ? `${Math.round(r.bottom + 8)}px` : '';
   }
 
   private renderActivity() {
@@ -673,7 +741,8 @@ export class App {
     const g = $('#gesture');
     const touch = TOUCH_VOCAB.find(t => t.id === id);
     const hand = HAND_VOCAB.find(h => h.id === id || `mouse:${h.id}` === id);
-    const name = touch?.name ?? hand?.name ?? MOUSE_VOCAB[id] ?? (id === 'gyro' ? 'Gyroscope' : id);
+    const mouse = MOUSE_VOCAB[id];
+    const name = touch?.name ?? hand?.name ?? mouse?.name ?? (id === 'gyro' ? 'Gyroscope' : id);
     // A mouse-equivalent caption names the INPUT, not the pose it stands in for.
     // Three of the four read "Open palm (mouse equivalent)" and so never said
     // what a mouse user actually does; the vocabulary already knows.
@@ -683,10 +752,13 @@ export class App {
     // anything, and appending the clause to them produced the tautology
     // "mouse-alt-drag — the mouse-alt-drag equivalent" on artifacts 08, 09
     // and 17.
-    const standIn = id.startsWith('mouse:') ? hand : undefined;
-    const label = standIn
-      ? `${standIn.mouse.split(', or ')[0]} — the ${standIn.name} equivalent`
-      : name;
+    const standIn = id.startsWith('mouse:')
+      ? hand
+      : mouse?.standsIn ? HAND_VOCAB.find(h => h.id === mouse.standsIn) : undefined;
+    const label = !standIn ? name
+      : id.startsWith('mouse:')
+        ? `${standIn.mouse.split(', or ')[0]} — the ${standIn.name} equivalent`
+        : `${name} — the ${standIn.name} equivalent`;
     g.innerHTML = `<span class="n">${esc(label)}</span> <span class="o">— ${esc(detail)}</span>`;
     g.classList.add('show');
     this.uiUntil.gesture = this.now() + 2600;

@@ -390,7 +390,7 @@ export class Scene {
     // Panels are seeded into the reserved set before any label is placed, so
     // they win against everything.
     const dpr = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
-    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top']) {
+    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e) continue;
       const r = e.getBoundingClientRect();
@@ -554,10 +554,14 @@ export class Scene {
     // Counted only for nodes actually ON SCREEN. A node behind the camera has no
     // label to hide, and counting it would overstate what the view is omitting.
     this.suppressed = 0;
+    this.suppressedIds.length = 0;
     for (let i = 0; i < this.runAlphas.length; i++) {
       if (this.runAlphas[i] > 0.02) continue;
       const q = byId.get(this.runMeta[i].id);
-      if (q && q.x >= 0 && q.y >= 0 && q.x <= VW && q.y <= VH) this.suppressed++;
+      if (q && q.x >= 0 && q.y >= 0 && q.x <= VW && q.y <= VH) {
+        this.suppressed++;
+        this.suppressedIds.push(this.runMeta[i].id);
+      }
     }
   }
 
@@ -567,6 +571,13 @@ export class Scene {
    * the map has anonymous nodes.
    */
   suppressed = 0;
+
+  /**
+   * WHICH labels the arbiter could not place, on screen, this frame. The count
+   * alone tells a reader that something is missing but not what; with the ids
+   * the frame can name them instead of only admitting to them.
+   */
+  suppressedIds: NodeId[] = [];
 
   /**
    * The rectangle each visible label occupies on screen, after re-anchoring and

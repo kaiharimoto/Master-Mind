@@ -205,7 +205,14 @@ export default [
     // evidence were reading against each other at a glance. What this frame
     // actually establishes is a gyroscopic vantage over a map that does not
     // move, and the anchor node's travel is the falsifiable part of it.
-    const shift = A.anchor && B.anchor ? Math.abs(B.anchor.x - A.anchor.x) : null;
+    // THE DISTANCE THE ANCHOR TRAVELLED, not its x component. The caption said
+    // 'travelled 117 px' from |dx| alone, where the anchor moved (117, -179) —
+    // 214 px. A frame whose whole falsifiable claim is one number must not
+    // under-report that number.
+    const shift = A.anchor && B.anchor
+      ? Math.round(Math.hypot(B.anchor.x - A.anchor.x, B.anchor.y - A.anchor.y)) : null;
+    const shiftXY = A.anchor && B.anchor
+      ? [Math.round(B.anchor.x - A.anchor.x), Math.round(B.anchor.y - A.anchor.y)] : null;
     await H.compose([A.file, B.file], H.out(this.file), { mode: 'h', width: 2560, height: 1440,
       labels: [`Gyroscopic vantage — device held at heading ${hdg(A.gyro)}°`,
                `Turned to heading ${hdg(B.gyro)}° — every node position unchanged`],
@@ -213,7 +220,8 @@ export default [
       sublabels2: [
         'cold first launch from the committed seed · the app’s own deviceorientation listener moves the vantage; nothing writes the camera',
         shift === null ? 'anchor not resolved'
-          : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px across the frame while its stored position did not change`,
+          : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px across the frame ` +
+            `(${shiftXY[0]}, ${shiftXY[1]}) while its stored position did not change`,
       ] });
 
     const st = await H.modelStats(page);
@@ -226,7 +234,7 @@ export default [
                (A.pose.yaw !== B.pose.yaw || A.pose.pitch !== B.pose.pitch) &&
                (poseBefore.yaw !== A.pose.yaw || poseBefore.pitch !== A.pose.pitch),
              headingChanged: Math.abs((hdg(B.gyro) ?? 0) - (hdg(A.gyro) ?? 0)),
-             anchorMovedOnScreen: A.anchor && B.anchor ? Math.abs(B.anchor.x - A.anchor.x) : null,
+             anchorMovedOnScreen: shift, anchorMovedOnScreenXY: shiftXY,
              positionsUnchangedBetweenPanels: same };
   },
 },

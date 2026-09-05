@@ -6,11 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T04:23:22.860Z",
+  "lastRunAt": "2026-09-05T04:34:52.681Z",
   "lastRunCaptured": [
-    "02",
-    "04",
-    "10"
+    "04"
   ],
   "artifacts": [
     {
@@ -133,7 +131,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T04:23:24.077Z"
     },
     {
@@ -142,15 +140,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 2.6,
+      "seconds": 3.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 1039032,
-        "sha256": "280f0cfec777036c61bec203126a22e0d0a9638fb99d22f81cd37995bc539553"
+        "bytes": 1037116,
+        "sha256": "1c773aa25e96d4ba799a04a9dd220991cade1d8efe787a3f212939d0e8b3948e"
       },
       "claims": {
         "ok": true,
@@ -231,7 +229,11 @@
         },
         "gyroDroveTheView": true,
         "headingChanged": 62,
-        "anchorMovedOnScreen": 117,
+        "anchorMovedOnScreen": 214,
+        "anchorMovedOnScreenXY": [
+          117,
+          -179
+        ],
         "positionsUnchangedBetweenPanels": true
       },
       "pageErrors": [],
@@ -239,12 +241,12 @@
         "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations",
         "surface": "android",
         "lens": null,
-        "fnSha": "cc6453acaa698523"
+        "fnSha": "164d084af1e706ec"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:14.736Z"
+      "fileMtime": "2026-09-05T04:25:53.854Z"
     },
     {
       "id": "04",
@@ -259,8 +261,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 378916,
-        "sha256": "057c7ba2719726b77d88beaacdf0dd007d2ed38244f5117a63c6bd34ff2c0784"
+        "bytes": 433195,
+        "sha256": "e8eda67c87aac884cf9efe4dbab74de5cad55f393ed3f6b8aec11510939bd51c"
       },
       "claims": {
         "ok": true,
@@ -429,7 +431,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-05T04:23:25.577Z"
+      "fileMtime": "2026-09-05T04:34:53.961Z"
     },
     {
       "id": "05",
@@ -918,7 +920,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T04:23:31.145Z"
     },
     {
@@ -1490,15 +1492,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 341,
+      "seconds": 335.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 6897637,
-        "sha256": "5353ee64bf0096c178123cc333bf50d12eff069f33bb04ec09367440e738d872",
+        "bytes": 6482250,
+        "sha256": "58314dffcd0f7b80ef71bcbb189f1cff3228d08fd0767944d341f75f8fd1acbf",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -1534,7 +1536,7 @@
           "gather"
         ],
         "count": 4,
-        "samples": 1346,
+        "samples": 1331,
         "clusterGrabbed": "Koji",
         "clusterMembers": 16,
         "clusterCentroidBefore": [
@@ -1565,7 +1567,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:48:09.064Z"
+      "fileMtime": "2026-09-05T04:32:20.608Z"
     },
     {
       "id": "18",
@@ -1913,12 +1915,12 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T04:23:32.512Z",
+  "finishedAt": "2026-09-05T04:34:55.476Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 781996,
-    "sha256": "c5de24b4a485fb9cdf620bcdfe00d5573134c1064b27b48dc30bfa9f2753b35e"
+    "bytes": 785446,
+    "sha256": "99ac11e01e27f7f5e3a8653b104443d1df35864c8c7e77d5a5cb8b670836574a"
   },
   "captured": 20,
   "total": 20

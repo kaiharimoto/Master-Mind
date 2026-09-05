@@ -18,21 +18,25 @@ export const TOUCH_VOCAB: TouchGesture[] = [
   { id: 'pinch',      name: 'Pinch / spread',   how: 'Two fingers, pinch or spread',       operation: 'Zoom the view in or out', span: 'navigation' },
 ];
 
+export type HandPoseId = 'fist' | 'spread' | 'gather' | 'two' | 'none';
+
 /**
  * The desk inputs the controls fire directly, named the way a person would say
  * them. Without this table a caption fell back to the raw event id and read
  * "mouse-alt-drag — the mouse-alt-drag equivalent": a tautology that told a
  * viewer neither what was pressed nor what it stood in for.
  */
-export const MOUSE_VOCAB: Record<string, string> = {
-  'mouse-drag': 'Drag',
-  'mouse-alt-drag': 'Alt-drag',
-  'mouse-click': 'Click',
-  'mouse-scroll-up': 'Scroll up',
-  'mouse-scroll-down': 'Scroll down',
+export const MOUSE_VOCAB: Record<string, { name: string; standsIn?: HandPoseId }> = {
+  'mouse-drag':        { name: 'Drag' },
+  // These four ARE the documented mouse equivalents of the four hand poses (see
+  // HAND_VOCAB.mouse), and the caption should say so whichever path fired them:
+  // pressing the Grab button and holding Alt while dragging are the same
+  // operation, and only one of them was naming the pose it stood in for.
+  'mouse-alt-drag':    { name: 'Alt-drag', standsIn: 'fist' },
+  'mouse-click':       { name: 'Click', standsIn: 'two' },
+  'mouse-scroll-up':   { name: 'Scroll up', standsIn: 'spread' },
+  'mouse-scroll-down': { name: 'Scroll down', standsIn: 'gather' },
 };
-
-export type HandPoseId = 'fist' | 'spread' | 'gather' | 'two' | 'none';
 
 export interface HandPose {
   id: Exclude<HandPoseId, 'none'>; name: string; how: string;
