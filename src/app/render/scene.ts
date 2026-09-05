@@ -588,8 +588,17 @@ export class Scene {
           //
           // The wider anchor search is kept, because it demonstrably helped the
           // sparse frames — the directions survive, the reach does not.
-          const MAX_DISP = 3.0;   // em, about two line-heights at this metric
-          if (Math.hypot(cx, cy) > MAX_DISP) continue;
+          // Measured as the gap between the node and the NEAREST EDGE of the
+          // box, which is the distance a reader's eye actually crosses — not
+          // the anchor's shift, which says nothing on its own because a label
+          // sits beside its node to begin with.
+          const MAX_DISP = 2.6 * sh.emPx;   // two line-heights at 1.3 em each
+          {
+            const px0 = x0, py0 = y0, px1 = x0 + cand.w, py1 = y0 + sh.h;
+            const nx2 = Math.min(Math.max(own ? own.x : px0, px0), px1);
+            const ny2 = Math.min(Math.max(own ? own.y : py0, py0), py1);
+            if (own && Math.hypot(own.x - nx2, own.y - ny2) > MAX_DISP) continue;
+          }
           // NOR IS ACROSS THE LABEL'S OWN MARKER. A node's own disc is left out
           // of the coverage sum — a label is supposed to sit beside its node
           // and would otherwise be penalised for doing so — but that is not a
@@ -619,7 +628,7 @@ export class Scene {
           // above and below. Coverage is still expressed as a fraction of the
           // label's OWN area, so intruding on the gutter costs in proportion to
           // the name it crowds.
-          const GX = 0.34 * sh.emPx, GY = 0.17 * sh.emPx;
+          const GX = 0.22 * sh.emPx, GY = 0.11 * sh.emPx;
           const frac = Math.min(1, coverage(x0 - GX, y0 - GY, x0 + cand.w + GX, y0 + sh.h + GY, area) + dc);
           // Text-on-text decides the tier; text-on-marker only breaks ties; and
           // a label that wanders pays for the distance. Inside a tight cluster
@@ -824,6 +833,8 @@ export class Scene {
     tightestPairGapPx: number | null; tightestPair: [string, string] | null;
     truncated: number; truncatedIds: string[];
     worstDisplacementPx: number; worstDisplacement: string | null;
+    farFromNode: number; farFromNodeIds: string[]; worstReservedDisplacementPx: number;
+    worstDisplacementEm: number;
     anchors: { id: string; x: number; y: number; r: number;
                x0: number; y0: number; x1: number; y1: number }[];
   } {
@@ -831,6 +842,8 @@ export class Scene {
     let worst = 0, worstId: string | null = null, checked = 0;
     let off = 0, offId: string | null = null;
     let worstDisp = 0, worstDispId: string | null = null;
+    const farIds: string[] = [];
+    let worstResDisp = 0, worstDispEm = 0;
     // EVERY DRAWN LABEL'S BOX, kept so the drawn set can be compared against
     // ITSELF.
     //
@@ -850,8 +863,26 @@ export class Scene {
     const anchors: { id: string; x: number; y: number; r: number;
                      x0: number; y0: number; x1: number; y1: number }[] = [];
     const truncatedIds: string[] = [];
-    const scr = this.screenPositions();
-    const byId = new Map(scr.map(q => [q.id, q]));
+    // THE POSITIONS THE DECONFLICTOR RAN ON, not a fresh projection.
+    //
+    // This audit was reading node positions from a fresh screenPositions() call
+    // while reading the label boxes from the frame the deconflictor had built,
+    // so a displacement it reported as 81.7 px had been placed under a 48 px
+    // cap — two different cameras, one subtraction. That is F-025 again, in the
+    // instrument written to catch F-025, and it made the displacement cap look
+    // as though it were not binding when it was.
+    const byId = this.lastScreen;
+    // TWO QUESTIONS, TWO PROJECTIONS, AND THEY ARE NOT INTERCHANGEABLE.
+    //
+    // "How far did this label travel from its node?" is about the frame the
+    // deconflictor laid out, so it uses lastScreen. "Is there a mark under this
+    // label in the shipped PNG?" is about the pixels, so its anchor must be the
+    // CURRENT projection — feeding it lastScreen made the sampler probe
+    // coordinates the image was not drawn at, and six markers on artifact 02
+    // that are plainly there measured as missing. Conflating the two is what
+    // made the displacement cap look unbound; separating them is the fix for
+    // both halves.
+    const fresh = new Map(this.screenPositions().map(q => [q.id, q]));
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const res = this.labelRects.get(meta.id);
@@ -883,9 +914,28 @@ export class Scene {
         const ny = Math.min(Math.max(q.y, drawn.y0), drawn.y1);
         const d = Math.hypot(q.x - nx, q.y - ny);
         if (d > worstDisp) { worstDisp = d; worstDispId = meta.id; }
+        // The same distance on the RESERVED box, which is what the placement
+        // constraint bounded. If the two disagree, the constraint is bounding
+        // something other than what ships.
+        const rx = Math.min(Math.max(q.x, res.x0), res.x1);
+        const ry = Math.min(Math.max(q.y, res.y0), res.y1);
+        const dr = Math.hypot(q.x - rx, q.y - ry);
+        if (dr > worstResDisp) worstResDisp = dr;
+        // The critic's own threshold: a label sitting more than 40 px clear of
+        // its node is what it counted as orphaned. One worst case says less
+        // than how many there are.
+        if (d > 40) farIds.push(meta.id);
+        // AND THE SAME DISTANCE IN THE LABEL'S OWN TYPE SIZE, which is the
+        // measure the cap is expressed in and the one that means the same thing
+        // at every zoom. Forty pixels is far beside 12 px type and adjacent
+        // beside 24 px type; the critic's absolute count is kept as reported
+        // and this is what the gate is on.
+        const em = this.text.emPxFor(i, s.pxPerWorld);
+        if (em > 0 && d / em > worstDispEm) worstDispEm = d / em;
       }
-      if (q) anchors.push({ id: meta.id, x: Number(q.x.toFixed(2)), y: Number(q.y.toFixed(2)),
-                            r: Number(q.r.toFixed(2)),
+      const f = fresh.get(meta.id);
+      if (f) anchors.push({ id: meta.id, x: Number(f.x.toFixed(2)), y: Number(f.y.toFixed(2)),
+                            r: Number(f.r.toFixed(2)),
                             x0: Number(drawn.x0.toFixed(2)), y0: Number(drawn.y0.toFixed(2)),
                             x1: Number(drawn.x1.toFixed(2)), y1: Number(drawn.y1.toFixed(2)) });
     }
@@ -921,7 +971,10 @@ export class Scene {
              overlappingPairs: pairs, worstPairOverlapPx: Number(worstArea.toFixed(1)), worstPair,
              tightestPairGapPx: Number.isFinite(tightest) ? Number(tightest.toFixed(2)) : null, tightestPair,
              truncated: truncatedIds.length, truncatedIds, anchors,
-             worstDisplacementPx: Number(worstDisp.toFixed(1)), worstDisplacement: worstDispId };
+             worstDisplacementPx: Number(worstDisp.toFixed(1)), worstDisplacement: worstDispId,
+             farFromNode: farIds.length, farFromNodeIds: farIds.slice(0, 40),
+             worstReservedDisplacementPx: Number(worstResDisp.toFixed(1)),
+             worstDisplacementEm: Number(worstDispEm.toFixed(2)) };
   }
 
   /**

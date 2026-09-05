@@ -188,6 +188,7 @@ export default [
               // labels 0.00 px apart — so they are gates on a fixed fault, not
               // gates written to describe what the code already did.
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
+              everyLabelStaysBesideItsNode: true,
               searchMatchReasonShown: true },
   demonstrates: 'search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
@@ -264,7 +265,14 @@ export default [
              labelsTruncatedOn: audit.truncatedText,
              labelWorstDisplacementPx: audit.worstDisplacementPx,
              labelWorstDisplacementOn: audit.dispText,
-             everyLabelStaysBesideItsNode: audit.checked > 0 && audit.worstDisplacementPx <= 64,
+             labelsFarFromTheirNode: audit.farFromNode,
+             labelWorstReservedDisplacementPx: audit.worstReservedDisplacementPx,
+             labelWorstDisplacementEm: audit.worstDisplacementEm,
+             // Beside its node, measured in the label's own type size so the
+             // rule means the same thing at every zoom. 2.6 em is the
+             // placement cap; a small tolerance covers the drawn box
+             // sitting inside the reserved one.
+             everyLabelStaysBesideItsNode: audit.checked > 0 && audit.worstDisplacementEm <= 2.8,
              // And whether each of those names has a marker a reader can see.
              // Measured off the captured PNG, not asked of the renderer; see
              // the note on labelsAndMarkers in drivers/stills.mjs.

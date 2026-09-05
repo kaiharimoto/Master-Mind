@@ -76,7 +76,14 @@ const labelAudit = async (page) => {
            labelsTruncatedOn: a.truncatedText,
            labelWorstDisplacementPx: a.worstDisplacementPx,
            labelWorstDisplacementOn: a.dispText,
-           everyLabelStaysBesideItsNode: a.checked > 0 && a.worstDisplacementPx <= 64,
+           labelsFarFromTheirNode: a.farFromNode,
+           labelWorstReservedDisplacementPx: a.worstReservedDisplacementPx,
+           labelWorstDisplacementEm: a.worstDisplacementEm,
+           // Beside its node, measured in the label's own type size so the
+           // rule means the same thing at every zoom. 2.6 em is the
+           // placement cap; a small tolerance covers the drawn box
+           // sitting inside the reserved one.
+           everyLabelStaysBesideItsNode: a.checked > 0 && a.worstDisplacementEm <= 2.8,
            labelAnchors: a.anchors };
 };
 
@@ -230,7 +237,8 @@ export default [
               // three unreadable overprinted pairs where cycle 7 had none, and
               // the two claims above passed throughout because neither of them
               // looks at one label against another. These two do.
-              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true },
+              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
+              everyLabelStaysBesideItsNode: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
@@ -398,7 +406,8 @@ export default [
   id: '04', file: '04_mind_expansion.png', kind: 'png',
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
               everyLabelInsideTheFrame: true, recencyChannelExercised: true,
-              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true },
+              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
+              everyLabelStaysBesideItsNode: true },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {
@@ -422,7 +431,7 @@ export default [
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
               countMatchesMarkers: true, everyHeldLabelAttributable: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyHeldMarkerCountable: true },
+              everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true },
   demonstrates: 'the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
   async run(H) {

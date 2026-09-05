@@ -246,6 +246,12 @@ export class TextLayer {
     return Number.isFinite(x0) ? { x0, y0, x1, y1 } : null;
   }
 
+  /** The em size this run is drawn at, in pixels, at a given scale. */
+  emPxFor(_run: number, pxPerWorld: number): number {
+    const u = this.material.uniforms;
+    return Math.min(Math.max(u.uEmWorld.value * pxPerWorld, u.uMinPx.value), u.uMaxPx.value);
+  }
+
   setViewport(w: number, h: number) { this.material.uniforms.uViewport.value.set(w, h); }
   setNodePx(min: number, max: number) {
     this.material.uniforms.uNodeMinPx.value = min;
