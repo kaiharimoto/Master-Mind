@@ -242,9 +242,14 @@ export class TextLayer {
     for (let r = 0; r < this.spans.length && r < alphas.length; r++) {
       const { start, count } = this.spans[r];
       const vis = visible && visible[r] > 0 ? Math.min(visible[r], count) : count;
+      // The tail fade marks a label that was CUT. A label drawn whole ends where
+      // the word ends and must not be dimmed for it — the fade was being applied
+      // to every label's last two glyphs, so complete names read as truncated.
+      const cut = vis < count;
       for (let k = 0; k < count; k++) {
         const tail = vis - k;
         arr[start + k] = k >= vis ? 0
+          : !cut ? alphas[r]
           : tail <= 1 ? alphas[r] * 0.45
           : tail === 2 ? alphas[r] * 0.75
           : alphas[r];
