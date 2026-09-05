@@ -94,6 +94,7 @@ export function drawHand(ctx, W, H, p, opt={}){
   ctx.strokeStyle = pg;
   ctx.lineJoin = 'round'; ctx.lineCap = 'round';
   ctx.lineWidth = scale*0.46;
+  if (opt && opt.shadow) { ctx.fillStyle = '#14120F'; ctx.strokeStyle = '#14120F'; }
   ctx.beginPath();
   ctx.moveTo(palmPts[0][0], palmPts[0][1]);
   for (let i=1;i<palmPts.length;i++) ctx.lineTo(palmPts[i][0], palmPts[i][1]);
@@ -107,8 +108,12 @@ export function drawHand(ctx, W, H, p, opt={}){
       const a = P[ch[s]], b = P[ch[s+1]];
       const t = s/(ch.length-1);
       const wA = scale*w0[fi]*(1-0.16*t), wB = scale*w0[fi]*(1-0.16*(t+0.34));
-      const gg = ctx.createLinearGradient(a[0]-wA, a[1], a[0]+wA, a[1]);
-      gg.addColorStop(0, SKIN_LO); gg.addColorStop(0.45, SKIN); gg.addColorStop(1, SKIN_HI);
+      let gg;
+      if (opt && opt.shadow) { gg = '#14120F'; }
+      else {
+        gg = ctx.createLinearGradient(a[0]-wA, a[1], a[0]+wA, a[1]);
+        gg.addColorStop(0, SKIN_LO); gg.addColorStop(0.45, SKIN); gg.addColorStop(1, SKIN_HI);
+      }
       ctx.strokeStyle = gg; ctx.lineWidth = (wA+wB);
       ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
       ctx.fillStyle = gg;
@@ -116,12 +121,14 @@ export function drawHand(ctx, W, H, p, opt={}){
     }
     // Nail-ish highlight at the tip: a small specular cue.
     const tip = P[ch[ch.length-1]];
+    if (opt && opt.shadow) return;
     ctx.fillStyle = 'rgba(255,236,220,0.30)';
     ctx.beginPath(); ctx.arc(tip[0]-scale*0.02, tip[1]-scale*0.03, scale*w0[fi]*0.46, 0, 7); ctx.fill();
   });
 
   // Knuckle shading, so the silhouette is not a flat cut-out.
   ctx.globalAlpha = 0.20; ctx.fillStyle = SKIN_LO;
+  if (opt && opt.shadow) { ctx.globalAlpha = 1; return P; }
   for (const i of [5,9,13,17,2,6,10,14,18]) {
     ctx.beginPath(); ctx.ellipse(P[i][0], P[i][1], scale*0.075, scale*0.05, 0, 0, 7); ctx.fill();
   }
@@ -137,6 +144,23 @@ export function drawScene(ctx, W, H, p, opt){
   const v = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.92);
   v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.34)');
   ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  // A CAST SHADOW ON THE WALL. The cycle-8 Audience's remaining finding was that
+  // the landmarks read as drawn onto an illustration rather than as detected on
+  // a hand. There is no camera in this container and none can be made (F-004),
+  // and inventing photographic footage is not on the table — the substitution
+  // stays declared on the frame exactly as it is. What CAN be fixed is that a
+  // flat cut-out has no relationship to the surface behind it: a real hand in
+  // front of a wall throws a shadow, and its absence is most of why the render
+  // read as a sticker. Drawn first, offset along the light direction, blurred
+  // and soft, so the hand sits in the scene rather than on it.
+  ctx.save();
+  ctx.globalAlpha = 0.42;
+  ctx.filter = 'blur(9px)';
+  ctx.translate(W * 0.021, H * 0.030);
+  ctx.scale(1.015, 1.015);
+  ctx.translate(-W * 0.0075, -H * 0.0075);
+  drawHand(ctx, W, H, p, { ...opt, shadow: true });
+  ctx.restore();
   ctx.save();
   ctx.filter = 'blur(0.7px)';
   const P = drawHand(ctx, W, H, p, opt);
