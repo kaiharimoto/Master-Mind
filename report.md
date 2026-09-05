@@ -764,9 +764,11 @@ only copy of a score he is not allowed to alter (§09).
 
 ## Cycle 7 — findings from the work itself
 
-Six findings came out of cycle 7's own work rather than from a critic. Four are
+Eight findings came out of cycle 7's own work rather than from a critic. Two are
 recorded because a capture **failed** on them, which §09 makes a finding rather
-than something to route around.
+than something to route around; two more — F-026 and F-027 — are faults in the
+cross-cycle regression instrument itself, which means every "regression-free"
+verdict before this cycle was made on a diff that under-reported change.
 
 **F-020 — a declared claim that asserted more than it meant.** Artifact 14's
 first `cameraFrozenAcrossPanels` claim compared `screenPositions()` records
@@ -820,6 +822,31 @@ rectangle reserved for it, and two labels the arbiter had certified as disjoint
 landed on top of each other — *"Barley miso, 18 months"* overprinted by
 *"Amazake"* in artifact 10. Same class as F-015, in the one case F-015 did not
 cover.
+
+**F-026 — the regression diff was comparing against the wrong set.** Each cycle
+archived the *working* `evidence/` directory to `history/cycle-N` at the start of
+the next cycle and diffed against that. Any artifact recaptured between cycles —
+which is most of them, since a driver is worked on before the cycle runs — was
+therefore already in the "previous" set, and the diff skipped exactly the
+artifacts that had changed. Cycle 7 first reported **5 of 20 changed**; against
+the frozen cycle-6 set the critics actually reviewed, the figure is **13 changed
+and 1 uncomparable**. This is the instrument the Auditor's regression-free
+verdict rests on, and it had been under-reporting since the freeze mechanism was
+introduced in cycle 2. The diff now uses `evidence/cycles/cycle-N` and prints
+which set it used.
+
+**F-027 — two blind spots in the video half of that instrument.** Videos were
+compared through their derived contact sheets, and when the sheets changed shape
+this cycle SSIM returned no score at all: five of the six videos came back
+`uncomparable` **with no reason recorded**, so a change to a review aid silently
+disabled the regression check for a third of the set. And the direct fallback
+was capped at `-t 4`: artifact 20's take rejects a placement at 24 s, which over
+four seconds scored 0.99 and read UNCHANGED, and over its full duration scores
+**0.909** against a 0.950 threshold. Videos are now compared over their whole
+duration with both streams scaled to 480 px wide — about three seconds a pair —
+an uncomparable row states why it could not be compared, and the diff records
+which method scored each video and warns that the fallback sits on a different
+noise floor from the thresholds, which were calibrated on the sheet method.
 
 The fix is the rectangle; the **guard** is new. `Scene.labelDrawAudit()`
 recomputes, from the instance attributes and uniforms the vertex shader reads,
