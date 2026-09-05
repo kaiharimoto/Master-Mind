@@ -659,11 +659,19 @@ export class App {
       document.body.appendChild(chip);
     }
     const n = this.scene.suppressed;
+    const cut = this.scene.shortened;
     // The badge exists to declare what the frame is not showing, so it must not
     // itself be the thing that is hidden: it stands down when the editor would
     // draw over it rather than being clipped to "1 label hid".
-    chip.className = n > 0 && !this.panelOpen() && !this.rightPanelOpen() ? 'show' : '';
-    chip.textContent = n > 0 ? `${n} label${n === 1 ? '' : 's'} hidden at this zoom — move closer to read them` : '';
+    chip.className = (n > 0 || cut > 0) && !this.panelOpen() && !this.rightPanelOpen() ? 'show' : '';
+    // Both kinds of omission, named separately. Saying only the first let a
+    // frame declare "0 labels hidden" while 42 of its 150 names were shortened
+    // to an ellipsis — a true sentence a reader would take for a false one.
+    const parts: string[] = [];
+    if (n > 0) parts.push(`${n} label${n === 1 ? '' : 's'} hidden`);
+    if (cut > 0) parts.push(`${cut} shortened`);
+    chip.textContent = parts.length
+      ? `${parts.join(' · ')} at this zoom — move closer to read them` : '';
     this.renderUnlabelled();
     this.renderLeaders();
   }

@@ -245,7 +245,12 @@ const modelStats = (page) => page.evaluate(() => {
   const num = (sel) => { const t = txt(sel); const m = t && t.match(/\d+/); return m ? Number(m[0]) : null; };
   const onFrame = {
     holdingBadge: num('[data-t=holding-count]'),
-    labelsHidden: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)/); return m ? Number(m[1]) : 0; })(),
+    // Matched by WORD, not by position. The chip now names two kinds of
+    // omission and the first number in it is no longer necessarily the hidden
+    // one: with nothing hidden and 44 names shortened, "take the first integer"
+    // would have reported 44 labels hidden on a frame that hides none.
+    labelsHidden: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+labels?\s+hidden/); return m ? Number(m[1]) : 0; })(),
+    labelsShortened: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+shortened/); return m ? Number(m[1]) : 0; })(),
     unlabelledListed: document.querySelectorAll('#unlabelled li').length,
     mapName: txt('[data-t=map-name]'),
   };

@@ -683,9 +683,20 @@ export class Scene {
     // chrome prints and the labels that are actually missing cannot disagree.
     this.suppressed = 0;
     this.suppressedIds.length = 0;
-    for (const meta of this.runMeta) {
+    this.shortened = 0;
+    this.shortenedIds.length = 0;
+    for (let i = 0; i < this.runMeta.length; i++) {
+      const meta = this.runMeta[i];
       const r = this.labelRects.get(meta.id);
-      if (r && r.alpha > 0.02) continue;
+      if (r && r.alpha > 0.02) {
+        // A NAME CUT SHORT IS ALSO A NAME THE VIEW IS NOT SHOWING. The chrome
+        // said "0 labels hidden" on a frame where 42 of 150 names ended in an
+        // ellipsis, which is true of the word "hidden" and false of what a
+        // reader can recover: "Coffee cherry cascara…" is no more the thought
+        // than a name that was never drawn.
+        if (this.text.isTruncated(i)) { this.shortened++; this.shortenedIds.push(meta.id); }
+        continue;
+      }
       const q = byId.get(meta.id);
       if (q && q.x >= 0 && q.y >= 0 && q.x <= VW && q.y <= VH) {
         this.suppressed++;
@@ -693,6 +704,10 @@ export class Scene {
       }
     }
   }
+
+  /** How many drawn names are cut short at this framing, and which. */
+  shortened = 0;
+  shortenedIds: NodeId[] = [];
 
   /**
    * How many labels the arbiter could not place at this framing. Reported so a
