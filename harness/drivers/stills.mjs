@@ -474,6 +474,28 @@ export default [
     // on-screen gap between any two held markers, and the distance is then
     // solved at that yaw as before. Nothing moves; the camera walks around the
     // ring until every waiting thought is its own dot.
+    // THE VOID WAS NOT A DISTANCE PROBLEM. The cycle-9 Audience measured 8
+    // saturated district pixels in this frame against cycle 8's 51 — no placed
+    // node visible at all, so the holding cluster appeared to float nowhere
+    // rather than sitting in the map it belongs to. The first attempt at a fix
+    // was to pull the camera back, and it made the count 0: the holding origin
+    // is off to one side of the map, so backing away along the same axis buys
+    // more empty space, not more map.
+    //
+    // The vantage is offset toward the map's centroid instead, so the districts
+    // are BEHIND the ring rather than out of frame, and the distance is then
+    // solved for ring fill as before.
+    const centre = await page.evaluate(() => {
+      const ns = Object.values(window.mm.store.doc.nodes).filter(n => n.placed);
+      const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0]);
+      return c.map(v => v / ns.length);
+    });
+    // Offsetting the vantage toward the centroid was the second attempt and it
+    // failed loudly, which is the right way for it to fail: at a 0.24 blend the
+    // capture reported everyHeldNodeInFrame false with 3 of 8 held nodes left
+    // in frame. The ring is the subject and it stays centred.
+    void centre;
+    const aim = h.origin;
     const heldSeparation = async () => page.evaluate(() => {
       const held = new Set(Object.values(window.mm.store.doc.nodes).filter(n => !n.placed).map(n => n.id));
       const pts = window.mm.scene.screenPositions().filter(q => held.has(q.id));
@@ -488,21 +510,35 @@ export default [
     let bestYaw = 0.35, bestSep = -Infinity;
     for (let k = 0; k < 24; k++) {
       const y = (k / 24) * Math.PI * 2;
-      await POSE(page, { target: h.origin, yaw: y, pitch: 0.10, dist: probeDist });
+      await POSE(page, { target: aim, yaw: y, pitch: 0.10, dist: probeDist });
       await sleepFrames(page, 0, 1);
       const sep = await heldSeparation();
-      if (sep.worst !== null && sep.worst > bestSep) { bestSep = sep.worst; bestYaw = y; }
+      // AND HOW MUCH MAP IS BEHIND IT. The districts lie in one direction from
+      // the holding origin, so which way the camera faces decides whether this
+      // frame shows the cluster among the map or against nothing. Separation
+      // still gates — a countable cluster is the artifact's own claim — but
+      // among the vantages that keep every held marker its own dot, the one
+      // with the most placed nodes in frame wins.
+      const behind = await page.evaluate(() => {
+        const el = window.mm.scene.renderer.domElement;
+        const d = window.mm.store.doc;
+        return window.mm.scene.screenPositions()
+          .filter(q => d.nodes[q.id]?.placed &&
+                       q.x > 0 && q.y > 0 && q.x < el.width && q.y < el.height).length;
+      });
+      const score = (sep.worst !== null && sep.worst >= 12 ? 1000 : 0) + behind + (sep.worst ?? 0) * 0.05;
+      if (sep.worst !== null && score > bestSep) { bestSep = score; bestYaw = y; }
     }
-    const TARGET = 0.80;
+    const TARGET = 0.66;
     let lo = h.radius * 1.2, hi = h.radius * 8;
     for (let i = 0; i < 22; i++) {
       const mid = (lo + hi) / 2;
-      await POSE(page, { target: h.origin, yaw: bestYaw, pitch: 0.10, dist: mid });
+      await POSE(page, { target: aim, yaw: bestYaw, pitch: 0.10, dist: mid });
       await sleepFrames(page, 0, 1);
       const f = await ringHeightFrac();
       if (f === null || f > TARGET) lo = mid; else hi = mid;
     }
-    await POSE(page, { target: h.origin, yaw: bestYaw, pitch: 0.10, dist: hi });
+    await POSE(page, { target: aim, yaw: bestYaw, pitch: 0.10, dist: hi });
     await sleepFrames(page, 0, 3);
     const sep = await heldSeparation();
     await H.shot(page, cdp, H.out(this.file));

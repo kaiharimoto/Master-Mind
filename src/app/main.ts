@@ -279,7 +279,13 @@ export class App {
 
   private renderReticle() {
     let r = document.getElementById('reticle');
-    if (this.lens !== 'ar') { r?.remove(); return; }
+    if (this.lens !== 'ar') {
+      r?.remove();
+      // Leaving the aimed node in the named-by-chrome set would keep its label
+      // suppressed on a lens that has no reticle to name it.
+      if (this.aimedAt) { this.aimedAt = null; this.scene.setNamedByChrome([]); }
+      return;
+    }
     if (!r) {
       r = el('div', { id: 'reticle', 'data-t': 'ar-reticle' });
       r.innerHTML = '<div class="lead" data-t="reticle-lead"></div>' +
@@ -308,6 +314,10 @@ export class App {
       this.aimedAt = aimed;
       this.scene.setSelection(aimed ?? this.selected);
     }
+    // The readout NAMES this node, so its canvas label stands down — the same
+    // rule the pin tag follows. Drawing both put the reticle's chip straight
+    // across the label it duplicates in the cycle-9 hero.
+    this.scene.setNamedByChrome(aimed ? [aimed] : []);
     const label = $('[data-t=reticle-node]', r);
     r.classList.toggle('on', on);
     label.textContent = n
@@ -759,7 +769,7 @@ export class App {
     // The badge exists to declare what the frame is not showing, so it must not
     // itself be the thing that is hidden: it stands down when the editor would
     // draw over it rather than being clipped to "1 label hid".
-    chip.className = (n > 0 || cut > 0) && !this.panelOpen() && !this.rightPanelOpen() ? 'show' : '';
+    chip.className = (n > 0 || cut > 0) ? 'show' : '';
     // Both kinds of omission, named separately. Saying only the first let a
     // frame declare "0 labels hidden" while 42 of its 150 names were shortened
     // to an ellipsis — a true sentence a reader would take for a false one.
@@ -768,6 +778,34 @@ export class App {
     if (cut > 0) parts.push(`${cut} shortened`);
     chip.textContent = parts.length
       ? `${parts.join(' · ')} at this zoom — move closer to read them` : '';
+    // KEPT WHOLE AND KEPT VISIBLE. This chip is how the frame stays honest
+    // about how much text it is withholding, and in cycle 9 it was the first
+    // thing sacrificed twice over: in artifact 05's half-width panels the seed
+    // banner overpainted its leading ~100 px so it read "els hidden" with the
+    // count destroyed, and in artifact 17 the editor clipped it mid-word at
+    // "37 shorte". Standing it down when a panel opens was the old answer and
+    // it is the wrong one — the number stops being stated exactly when the
+    // frame is busiest. It is placed instead: right-inset past any open side
+    // panel, and dropped below the seed banner rather than across it.
+    if (chip.className === 'show') {
+      chip.style.top = ''; chip.style.right = '';
+      const own = chip.getBoundingClientRect();
+      let right = 12;
+      for (const sel of ['#editor', '#finder', '#states', '#hands']) {
+        const e = document.querySelector(sel) as HTMLElement | null;
+        if (!e) continue;
+        const r = e.getBoundingClientRect();
+        if (r.width > 2 && r.height > 2 && r.top < own.bottom && r.bottom > own.top)
+          right = Math.max(right, window.innerWidth - r.left + 8);
+      }
+      chip.style.right = `${Math.round(right)}px`;
+      const banner = document.getElementById('origin');
+      const b = banner && getComputedStyle(banner).display !== 'none'
+        ? banner.getBoundingClientRect() : null;
+      const now = chip.getBoundingClientRect();
+      chip.style.top = b && b.right + 8 > now.left && b.bottom > now.top && b.top < now.bottom
+        ? `${Math.round(b.bottom + 8)}px` : '';
+    }
     this.renderUnlabelled();
     this.renderLeaders();
     this.renderHitBreakdown();
@@ -865,15 +903,36 @@ export class App {
     if (!show) { col.innerHTML = ''; return; }
     // As many as the column can hold, longest-settled first so the order is a
     // property of the map rather than of the arbiter's iteration.
-    const rows = Math.max(1, Math.floor((col.clientHeight - 26) / 18));
     const named = ids.map(i => this.store.doc.nodes[i]).filter(Boolean)
       .sort((a, b) => a.createdAt - b.createdAt);
-    const shown = named.slice(0, rows);
-    const rest = named.length - shown.length;
-    col.innerHTML =
-      `<h4>${named.length} thought${named.length === 1 ? '' : 's'} on screen without room for a label</h4>` +
-      shown.map(n => `<li><i style="background:${PALETTE[n.color as ColorKey] ?? '#8A7C70'}"></i>${esc(n.text)}</li>`).join('') +
-      (rest > 0 ? `<li style="opacity:.6">…and ${rest} more</li>` : '');
+    const row = (n: MMNode) =>
+      `<li><i style="background:${PALETTE[n.color as ColorKey] ?? '#8A7C70'}"></i>${esc(n.text)}</li>`;
+    const head = (k: number) =>
+      `<h4>${k} thought${k === 1 ? '' : 's'} on screen without room for a label</h4>`;
+    // TRIMMED AGAINST WHAT WAS ACTUALLY RENDERED, not against an estimate.
+    //
+    // The row count was derived from clientHeight divided by an assumed 18 px
+    // line, measured BEFORE the content was written — so it over-counted, the
+    // "…and N more" branch was never reached because `rest` came out zero, and
+    // the surplus was silently clipped by the column's own overflow. The frame
+    // announced 87 thoughts and listed about 50 with nothing saying so: an
+    // honesty affordance quietly failing to be honest. It is laid out and then
+    // measured, and rows come off the end until the last one fits with room for
+    // the overflow line.
+    col.innerHTML = head(named.length) + named.map(row).join('');
+    let shown = named.length;
+    const fits = () => {
+      const last = col!.lastElementChild as HTMLElement | null;
+      return !last || last.getBoundingClientRect().bottom <= col!.getBoundingClientRect().bottom - 2;
+    };
+    if (!fits()) {
+      // One extra off the end so the marker itself has a line to sit on.
+      while (shown > 1 && !fits()) {
+        shown--;
+        col.innerHTML = head(named.length) + named.slice(0, shown).map(row).join('') +
+          `<li style="opacity:.6">…and ${named.length - shown} more</li>`;
+      }
+    }
   }
 
   /**

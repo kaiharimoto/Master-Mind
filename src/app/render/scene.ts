@@ -152,6 +152,29 @@ export class Scene {
   setPinned(id: NodeId | null) { if (id !== this.pinned) { this.pinned = id; this.dirty = true; } }
   getPinned() { return this.pinned; }
   private pinned: NodeId | null = null;
+
+  /**
+   * Nodes some other piece of chrome already names on this frame.
+   *
+   * The pin tag was the first of these and its label run was stood down for it.
+   * The AR reticle's readout is the second and was not: in the cycle-9 hero it
+   * printed "Kimchi: gochugaru" straight across the canvas label of the same
+   * name, hiding eight of its seventeen characters — while the frame's own
+   * `noTwoDrawnLabelsOverlap` reported true, because that claim is about the
+   * label layer and the readout is not in it. True of what it checks, not of
+   * what its name says, for the third time in three cycles.
+   *
+   * So the rule is generalised rather than special-cased again: anything that
+   * puts a node's name on the frame declares it here, the label run stands
+   * down, and the chip's rectangle is reserved like any other panel.
+   */
+  setNamedByChrome(ids: Iterable<NodeId>) {
+    const next = new Set(ids);
+    if (next.size !== this.namedByChrome.size || [...next].some(i => !this.namedByChrome.has(i))) {
+      this.namedByChrome = next; this.dirty = true;
+    }
+  }
+  private namedByChrome = new Set<NodeId>();
   getSelection() { return this.selected; }
   setHits(ids: Iterable<NodeId>) { this.hits = new Set(ids); this.dirty = true; }
   getHits() { return this.hits; }
@@ -214,8 +237,17 @@ export class Scene {
       // overprinted by 'Amazake' in cycle 7's artifact 10. Same class as F-015,
       // in the one case F-015 did not cover.
       const labelSize = st === 'searchHit' ? size * 1.9 : size;
-      this.runMeta.push({ id: n.id, pinned: n.id === this.pinned,
-                          priority: n.id === this.pinned ? -1 : PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0,
+      this.runMeta.push({ id: n.id, pinned: n.id === this.pinned || this.namedByChrome.has(n.id),
+                          // HELD THOUGHTS ARE NAMED FIRST. They are few, they
+                          // are the subject of two artifacts, and a waiting
+                          // thought whose name is missing is a thought the
+                          // reader cannot act on. Artifact 08 shipped four
+                          // dashed markers and three labels because an unplaced
+                          // label lost its ground to a higher-priority one;
+                          // placing them ahead of everything but the pin costs
+                          // almost nothing at this count and removes the case.
+                          priority: n.id === this.pinned ? -1 : !n.placed ? -0.5 : PRIORITY[st],
+                          baseAlpha: st === 'plain' ? 0.86 : 1.0,
                           nodeSizeWorld: labelSize, held: !n.placed });
       // Unplaced nodes sit in a ring. Their labels are pushed to the outward
       // side so they radiate from the holding cluster rather than pile onto it.
@@ -453,7 +485,17 @@ export class Scene {
     // Panels are seeded into the reserved set before any label is placed, so
     // they win against everything.
     const dpr = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
-    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled', '#hitbreak', '#pinmark']) {
+    // EVERY OPAQUE OVERLAY, not the ones that happened to be noticed.
+    //
+    // This list grew one selector at a time as each overlay was caught sitting
+    // on a label — the editor, then the roster, then the hit breakdown, then
+    // the pin tag, then the reticle. The cycle-9 hero still had "Recalibrate
+    // the pH me…" disappearing under the gyro HUD, which was never in it. The
+    // rule is now stated as a rule: an element that draws an opaque box over
+    // the world reserves its rectangle, and the list is every such element.
+    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled',
+                       '#hitbreak', '#pinmark', '#reticle', '#argyro', '#gesture', '#lenstag',
+                       '#toast', '#tools', '#hidden', '#origin']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e) continue;
       const r = e.getBoundingClientRect();
