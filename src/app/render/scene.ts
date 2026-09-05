@@ -362,6 +362,7 @@ export class Scene {
     // anchor is gone rather than half-said. What that costs is reported in the
     // frame: see suppressed().
     const BRIGHT_MAX = 0, DIM_MAX = 0.16;
+    this.labelRects.clear();
     const panels: Box[] = [];
     const taken: Box[] = [];
     // Node markers are occluders too: text landing on a disc is as unreadable as
@@ -509,6 +510,12 @@ export class Scene {
       // so ghost strokes still crossed foreground text.
       if (k > 0.02) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h,
                                  pri: b.pri, z: b.z });
+      // Where this label was actually DRAWN, in canvas pixels. Anything that
+      // has to reason about a node's footprint on screen — a crop that must
+      // not cut a name in half, a hit test, a safe area — needs the label's
+      // rectangle after re-anchoring and shortening, not the node's disc.
+      this.labelRects.set(this.runMeta[b.i].id,
+        { x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h, alpha: this.runAlphas[b.i] });
     }
     this.text.setRunAlphas(this.runAlphas, this.runVisible);
     this.text.setRunShifts(this.runShifts, this.runEllipsisDx);
@@ -528,6 +535,13 @@ export class Scene {
    * the map has anonymous nodes.
    */
   suppressed = 0;
+
+  /**
+   * The rectangle each visible label occupies on screen, after re-anchoring and
+   * shortening. Rebuilt every frame by the deconflictor, so it describes the
+   * frame that was drawn rather than an estimate of it.
+   */
+  labelRects = new Map<NodeId, { x0: number; y0: number; x1: number; y1: number; alpha: number }>();
 
   /**
    * One world point in screen pixels. The holding boundary is drawn from the

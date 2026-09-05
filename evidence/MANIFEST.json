@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T02:55:50.561Z",
+  "lastRunAt": "2026-09-05T03:09:25.795Z",
   "lastRunCaptured": [
-    "04"
+    "14"
   ],
   "artifacts": [
     {
@@ -283,7 +283,7 @@
         "fnSha": "45fc3b745339efe7"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T02:55:52.056Z"
     },
     {
@@ -930,15 +930,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 2.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 160195,
-        "sha256": "07445a0a7dcb576e55dab7ec7d479e0c32ca09bef556f1275f65d07df7ab8ca7"
+        "bytes": 277810,
+        "sha256": "fa3b47490dc70033ce1a87024db3474e214e2e16963ac922368f94242db00a52"
       },
       "claims": {
         "ok": true,
@@ -966,6 +966,24 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "cameraFrozenAcrossPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "rejectedPairUnjoined",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "detailIsMagnified",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -985,20 +1003,60 @@
         "acceptedAdded": 1,
         "acceptanceLanded": true,
         "allThreeKinds": true,
-        "rejectedId": "s1",
+        "detailCrops": [
+          {
+            "x": 484,
+            "y": 50,
+            "w": 710,
+            "h": 448
+          },
+          {
+            "x": 484,
+            "y": 50,
+            "w": 710,
+            "h": 448
+          },
+          {
+            "x": 474,
+            "y": 88,
+            "w": 806,
+            "h": 508
+          }
+        ],
+        "detailMagnifications": [
+          0.9,
+          0.9,
+          0.79
+        ],
+        "detailNodesFound": 4,
+        "acceptedId": "s1",
+        "acceptedNodes": [
+          "s8341efc5bb",
+          "se318fc2f75"
+        ],
+        "rejectedKind": "connection",
+        "rejectedNodes": [
+          "s480af97d09",
+          "s88f833ea80"
+        ],
+        "rejectedPairUnjoined": true,
+        "detailIsMagnified": true,
+        "detailMagnificationFloor": 0.79,
+        "cameraFrozenAcrossPanels": true,
+        "rejectedId": "s2",
         "rejectionLeftNoTrace": true,
         "rejectedIsGone": true
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls",
+        "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch",
         "surface": "windows",
         "lens": null,
-        "fnSha": "a0064fc35ae0471b"
+        "fnSha": "5b51c1c6176689d9"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:45:06.663Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:09:28.118Z"
     },
     {
       "id": "15",
@@ -1425,12 +1483,12 @@
       "fileMtime": "2026-09-05T01:54:57.650Z"
     }
   ],
-  "finishedAt": "2026-09-05T02:55:53.676Z",
+  "finishedAt": "2026-09-05T03:09:29.460Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 778874,
-    "sha256": "755edf12bfbe7daef8a5ce568dae117e07a1075bb19ee1dd96bc26b135830190"
+    "bytes": 779031,
+    "sha256": "a5b1159ec6f6e17772552751b4f1a12a16542846ad94d2e71eb238ea292c0577"
   },
   "captured": 20,
   "total": 20

@@ -11,7 +11,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import stills from './drivers/stills.mjs';
 import motion from './drivers/motion.mjs';
-import { openBrowser, openApp, shot, step, record, compose, grab, probe, sha, launch, SEED, INIT_SCRIPT } from './capture.mjs';
+import { openBrowser, openApp, shot, step, record, compose, stack, grab, probe, sha, launch, SEED, INIT_SCRIPT } from './capture.mjs';
 import { y4m } from './clips-to-y4m.mjs';
 import { POSE, FRAME_ALL, NODE_ID, SELECT, SCREEN_OF, sleepFrames } from './drivers/util.mjs';
 import { windowsTarget } from './win-target.mjs';
@@ -144,7 +144,7 @@ async function runDriver(d) {
       pages.push(r);
       return r;
     },
-    shot, step, record, compose, crop, modelStats, clusterState, clusterDelta, positions,
+    shot, step, record, compose, stack, crop, modelStats, clusterState, clusterDelta, positions,
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };

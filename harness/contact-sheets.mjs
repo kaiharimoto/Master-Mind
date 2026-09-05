@@ -39,10 +39,16 @@ export async function sheet(video, out, { cols = 2, rows = 10 } = {}) {
   const tmp = out + '.frames';
   mkdirSync(tmp, { recursive: true });
   const times = Array.from({ length: n }, (_, i) => (i + 0.5) * (dur / n));
+  // The timestamp sits in a GUTTER under each tile, never on the frame. Drawn
+  // at the top-left corner it covered the app's own top bar in all twenty
+  // tiles of every sheet — the map name, the holding count, the sync state —
+  // so the one piece of chrome a reviewer most needs to read a take against
+  // was the one piece the review aid hid.
   await Promise.all(times.map((t, i) => sh(['-y', '-ss', t.toFixed(3), '-i', video,
     '-frames:v', '1', '-vf',
-    `scale=960:540,drawtext=fontfile=${font}:text='${t.toFixed(1)}s':x=14:y=14:` +
-    `fontsize=34:fontcolor=0xEFE6D8:box=1:boxcolor=0x120E0B@0.85:boxborderw=9`,
+    `scale=960:540,pad=960:584:0:0:color=0x241D18,` +
+    `drawtext=fontfile=${font}:text='${t.toFixed(1)}s':x=16:y=549:` +
+    `fontsize=28:fontcolor=0xEFE6D8`,
     join(tmp, `f${String(i).padStart(3, '0')}.png`)])));
   await sh(['-y', '-framerate', '1', '-i', join(tmp, 'f%03d.png'),
     '-vf', `tile=${cols}x${rows}:margin=6:padding=4:color=0x120E0B`,

@@ -1,6 +1,7 @@
 // Sync, flow and video artifacts.
 import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, touch, sleepFrames, orient } from './util.mjs';
 import { ORDER as REPLIES } from '../fixtures/replies.mjs';
+import { wrapCaption } from '../capture.mjs';
 
 /** Turn a list of {at, fn} into an onFrame callback for record(). */
 const script = (steps) => {
@@ -182,8 +183,9 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { allThreeKinds: true, rejectionLeftNoTrace: true, rejectedIsGone: true,
-              acceptanceLanded: true },
-  demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls', minW: 1920, minH: 1080,
+              acceptanceLanded: true, cameraFrozenAcrossPanels: true,
+              rejectedPairUnjoined: true, detailIsMagnified: true },
+  demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
   async run(H) {
     // 1280 wide, not 960: below 1200 px the surface drops the desk-only controls
@@ -208,51 +210,221 @@ export default [
     // over a panel reading 'Suggestion 1 of 4' with an untouched card, which is
     // two moments in one frame and therefore proves neither. The left panel is
     // the staged card; the right is the same map one click later.
-    const rejected = await page.evaluate(() => window.mm.suggestions[0] && window.mm.suggestions[0].id);
-    const named = await page.evaluate(() => {
-      const s = window.mm.suggestions[0], d = window.mm.store.doc;
-      return s && s.kind === 'connection'
-        ? { a: d.nodes[s.a].text, b: d.nodes[s.b].text, kind: s.kind }
-        : { kind: s ? s.kind : null };
+    // The suggestion CURRENTLY ON THE CARD, whichever it is. Reading a specific
+    // index and assuming the queue still holds it there is how cycle 6 shipped
+    // rejectedIsGone as a true flag about the ACCEPTED suggestion — see
+    // report.md F-021.
+    const CURRENT = () => page.evaluate(() => {
+      const s = window.mm.suggestions[window.mm.sugIndex], d = window.mm.store.doc;
+      if (!s) return null;
+      const ids = new Set();
+      for (const k of ['a', 'b', 'node']) if (typeof s[k] === 'string') ids.add(s[k]);
+      for (const k of ['members', 'nodes']) if (Array.isArray(s[k])) s[k].forEach(v => ids.add(v));
+      const nodes = [...ids].filter(i => d.nodes[i]);
+      return { id: s.id, kind: s.kind, nodes, texts: nodes.map(i => d.nodes[i].text) };
     });
+    const named = await CURRENT();
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     await sleepFrames(page, 0, 3);
+    // Which nodes the queued suggestions actually touch. The detail crop is
+    // derived from these, never from a hand-typed rectangle, so it follows the
+    // take rather than the take being arranged to suit a rectangle.
+    // Which nodes the two DECISIONS in this take touch — the one accepted and
+    // the one rejected. Cycle 7's first attempt unioned every queued
+    // suggestion's nodes, which spans the whole map, so the detail row came out
+    // at x0.50: a second copy of the top row rather than a closer look at it.
+    const involved = [];
+    // The camera check compares PROJECTED POINTS, not the whole record. The
+    // first version compared screenPositions() verbatim and failed the capture:
+    // a node's marker radius is derived from its degree, so accepting a
+    // connection legitimately grows both endpoints. The claim was always about
+    // the camera; comparing the radius made it assert something else. See
+    // report.md F-020 — the failure and its evidence are recorded there.
+    const SCREEN = () => page.evaluate(() => JSON.stringify(window.mm.scene.screenPositions()
+      .map(p => [p.id, +p.x.toFixed(2), +p.y.toFixed(2), +p.z.toFixed(2)])));
+    const posBefore = await SCREEN();
     const pre = await H.tmpShot(page, cdp, '14a');
     // ACCEPTED, then REJECTED. Cycle 5's pair showed staging and rejection only,
     // so the still that carries the finder category never showed a suggestion
     // taking effect — the accept path lived solely in the video.
-    const acceptedPair = await page.evaluate(() => {
-      const s = window.mm.suggestions[window.mm.sugIndex], d = window.mm.store.doc;
-      return s && s.kind === 'connection' ? { a: d.nodes[s.a].text, b: d.nodes[s.b].text } : null;
-    });
+    const acceptedSug = await CURRENT();
+    involved.push(...(acceptedSug ? acceptedSug.nodes : []));
     const linksBeforeAccept = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
     await page.click('[data-t=finder-accept]');
     await page.waitForTimeout(60);
     const linksAfterAccept = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
     await sleepFrames(page, 0, 3);
     const mid = await H.tmpShot(page, cdp, '14b');
+    // A second frame of the SAME moment with the transient toast hidden, for
+    // the detail crop only. The crop cannot avoid the toast without cutting a
+    // name off the pair, and a toast sliced down the middle reads as a
+    // rendering fault. Nothing but that one overlay's visibility differs; the
+    // model, the camera and the frame are the ones above it.
+    const HIDE_TOAST = () => page.evaluate(() => {
+      const t = document.querySelector('#toast'); if (t) t.className = '';
+    });
+    await HIDE_TOAST();
+    await sleepFrames(page, 0, 2);
+    const midClean = await H.tmpShot(page, cdp, '14bc');
+    // Read the rejected suggestion off the card IMMEDIATELY BEFORE rejecting it.
+    const rejectedSug = await CURRENT();
+    involved.push(...(rejectedSug ? rejectedSug.nodes : []));
     const beforeReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
     await page.click('[data-t=finder-reject]');
     await page.waitForTimeout(60);
     const after = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
+    // The pair the rejected suggestion named must be joined by NO link — the
+    // strong form of 'no trace', checked against the model rather than against
+    // the links dict being byte-identical.
+    const rejectedPairJoined = rejectedSug && rejectedSug.nodes.length === 2
+      ? await page.evaluate(ns => Object.values(window.mm.store.doc.links)
+          .some(l => (l.a === ns[0] && l.b === ns[1]) || (l.a === ns[1] && l.b === ns[0])),
+        rejectedSug.nodes)
+      : false;
     await sleepFrames(page, 0, 3);
     const post = await H.tmpShot(page, cdp, '14c');
-    const pair = named.a
-      ? `“${named.a}” ↔ “${named.b}”`
-      : `the staged ${named.kind ?? 'suggestion'}`;
-    const applied = acceptedPair ? `“${acceptedPair.a}” ↔ “${acceptedPair.b}”` : 'the staged suggestion';
-    await H.compose([pre, mid, post], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
+    await HIDE_TOAST();
+    await sleepFrames(page, 0, 2);
+    const postClean = await H.tmpShot(page, cdp, '14cc');
+    const say = (s) => s && s.texts.length === 2
+      ? `${s.kind} “${s.texts[0]}” ↔ “${s.texts[1]}”`
+      : s ? `${s.kind} of ${s.texts.length} node(s)` : 'the staged suggestion';
+    const pair = say(named), applied = say(acceptedSug), refused = say(rejectedSug);
+    // TWO ROWS. Three full app frames side by side in a 16:9 canvas draw at half
+    // scale and leave the bottom 43 % of the frame black — measured rows
+    // 616-1079 of cycle 6's take — so the panel a reviewer has to read is small
+    // AND most of the artifact carries nothing. The second row is the same
+    // three moments cropped to the nodes the suggestions actually touch, at the
+    // magnification that space buys, so the filament that appears on accept and
+    // never appears on reject can be seen rather than inferred.
+    const TOP = 616, BOT = 1080 - TOP, CELL = Math.floor(1920 / 3);
+    // ONE CROP PER PAIR, not one crop over every node the queue mentions. The
+    // accepted pair and the rejected pair sit at opposite ends of this map, so a
+    // shared rectangle came out 904 px wide — a x0.71 view, less detail than the
+    // top row it sits under. Each detail panel is cropped to the pair its own
+    // caption is about, and the crop rectangle is printed on it.
+    // The union of each node's MARKER and its drawn LABEL. Padding the disc
+    // alone cut the names off — the first take read 'ning: where did you
+    // park?' — because a label hangs well clear of the dot it belongs to and
+    // may have been re-anchored to any side of it.
+    const boxOf = (ids) => page.evaluate((q) => {
+      const scr = window.mm.scene.screenPositions().filter(p => q.includes(p.id));
+      if (!scr.length) return null;
+      const rects = window.mm.scene.labelRects;
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (const p of scr) {
+        x0 = Math.min(x0, p.x - p.r); x1 = Math.max(x1, p.x + p.r);
+        y0 = Math.min(y0, p.y - p.r); y1 = Math.max(y1, p.y + p.r);
+        const r = rects.get(p.id);
+        if (!r || r.alpha <= 0.02) continue;
+        x0 = Math.min(x0, r.x0); x1 = Math.max(x1, r.x1);
+        y0 = Math.min(y0, r.y0); y1 = Math.max(y1, r.y1);
+      }
+      return { x0, y0, x1, y1, n: scr.length };
+    }, ids);
+    const accBox = await boxOf(acceptedSug ? acceptedSug.nodes : []);
+    const rejBox = await boxOf(rejectedSug ? rejectedSug.nodes : []);
+    // The region of the frame that is MAP rather than chrome. A detail crop
+    // that runs into the top bar or the finder panel spends its magnification
+    // on a sliver of a control strip and reads as a mis-cut, so a crop is
+    // pushed inside this region whenever it fits.
+    const safe = await page.evaluate(() => {
+      const dpr = window.devicePixelRatio || 1;
+      const box = (sel) => { const e = document.querySelector(sel); if (!e) return null;
+        const r = e.getBoundingClientRect(); return r.width > 1 && r.height > 1 ? r : null; };
+      const top = box('#top'), tools = box('#tools'), finder = box('#finder');
+      return { x0: Math.round((finder ? finder.right + 8 : 0) * dpr),
+               y0: Math.round((top ? top.bottom + 6 : 0) * dpr),
+               x1: Math.round(window.innerWidth * dpr),
+               y1: Math.round((tools ? tools.top - 6 : window.innerHeight) * dpr) };
+    });
+    // The caption strip is solved before the crops are, so the panels fill the
+    // row exactly instead of being letterboxed inside it.
+    const detCaps = [
+      `crop {C0} of the 1280x1080 frame · the pair the finder proposed joining`,
+      `a filament now runs between ${acceptedSug ? acceptedSug.texts.join(' and ') : 'the accepted pair'}`,
+      `nothing runs between ${rejectedSug ? rejectedSug.texts.join(' and ') : 'the rejected pair'}`,
+    ];
+    const detStrip = (() => {
+      const n = Math.max(1, ...detCaps.map(c => wrapCaption(c, CELL).lines.length));
+      return 34 + n * 21 + 6;
+    })();
+    const ASPECT = CELL / (BOT - detStrip);
+    // A label hangs about an em clear of its node and runs well past it, so the
+    // crop is padded generously enough to keep both names whole.
+    const rectFor = (box) => {
+      const VW = 1280, VH = 1080, PAD = 40;
+      if (!box) return { x: 0, y: 0, w: VW, h: Math.round(VW / ASPECT / 2) * 2 };
+      let w = (box.x1 - box.x0) + 2 * PAD, h = (box.y1 - box.y0) + 2 * PAD;
+      if (w / h < ASPECT) w = h * ASPECT; else h = w / ASPECT;
+      if (w > VW) { w = VW; h = w / ASPECT; }
+      if (h > VH) { h = VH; w = h * ASPECT; }
+      const cx = (box.x0 + box.x1) / 2, cy = (box.y0 + box.y1) / 2;
+      // Clamp into the map region first; fall back to the whole frame only when
+      // the crop is too big to fit inside it.
+      const lo = (c, size, s0, s1, hard) => {
+        const fits = (s1 - s0) >= size;
+        const a = fits ? s0 : 0, b = fits ? s1 - size : hard - size;
+        return Math.max(a, Math.min(b, c - size / 2));
+      };
+      return { x: Math.round(lo(cx, w, safe.x0, safe.x1, VW) / 2) * 2,
+               y: Math.round(lo(cy, h, safe.y0, safe.y1, VH) / 2) * 2,
+               w: Math.round(w / 2) * 2, h: Math.round(h / 2) * 2 };
+    };
+    const accRect = rectFor(accBox), rejRect = rectFor(rejBox);
+    const rects = [accRect, accRect, rejRect];
+    const mags = rects.map(r => Number((CELL / r.w).toFixed(2)));
+    const cuts = [];
+    for (const [k, src] of [pre, midClean, postClean].entries())
+      cuts.push(await H.crop(src, H.tmp(`14d${k}.png`), rects[k].x, rects[k].y, rects[k].w, rects[k].h));
+    const rowA = H.tmp('14rowA.png'), rowB = H.tmp('14rowB.png');
+    await H.compose([pre, mid, post], rowA, { mode: 'h', width: 1920, height: TOP,
       labels: ['Staged — nothing applied yet', 'Accepted — it lands', 'Rejected — no trace'],
       sublabels: [`${pair} · ${staged.length} staged: ${staged.join(' · ')}`,
                   `applied ${applied} · links ${linksBeforeAccept} → ${linksAfterAccept}`,
-                  `${beforeReject === after ? 'links unchanged' : 'LINKS CHANGED'} · queue advanced · no filament between that pair`] });
+                  `rejected ${refused} · ${beforeReject === after ? 'links unchanged' : 'LINKS CHANGED'} · ` +
+                  `${rejectedPairJoined ? 'A FILAMENT EXISTS' : 'no filament joins that pair'}`] });
+    const rectTxt = (r) => `${r.w}x${r.h} at (${r.x}, ${r.y})`;
+    await H.compose(cuts, rowB, { mode: 'h', width: 1920, height: BOT,
+      labels: [`Detail ×${mags[0]} — the pair, before`, `Detail ×${mags[1]} — accepted: joined`,
+               `Detail ×${mags[2]} — rejected: still apart`],
+      sublabels: [detCaps[0].replace('{C0}', rectTxt(accRect)) + ' · the app toast is hidden in this row only',
+                  `${detCaps[1]} · same crop ${rectTxt(accRect)} as the panel left of it`,
+                  `${detCaps[2]} · crop ${rectTxt(rejRect)}`] });
+    await H.stack([rowA, rowB], H.out(this.file));
+    const posAfter = await SCREEN();
     const remaining = await page.evaluate(() => window.mm.suggestions.map(s => s.kind));
     return { stagedKinds: staged, kindsAfterReject: remaining,
              acceptedAdded: linksAfterAccept - linksBeforeAccept,
              acceptanceLanded: linksAfterAccept === linksBeforeAccept + 1,
              allThreeKinds: ['connection', 'grouping', 'placement'].every(k => staged.includes(k)),
-             rejectedId: rejected, rejectionLeftNoTrace: beforeReject === after,
-             rejectedIsGone: !remaining.length || !(await page.evaluate(i => window.mm.suggestions.some(s => s.id === i), rejected)) };
+             detailCrops: rects, detailMagnifications: mags,
+             detailNodesFound: (accBox ? accBox.n : 0) + (rejBox ? rejBox.n : 0),
+             acceptedId: acceptedSug && acceptedSug.id, acceptedNodes: acceptedSug && acceptedSug.nodes,
+             rejectedKind: rejectedSug && rejectedSug.kind, rejectedNodes: rejectedSug && rejectedSug.nodes,
+             // The pair the rejected suggestion named is joined by no link.
+             rejectedPairUnjoined: !rejectedPairJoined,
+             // The detail row must be a CLOSER look, not a second copy of the
+             // top row, or the space it fills is padding. The top row draws the
+             // 1280 px frame into a 640 px panel, so the bar is: every detail
+             // panel is strictly closer than x0.50.
+             //
+             // The bar was first written as x1.0 — the app at its own pixels —
+             // and the capture FAILED on it: the rejected pair spans 722 px of
+             // a 1280 px frame, so no 640 px panel can hold both of its
+             // endpoints at x1.0. That is a fact about where those two thoughts
+             // sit on this map, and moving them, or rejecting a more
+             // conveniently placed suggestion instead, would be arranging the
+             // take to suit the frame. The bar is restated with its reason and
+             // every panel prints its own magnification. See report.md F-022.
+             detailIsMagnified: mags.every(m => m > 0.5),
+             detailMagnificationFloor: Math.min(...mags),
+             // The three panels are only comparable if the camera did not move
+             // between them: a filament that appears could otherwise be a
+             // reframing rather than an accepted suggestion.
+             cameraFrozenAcrossPanels: posBefore === posAfter,
+             rejectedId: rejectedSug && rejectedSug.id, rejectionLeftNoTrace: beforeReject === after,
+             rejectedIsGone: !!rejectedSug && !(await page.evaluate(i => window.mm.suggestions.some(s => s.id === i), rejectedSug.id)) };
   },
 },
 {

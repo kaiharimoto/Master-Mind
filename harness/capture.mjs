@@ -225,6 +225,29 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
   return out;
 }
 
+/**
+ * Vertically stack finished panels into one frame.
+ *
+ * `compose` lays out one ROW; a composite whose panels are full app frames
+ * cannot fill a 16:9 canvas from a single row — artifact 14 left its bottom
+ * 43 % (rows 616-1079, measured) black while its panels were drawn at half
+ * scale. Stacking rows lets that space carry a magnified detail of the same
+ * take instead of nothing.
+ */
+export async function stack(inputs, out) {
+  const args = ['-y'];
+  for (const i of inputs) args.push('-i', i);
+  const chain = inputs.map((_, i) => `[${i}:v]`).join('') + `vstack=inputs=${inputs.length}[out]`;
+  args.push('-filter_complex', chain, '-map', '[out]', '-frames:v', '1', out);
+  await new Promise((res, rej) => {
+    let err = '';
+    const p = spawn('ffmpeg', args, { stdio: ['ignore', 'ignore', 'pipe'] });
+    p.stderr.on('data', d => err += d);
+    p.on('close', c => c === 0 ? res() : rej(new Error(`stack failed: ${err.slice(-600)}`)));
+  });
+  return out;
+}
+
 export const sha = (p) => createHash('sha256').update(readFileSync(p)).digest('hex');
 
 export async function probe(file) {
