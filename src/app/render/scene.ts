@@ -87,6 +87,7 @@ export class Scene {
   private runMeta: { id: NodeId; priority: number; baseAlpha: number }[] = [];
   private runAlphas = new Float32Array(0);
   private runShifts = new Float32Array(0);
+  private runVisible = new Int32Array(0);
   private dirty = true;
 
   constructor(readonly canvas: HTMLCanvasElement, fontMeta: FontMeta, atlas: THREE.Texture) {
@@ -156,19 +157,6 @@ export class Scene {
     this.runMeta = [];
     const posOf = new Map<NodeId, THREE.Vector3>();
     const textCol = new THREE.Color(TEXT_COLOR);
-    // How many other nodes sit within a short world radius of each node. This is
-    // the density that decides how much of a label has room to be drawn.
-    const CROWD_R = 7.5, CROWD_R2 = CROWD_R * CROWD_R;
-    const crowding = new Map<NodeId, number>();
-    for (let i = 0; i < ns.length; i++) {
-      let c = 0;
-      for (let j = 0; j < ns.length; j++) {
-        if (i === j) continue;
-        const dx = ns[i].pos[0] - ns[j].pos[0], dy = ns[i].pos[1] - ns[j].pos[1], dz = ns[i].pos[2] - ns[j].pos[2];
-        if (dx * dx + dy * dy + dz * dz < CROWD_R2) c++;
-      }
-      crowding.set(ns[i].id, c);
-    }
     for (const n of ns) {
       const st: NodeState = states.get(n.id) ?? 'plain';
       const p = new THREE.Vector3(n.pos[0], n.pos[1], n.pos[2]);
@@ -200,13 +188,6 @@ export class Scene {
       // side so they radiate from the holding cluster rather than pile onto it.
       const side: -1 | 0 | 1 = n.placed ? 0 : (n.pos[0] < doc.holding.origin[0] ? -1 : 1);
       runs.push({
-        // Truncation is decided PER NODE from how crowded its own neighbourhood
-        // is, in world space so it is stable as the camera moves. A label in
-        // open ground renders whole; one inside a dense district gives up
-        // characters to stay placeable. A single lens-wide clamp traded whole
-        // words everywhere to solve crowding somewhere — the hero came back
-        // reading "Saccharomyces…" where it had read "Saccharomyces cerevisiae".
-        perLine: Math.round(28 - 13 * Math.min(1, (crowding.get(n.id) ?? 0) / 9)),
         // A search hit wears four ticks at 1.9x its core radius. Anchoring the
         // label to the core radius put the text straight through the south
         // tick, so the state signature was overdrawn by its own label. The
@@ -225,6 +206,7 @@ export class Scene {
     this.text.build(runs, 28, p.textLines);
     if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
     if (this.runShifts.length !== this.runMeta.length * 2) this.runShifts = new Float32Array(this.runMeta.length * 2);
+    if (this.runVisible.length !== this.runMeta.length) this.runVisible = new Int32Array(this.runMeta.length);
 
     // A filament is live when it touches the selection or a search hit.
     const links: LinkInstance[] = [];
@@ -433,26 +415,54 @@ export class Scene {
     taken.push(...panels);
     for (const b of boxes) {
       const sh = shape[b.i];
-      const area = Math.max(sh.w * sh.h, 1);
-      let best = { frac: 1, score: 2, dx: 0, dy: 0 };
-      for (const [cx, cy] of CAND) {
-        const dx = cx * sh.emPx, dy = cy * sh.emPx;
-        const x0 = sh.bx0 + dx, y0 = sh.by0 + dy;
-        const frac = coverage(x0, y0, x0 + sh.w, y0 + sh.h, area);
-        // Text-on-text decides the tier; text-on-marker only breaks ties; and a
-        // label that wanders pays for the distance. Inside a tight cluster an
-        // unpenalised anchor could push a name out to open ground where it read
-        // cleanly but attached ambiguously — a label that names the wrong
-        // thought costs more than one that cannot be read.
-        const away = Math.hypot(cx, cy) / 3.8;
-        const score = frac + 0.34 * discCover(this.runMeta[b.i].id, x0, y0, x0 + sh.w, y0 + sh.h, area)
-                           + 0.22 * away;
-        // The unshifted anchor is preferred: a candidate only wins if it is
-        // meaningfully clearer, so labels do not jitter between placements.
-        if (score < best.score - (cx === 0 && cy === 0 ? 0 : 0.06) ||
-            (cx === 0 && cy === 0 && score <= best.score)) best = { frac, score, dx: cx, dy: cy };
-        if (best.score <= 0) break;   // clear of every label and every marker
+      const span = this.text.spans[b.i];
+      const glyphs = span.glyphRight;
+      // Widths this label is willing to be drawn at, longest first. A label is
+      // SHORTENED only if it cannot be placed whole at any anchor — truncation
+      // is a last resort before fading, not a lens-wide clamp applied to every
+      // name to solve crowding somewhere else. Multi-line runs are never
+      // shortened (there is no single tail to fade).
+      const widths: { w: number; vis: number }[] = [{ w: sh.w, vis: 0 }];
+      if (glyphs.length >= 8) {
+        for (const keep of [0.72, 0.5]) {
+          const k = Math.max(5, Math.floor(glyphs.length * keep));
+          if (k >= glyphs.length) continue;
+          widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * sh.emPx, 6), vis: k });
+        }
       }
+      let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0 };
+      for (const cand of widths) {
+        const area = Math.max(cand.w * sh.h, 1);
+        // A shortened label is only taken if a longer one could not be placed,
+        // so length is worth a real penalty rather than a tie-break.
+        const shortPenalty = cand.vis ? 0.55 : 0;
+        for (const [cx, cy] of CAND) {
+          const dx = cx * sh.emPx, dy = cy * sh.emPx;
+          const x0 = sh.bx0 + dx, y0 = sh.by0 + dy;
+          const frac = coverage(x0, y0, x0 + cand.w, y0 + sh.h, area);
+          // Text-on-text decides the tier; text-on-marker only breaks ties; and
+          // a label that wanders pays for the distance. Inside a tight cluster
+          // an unpenalised anchor could push a name out to open ground where it
+          // read cleanly but attached ambiguously — a label that names the
+          // wrong thought costs more than one that cannot be read.
+          const away = Math.hypot(cx, cy) / 3.8;
+          // Coverage dominates: a CLEAR placement always beats a covered one,
+          // however much shorter or further it is. Otherwise a full-length
+          // label that could only be placed 20 % buried would win over the same
+          // label shortened and completely clear, and then be dimmed for being
+          // buried — losing both the words and the legibility.
+          const score = 6 * frac + shortPenalty
+                             + 0.34 * discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area)
+                             + 0.22 * away;
+          // The unshifted, full-length anchor is preferred: a candidate only
+          // wins if it is meaningfully clearer, so labels do not jitter.
+          const home = cx === 0 && cy === 0 && !cand.vis;
+          if (score < best.score - (home ? 0 : 0.06) || (home && score <= best.score))
+            best = { frac, score, dx: cx, dy: cy, w: cand.w, vis: cand.vis };
+        }
+        if (best.frac <= 0 && !best.vis) break;   // placed whole and clear
+      }
+      this.runVisible[b.i] = best.vis;
       this.runShifts[b.i * 2] = best.dx;
       this.runShifts[b.i * 2 + 1] = -best.dy;   // screen y grows downward; the shader's y does not
       const px = { x0: sh.bx0 + best.dx * sh.emPx, y0: sh.by0 + best.dy * sh.emPx };
@@ -476,10 +486,10 @@ export class Scene {
       // ones above a weight threshold let two suppressed labels be placed on
       // top of each other — the faded tier was not deconflicted against itself,
       // so ghost strokes still crossed foreground text.
-      if (k > 0.02) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + sh.w, y1: px.y0 + sh.h,
+      if (k > 0.02) taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h,
                                  pri: b.pri, z: b.z });
     }
-    this.text.setRunAlphas(this.runAlphas);
+    this.text.setRunAlphas(this.runAlphas, this.runVisible);
     this.text.setRunShifts(this.runShifts);
     // Counted only for nodes actually ON SCREEN. A node behind the camera has no
     // label to hide, and counting it would overstate what the view is omitting.

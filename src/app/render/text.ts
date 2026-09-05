@@ -133,6 +133,15 @@ export interface RunSpan {
    * the glyphs actually drawn, and declared two overlapping labels disjoint.
    */
   x0Em: number; x1Em: number; y0Em: number; y1Em: number; vSide: number;
+  /**
+   * The run's right edge in em after each glyph, so a consumer can ask "how
+   * wide would this label be if I only drew the first K characters?" without
+   * rebuilding it. Truncation is then a rendering decision the deconflictor
+   * makes per frame, rather than a wrap decision baked in at build time.
+   * Only meaningful for single-line runs; multi-line runs get an empty array
+   * and are never shortened.
+   */
+  glyphRight: number[];
 }
 
 export class TextLayer {
@@ -219,11 +228,27 @@ export class TextLayer {
    * screen-space label deconfliction so a lower-priority label recedes behind
    * a higher-priority one instead of overprinting it.
    */
-  setRunAlphas(alphas: Float32Array) {
+  /**
+   * Per-run alpha, and how many of its glyphs to draw.
+   *
+   * `visible[r]` under the run's glyph count shortens the label for this frame:
+   * the tail is not drawn, and the last two visible glyphs fade, so a shortened
+   * name reads as continuing rather than as ending oddly. Every label is built
+   * at full length; shortening is a placement decision made per frame, so a
+   * label in open ground is never clipped to solve crowding somewhere else.
+   */
+  setRunAlphas(alphas: Float32Array, visible?: Int32Array) {
     const arr = this.aAlpha.array as Float32Array;
     for (let r = 0; r < this.spans.length && r < alphas.length; r++) {
       const { start, count } = this.spans[r];
-      for (let k = 0; k < count; k++) arr[start + k] = alphas[r];
+      const vis = visible && visible[r] > 0 ? Math.min(visible[r], count) : count;
+      for (let k = 0; k < count; k++) {
+        const tail = vis - k;
+        arr[start + k] = k >= vis ? 0
+          : tail <= 1 ? alphas[r] * 0.45
+          : tail === 2 ? alphas[r] * 0.75
+          : alphas[r];
+      }
     }
     this.aAlpha.needsUpdate = true;
   }
@@ -276,6 +301,7 @@ export class TextLayer {
       const emY = above ? 0.55 + (lines.length - 1) * m.lineHeight + 0.30 : -0.92;
       const vSide = above ? -1 : 1;   // which way the block hangs off the node
       let ex0 = Infinity, ex1 = -Infinity, ey0 = Infinity, ey1 = -Infinity;
+      const glyphRight: number[] = [];
       lines.forEach((line, li) => {
         let width = 0;
         for (const ch of line) width += (m.chars[ch]?.adv ?? 0);
@@ -288,6 +314,7 @@ export class TextLayer {
           const g = m.chars[ch];
           if (!g) continue;
           const rx = pen - m.pad / m.glyph, ry = baseY - (cellEm - baseTop);
+          if (lines.length === 1) glyphRight.push(pen + g.adv);
           if (rx < ex0) ex0 = rx;
           if (rx + cellEm > ex1) ex1 = rx + cellEm;
           if (ry < ey0) ey0 = ry;
@@ -306,7 +333,8 @@ export class TextLayer {
       if (!Number.isFinite(ex0)) { ex0 = ex1 = ey0 = ey1 = 0; }
       this.spans.push({ start: spanStart, count: i - spanStart, widthEm: widest,
                         lines: lines.length, above, side: run.side ?? 0,
-                        x0Em: ex0, x1Em: ex1, y0Em: emY + ey0, y1Em: emY + ey1, vSide });
+                        x0Em: ex0, x1Em: ex1, y0Em: emY + ey0, y1Em: emY + ey1, vSide,
+                        glyphRight });
     }
     for (const a of [this.aRect, this.aUV, this.aAnchor, this.aColor, this.aNodeSize, this.aAlpha, this.aOff]) a.needsUpdate = true;
     this.geo.instanceCount = i;
