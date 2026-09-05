@@ -309,6 +309,47 @@ dimming-only version of this code was live.
 **Not a reopening of D-006 or D-007.** The five states keep their signatures and
 recency keeps chroma. This decides only where a label may be drawn.
 
+### Amendment, cycle 9 — the far ring was a departure from this decision, and is withdrawn
+
+Cycle 8 added a *far ring* of anchors — twelve directions at four radii, out to
+about fifteen em — so that names crowded out of a dense district could reach
+open ground, with a leader drawn back to the node. It bought roughly thirty more
+drawn labels on the whole-map frames.
+
+It also broke the sentence three paragraphs above. **"Every anchor is adjacent
+to the node it names… no label detaches from its subject"** stopped being true
+of the shipped frames, and the cycle-8 Art Director measured the cost: **18
+label runs on artifact 02 sitting entirely clear of every node, against 1 in
+cycle 7**, with label ink overhanging the node field by 277 px against 46. Its
+delegated ruling — and this call is the Art Director's under §04 — was to keep
+the anchor *directions* and lose the *reach*.
+
+**Displacement is now a hard constraint, not a term in a score:** no candidate
+whose box lies more than **2.6 em** — about two line-heights — from the nearest
+edge of its own node's mark, and a label with no candidate inside that is
+suppressed and counted rather than relocated. `everyLabelStaysBesideItsNode` is
+a required claim on every artifact that carries labels, asserted in the label's
+own type size, because 40 px is far beside 12 px type and adjacent beside 24 px
+type.
+
+**This restores D-012 rather than reopening it.** The decision always said
+adjacent; cycle 8's code stopped honouring it and cycle 9 makes the code match
+the decision and gates it so the drift is caught by a claim rather than by a
+critic.
+
+One clause of D-012 did not survive contact and is amended rather than quietly
+dropped: *"no leader lines are needed"*. Leaders exist, and they earn their
+place on a different problem than the one this decision anticipated — **not
+distance, but ambiguity**. In the holding ring the unplaced nodes pack tightly
+enough that a label's nearest dot can be a neighbour's rather than its own, and
+there a line joining name to mark is the only thing that makes attribution
+certain. Leaders are drawn for that case and no longer for reach.
+
+The cost is stated on the frame rather than absorbed: artifact 02 draws **66 of
+150** labels and says so — "84 labels hidden · 36 shortened at this zoom". A
+suppressed label costs one label; an orphan costs one label and adds a false
+object.
+
 ## D-013 · Node hues render at one reference lightness  · cycle 3 · SETTLED
 
 D-006 declares a luminance ladder — plain 0.50, connected 0.72, unplaced 0.86,
@@ -465,6 +506,36 @@ independent sampler over the shipped artifact 07: the two *plain* cores measure
 **This amendment is a correction of the record, not a new decision.** The change
 happened in cycle 5's code and this table was not updated with it, so for two
 cycles DIRECTION.md stated rungs the app did not use. Recorded as F-023.
+
+### Correction, cycle 9 — the sentence above is still wrong, and this is why
+
+*"The palette is solved in the same space a reader measures in."* It is not, and
+the cycle-8 Art Director proved it by doing exactly what that sentence invites:
+sampling artifact 07 with the standard definition. It got **0.1594 and 0.1817**
+for the two *connected* cores against the 0.4242 and 0.4249 recorded above.
+
+The cycle-8 correction changed the coefficients from Rec.601 to Rec.709 and
+**never added the sRGB-to-linear transfer step**. Relative luminance is
+*linearise, then weight*. Weighting encoded values is **luma**. So the fix for a
+mis-named yardstick installed a second mis-named yardstick, and the failure has
+the same shape both times: a number the builder can produce and a reader cannot.
+
+Two changes, and deliberately neither of them is to the palette:
+
+1. **The function is named `luma709`**, because that is what it computes. The
+   ladder is solved in it and stays solved in it — this is not a reopening of
+   D-013, D-015 or D-016, and the Art Director ruled explicitly that the palette
+   should not change.
+2. **True `relLuminance` is reported beside it.** Artifact 07 now carries the
+   ladder in *both* yardsticks and its capture is gated on both. It had been
+   gated only on the space the palette is solved in, which is precisely why the
+   gate could not fail for this reason.
+
+Measured off the shipped frame in true relative luminance: plain **0.0759**,
+connected **0.1683**, unplaced **0.2781**, search hit **0.4195**, selected
+**0.6233** — monotonic, smallest step 0.0924 against a within-rung spread of
+0.022, so the bands stay disjoint. **The ladder was sound both times.** Only the
+word was wrong, twice. Recorded as F-032.
 
 ---
 
