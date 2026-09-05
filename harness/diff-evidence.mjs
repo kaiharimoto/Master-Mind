@@ -216,7 +216,7 @@ export async function diffEvidence(curDir, prevDir) {
         // 4 marked artifact 20 substantive on a reworded description while its
         // frames were the same at every timestamp.
         const outputMoved = row.verdict === 'changed' || row.subjectChanged === true;
-        row.substantive = outputMoved &&
+        row.recipeChanged = outputMoved &&
           (notes.length > 1 || pr.demonstrates !== cr.demonstrates ||
            pr.lens !== cr.lens || pr.surface !== cr.surface);
         if (!outputMoved) row.why = 'recipe reworded, output unchanged';
@@ -232,13 +232,36 @@ export async function diffEvidence(curDir, prevDir) {
         : margin > 0.05
           ? `no recipe fingerprint in the previous set; ssim ${row.ssim.toFixed(3)} is ${margin.toFixed(3)} below its threshold — provisionally SUBSTANTIVE, inspect. demonstrates: "${cr.demonstrates ?? '—'}"`
           : `no recipe fingerprint in the previous set; ssim ${row.ssim.toFixed(3)} within ${Math.abs(margin).toFixed(3)} of its threshold — cosmetic or unchanged. demonstrates: "${cr.demonstrates ?? '—'}"`;
-      if (margin !== null && margin > 0.05) row.substantive = true;
+      if (margin !== null && margin > 0.05) row.recipeChanged = true;
     }
     // An artifact whose recipe changed but whose pixels did not is not
     // 'unchanged' in any sense a reviewer cares about.
-    if (row.verdict === 'unchanged' && row.whatChanged && row.substantive) {
+    if (row.verdict === 'unchanged' && row.whatChanged && row.recipeChanged) {
       row.verdict = 'changed';
       row.why = 'recipe changed: ' + row.whatChanged;
+    }
+    // THE WORD MEANT THE CAUSE, NOT THE MAGNITUDE.
+    //
+    // `substantive` was set exactly when the capture RECIPE fingerprint had
+    // changed, and every substantive row said so in its own note. So in cycle 8
+    // the two largest still-image changes in the set — artifact 02 at SSIM
+    // 0.853 with 44 % more lit subject, and 04 at 0.819 — were labelled NOT
+    // substantive, while an artifact at SSIM 0.973 was. The numbers underneath
+    // were honest and the word on top of them was not the word for them; the
+    // cycle-8 Auditor read it exactly that way. The flag is `recipeChanged`
+    // now, and `substantive` means what a reader takes it to mean: the OUTPUT
+    // moved materially, whatever the cause.
+    const bigSubject = Math.abs(row.subject?.litDelta ?? 0) > 0.2 ||
+                       Math.abs(row.subject?.meanDelta ?? 0) > 0.08;
+    const wellBelowThreshold = row.ssim != null && row.threshold != null &&
+                               row.threshold - row.ssim > 0.05;
+    row.substantive = !!(row.recipeChanged || (row.verdict !== 'unchanged' && (bigSubject || wellBelowThreshold)));
+    if (row.substantive && !row.recipeChanged) {
+      const why = [];
+      if (wellBelowThreshold) why.push(`ssim ${row.ssim.toFixed(3)} is ${(row.threshold - row.ssim).toFixed(3)} below its ${row.threshold} threshold`);
+      if (bigSubject) why.push(`lit subject moved ${((row.subject?.litDelta ?? 0) * 100).toFixed(0)} %, mean luminance ${((row.subject?.meanDelta ?? 0) * 100).toFixed(0)} %`);
+      row.whatChanged = [row.whatChanged, `output moved materially: ${why.join('; ')} — inspect`]
+        .filter(Boolean).join('; ');
     }
     // A re-encode that moves the bitrate by more than a quarter is a change
     // even when 20 sampled frames still look alike.
@@ -313,6 +336,11 @@ export async function diffEvidence(curDir, prevDir) {
   // know which. Said here rather than left to be inferred from the rows.
   const fallback = rows.filter(r => r.ssimMethod && r.ssimMethod.startsWith('the take'));
   const notes = [];
+  // The prose the summary carries. It was empty in cycle 8 while two artifacts
+  // had moved materially, so nothing wrote the change up and only the numbers
+  // said it.
+  for (const r of rows.filter(r => r.substantive && !r.recipeChanged))
+    notes.push(`${r.id} ${r.file}: ${r.whatChanged}`);
   if (fallback.length) notes.push(
     `${fallback.length} video(s) compared as takes rather than through their contact sheets ` +
     `(${fallback.map(r => r.id).join(', ')}) — the sheets changed shape this cycle. The thresholds in ` +
@@ -333,7 +361,8 @@ export async function diffEvidence(curDir, prevDir) {
                total: rows.length,
                changedIds: changed, missingIds: missing,
                uncomparableIds: rows.filter(r => r.verdict === 'uncomparable').map(r => r.id),
-               substantiveIds: rows.filter(r => r.substantive).map(r => r.id) },
+               substantiveIds: rows.filter(r => r.substantive).map(r => r.id),
+               recipeChangedIds: rows.filter(r => r.recipeChanged).map(r => r.id) },
   };
 }
 

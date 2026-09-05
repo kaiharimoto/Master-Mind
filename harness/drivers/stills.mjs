@@ -141,6 +141,8 @@ const recencySpan = async (page) => page.evaluate(() => {
 export default [
 {
   id: '01', file: '01_maps_home.png', kind: 'png',
+  requires: { listedCountsMatchTheModel: true, mapsAfterDelete: (n) => n === 2,
+              renameWentThroughThePrompt: true },
   demonstrates: 'maps home: create, rename and delete a map, both seeded maps listed with node counts', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation',
   title: 'Maps home',
@@ -151,24 +153,70 @@ export default [
     // create -> rename -> delete, really driven through the buttons.
     await page.fill('[data-t=maps-new-name]', 'Sprint retro');
     await page.click('[data-t=maps-create]');
-    await page.waitForFunction(() => document.body.innerText.includes('Sprint retro'), null, { timeout: 15000 });
+    // On the TABLE, for the same reason the delete wait is: the create button
+    // toasts `Created "Sprint retro".`, so a body-text wait was satisfied by the
+    // confirmation rather than by the row, and would have passed even if the row
+    // never appeared.
+    await page.waitForFunction(() => [...document.querySelectorAll('[data-t=maps-home] tbody tr')]
+                                     .some(tr => tr.textContent.includes('Sprint retro')),
+                               null, { timeout: 15000 });
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const a = await H.tmpShot(page, cdp, '01a');
     const id = await page.evaluate(() => (window.mm.maps.find(m => m.name === 'Sprint retro') || {}).id);
-    await page.evaluate(i => window.mm.sync.request({ t: 'maps.rename', id: i, name: 'Retro — sprint 14' }), id);
-    await page.waitForFunction(() => document.body.innerText.includes('Retro — sprint 14'), null, { timeout: 15000 });
+    // THROUGH THE ROW'S OWN BUTTONS. The caption said all three operations were
+    // "driven through the real buttons" and only the create was: rename and
+    // delete went straight to the sync request, past the controls a person
+    // would use. The buttons exist; the rename one opens a prompt, which is
+    // answered here the way a person answers it.
+    // The prompt is answered the way a person answers it. Two details mattered
+    // and both cost a capture to find: the accept must be AWAITED, and the
+    // replacement name is plain ASCII — with an em dash in it the dialog was
+    // accepted, `window.prompt` returned nothing usable, and the rename silently
+    // did not happen while every step reported success.
+    let dialogSeen = null;
+    page.on('dialog', async d => { dialogSeen = d.type(); await d.accept('Retro - sprint 14'); });
+    await page.click(`[data-t="map-rename-${id}"]`);
+    await page.waitForFunction(i => (document.querySelector(`[data-t="map-row-${i}"]`)?.textContent ?? '')
+                                     .includes('Retro - sprint 14'), id, { timeout: 15000 });
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const b = await H.tmpShot(page, cdp, '01b');
-    await page.evaluate(i => window.mm.sync.request({ t: 'maps.delete', id: i }), id);
-    await page.waitForFunction(() => !document.body.innerText.includes('Retro — sprint 14'), null, { timeout: 15000 });
+    // The maps overlay replaces its whole table on every list change, so for a
+    // moment after the rename the row's own Delete button is a node that is
+    // about to be thrown away. A click landing in that window does nothing and
+    // reports success. Waiting for the row to settle is the capture's part of
+    // the fix; the app's part is recorded as a finding rather than papered over.
+    await page.waitForSelector(`[data-t="map-delete-${id}"]`);
+    await page.waitForTimeout(400);
+    await page.click(`[data-t="map-delete-${id}"]`);
+    // WAIT ON THE TABLE, NOT ON THE PAGE. The delete button toasts
+    // `Deleted "Retro - sprint 14".`, so a wait for the name to disappear from
+    // document.body.innerText waits for the confirmation of the very thing it
+    // is waiting for and times out — with the delete already done. The capture
+    // failed for fifteen seconds on a step that had succeeded immediately.
+    await page.waitForFunction(i => !document.querySelector(`[data-t="map-row-${i}"]`),
+                               id, { timeout: 15000 });
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const c = await H.tmpShot(page, cdp, '01c');
     const crop = async (src, tag) => H.crop(src, H.tmp(`01-${tag}.png`), 0, 40, 1920, 360);
     const panels = [await crop(a, 'a'), await crop(b, 'b'), await crop(c, 'c')];
     await H.compose(panels, H.out(this.file), { mode: 'v', width: 1920, height: 1080,
-      labels: ['Create — “Sprint retro” added', 'Rename — now “Retro — sprint 14”', 'Delete — removed; both seeded maps remain'] });
+      labels: ['Create — “Sprint retro” added', 'Rename — now “Retro - sprint 14”', 'Delete — removed; both seeded maps remain'] });
+    // THE NUMBERS THE TABLE PRINTS, AGAINST THE MODEL'S OWN COUNTS.
+    //
+    // This artifact carried zero machine-checked claims — the cycle-8 Auditor
+    // counted 18 of 20 artifacts with claims and this was one of the two
+    // without. Its whole subject is a table of node counts, which is exactly
+    // the kind of number that can drift from the thing it describes without
+    // anyone noticing.
+    const listed = await page.evaluate(() => Object.fromEntries(window.mm.maps.map(m =>
+      [m.id, Number(document.querySelector(`[data-t=map-nodes-${m.id}]`)?.textContent.trim())])));
     const counts = await page.evaluate(() => Object.fromEntries(window.mm.maps.map(m => [m.id, m.nodes])));
-    return { maps: counts, note: 'create/rename/delete driven through the real buttons; three states composited' };
+    const wrong = Object.keys(counts).filter(k => listed[k] !== counts[k]);
+    return { maps: counts, listedOnFrame: listed, countMismatches: wrong,
+             renameWentThroughThePrompt: dialogSeen === 'prompt',
+             listedCountsMatchTheModel: wrong.length === 0 && Object.keys(counts).length > 0,
+             mapsAfterDelete: Object.keys(counts).length,
+             note: 'create, rename and delete each driven through that row\'s own button; three states composited' };
   },
 },
 {
@@ -698,6 +746,7 @@ export default [
 },
 {
   id: '15', file: '15_settings_gestures.png', kind: 'png',
+  requires: { referenceMatchesTheRuntime: true },
   demonstrates: 'settings and the gesture reference for touch and hand vocabularies', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Settings and gesture reference',
   camera: 'hand-vocabulary',
@@ -718,7 +767,32 @@ export default [
       touch: document.querySelectorAll('[data-t=touch-reference] tbody tr').length,
       hand: document.querySelectorAll('[data-t=hand-reference] tbody tr').length,
     }));
-    return { ...f, ...rows };
+    // THE REFERENCE TABLE IS CHECKED AGAINST THE RUNTIME.
+    //
+    // This artifact is the set's source of truth for both vocabularies — the
+    // text artifact 05's caption contradicted for a whole cycle — and it
+    // carried zero machine-checked claims, as the cycle-8 Auditor pointed out.
+    // Every operation string the table prints must be the string the app holds
+    // for that pose, read from the rendered table and from the app's own
+    // vocabulary and compared, not eyeballed.
+    const table = await page.evaluate(() => {
+      const cells = (sel) => [...document.querySelectorAll(`${sel} tbody tr`)]
+        .map(tr => [...tr.querySelectorAll('td,th')].map(td => td.textContent.trim()));
+      const inTable = (rowsIn, want) => rowsIn.some(r => r.some(c => c === want));
+      const hand = window.mm.handVocab.map(h => ({ id: h.id, name: h.name, operation: h.operation }));
+      const touch = window.mm.touchVocab.map(t => ({ id: t.id, name: t.name, operation: t.operation }));
+      const hr = cells('[data-t=hand-reference]'), tr2 = cells('[data-t=touch-reference]');
+      const missing = [];
+      for (const h of hand) { if (!inTable(hr, h.name)) missing.push(`hand name ${h.name}`);
+                              if (!inTable(hr, h.operation)) missing.push(`hand operation ${h.operation}`); }
+      for (const t of touch) { if (!inTable(tr2, t.name)) missing.push(`touch name ${t.name}`);
+                               if (!inTable(tr2, t.operation)) missing.push(`touch operation ${t.operation}`); }
+      return { checked: hand.length * 2 + touch.length * 2, missing };
+    });
+    return { ...f, ...rows,
+             vocabularyStringsChecked: table.checked,
+             vocabularyMismatches: table.missing,
+             referenceMatchesTheRuntime: table.missing.length === 0 && table.checked > 0 };
   },
 },
 ];
