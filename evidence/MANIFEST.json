@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T03:59:41.322Z",
+  "lastRunAt": "2026-09-05T04:04:16.161Z",
   "lastRunCaptured": [
-    "06"
+    "19"
   ],
   "artifacts": [
     {
@@ -544,7 +544,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T03:59:44.468Z"
     },
     {
@@ -1619,21 +1619,21 @@
     {
       "id": "19",
       "file": "19_capture_place_arc.mp4",
-      "title": "Capture-place arc",
+      "title": "Capture, place, connect, refind",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 47.1,
+      "seconds": 61.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 384498,
-        "sha256": "61985018dad1b510fa52e746b8bc4126471b1b3ae1b223ef18c8e6fa17cbb270",
-        "seconds": 18,
+        "bytes": 839013,
+        "sha256": "7d7df660249f9f9ed75e726bd2b20128c60cd294c3fcedd7abf6196ef3399f29",
+        "seconds": 23,
         "fps": 30,
-        "frames": 540
+        "frames": 690
       },
       "claims": {
         "ok": true,
@@ -1655,6 +1655,24 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "connectedAfterPlacing",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "refoundBySearch",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "positionSurvivedTheWholeLoop",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -1668,19 +1686,50 @@
           -1.4769724111703333
         ],
         "stayedPut": true,
+        "connectedTo": "Method of loci",
+        "linksAcrossConnect": [
+          6,
+          7
+        ],
+        "connectedAfterPlacing": true,
+        "searchHits": 1,
+        "flewToTheNewNode": true,
+        "centredOnRefind": {
+          "dx": 0,
+          "dy": 0
+        },
+        "refoundBySearch": true,
+        "positionThroughTheLoop": {
+          "atDrop": [
+            7.354568612561264,
+            0.4563576046908786,
+            -1.4769724111703333
+          ],
+          "afterConnect": [
+            7.354568612561264,
+            0.4563576046908786,
+            -1.4769724111703333
+          ],
+          "atEnd": [
+            7.354568612561264,
+            0.4563576046908786,
+            -1.4769724111703333
+          ]
+        },
+        "positionSurvivedTheWholeLoop": true,
         "holding": 4
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "the capture-place arc in motion: compose, holding, drag out, stays put",
+        "demonstrates": "the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put",
         "surface": "windows",
         "lens": null,
-        "fnSha": "47efb38d7233c683"
+        "fnSha": "b8f2b600b9cec90b"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:50:00.454Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T04:05:16.012Z"
     },
     {
       "id": "20",
@@ -1835,7 +1884,7 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T03:59:46.068Z",
+  "finishedAt": "2026-09-05T04:05:19.455Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",

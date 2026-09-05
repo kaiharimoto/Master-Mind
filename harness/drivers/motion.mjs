@@ -688,15 +688,19 @@ export default [
   id: '19', file: '19_capture_place_arc.mp4', kind: 'mp4',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { created: true, placed: true, stayedPut: true },
-  demonstrates: 'the capture-place arc in motion: compose, holding, drag out, stays put', minW: 1920, minH: 1080,
-  minFps: 24, minSec: 15, surface: 'windows', map: 'map-talk', title: 'Capture-place arc',
+  requires: { created: true, placed: true, stayedPut: true, connectedAfterPlacing: true,
+              refoundBySearch: true, positionSurvivedTheWholeLoop: true },
+  demonstrates: 'the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put', minW: 1920, minH: 1080,
+  minFps: 24, minSec: 15, surface: 'windows', map: 'map-talk', title: 'Capture, place, connect, refind',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-talk' });
     await POSE(page, { yaw: 0.28, pitch: 0.12 });
     await FRAME_ALL(page, 1.14);
     const text = 'Rehearse the fly-to twice';
+    const targetText = 'Method of loci';
+    const targetId = await NODE_ID(page, targetText);
     let id = null, dropAt = null;
+    const log = {};
     const steps = [
       ...text.split('').map((ch, k) => ({ at: 40 + k * 3, fn: async () => {
         await page.evaluate(c => {
@@ -713,14 +717,65 @@ export default [
         const s = await SCREEN_OF(page, id);
         if (s && dropAt) await page.mouse.move(s.x + (dropAt.x - s.x) / (40 - k), s.y + (dropAt.y - s.y) / (40 - k));
       } })),
-      { at: 380, fn: async () => page.mouse.up() },
+      { at: 380, fn: async () => { await page.mouse.up();
+          log.atDrop = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id); } },
+      // THE WHOLE LOOP, not its first half. The mission's core is capturing,
+      // connecting, organising and REFINDING as one workflow; this take stopped
+      // at placing and then held a still frame for five seconds. It now carries
+      // straight on into connecting the new thought to an existing one and
+      // finding it again by name — and the position it was put at has to
+      // survive both.
+      { at: 420, fn: async () => {
+          log.linksBeforeConnect = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+          await page.click('[data-t=ed-link]');
+        } },
+      { at: 450, fn: async () => {
+          const t = await SCREEN_OF(page, targetId);
+          if (t) await page.mouse.click(t.x, t.y);
+          log.linksAfterConnect = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+          log.connected = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
+            .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a: id, b: targetId });
+          log.afterConnect = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
+        } },
+      { at: 500, fn: async () => { await page.click('[data-t=ed-close]'); } },
+      ...'Rehearse'.split('').map((ch, k) => ({ at: 530 + k * 4, fn: async () => {
+        await page.focus('[data-t=search]');
+        await page.evaluate(c => {
+          const el = document.querySelector('[data-t=search]');
+          el.value += c; el.dispatchEvent(new Event('input', { bubbles: true }));
+        }, ch);
+      } })),
+      { at: 590, fn: async () => {
+          await page.press('[data-t=search]', 'Enter');
+          log.flewTo = await page.evaluate(() => window.mm.hits[window.mm.hitIndex]);
+          log.hits = await page.evaluate(() => window.mm.hits.length);
+        } },
+      { at: 680, fn: async () => {
+          log.atEnd = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
+          const sc = await SCREEN_OF(page, id);
+          log.centred = sc ? { dx: Math.round(sc.x - 960), dy: Math.round(sc.y - 540) } : null;
+        } },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 18, onFrame: script(steps) });
+    // 23 s, not 26: the flight lands at about 21 s and the take was holding a
+    // static end-state for four and a half seconds after it, which is the same
+    // fault artifact 18 was rebalanced for.
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 23, onFrame: script(steps) });
     const n = await page.evaluate(i => { const x = window.mm.store.doc.nodes[i]; return x && { placed: x.placed, pos: x.pos, text: x.text }; }, id);
     await sleepFrames(page, 0, 40);
     const after = await page.evaluate(i => { const x = window.mm.store.doc.nodes[i]; return x && x.pos; }, id);
+    const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
     return { text, created: !!n, placed: n && n.placed, pos: n && n.pos,
-             stayedPut: JSON.stringify(n && n.pos) === JSON.stringify(after),
+             stayedPut: same(n && n.pos, after),
+             connectedTo: targetText, linksAcrossConnect: [log.linksBeforeConnect, log.linksAfterConnect],
+             connectedAfterPlacing: !!log.connected &&
+               log.linksAfterConnect === log.linksBeforeConnect + 1,
+             searchHits: log.hits, flewToTheNewNode: log.flewTo === id,
+             centredOnRefind: log.centred,
+             refoundBySearch: log.flewTo === id && !!log.centred &&
+               Math.abs(log.centred.dx) < 40 && Math.abs(log.centred.dy) < 40,
+             positionThroughTheLoop: { atDrop: log.atDrop, afterConnect: log.afterConnect, atEnd: log.atEnd },
+             // The whole point of the loop: where you PUT it is where you find it.
+             positionSurvivedTheWholeLoop: same(log.atDrop, log.afterConnect) && same(log.atDrop, log.atEnd),
              holding: await page.evaluate(() => window.mm.store.holdingCount()) };
   },
 },
