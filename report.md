@@ -825,6 +825,47 @@ landed on top of each other — *"Barley miso, 18 months"* overprinted by
 *"Amazake"* in artifact 10. Same class as F-015, in the one case F-015 did not
 cover.
 
+**F-032 — the fix for a mis-named yardstick installed a second one.** F-029
+changed the ladder's measure from Rec.601 to Rec.709 and this report then said
+*"the palette is solved in the space a reader measures in."* It is not.
+Relative luminance is **linearise, then weight**; F-029 changed the weights and
+never added the transfer step, so the metric is Rec.709-weighted **luma** of
+gamma-encoded values. The cycle-8 Art Director did the one thing the sentence
+invites — sampled artifact 07 with the standard definition — and measured the
+two *connected* cores at **0.1594 and 0.1817** against a recorded 0.4242 and
+0.4249.
+
+The failure has the same shape both times: **a number the builder can produce
+and a reader cannot**, which is the exact defect F-029 was raised to fix. That
+is what makes this worth its own entry rather than a line in F-029 — the second
+occurrence is evidence that correcting the symptom is not the same as
+correcting the habit.
+
+The palette does not change: it was not what was wrong, the ladder survives the
+stricter measure with disjoint bands, and the Art Director ruled explicitly that
+it should stay. The function is named `luma709` for what it computes, true
+`relLuminance` is reported beside it, and **artifact 07 is gated on both** — it
+had been gated only in the space the palette is solved in, so the gate could not
+have failed for this reason. Measured off the shipped frame in true relative
+luminance: plain 0.0759, connected 0.1683, unplaced 0.2781, search hit 0.4195,
+selected 0.6233 — smallest step 0.0924 against a within-rung spread of 0.022.
+D-015 carries the correction; the amendment says plainly that the sentence above
+it is wrong.
+
+**F-033 — the instrument written to catch F-025 committed F-025.** The label
+audit read node positions from a **fresh projection** while reading label boxes
+from the frame the deconflictor had laid out — two cameras, one subtraction — so
+it reported 81.7 px of displacement for a label placed under a 48 px cap, and
+the adjacency constraint looked unbound while it was binding. Corrected, the
+same label measures 32.4 px.
+
+There are genuinely two questions and they need different projections. *How far
+did this label travel from its node* is about the frame the deconflictor built.
+*Is there a mark under this label in the shipped PNG* is about the pixels.
+Feeding the pixel sampler the deconflictor's coordinates made six markers on
+artifact 02 that are plainly there measure as missing — the same conflation
+failing in the opposite direction within the same hour.
+
 **F-031 — a typed name wiped by a background redraw.** Artifact 01's capture
 **failed** in cycle 8: `page.waitForFunction` timed out waiting for the map the
 driver had just created to appear by name. It had appeared — as *"Untitled
