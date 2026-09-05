@@ -888,6 +888,95 @@ worst overhang **0.00 px** in all three. It also caught a second, smaller
 disagreement on the way — a shortened run reserved the ellipsis's advance where
 the drawn cell is wider, leaving glyphs 1.63 px outside their own reservation.
 
+## Cycle 7 — the critics' findings and what was done
+
+**Total 82.0/100 · category 05 BELOW its minimum · regression-free by the
+Auditor's declaration · no position regression · 20/20 captured as defined.**
+88.0 → 82.0. The worst cycle of the run, and the first time a category has
+fallen below its minimum.
+
+| Critic | Category | C6 | C7 | Weight | Minimum | |
+|---|---|---:|---:|---:|---:|---|
+| The Audience | 01 Core workflow | 21.5 | 21 | 25 | 20 | −0.5 |
+| The Audience | 02 Landmarks live | 22.5 | 20 | 25 | 20 | −2.5 · at the minimum |
+| The Auditor | 03 One model and sacred positions | 17.5 | 18 | 20 | 17 | +0.5 · **hard gate met** |
+| The Auditor | 04 Evidence and report integrity | 13.5 | 13 | 15 | 13 | −0.5 · **hard gate met, only just** |
+| The Art Director | 05 Quality compliance | 8.5 | **6** | 10 | **8** | −2.5 · **BELOW MINIMUM** |
+| The Art Director | 06 Finder round-trip | 4.5 | 4 | 5 | 4 | −0.5 |
+| | **Total** | 88.0 | **82.0** | 100 | | |
+
+All three verdicts are in `evidence/critics/`, written down verbatim as they
+arrived and before any response was made to them.
+
+**The two critics disagree about whether this cycle regressed, and both are
+recorded.** §04 gives the regression call to the Auditor alone, and the Auditor
+declares cycle 7 regression-free, having checked the thing that looked like a
+regression — the hidden-label count rising from 26 and 17 to 33 and 30 — and
+ruled it an improvement: cycle 6 was drawing *silently hard-truncated* labels
+(«Beef gar», «Amylase pl», «5% targe») and cycle 7 replaced them with honest
+ellipsis and dropped what it could not shorten. The Art Director, judging the
+same frames against the legibility clause, called four artifacts regressions —
+02, 04, 10 and 13 — and scored category 05 below its minimum. **Both readings
+are right about what they measured.** The labels were more honest and there were
+fewer of them, and I had taken the second as the price of the first. It was not:
+see below.
+
+### The Art Director's two blocking findings
+
+| # | Finding | Response |
+|---|---|---|
+| C1 | *"Labels are suppressed at whole-brain zoom while half the canvas is empty."* 02 hid **33**, 04 hid **30**, and content in 04 occupied **51 % of frame width** — 930 px of canvas empty while thirty names were dropped for crowding. About 18 more measured 1.79:1 to 2.73:1 against the ground. | **Fixed to the ruling, and past its target.** See the ruling below. Measured on the shipped frames: **02, 04 and 06 now draw every label they have — 150 of 150 — with zero hidden, zero overlaps of any kind, and every drawn label at 3:1 or better.** |
+| C2 | *"Link filaments are below the visibility threshold, so the map's connections do not render at all."* The modal filament pixel measured **(26,21,17) against an (18,14,11) ground**, consistent across five districts, and identical in cycle 6 — a carried defect. | **Fixed at the mechanism.** Link alpha was driven down by the same distance fade as everything else, with no floor, so at whole-brain framing every link fell under the threshold at once. The fade now floors at 0.40 of the rest alpha, and a **cross-district** link — the structural claim — is drawn a step stronger than one inside a district. The two modal values are now **(34,27,22) and (46,38,32)**, 1.49:1 and 1.90:1 against the ground. |
+
+### The ruling, and what it took to honour it
+
+The Art Director made a second delegated call: *"when the label solver runs out
+of room, it must push labels outward with a short leader into free canvas —
+the mechanism already shipped for the holding cluster — rather than dropping
+them. Dropping is only permitted when the canvas is genuinely full."*
+
+That is now the rule. There is a **far ring** — twelve directions at four radii —
+tried only for the labels the near anchors could not place, and anything placed
+on it is drawn with a leader back to its node. Building it exposed two defects
+that had been quietly costing labels for cycles:
+
+- **A label the legibility floor had cut to nothing still reserved its
+  rectangle**, because the test used the pre-floor weight. Names were being
+  pushed off the map to make room for labels that were not being drawn.
+- **Coverage did not dominate.** The comment in the scorer has read *"a CLEAR
+  placement always beats a covered one, however much shorter or further it is"*
+  since cycle 5, and the weight of 6 did not deliver it: a held label's distance
+  penalty could outscore a half-buried anchor, the label took the buried one,
+  and the floor then cut it. At 1000, any clear placement beats any covered one
+  and length and distance decide only among the clear ones.
+
+The Art Director also **ruled D-004 closed**: organic-bioluminescent, with four
+binding rules — filled self-luminous cores, state by core luminance first and
+ring geometry second, no holographic vocabulary, and saturation reserved for the
+district and age encoding. That confirms the decision already recorded and is
+not reopened.
+
+### The other findings
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| A1/C10 | Audience · Art Director · a03/a16 | The AR reticle is fixed in screen space, correctly, but names a node **21, 91, 127 and 149 px away** with nothing joining the two; and the hero has no focal point | **Fixed twice over.** A leader runs from the ring's edge to the node the chip names — measured 39.3 px from the ring to the node's own pixel. And the aimed node now takes the top rung of the ladder with its filaments live, without opening the editor, so the brightest thing in the frame is the thing the readout names. |
+| A3 | Audience · a10 | Two labels have ink in column 0 while the frame's own audit reports `labelWorstOverhangPx: 0` | **Fixed, and it was a false machine-checked claim in the cycle that added the check.** The audit compared the drawn box against the reserved box and neither was ever compared against the viewport. The frame edge is now a hard constraint with an 8 px margin, and the audit reports off-frame overhang. |
+| A4/C4 | Audience · Art Director | Labels are drawn through the nodes they name | **Fixed.** A label's box must clear its own mark by 4 px. |
+| B1 | Auditor · a07 | `withinRungSpread` is not reproducible off the frame the recipe says it was measured off | **Fixed at the yardstick — F-029.** The ladder was equalised in Rec.601 luma while everything called it *relative luminance*. Now Rec.709 throughout, and an independent sampler reproduces the manifest. |
+| B2/C5 | Auditor · Art Director · a14 | The detail row is clipped by the frame bottom; a "detail" panel at ×0.79 is a reduction; the top row is too small to read the panel | **All three fixed.** The caption strip is solved from the captions actually used (last lit row 1045 of 1079); the magnification is expressed against the panel it is a detail of (×2.09, ×1.5, ×1.5, ×1.37); and a fourth cell crops the card, its controls and the rejection log at **×2.09**. |
+| B3 | Auditor · a12 | The node editor covers a placed node in both surfaces of the artifact headlined `noNodeDropped` | **Fixed.** The twin's camera is framed with the editor's band reserved, and the artifact requires that no node sits under any chrome — zero on both surfaces. |
+| B8 | Auditor · a18 | The zero-overhang guarantee does not hold in the takes | **Fixed, and the first version of the check was wrong.** It re-projected at call time, so mid-flight it compared boxes reserved at one camera against glyphs drawn at another and reported 178 px. It now uses the positions the deconflictor ran on: 26 samples across the take, worst overhang 0. |
+| C3/A10 | Art Director · Audience · a10/a19 | Thirteen co-equal search hits with no focal point; and the core loop is never shown at scale | **Both fixed.** Flying to a hit now selects it — top rung, live filaments, open for editing. And artifact 19 runs the whole loop on the **150-node** map: links 208 → 209, refound by search, position identical at the drop, after the connect and at the end of the flight. |
+| C6/C7 | Art Director · a14/a20 | Accept and Reject are visually identical; the rejection log is the least legible block on the panel | **Both fixed.** Accept takes the amber the kind tag already uses; Reject keeps the outline. The log is a list — one entry per line, subject at reading contrast, reason a step below, overflow as a count. |
+| A5 | Audience · a16 | Two of seven gestures map to the same operation | **Fixed at the behaviour, not the wording.** In the AR lens the pose is rebuilt from the device's absolute heading every event, so a finger drag on empty space was overwritten within a frame — the gesture fired and nothing lasted. The drag now carries its delta into the gyro base, so it **re-aims** where the heading points. |
+| A6 | Audience · a05/a17 | *"Spread the map"* is a camera dolly and the label invites the wrong reading | **Fixed.** They are *Move closer* and *Pull back*. On a map whose premise is that positions are sacred, "spread the map" invites exactly the reading the premise forbids. |
+| A7/C8 | Audience · Art Director · a06 | Holding labels are not attributable to their nodes | **Fixed.** Distance costs a held label five times what it costs a placed one, and where the nearest node to a label's box is still not its own, a leader joins them. The artifact requires every held label to be attributable. |
+| A8/B4 | Audience · Auditor · a03 | `anchorMovedOnScreen` is an x-component printed as travel across the frame | **Fixed.** 214 px, with the components, matching both critics' own measurements. |
+| A9 | Audience · a17 | One mouse equivalent does not name its pose; the cluster chip covers the provenance chip | **Both fixed.** All four desk inputs name the pose they stand in for; the cluster proof stacks under the seed chip. |
+| B6/B7 | Auditor · DIFF.json | The diff never names a real pixel change and its buckets total 19 of 20 | **Both fixed.** Each artifact records the counters its own chrome printed and the diff compares them as first-class fields; the buckets sum to the set size. |
+| C9 | Art Director · a13 | The map is clipped by the finder panel | **Fixed.** The map is framed after the panel reaches its final width, and the artifact requires that no label sits under the panel. |
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
