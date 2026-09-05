@@ -1,2 +1,2 @@
-3bdf5ff04f2f70c6399db6c8901f04ca7a202695
-cycle 7 captured 20/20; positions identical for the seventh consecutive cycle; critics running
+3200db6f249370735353a5777d12f60ac2ffb197
+cycle 7 frozen at evidence/cycles/cycle-7; critics running; verdicts to evidence/critics/
