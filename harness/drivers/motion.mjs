@@ -710,8 +710,9 @@ export default [
   id: '20', file: '20_finder_roundtrip.mp4', kind: 'mp4',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { rejectionLeftNoTrace: true, allThreeKindsAccepted: true },
-  demonstrates: 'the finder round-trip in motion, including a malformed reply and an accepted placement', minW: 1920, minH: 1080,
+  requires: { rejectionLeftNoTrace: true, allThreeKindsAccepted: true,
+              placementRejectionLeftNoTrace: true, bothRejectionKindsShown: true },
+  demonstrates: 'the finder round-trip in motion: a malformed reply, an adversarially messy one, all three suggestion kinds accepted, and a REJECTED placement that leaves the node exactly where it was', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
@@ -777,7 +778,7 @@ export default [
       // positions are declared sacred — so it is the acceptance most worth
       // showing. Reach it the way a user does: by dispatching the suggestions
       // in front of it, one at a time, not by jumping an index.
-      { at: 700, fn: async () => {
+      { at: 690, fn: async () => {
           for (let guard = 0; guard < 4; guard++) {
             const kind = await page.evaluate(() => {
               const s = window.mm.suggestions[window.mm.sugIndex];
@@ -788,7 +789,31 @@ export default [
             await page.waitForTimeout(40);
           }
         } },
-      { at: 760, fn: async () => {
+      // A REJECTED PLACEMENT, before the accepted one. Placement is the only
+      // finder path that writes a node position, and positions are declared
+      // sacred — so the rejection that matters most is a rejected placement,
+      // and the take had only ever rejected a connection. The node the finder
+      // wanted to move must be exactly where it was, and still unplaced.
+      { at: 720, fn: async () => {
+          log.rejectedPlacement = await page.evaluate(() => {
+            const s = window.mm.suggestions[window.mm.sugIndex];
+            if (!s || s.kind !== 'placement') return null;
+            const n = window.mm.store.doc.nodes[s.node];
+            return { id: s.id, node: s.node, text: n.text, to: s.pos,
+                     posBefore: n.pos.slice(), placedBefore: n.placed,
+                     holdingBefore: window.mm.store.holdingCount() };
+          });
+          if (log.rejectedPlacement) await page.click('[data-t=finder-reject]');
+        } },
+      { at: 770, fn: async () => {
+          log.afterPlacementReject = log.rejectedPlacement ? await page.evaluate((r) => {
+            const n = window.mm.store.doc.nodes[r.node];
+            return { pos: n.pos.slice(), placed: n.placed,
+                     holding: window.mm.store.holdingCount(),
+                     stillQueued: window.mm.suggestions.some(s => s.id === r.id) };
+          }, log.rejectedPlacement) : null;
+        } },
+      { at: 800, fn: async () => {
           log.holdingBeforePlacement = await page.evaluate(() => window.mm.store.holdingCount());
           log.placement = await page.evaluate(() => {
             const s = window.mm.suggestions[window.mm.sugIndex];
@@ -799,7 +824,7 @@ export default [
           });
           if (log.placement) await page.click('[data-t=finder-accept]');
         } },
-      { at: 820, fn: async () => {
+      { at: 860, fn: async () => {
           log.afterPlacement = await page.evaluate((n) => {
             const x = n ? window.mm.store.doc.nodes[n] : null;
             return x ? { placed: x.placed, pos: x.pos.slice() } : null;
@@ -825,6 +850,20 @@ export default [
             labelsAfter: log.groupingAfter.labelsAfter, applied: !!log.groupingApplied }
         : null,
       allThreeKindsAccepted: !!log.groupingApplied && !!log.placement && !!log.accepted,
+      // A rejected PLACEMENT, and the node it named still exactly where it was.
+      placementRejected: log.rejectedPlacement && log.afterPlacementReject
+        ? { node: log.rejectedPlacement.text,
+            wouldHaveMovedTo: log.rejectedPlacement.to,
+            posBefore: log.rejectedPlacement.posBefore,
+            posAfter: log.afterPlacementReject.pos,
+            holding: [log.rejectedPlacement.holdingBefore, log.afterPlacementReject.holding] }
+        : null,
+      placementRejectionLeftNoTrace: !!(log.rejectedPlacement && log.afterPlacementReject &&
+        JSON.stringify(log.rejectedPlacement.posBefore) === JSON.stringify(log.afterPlacementReject.pos) &&
+        log.rejectedPlacement.placedBefore === log.afterPlacementReject.placed &&
+        log.rejectedPlacement.holdingBefore === log.afterPlacementReject.holding &&
+        !log.afterPlacementReject.stillQueued),
+      bothRejectionKindsShown: !!(log.rejected && log.rejectedPlacement),
       rejectionLeftNoTrace: log.linksBeforeReject === log.linksAfterReject &&
                             log.nodesBeforeReject === log.nodesAfterReject,
       linksBefore: JSON.parse(linksBefore || '{}') && Object.keys(JSON.parse(linksBefore)).length,

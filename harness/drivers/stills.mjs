@@ -48,6 +48,43 @@ const labelAudit = async (page) => {
            labelArbiterAgreesWithDraw: a.checked > 0 && a.worstGapPx === 0 };
 };
 
+/**
+ * How much of the recency channel this frame actually exercises.
+ *
+ * Recency is normalised across the WHOLE map, so a district whose thoughts were
+ * all captured in one sitting is uniformly muted — which is the channel
+ * working, not failing. Recording the span per hue family lets that be told
+ * apart from a channel that has gone flat everywhere.
+ */
+const recencySpan = async (page) => page.evaluate(() => {
+  const d = window.mm.store.doc, N = window.mm.scene.nodes;
+  const sat = N.iSat.array, col = N.iColor.array;
+  const ids = Object.values(d.nodes).map(n => n.id);
+  let lo = Infinity, hi = -Infinity;
+  for (const n of Object.values(d.nodes)) { lo = Math.min(lo, n.createdAt); hi = Math.max(hi, n.createdAt); }
+  const by = {};
+  ids.forEach((id, i) => {
+    const n = d.nodes[id];
+    const r = col[i * 3], g = col[i * 3 + 1], b = col[i * 3 + 2];
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    const chroma = Math.hypot(r - lum, g - lum, b - lum);
+    (by[n.color] ??= []).push({ rec: (n.createdAt - lo) / (hi - lo), on: sat[i] * chroma });
+  });
+  const out = {}; let gLo = 1e9, gHi = -1e9;
+  for (const [k, v] of Object.entries(by)) {
+    const on = v.map(x => x.on), rec = v.map(x => x.rec);
+    out[k] = { n: v.length,
+               recency: [+Math.min(...rec).toFixed(2), +Math.max(...rec).toFixed(2)],
+               chroma: [+Math.min(...on).toFixed(3), +Math.max(...on).toFixed(3)] };
+    gLo = Math.min(gLo, ...on); gHi = Math.max(gHi, ...on);
+  }
+  return { recencyByDistrict: out,
+           recencyChromaSpan: [+gLo.toFixed(3), +gHi.toFixed(3)],
+           // The channel must be exercised across the map, whatever any one
+           // district's timestamps happen to be.
+           recencyChannelExercised: gHi - gLo > 0.25 };
+});
+
 export default [
 {
   id: '01', file: '01_maps_home.png', kind: 'png',
@@ -187,7 +224,8 @@ export default [
 },
 {
   id: '04', file: '04_mind_expansion.png', kind: 'png',
-  requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true },
+  requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
+              recencyChannelExercised: true },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {
@@ -201,7 +239,7 @@ export default [
     await POSE(page, PIN['04']);
     await H.shot(page, cdp, H.out(this.file));
     return { ...await H.modelStats(page), camera: PIN['04'], cameraPinned: true,
-             ...(await labelAudit(page)) };
+             ...(await labelAudit(page)), ...(await recencySpan(page)) };
   },
 },
 {
@@ -297,7 +335,7 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true,
-              editorWroteToTheModel: true },
+              editorWroteToTheModel: true, recencyMatchesModel: true },
   demonstrates: 'connect and edit before/after: a new filament created between two named nodes', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Connect and edit',
   async run(H) {
@@ -372,9 +410,28 @@ export default [
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
     const moved = await page.evaluate(() => Object.fromEntries(
       Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos])));
+    // The recency line, checked against the model rather than against itself.
+    // The legend states that chroma names age; until cycle 7 nothing in the app
+    // let a reader check that for any particular node, so the one modelled
+    // property with a declared visual channel (§06) could only be taken on
+    // trust. The panel now states the node's date and its rank, and this
+    // recomputes both from the document.
+    const recency = await page.evaluate(() => {
+      const el = document.querySelector('[data-t=ed-recency]');
+      const shown = el ? el.textContent.trim() : '';
+      const id = window.mm.selected;
+      if (!id) return { shown, ok: false };
+      const d = window.mm.store.doc, n = d.nodes[id];
+      const all = Object.values(d.nodes);
+      const older = all.filter(m => m.createdAt < n.createdAt).length;
+      const pct = Math.round(100 * older / (all.length - 1));
+      const when = new Date(n.createdAt).toISOString().slice(0, 10);
+      return { shown, when, pct, ok: shown.includes(when) && shown.includes(`${pct}%`) };
+    });
     return { between: [A, B], linkedBefore, linkedAfter, connectedByThisCapture: !linkedBefore && linkedAfter,
              nodeCount: Object.keys(moved).length, editorOpen: true,
              colourBefore, colourAfter, textBefore, textAfter,
+             recencyShown: recency.shown, recencyMatchesModel: recency.ok,
              editorWroteToTheModel: colourBefore !== colourAfter && textBefore !== textAfter };
   },
 },

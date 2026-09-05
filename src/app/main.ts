@@ -5,8 +5,8 @@
 // + AR. Both run this same bundle.
 import * as THREE from 'three';
 import {
-  type MapDoc, type NodeId, type ColorKey, COLOR_KEYS, PALETTE,
-  holdingNodes, searchMatches, nodeList,
+  type MapDoc, type MMNode, type NodeId, type ColorKey, COLOR_KEYS, PALETTE,
+  holdingNodes, searchMatches, nodeList, recencyOf,
 } from './core/model.js';
 import { Store, newId } from './core/store.js';
 import { SyncClient, type MapSummary } from './core/syncClient.js';
@@ -713,6 +713,7 @@ export class App {
         <button data-t="ed-flyto">Fly to</button>
       </div>
       <div class="row"><button data-t="ed-delete">Delete</button><button data-t="ed-close">Close</button></div>
+      <div class="note" data-t="ed-recency">${esc(this.recencyLine(n))}</div>
       <div class="note mono">${n.id} · ${n.pos.map(v => v.toFixed(1)).join(', ')}</div>`;
     const id = n.id;
     $<HTMLInputElement>('[data-t=ed-text]', panel).addEventListener('input', e => this.store.setText(id, (e.target as HTMLInputElement).value));
@@ -722,6 +723,28 @@ export class App {
     $('[data-t=ed-flyto]', panel).addEventListener('click', () => this.controls.flyTo(id));
     $('[data-t=ed-delete]', panel).addEventListener('click', () => { this.store.remove(id); this.select(null); });
     $('[data-t=ed-close]', panel).addEventListener('click', () => this.select(null));
+  }
+
+  /**
+   * A node's age, in the terms the chroma channel uses.
+   *
+   * The legend states that chroma names age; until now nothing in the app let a
+   * reader check that against any particular node, so the one modelled property
+   * with a declared visual channel (§06) could only be taken on trust. The rank
+   * is what the channel actually encodes — recency is normalised across the map,
+   * so 'newer than 84 % of this map' is the number the colour is drawn from,
+   * and the date is what makes it legible.
+   */
+  private recencyLine(n: MMNode): string {
+    const all = nodeList(this.store.doc);
+    const rec = recencyOf(this.store.doc, n);
+    const older = all.filter(m => m.createdAt < n.createdAt).length;
+    const pct = all.length > 1 ? Math.round(100 * older / (all.length - 1)) : 100;
+    const when = new Date(n.createdAt).toISOString().slice(0, 10);
+    const band = rec >= 0.8 ? 'full chroma — recently touched'
+      : rec >= 0.45 ? 'mid chroma'
+      : 'muted — settled';
+    return `Captured ${when} · newer than ${pct}% of this map · ${band}`;
   }
 
   // -- overlays ------------------------------------------------------------

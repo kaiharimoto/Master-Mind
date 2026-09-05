@@ -758,6 +758,8 @@ only copy of a score he is not allowed to alter (§09).
 | L7 | Auditor · a08 | The two panels are not demonstrably camera-frozen, so a reader cannot tell the placement from a re-framing | **Fixed.** 08 records every node's projected point except the dragged one, before and after, and **requires** `cameraFrozenAcrossPanels`. |
 | L8 | Auditor · a09 | Opening the editor re-frames the whole map by about 120 px | **Fixed, and the cause was a bug — F-024.** The pan now moves the least that clears the panel rather than re-centring, and `panTarget` converts screen pixels through the projection instead of a tuned constant that was about twice the true scale. Measured at whole-map framing on both maps: **0.0 px** of movement on opening the editor, with the selected node clear of the panel. |
 | L9 | Auditor · manifest | `capturedInThisRun` cannot answer whether a frozen set was captured wholly inside the cycle it is filed under | **Fixed.** Every artifact carries `capturedInCycle`, and the manifest carries `allCapturedInThisCycle` and names any stale rows. |
+| L11 | Art Director · a04 | The violet district's recency reads flat — on-screen chroma 0.26–0.33 across the whole district | **Declined on measurement, and made checkable.** See the rebuttals: those thoughts were all captured early, so the district *is* settled and the channel is reporting it. What was missing was any way to check that, so the editor now states the selected node's date and its rank — `Captured 2025-06-12 · newer than 70% of this map · mid chroma` — checked against the model by artifact 09's `recencyMatchesModel`, and artifact 04 records the recency and chroma span of every district. |
+| L12 | Art Director · a20 | The round-trip never rejects a **placement** — the one finder path that writes a position, on a map whose positions are declared sacred | **Fixed as prescribed.** The take now rejects a placement before accepting one: `Steal the parking-lot bit` stays at `2.056, -10.26, 3.869` with the holding count unchanged at 4, and the next placement is accepted and lands exactly where it was suggested. The artifact **requires** `placementRejectionLeftNoTrace` and `bothRejectionKindsShown`. |
 | L10 | Audience · a10 | The search artifact only ever shows a **single** hit, so the state that exists to tell candidates apart is never shown telling anything apart | **Fixed.** The query matches 19 nodes, 13 of them in the final frame, and the artifact **requires** `severalHitsMatched`, `severalHitsShown` and `flownHitCentred`. Rebuilding it exposed **F-025**. |
 
 ## Cycle 7 — findings from the work itself
@@ -911,6 +913,42 @@ What the Art Director actually observed was true and worth acting on: artifact
 02 was byte-identical to the previous cycle because it had not been recaptured
 since the change landed. The correction is a recapture, not a code change, and
 cycle 2 makes it.
+
+### Rebuttal — the violet district's flat recency is the seed's, not the channel's
+
+The Art Director measured the violet district's on-screen chroma at 0.26–0.33
+and read it as a channel that had gone flat. Measured across artifact 04's frame
+and recorded on the artifact itself:
+
+| district | n | recency span | on-screen chroma |
+|---|---:|---|---|
+| violet | 18 | 0.00 – 0.20 | 0.055 – 0.457 |
+| amber | 18 | 0.01 – 0.32 | 0.047 – 0.453 |
+| azure | 14 | 0.41 – 0.71 | 0.048 – 0.456 |
+| bone | 21 | 0.47 – 1.00 | 0.054 – 0.456 |
+| coral | 25 | 0.36 – 1.00 | 0.059 – 0.457 |
+| lime | 30 | 0.00 – 0.89 | 0.045 – 0.456 |
+| magenta | 12 | 0.01 – 0.85 | 0.050 – 0.354 |
+| teal | 12 | 0.02 – 0.82 | 0.099 – 0.455 |
+
+Recency is normalised across the **whole map** (D-007), and the violet district's
+thoughts all carry early timestamps: their recency spans 0.00–0.20 of the map's
+range. The mix parameter for a plain violet therefore runs 0.36 to 0.49, and at
+that hue's plain-rung chroma that is on-screen 0.234 to 0.32 — which is the
+0.26–0.33 the Art Director measured. **The district is settled, and the channel
+is saying so.** Across the map the channel spans 0.045 to 0.457, an order of
+magnitude.
+
+Making that district look more varied would mean either regenerating the seed —
+which §09 makes fatal to every position-regression claim in category 03 — or
+normalising recency per district, which would make the same colour mean
+different ages in different parts of one map, and the legend says it means one
+thing.
+
+What the finding did expose is that **nothing in the app let a reader check
+it**. The legend declared the channel; no surface stated any node's actual age.
+The editor now does, and artifact 09 checks the line against the model rather
+than against itself.
 
 ## Capture failures
 

@@ -6,11 +6,10 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T03:30:30.102Z",
+  "lastRunAt": "2026-09-05T03:37:08.321Z",
   "lastRunCaptured": [
-    "02",
     "04",
-    "10"
+    "09"
   ],
   "artifacts": [
     {
@@ -123,7 +122,7 @@
       },
       "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T03:30:31.512Z"
     },
     {
@@ -241,7 +240,7 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.3,
+      "seconds": 1.4,
       "status": "captured",
       "error": null,
       "check": {
@@ -271,6 +270,12 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "recencyChannelExercised",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -296,19 +301,114 @@
         "labelsAudited": 120,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Recalibrate the pH meter",
-        "labelArbiterAgreesWithDraw": true
+        "labelArbiterAgreesWithDraw": true,
+        "recencyByDistrict": {
+          "violet": {
+            "n": 18,
+            "recency": [
+              0,
+              0.2
+            ],
+            "chroma": [
+              0.055,
+              0.457
+            ]
+          },
+          "lime": {
+            "n": 30,
+            "recency": [
+              0,
+              0.89
+            ],
+            "chroma": [
+              0.045,
+              0.456
+            ]
+          },
+          "amber": {
+            "n": 18,
+            "recency": [
+              0.01,
+              0.32
+            ],
+            "chroma": [
+              0.047,
+              0.453
+            ]
+          },
+          "coral": {
+            "n": 25,
+            "recency": [
+              0.36,
+              1
+            ],
+            "chroma": [
+              0.059,
+              0.457
+            ]
+          },
+          "azure": {
+            "n": 14,
+            "recency": [
+              0.41,
+              0.71
+            ],
+            "chroma": [
+              0.048,
+              0.456
+            ]
+          },
+          "bone": {
+            "n": 21,
+            "recency": [
+              0.47,
+              1
+            ],
+            "chroma": [
+              0.054,
+              0.456
+            ]
+          },
+          "magenta": {
+            "n": 12,
+            "recency": [
+              0.01,
+              0.85
+            ],
+            "chroma": [
+              0.05,
+              0.354
+            ]
+          },
+          "teal": {
+            "n": 12,
+            "recency": [
+              0.02,
+              0.82
+            ],
+            "chroma": [
+              0.099,
+              0.455
+            ]
+          }
+        },
+        "recencyChromaSpan": [
+          0.045,
+          0.457
+        ],
+        "recencyChannelExercised": true
       },
       "pageErrors": [],
       "recipe": {
         "demonstrates": "mind-expansion lens, the whole map and the holding cluster on screen at once",
         "surface": "windows",
         "lens": null,
-        "fnSha": "f7e7a992ad0cd188"
+        "fnSha": "be545e4dc4aeeb93"
       },
       "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-05T03:30:32.880Z"
+      "fileMtime": "2026-09-05T03:37:09.576Z"
     },
     {
       "id": "05",
@@ -517,15 +617,15 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.8,
+      "seconds": 1.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 193654,
-        "sha256": "21fd8d8260133a54b2189314f83711d3e4117303122dd6e4c1720e01670a95f0"
+        "bytes": 183584,
+        "sha256": "341d10ce301534686ab2b81fe705d4b530f7bbf1e86160b5cb940627208d975d"
       },
       "claims": {
         "ok": true,
@@ -578,7 +678,7 @@
       "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:21:07.805Z"
+      "fileMtime": "2026-09-05T03:36:27.473Z"
     },
     {
       "id": "09",
@@ -586,15 +686,15 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.3,
+      "seconds": 2.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 231441,
-        "sha256": "aafbbc4f0715df1a44c08f5a6a1298dff734d3bd9106c9aa73cf8b0a81666576"
+        "bytes": 231642,
+        "sha256": "6d0ad06638186e1426cefbf5eb913937aa9300297e9d8e3ba650b81d4179ab52"
       },
       "claims": {
         "ok": true,
@@ -622,6 +722,12 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "recencyMatchesModel",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -639,6 +745,8 @@
         "colourAfter": "teal",
         "textBefore": "Koji-cured egg yolk",
         "textAfter": "Koji-cured egg yolk · aged 60d",
+        "recencyShown": "Captured 2025-06-12 · newer than 70% of this map · mid chroma",
+        "recencyMatchesModel": true,
         "editorWroteToTheModel": true
       },
       "pageErrors": [],
@@ -646,11 +754,12 @@
         "demonstrates": "connect and edit before/after: a new filament created between two named nodes",
         "surface": "windows",
         "lens": null,
-        "fnSha": "8ae3f9c207e1d6fe"
+        "fnSha": "dacb57afebb04362"
       },
+      "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:44:55.398Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:37:11.776Z"
     },
     {
       "id": "10",
@@ -746,7 +855,7 @@
       },
       "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T03:30:38.052Z"
     },
     {
@@ -1502,15 +1611,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 72.5,
+      "seconds": 76.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 620739,
-        "sha256": "7683780fdae4f6af39c51e83c399b6098e839b8cad96f186dd8ca0cee32af17e",
+        "bytes": 615107,
+        "sha256": "f4e239cb36d6e3943b320849c10e519b66d2df0736751dbfb14c5ecbb23b5840",
         "seconds": 30,
         "fps": 30,
         "frames": 900
@@ -1529,21 +1638,33 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "placementRejectionLeftNoTrace",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "bothRejectionKindsShown",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
       "result": {
         "placementAccepted": {
-          "node": "sec77dd4720",
+          "node": "s13669df17f",
           "from": [
-            2.056,
-            -10.26,
-            3.869
+            0.869,
+            -8.496,
+            0.944
           ],
           "to": [
-            -6.2,
-            2.4,
-            1.1
+            -5.4,
+            -3.6,
+            -2.2
           ],
           "landedWhereSuggested": true,
           "wasUnplaced": true,
@@ -1594,20 +1715,45 @@
           "applied": true
         },
         "allThreeKindsAccepted": true,
+        "placementRejected": {
+          "node": "Steal the parking-lot bit",
+          "wouldHaveMovedTo": [
+            -6.2,
+            2.4,
+            1.1
+          ],
+          "posBefore": [
+            2.056,
+            -10.26,
+            3.869
+          ],
+          "posAfter": [
+            2.056,
+            -10.26,
+            3.869
+          ],
+          "holding": [
+            4,
+            4
+          ]
+        },
+        "placementRejectionLeftNoTrace": true,
+        "bothRejectionKindsShown": true,
         "rejectionLeftNoTrace": true,
         "linksBefore": 6,
         "linksAfter": 7
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "the finder round-trip in motion, including a malformed reply and an accepted placement",
+        "demonstrates": "the finder round-trip in motion: a malformed reply, an adversarially messy one, all three suggestion kinds accepted, and a REJECTED placement that leaves the node exactly where it was",
         "surface": "windows",
         "lens": null,
-        "fnSha": "03ffcf35f1749546"
+        "fnSha": "dd8867f00542f2cc"
       },
+      "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:54:57.650Z"
+      "fileMtime": "2026-09-05T03:34:31.854Z"
     }
   ],
   "staleFromEarlierCycles": [
@@ -1629,10 +1775,6 @@
     },
     {
       "id": "07",
-      "capturedInCycle": "unknown"
-    },
-    {
-      "id": "09",
       "capturedInCycle": "unknown"
     },
     {
@@ -1670,19 +1812,15 @@
     {
       "id": "19",
       "capturedInCycle": "unknown"
-    },
-    {
-      "id": "20",
-      "capturedInCycle": "unknown"
     }
   ],
   "allCapturedInThisCycle": false,
-  "finishedAt": "2026-09-05T03:30:39.533Z",
+  "finishedAt": "2026-09-05T03:37:13.114Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 781456,
-    "sha256": "f91a2c4e7658b54957eca26364ed4a6133e3f9e2565c0c51bd3d3ae75c5175f2"
+    "bytes": 781895,
+    "sha256": "37318b6ba91be2c47d1c5258dd7b74cce3d363cf83b338f058d088dac27947a5"
   },
   "captured": 20,
   "total": 20
