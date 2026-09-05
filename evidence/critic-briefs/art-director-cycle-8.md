@@ -109,7 +109,7 @@ and label it **improved**, **unchanged** or **regressed**.
 # Current evidence set — cycle 8
 
 - **01** `01_maps_home.png` — Maps home: both seeded maps with live node counts (the large one 100+) and last-opened times; create / rename / delete shown operating
-  - file: NOT PRESENT
+  - file: /home/user/Master-Mind/evidence/cycles/cycle-8/01_maps_home.png
 - **02** `02_canvas_large_map.png` — Canvas at scale: the 100+ node map, districts, cross-links and filaments, no auto-tidy artifacts, plain and unplaced distinguishable
   - file: /home/user/Master-Mind/evidence/cycles/cycle-8/02_canvas_large_map.png
 - **03** `03_hero_ar_coldstart.png` — HERO. AR projection on Android, cold start: local state wiped, fresh first launch, gyro-oriented vantage, node text legible, holding cluster in frame

@@ -6,9 +6,28 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T05:58:17.008Z",
+  "lastRunAt": "2026-09-05T05:58:32.758Z",
   "lastRunCaptured": [
-    "01"
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
   ],
   "artifacts": [
     {
@@ -17,7 +36,7 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.4,
+      "seconds": 2.3,
       "status": "captured",
       "error": null,
       "check": {
@@ -48,7 +67,7 @@
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-05T05:58:19.211Z"
+      "fileMtime": "2026-09-05T05:58:34.970Z"
     },
     {
       "id": "02",
@@ -56,7 +75,7 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2,
+      "seconds": 1.6,
       "status": "captured",
       "error": null,
       "check": {
@@ -137,8 +156,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:39:56.985Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:58:36.469Z"
     },
     {
       "id": "03",
@@ -146,7 +165,7 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3.5,
+      "seconds": 2.8,
       "status": "captured",
       "error": null,
       "check": {
@@ -257,8 +276,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:00.484Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:58:39.309Z"
     },
     {
       "id": "04",
@@ -266,7 +285,7 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 1.7,
       "status": "captured",
       "error": null,
       "check": {
@@ -448,8 +467,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:02.153Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:58:41.037Z"
     },
     {
       "id": "05",
@@ -457,15 +476,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 18,
+      "seconds": 15.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1224757,
-        "sha256": "96f9609d1df012d28f4447289e6a8b535c8676fdd5453b0129e170363bd441ba"
+        "bytes": 1242818,
+        "sha256": "98f2c3f8f580298e5fcf63fb16172facec7688989140280eaa970aa1c9c635d4"
       },
       "claims": {
         "ok": true,
@@ -488,8 +507,8 @@
         "pose": "spread",
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 1.026,
-        "confidence": 0.949,
+        "fan": 1.012,
+        "confidence": 0.948,
         "distBefore": 148.41,
         "distAfter": 129.54,
         "operationTookEffect": true,
@@ -507,8 +526,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:20.193Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:58:56.327Z"
     },
     {
       "id": "06",
@@ -516,7 +535,7 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.3,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
@@ -657,8 +676,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:23.485Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:58:59.433Z"
     },
     {
       "id": "07",
@@ -666,7 +685,7 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.5,
+      "seconds": 1.2,
       "status": "captured",
       "error": null,
       "check": {
@@ -755,8 +774,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:24.701Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:00.469Z"
     },
     {
       "id": "08",
@@ -764,7 +783,7 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.3,
+      "seconds": 2,
       "status": "captured",
       "error": null,
       "check": {
@@ -824,8 +843,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:26.851Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:02.291Z"
     },
     {
       "id": "09",
@@ -905,8 +924,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:29.794Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:05.137Z"
     },
     {
       "id": "10",
@@ -914,15 +933,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 6.7,
+      "seconds": 5.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 349801,
-        "sha256": "c478d2cf04b58622983f00c0a0abf35a7b662df7e1741fcadd4cef16c7181ea4"
+        "bytes": 349819,
+        "sha256": "4a408d8d5f40492f1038bbe19c1542126add73531e89e8e1208b5543f482638d"
       },
       "claims": {
         "ok": true,
@@ -1011,8 +1030,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:36.433Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:10.773Z"
     },
     {
       "id": "11",
@@ -1020,7 +1039,7 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 16.6,
+      "seconds": 11.4,
       "status": "captured",
       "error": null,
       "check": {
@@ -1059,8 +1078,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:49.538Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:19.027Z"
     },
     {
       "id": "12",
@@ -1189,7 +1208,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 9089,
+            "serverPid": 17995,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -1200,7 +1219,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 9089,
+            "serverPid": 17995,
             "actor": "android-twin",
             "status": "live"
           }
@@ -1270,8 +1289,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:53.017Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:22.218Z"
     },
     {
       "id": "13",
@@ -1279,7 +1298,7 @@
       "title": "Finder prompt export",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.3,
+      "seconds": 1.2,
       "status": "captured",
       "error": null,
       "check": {
@@ -1335,8 +1354,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:54.653Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:23.701Z"
     },
     {
       "id": "14",
@@ -1344,7 +1363,7 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3,
+      "seconds": 2.6,
       "status": "captured",
       "error": null,
       "check": {
@@ -1498,8 +1517,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:40:57.690Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:26.317Z"
     },
     {
       "id": "15",
@@ -1507,7 +1526,7 @@
       "title": "Settings and gesture reference",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.4,
+      "seconds": 2.8,
       "status": "captured",
       "error": null,
       "check": {
@@ -1540,8 +1559,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:41:00.985Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:59:29.057Z"
     },
     {
       "id": "16",
@@ -1549,15 +1568,15 @@
       "title": "Touch gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 30s",
-      "seconds": 122.3,
+      "seconds": 99.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2045722,
-        "sha256": "ff1c29e53202ce662f2e128b091050460ef097be52c575b4bdbc2a173651c50a",
+        "bytes": 2045463,
+        "sha256": "583af6e9640e1875a174c3a2d5683da9e469ea1361d2a867f5dd345269602ecb",
         "seconds": 34,
         "fps": 30,
         "frames": 1020
@@ -1597,7 +1616,7 @@
           "gyro"
         ],
         "count": 7,
-        "quickAddedNode": "nmt1gy8rr1mte8",
+        "quickAddedNode": "nmt1gy47p1mte8",
         "tapSelected": true,
         "doubleTapConnected": true,
         "dragPlacedIt": true,
@@ -1621,8 +1640,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:43:01.401Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T06:01:06.750Z"
     },
     {
       "id": "17",
@@ -1630,15 +1649,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 494.4,
+      "seconds": 423.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 11901779,
-        "sha256": "832358818a04b1ba85e42706cb637006031427363da806dc64b3c79b6564e471",
+        "bytes": 11007460,
+        "sha256": "a5faea9c4440ebe12c5f749c0dd1ec26c16234a04dfa967dc799d3aad63fb756",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -1669,12 +1688,12 @@
       "result": {
         "posesRecognised": [
           "spread",
-          "fist",
           "two",
+          "fist",
           "gather"
         ],
         "count": 4,
-        "samples": 1532,
+        "samples": 1496,
         "clusterGrabbed": "Koji",
         "clusterMembers": 16,
         "clusterCentroidBefore": [
@@ -1683,11 +1702,11 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          2.432,
-          0.445,
-          -3.416
+          2.284,
+          0.286,
+          -3.343
         ],
-        "clusterCentroidTravelled": 17.2866,
+        "clusterCentroidTravelled": 17.508,
         "clusterMaxMemberDrift": 0,
         "clusterMoved": true,
         "clusterInternalArrangementPreserved": true,
@@ -1704,8 +1723,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:51:14.025Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T06:08:09.085Z"
     },
     {
       "id": "18",
@@ -1713,15 +1732,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 72.7,
+      "seconds": 74.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 5164942,
-        "sha256": "f7d3859d81757c0ddad14ac984c27f992fc6f93bf819b223ac14e15a0512245c",
+        "bytes": 5165843,
+        "sha256": "6341c98f45e573678837fcf52b9273cb0c32114a0ddf40f3bc82f91a48a29938",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -1814,8 +1833,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:52:29.225Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T06:09:25.718Z"
     },
     {
       "id": "19",
@@ -1830,8 +1849,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 3141400,
-        "sha256": "46e7820d38b5620839c52844de5e73acbadd6d375b825127bea466e564fb5e42",
+        "bytes": 3142820,
+        "sha256": "e9cd469d13ddf8eb97377a7fc8a2a374ed6be394d7a4ba68395a4da579833efb",
         "seconds": 23,
         "fps": 30,
         "frames": 690
@@ -1929,8 +1948,8 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:54:35.619Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T06:11:32.400Z"
     },
     {
       "id": "20",
@@ -1938,15 +1957,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 83.8,
+      "seconds": 83.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 632135,
-        "sha256": "e0435484336d8c3323ad8815bb7e4ed52a0b0c7d0279efaa1c1037b36435d93e",
+        "bytes": 632206,
+        "sha256": "895666ff54f79aeb07ec23bb8a614b6817676dd744865eabc849d1409adfb704",
         "seconds": 30,
         "fps": 30,
         "frames": 900
@@ -2079,13 +2098,13 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:55:59.926Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T06:12:56.534Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T05:58:20.800Z",
+  "finishedAt": "2026-09-05T06:12:59.907Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",

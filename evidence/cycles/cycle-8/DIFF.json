@@ -2,7 +2,7 @@
   "cycle": 8,
   "previousCycle": 7,
   "previousCycleSource": "derived from the snapshot directory being diffed",
-  "capturedNow": 19,
+  "capturedNow": 20,
   "capturedPrev": 20,
   "capturedPrevSource": "artifact files actually present in the previous snapshot",
   "previousManifestSelfReport": {
@@ -16,9 +16,25 @@
     {
       "id": "01",
       "file": "01_maps_home.png",
-      "status": "driver-error",
+      "status": "captured",
       "threshold": 0.995,
-      "verdict": "missing"
+      "ssim": 0.998367,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 33084,
+          "meanLum": 0.5718,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 33327,
+          "meanLum": 0.564,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.014,
+        "litDelta": 0.007
+      }
     },
     {
       "id": "02",
@@ -94,12 +110,12 @@
       "file": "05_hand_tracking.png",
       "status": "captured",
       "threshold": 0.94,
-      "ssim": 0.688471,
+      "ssim": 0.687379,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 346711,
-          "meanLum": 0.376,
+          "litPixels": 349957,
+          "meanLum": 0.3746,
           "peakLum": 0.9987
         },
         "prev": {
@@ -108,8 +124,8 @@
           "peakLum": 0.9982
         },
         "peakDelta": 0.001,
-        "meanDelta": 0.026,
-        "litDelta": 0.184
+        "meanDelta": 0.029,
+        "litDelta": 0.195
       },
       "subjectChanged": true
     },
@@ -211,11 +227,11 @@
       "file": "10_search_flyto_end.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.999936,
+      "ssim": 1,
       "verdict": "unchanged",
       "subject": {
         "cur": {
-          "litPixels": 122651,
+          "litPixels": 122666,
           "meanLum": 0.5346,
           "peakLum": 0.9063
         },
@@ -351,7 +367,7 @@
       "status": "captured",
       "threshold": 0.93,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.960094,
+      "ssim": 0.960049,
       "seconds": {
         "cur": 34,
         "prev": 34
@@ -361,23 +377,23 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 2045722,
+        "cur": 2045463,
         "prev": 1940376
       },
       "bitrateDelta": 0.054,
       "verdict": "unchanged",
       "subject": {
         "cur": {
-          "litPixels": 288405,
-          "meanLum": 0.422,
-          "peakLum": 0.9914
+          "litPixels": 288552,
+          "meanLum": 0.4219,
+          "peakLum": 0.9973
         },
         "prev": {
           "litPixels": 280371,
           "meanLum": 0.4246,
           "peakLum": 0.9932
         },
-        "peakDelta": 0.002,
+        "peakDelta": 0.004,
         "meanDelta": 0.006,
         "litDelta": 0.029
       }
@@ -388,7 +404,7 @@
       "status": "captured",
       "threshold": 0.9,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.743867,
+      "ssim": 0.740559,
       "seconds": {
         "cur": 41,
         "prev": 41
@@ -398,25 +414,25 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 11901779,
+        "cur": 11007460,
         "prev": 6482250
       },
-      "bitrateDelta": 0.836,
+      "bitrateDelta": 0.698,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 993115,
-          "meanLum": 0.3323,
-          "peakLum": 0.9836
+          "litPixels": 1000219,
+          "meanLum": 0.3308,
+          "peakLum": 0.9806
         },
         "prev": {
           "litPixels": 750304,
           "meanLum": 0.3396,
           "peakLum": 0.9836
         },
-        "peakDelta": 0,
-        "meanDelta": 0.021,
-        "litDelta": 0.324
+        "peakDelta": 0.003,
+        "meanDelta": 0.026,
+        "litDelta": 0.333
       },
       "subjectChanged": true
     },
@@ -426,7 +442,7 @@
       "status": "captured",
       "threshold": 0.94,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.838991,
+      "ssim": 0.838986,
       "seconds": {
         "cur": 13,
         "prev": 13
@@ -436,25 +452,25 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 5164942,
+        "cur": 5165843,
         "prev": 5048435
       },
       "bitrateDelta": 0.023,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 725845,
-          "meanLum": 0.3892,
-          "peakLum": 0.9821
+          "litPixels": 726157,
+          "meanLum": 0.3891,
+          "peakLum": 0.9959
         },
         "prev": {
           "litPixels": 467840,
           "meanLum": 0.3722,
           "peakLum": 0.9795
         },
-        "peakDelta": 0.003,
-        "meanDelta": 0.046,
-        "litDelta": 0.551
+        "peakDelta": 0.017,
+        "meanDelta": 0.045,
+        "litDelta": 0.552
       },
       "subjectChanged": true
     },
@@ -474,23 +490,23 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 3141400,
+        "cur": 3142820,
         "prev": 3032178
       },
       "bitrateDelta": 0.036,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 580166,
+          "litPixels": 580169,
           "meanLum": 0.3376,
-          "peakLum": 0.9619
+          "peakLum": 0.9631
         },
         "prev": {
           "litPixels": 296600,
           "meanLum": 0.4433,
           "peakLum": 0.984
         },
-        "peakDelta": 0.022,
+        "peakDelta": 0.021,
         "meanDelta": 0.238,
         "litDelta": 0.956
       },
@@ -502,7 +518,7 @@
       "status": "captured",
       "threshold": 0.95,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.942338,
+      "ssim": 0.942337,
       "seconds": {
         "cur": 30,
         "prev": 30
@@ -512,7 +528,7 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 632135,
+        "cur": 632206,
         "prev": 634698
       },
       "bitrateDelta": -0.004,
@@ -542,10 +558,10 @@
     "identical": true
   },
   "summary": {
-    "unchanged": 6,
+    "unchanged": 7,
     "changed": 13,
     "new": 0,
-    "missing": 1,
+    "missing": 0,
     "uncomparable": 0,
     "total": 20,
     "changedIds": [
@@ -563,9 +579,7 @@
       "19",
       "20"
     ],
-    "missingIds": [
-      "01"
-    ],
+    "missingIds": [],
     "uncomparableIds": [],
     "substantiveIds": []
   }
