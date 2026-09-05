@@ -238,6 +238,42 @@ export class App {
    * for and the one thing that makes a still read as AR rather than as a second
    * canvas. It names the node nearest the view centre and how far away it is.
    */
+  /**
+   * The ring on a pinned thought, so the name and the mark are one thing.
+   *
+   * Drawn in the DOM at the node's projected position rather than as a sixth
+   * node state — the ladder stays at five. It is a small ring plus the name in
+   * full, and it survives a turn of the device, which is the whole point of it
+   * in the AR lens.
+   */
+  private renderPin() {
+    const id = this.pinned;
+    let r = document.getElementById('pinmark');
+    if (!id || !this.store.doc.nodes[id]) { r?.remove(); return; }
+    if (!r) {
+      r = el('div', { id: 'pinmark', 'data-t': 'pin-mark' });
+      r.innerHTML = '<div class="ring"></div><div class="tag" data-t="pin-name"></div>';
+      document.body.appendChild(r);
+    }
+    const s = this.scene.screenPositions().find(q => q.id === id);
+    if (!s) { r.className = ''; return; }
+    const dpr = this.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    const rad = Math.max(14, s.r / dpr + 9);
+    r.className = 'on';
+    r.style.left = `${Math.round(s.x / dpr - rad)}px`;
+    r.style.top = `${Math.round(s.y / dpr - rad)}px`;
+    r.style.width = r.style.height = `${Math.round(rad * 2)}px`;
+    $('[data-t=pin-name]', r).textContent = this.store.doc.nodes[id].text;
+  }
+
+  /** Keep a thought identified while the view moves. Toggled from the editor. */
+  togglePin(id: NodeId | null) {
+    this.pinned = this.pinned === id ? null : id;
+    this.scene.setPinned(this.pinned);
+    this.refresh();
+  }
+  pinned: NodeId | null = null;
+
   private renderReticle() {
     let r = document.getElementById('reticle');
     if (this.lens !== 'ar') { r?.remove(); return; }
@@ -732,6 +768,7 @@ export class App {
     this.renderUnlabelled();
     this.renderLeaders();
     this.renderHitBreakdown();
+    this.renderPin();
   }
 
   /**
@@ -935,6 +972,7 @@ export class App {
       <div class="row">
         <button data-t="ed-link" class="${armed ? 'on' : ''}">${armed ? 'Pick a node…' : 'Connect'}</button>
         <button data-t="ed-flyto">Fly to</button>
+        <button data-t="ed-pin" class="${this.pinned === n.id ? 'on' : ''}">${this.pinned === n.id ? 'Kept in view' : 'Keep in view'}</button>
       </div>
       <div class="row"><button data-t="ed-delete">Delete</button><button data-t="ed-close">Close</button></div>
       <div class="note" data-t="ed-recency">${esc(this.recencyLine(n))}</div>
@@ -945,6 +983,9 @@ export class App {
     for (const k of COLOR_KEYS) $(`[data-t=ed-colour-${k}]`, panel).addEventListener('click', () => this.store.setColor(id, k as ColorKey));
     $('[data-t=ed-link]', panel).addEventListener('click', () => { this.controls.armLink(id); this.toast('Now click the node to connect to.'); this.renderEditor(); });
     $('[data-t=ed-flyto]', panel).addEventListener('click', () => this.controls.flyTo(id));
+    // Keeping a thought in view survives closing the editor and turning the
+    // device — that is what it is for.
+    $('[data-t=ed-pin]', panel).addEventListener('click', () => this.togglePin(id));
     $('[data-t=ed-delete]', panel).addEventListener('click', () => { this.store.remove(id); this.select(null); });
     $('[data-t=ed-close]', panel).addEventListener('click', () => this.select(null));
   }

@@ -84,7 +84,7 @@ export class Scene {
   private hits = new Set<NodeId>();
   private screenCache: { id: NodeId; x: number; y: number; r: number; z: number; pxPerWorld: number }[] = [];
   /** Run order and priority for label deconfliction, rebuilt with the text. */
-  private runMeta: { id: NodeId; priority: number; baseAlpha: number; nodeSizeWorld: number; held: boolean }[] = [];
+  private runMeta: { id: NodeId; priority: number; baseAlpha: number; nodeSizeWorld: number; held: boolean; pinned: boolean }[] = [];
   private runAlphas = new Float32Array(0);
   private runShifts = new Float32Array(0);
   private runVisible = new Int32Array(0);
@@ -133,6 +133,25 @@ export class Scene {
   setDoc(doc: MapDoc | null) { this.doc = doc; this.dirty = true; }
   getDoc() { return this.doc; }
   setSelection(id: NodeId | null) { if (id !== this.selected) { this.selected = id; this.dirty = true; } }
+  /**
+   * KEEP THIS ONE IN VIEW.
+   *
+   * A pinned thought is not a sixth node state — the ladder stays at five, and
+   * artifact 07 still demonstrates exactly those. Pinning is a separate channel:
+   * the name is placed before every other label, is never shortened, and is
+   * never dropped for crowding, and the app rings the node so the name and the
+   * mark are unmistakably the same thing.
+   *
+   * It exists because artifact 03's headline is a measurement about
+   * "Sauerkraut by weight" and panel 2 drew that node's label as "Sauerkraut
+   * by…", with its marker indistinguishable among a hundred and fifty dots —
+   * a frame asserting a claim about a thing it would not name. In AR, where the
+   * view moves with the device, keeping one thought identified across a turn is
+   * what a reader actually needs.
+   */
+  setPinned(id: NodeId | null) { if (id !== this.pinned) { this.pinned = id; this.dirty = true; } }
+  getPinned() { return this.pinned; }
+  private pinned: NodeId | null = null;
   getSelection() { return this.selected; }
   setHits(ids: Iterable<NodeId>) { this.hits = new Set(ids); this.dirty = true; }
   getHits() { return this.hits; }
@@ -195,7 +214,8 @@ export class Scene {
       // overprinted by 'Amazake' in cycle 7's artifact 10. Same class as F-015,
       // in the one case F-015 did not cover.
       const labelSize = st === 'searchHit' ? size * 1.9 : size;
-      this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0,
+      this.runMeta.push({ id: n.id, pinned: n.id === this.pinned,
+                          priority: n.id === this.pinned ? -1 : PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0,
                           nodeSizeWorld: labelSize, held: !n.placed });
       // Unplaced nodes sit in a ring. Their labels are pushed to the outward
       // side so they radiate from the holding cluster rather than pile onto it.
@@ -433,7 +453,7 @@ export class Scene {
     // Panels are seeded into the reserved set before any label is placed, so
     // they win against everything.
     const dpr = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
-    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled', '#hitbreak']) {
+    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled', '#hitbreak', '#pinmark']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e) continue;
       const r = e.getBoundingClientRect();
@@ -499,7 +519,26 @@ export class Scene {
       // rather than reading as a finished phrase. Where no whole word survives,
       // the label is not shortened at all and takes its chances on being faded.
       const widths: { w: number; vis: number }[] = [{ w: sh.w, vis: 0 }];
-      if (span.ellipsis >= 0 && span.wordEnds.length) {
+      // THE CHOSEN THOUGHT IS ALWAYS NAMED IN FULL. Artifact 03's headline is a
+      // measurement about "Sauerkraut by weight", and panel 2 rendered that
+      // node's label as "Sauerkraut by…" — the frame asserting a claim about a
+      // thing it declined to name. A selected node is the one the reader is
+      // looking at; it takes the top rung of the ladder already, and it does
+      // not get shortened to make room for the rest.
+      if (this.runMeta[b.i].pinned) {
+        // THE PIN TAG IS THE NAME. Drawing the label run as well put
+        // "Sauerkraut by weight" on the hero twice, six centimetres apart, one
+        // of them ringed — which reads as two thoughts with the same words
+        // rather than as one thought being kept in view. The run stands down
+        // and the tag carries the name.
+        this.runAlphas[b.i] = 0;
+        this.labelRects.set(this.runMeta[b.i].id,
+          { x0: 0, y0: 0, x1: 0, y1: 0, alpha: 0 });
+        continue;
+      }
+      if (this.runMeta[b.i].priority <= 0) {
+        // widths stays [full], so no truncated candidate is ever considered.
+      } else if (span.ellipsis >= 0 && span.wordEnds.length) {
         const ellW = span.ellipsisWidthEm * sh.emPx;
         for (let wi = span.wordEnds.length - 1; wi >= 0; wi--) {
           const k = span.wordEnds[wi];
@@ -697,6 +736,9 @@ export class Scene {
         if (this.text.isTruncated(i)) { this.shortened++; this.shortenedIds.push(meta.id); }
         continue;
       }
+      // A pinned node's run stands down because the pin tag names it, so it is
+      // not a name the view is omitting and must not be counted as one.
+      if (meta.pinned) continue;
       const q = byId.get(meta.id);
       if (q && q.x >= 0 && q.y >= 0 && q.x <= VW && q.y <= VH) {
         this.suppressed++;

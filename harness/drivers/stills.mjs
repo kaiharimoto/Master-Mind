@@ -1,6 +1,6 @@
 // Still-image artifacts. Every driver here is the executable form of the
 // recipe in docs/capture/<id>.md.
-import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, orient, sleepFrames } from './util.mjs';
+import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, orient, sleepFrames, touch } from './util.mjs';
 
 /**
  * Frozen cameras for the two continuous regression instruments.
@@ -197,7 +197,8 @@ export default [
   minW: 2560, minH: 1440,
   surface: 'android', map: 'map-fermentation', title: 'Hero — AR projection, cold start',
   coldStart: true,
-  requires: { gyroDroveTheView: true, positionsUnchangedBetweenPanels: true, headingChanged: (d) => d > 25 },
+  requires: { gyroDroveTheView: true, positionsUnchangedBetweenPanels: true, headingChanged: (d) => d > 25,
+              anchorNamedInBothPanels: true },
   async run(H) {
     // Cold start: the sync service's live data directory is wiped before this
     // driver runs, so the map is read fresh from the committed seed fixture.
@@ -229,6 +230,41 @@ export default [
       p.dist = Math.hypot(c[0] - h[0], c[1] - h[1], c[2] - h[2]) * 1.18;
     });
     const anchorId = await NODE_ID(page, 'Sauerkraut by weight');
+    // THE NODE THE HEADLINE IS ABOUT IS KEPT IN VIEW, through the app's own
+    // control. The hero asserts that "Sauerkraut by weight" travelled 271 px
+    // while its stored position did not change, and panel 2 drew that node's
+    // label as "Sauerkraut by…" with its marker indistinguishable among a
+    // hundred and fifty dots — a frame making a claim about a thing it would
+    // not name. Keeping it in view rings the node and names it in full in BOTH
+    // panels, and the pin survives the device turn, which is the property the
+    // artifact is about.
+    //
+    // Done by tapping the node and pressing the editor's own button, then
+    // tapping empty space to close the panel: the same sequence a person
+    // performs, not a state written into the app from outside.
+    if (anchorId) {
+      const at = await SCREEN_OF(page, anchorId);
+      if (at) {
+        await touch.tap(cdp, at.x, at.y);
+        await sleepFrames(page, 0, 2);
+        await page.click('[data-t=ed-pin]');
+        await page.click('[data-t=ed-close]');
+        await sleepFrames(page, 0, 2);
+      }
+    }
+    const pinned = await page.evaluate(() => window.mm.pinned);
+    // The framing is re-applied after the pin, because opening the editor pans
+    // the view clear of the panel — a real behaviour that would otherwise leave
+    // the hero framed somewhere else.
+    await page.evaluate(() => {
+      const mm = window.mm, d = mm.store.doc;
+      const ns = Object.values(d.nodes).filter(n => n.placed && n.label === 'Lacto-vegetables');
+      const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0])
+                  .map(v => v / ns.length);
+      const h = d.holding.origin, p = mm.scene.pose;
+      p.target.set((c[0] * 0.70 + h[0] * 0.30), (c[1] * 0.70 + h[1] * 0.30), (c[2] * 0.70 + h[2] * 0.30));
+      p.dist = Math.hypot(c[0] - h[0], c[1] - h[1], c[2] - h[2]) * 1.18;
+    });
     const panel = async (o, tag) => {
       // The app's own deviceorientation listener is what moves the camera.
       const received = await orient(page, cdp, o);
@@ -239,8 +275,14 @@ export default [
       const anchor = anchorId ? await SCREEN_OF(page, anchorId) : null;
       const positions = await H.positions(page);
       const file = await H.tmpShot(page, cdp, tag);
+      // The pin's own name, read off the chrome, so "named in full in both
+      // panels" is a fact about the frame rather than about the intent.
+      const pinName = await page.evaluate(() => {
+        const e = document.querySelector('[data-t=pin-name]');
+        return e && getComputedStyle(e.parentElement).display !== 'none' ? e.textContent.trim() : null;
+      });
       return { received, pose, gyro, anchor: anchor ? { x: Math.round(anchor.x), y: Math.round(anchor.y) } : null,
-               positions, file, sent: o };
+               pinName, positions, file, sent: o };
     };
     // Neutral hold first, so the second panel is a turn from a real rest state.
     await orient(page, cdp, { alpha: 0, beta: 90, gamma: 0 });
@@ -286,7 +328,14 @@ export default [
                (poseBefore.yaw !== A.pose.yaw || poseBefore.pitch !== A.pose.pitch),
              headingChanged: Math.abs((hdg(B.gyro) ?? 0) - (hdg(A.gyro) ?? 0)),
              anchorMovedOnScreen: shift, anchorMovedOnScreenXY: shiftXY,
-             positionsUnchangedBetweenPanels: same };
+             positionsUnchangedBetweenPanels: same,
+             pinnedNode: pinned, pinNameA: A.pinName, pinNameB: B.pinName,
+             // The frame names, in full and in BOTH panels, the node its
+             // headline measures. Read off the chrome in each panel, so a
+             // truncated or missing name fails the capture rather than
+             // appearing only as a critic's observation two cycles later.
+             anchorNamedInBothPanels: A.pinName === 'Sauerkraut by weight' &&
+                                      B.pinName === 'Sauerkraut by weight' };
   },
 },
 {

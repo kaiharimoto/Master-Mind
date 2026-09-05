@@ -204,6 +204,13 @@ tr.map:hover{background:var(--panel)}
    auto sizing leaves it at its intrinsic 300x150 and every line outside that
    box is clipped away — which is why the first attempt drew eight lines and
    showed none of them. */
+#pinmark{position:fixed;z-index:20;display:none;pointer-events:none}
+#pinmark.on{display:block}
+#pinmark .ring{position:absolute;inset:0;border:2px solid var(--hot);border-radius:50%;
+  box-shadow:0 0 0 1px rgba(0,0,0,0.55)}
+#pinmark .tag{position:absolute;left:50%;top:100%;transform:translate(-50%,6px);
+  white-space:nowrap;font-size:12px;color:var(--ink);background:rgba(14,12,10,0.9);
+  border:1px solid var(--hot);border-radius:5px;padding:2px 7px}
 #hitbreak{position:fixed;top:52px;right:16px;z-index:23;display:none;
   padding:5px 10px;border-radius:6px;background:rgba(14,12,10,0.92);
   border:1px solid rgba(255,255,255,0.14);font-size:12px;letter-spacing:0.01em;
