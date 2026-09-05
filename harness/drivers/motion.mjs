@@ -637,33 +637,51 @@ export default [
 },
 {
   id: '18', file: '18_search_flyto.mp4', kind: 'mp4',
-  demonstrates: 'search fly-to in motion, from whole-map framing to the hit', minW: 1920, minH: 1080,
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { steppedToASecondHit: true, severalHitsMatched: true, endsOnTheHit: true },
+  demonstrates: 'search fly-to in motion: whole-map framing to one hit of several, then on to the next', minW: 1920, minH: 1080,
   minFps: 24, minSec: 10, surface: 'windows', map: 'map-fermentation',
   title: 'Search fly-to in motion',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
     await POSE(page, { yaw: 0.42, pitch: 0.20 });
     await FRAME_ALL(page, 1.02);
-    const q = 'grape leaf';
+    // A query with SEVERAL hits, and the time spent on the flights rather than
+    // on the typing. Cycle 3 spent seven of thirteen seconds on a motionless
+    // end-state; cycle 6's rebalance then spent five of eleven on ten
+    // keystrokes, which inverted the same fault. Four keystrokes, then two
+    // flights: to the first hit, and on to the next — which is the affordance a
+    // one-hit query could never show.
+    const q = 'koji';
+    const landed = [];
+    const noteHit = async (tag) => landed.push({ tag,
+      id: await page.evaluate(() => window.mm.hits[window.mm.hitIndex]),
+      text: await page.evaluate(() => {
+        const i = window.mm.hits[window.mm.hitIndex];
+        return i ? window.mm.store.doc.nodes[i].text : null;
+      }) });
     const steps = [
-      // Rebalanced: the query and the approach are what this artifact is about,
-      // so they get the time. Cycle 3 spent seven of thirteen seconds on a
-      // motionless end-state, which the frame in artifact 10 already makes.
-      ...q.split('').map((ch, k) => ({ at: 30 + k * 15, fn: async () => {
+      ...q.split('').map((ch, k) => ({ at: 20 + k * 12, fn: async () => {
         await page.focus('[data-t=search]');
         await page.evaluate(c => {
           const el = document.querySelector('[data-t=search]');
           el.value += c; el.dispatchEvent(new Event('input', { bubbles: true }));
         }, ch);
       } })),
-      { at: 30 + q.length * 15 + 30, fn: async () => page.press('[data-t=search]', 'Enter') },
+      { at: 100, fn: async () => { await page.press('[data-t=search]', 'Enter'); await noteHit('first'); } },
+      { at: 270, fn: async () => { await page.press('[data-t=search]', 'Enter'); await noteHit('next'); } },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 11, onFrame: script(steps) });
-    const id = await NODE_ID(page, 'Grape leaf tannin trick');
-    const scr = await SCREEN_OF(page, id);
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 13, onFrame: script(steps) });
+    const scr = landed.length ? await SCREEN_OF(page, landed[landed.length - 1].id) : null;
+    const hits = await page.evaluate(() => window.mm.hits.length);
     return { query: q, endDistance: +(await page.evaluate(() => window.mm.scene.pose.dist)).toFixed(2),
              centred: scr ? { dx: Math.round(scr.x - 960), dy: Math.round(scr.y - 540) } : null,
-             hits: await page.evaluate(() => window.mm.hits.length) };
+             hits, landedOn: landed,
+             // Two different hits, in one take, from one query.
+             steppedToASecondHit: landed.length === 2 && landed[0].id !== landed[1].id,
+             severalHitsMatched: hits >= 3,
+             endsOnTheHit: !!scr && Math.abs(scr.x - 960) < 40 && Math.abs(scr.y - 540) < 40 };
   },
 },
 {

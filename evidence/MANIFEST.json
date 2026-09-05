@@ -6,10 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T03:37:08.321Z",
+  "lastRunAt": "2026-09-05T03:38:42.530Z",
   "lastRunCaptured": [
-    "04",
-    "09"
+    "18"
   ],
   "artifacts": [
     {
@@ -407,7 +406,7 @@
       },
       "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T03:37:09.576Z"
     },
     {
@@ -758,7 +757,7 @@
       },
       "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T03:37:11.776Z"
     },
     {
@@ -1503,42 +1502,77 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 55.3,
+      "seconds": 62.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1889347,
-        "sha256": "2c81b66d3dec7e0838e14d62e52b707f501400cb74b9770dcdec3aff06d08669",
-        "seconds": 11,
+        "bytes": 3223074,
+        "sha256": "e9867e747f93a5182a33b75319b88ad8e0a903265c5e30948f2c1eb7946b8d4f",
+        "seconds": 13,
         "fps": 30,
-        "frames": 330
+        "frames": 390
       },
       "claims": {
         "ok": true,
-        "claims": []
+        "claims": [
+          {
+            "claim": "steppedToASecondHit",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "severalHitsMatched",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "endsOnTheHit",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
       },
       "result": {
-        "query": "grape leaf",
+        "query": "koji",
         "endDistance": 12,
         "centred": {
           "dx": 0,
           "dy": 0
         },
-        "hits": 1
+        "hits": 19,
+        "landedOn": [
+          {
+            "tag": "first",
+            "id": "n3e0d08c741",
+            "text": "Koji-kin sourcing"
+          },
+          {
+            "tag": "next",
+            "id": "n67398866c5",
+            "text": "Koji-accelerated garum"
+          }
+        ],
+        "steppedToASecondHit": true,
+        "severalHitsMatched": true,
+        "endsOnTheHit": true
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "search fly-to in motion, from whole-map framing to the hit",
+        "demonstrates": "search fly-to in motion: whole-map framing to one hit of several, then on to the next",
         "surface": "windows",
         "lens": null,
-        "fnSha": "f4c96238bbcdea68"
+        "fnSha": "de9c3f5fd1bb2ad6"
       },
+      "capturedInCycle": 6,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:53:01.345Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:39:43.966Z"
     },
     {
       "id": "19",
@@ -1806,16 +1840,12 @@
       "capturedInCycle": "unknown"
     },
     {
-      "id": "18",
-      "capturedInCycle": "unknown"
-    },
-    {
       "id": "19",
       "capturedInCycle": "unknown"
     }
   ],
   "allCapturedInThisCycle": false,
-  "finishedAt": "2026-09-05T03:37:13.114Z",
+  "finishedAt": "2026-09-05T03:39:46.536Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
