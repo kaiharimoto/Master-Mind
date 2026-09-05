@@ -180,6 +180,12 @@ export class Controls {
         .filter(m => m.placed && m.label === label).map(m => m.id);
       this.clusterStart = this.snapshotCluster(this.dragCluster);
     } else { this.dragCluster = null; this.clusterStart = null; }
+    // The holding boundary goes live for the duration of the drag. Crossing it
+    // is the difference between a thought that stays in holding and one that
+    // gets a permanent position, so it stops being a static contour and starts
+    // being the line the drag is being judged against.
+    this.scene.holding.setActive(true);
+    this.scene.markDirty();
   }
 
   private moveDrag(sx: number, sy: number) {
@@ -227,6 +233,8 @@ export class Controls {
       }
     }
     this.dragging = null; this.dragCluster = null; this.clusterStart = null;
+    this.scene.holding.setActive(false);
+    this.scene.markDirty();
   }
 
   /** The cluster a node belongs to — used by the hand "grab cluster" pose too. */

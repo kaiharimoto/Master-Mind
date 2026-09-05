@@ -540,19 +540,33 @@ precision highp float;
 #define TAU 6.28318530718
 varying vec2 vQuad;
 varying float vFade;
+uniform float uActive;
 void main() {
   float r = length(vQuad);
   float aa = max(fwidth(r) * 1.1, 0.004);
   float u = atan(vQuad.y, vQuad.x) / TAU + 0.5;
   float f = fract(u * 44.0);
   float dash = smoothstep(0.0, 0.10, f) * (1.0 - smoothstep(0.42, 0.52, f));
-  float ring = (1.0 - smoothstep(0.006 - aa, 0.006 + aa, abs(r - 0.5))) * dash;
+  // THE BOUNDARY EARNS ITS LIGHT WHEN IT IS LOAD-BEARING.
+  //
+  // At rest it is the quietest contour in the world — the cycle-8 Art Director
+  // called it the single element on any frame closest to chrome that encodes no
+  // new state, and offered the fix taken here: make it the live drop boundary
+  // during a placement drag. It is NOT hidden otherwise, because the boundary
+  // is what says where captured-but-unplaced thoughts live and one whole
+  // artifact is about exactly that. It changes weight instead: while a node is
+  // being dragged, crossing this circle is the difference between a thought
+  // that stays in holding and one that gets a permanent position, so the ring
+  // thickens and brightens to say which side of that line the drag is on.
+  float wid = mix(0.006, 0.011, uActive);
+  float ring = (1.0 - smoothstep(wid - aa, wid + aa, abs(r - 0.5))) * dash;
   if (ring < 0.004) discard;
   // Below the quietest node state. The boundary encodes real state and belongs
   // in the world, but it was measuring 0.115 against a plain node core at 0.098
   // — the largest and brightest contour in four artifacts, out-reading the
   // nodes it contains.
-  gl_FragColor = vec4(vec3(0.34, 0.32, 0.29), ring * 0.55 * vFade);
+  vec3 col = mix(vec3(0.34, 0.32, 0.29), vec3(0.62, 0.55, 0.40), uActive);
+  gl_FragColor = vec4(col, ring * mix(0.55, 0.95, uActive) * vFade);
 }`;
 
 export class HoldingShell {
@@ -563,6 +577,7 @@ export class HoldingShell {
       uniforms: {
         uCentre: { value: new THREE.Vector3() }, uRadius: { value: 5 },
         uViewport: { value: new THREE.Vector2(1920, 1080) },
+        uActive: { value: 0 },
       },
       transparent: true, depthWrite: false, depthTest: true,
     });
@@ -583,4 +598,8 @@ export class HoldingShell {
     this.material.uniforms.uCentre.value.copy(centre);
     this.material.uniforms.uRadius.value = radius * 2;
   }
+
+  /** Live while a node is being dragged: this circle is the drop boundary. */
+  setActive(on: boolean) { this.material.uniforms.uActive.value = on ? 1 : 0; }
+  get active() { return this.material.uniforms.uActive.value === 1; }
 }
