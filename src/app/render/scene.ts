@@ -228,7 +228,11 @@ export class Scene {
       const a = posOf.get(l.a), b = posOf.get(l.b);
       if (!a || !b) continue;
       const live = l.a === this.selected || l.b === this.selected || this.hits.has(l.a) || this.hits.has(l.b);
-      links.push({ a, b, live });
+      // A link between two districts carries the geography claim: near ones are
+      // implied by proximity, a long cross-district run is not implied by
+      // anything and is the thing worth seeing.
+      const cross = doc.nodes[l.a] && doc.nodes[l.b] && doc.nodes[l.a].color !== doc.nodes[l.b].color;
+      links.push({ a, b, live, cross });
     }
     this.filaments.build(links);
     this.holdingMembers = ns.filter(n => !n.placed).map(n => n.pos.slice() as [number, number, number]);
@@ -375,8 +379,21 @@ export class Scene {
     // so nothing pops as the camera turns, and a label that cannot find a clear
     // anchor is gone rather than half-said. What that costs is reported in the
     // frame: see suppressed().
+    // THE FAR RING. Whole-brain framing put a near-square node cloud in the
+    // middle of a 16:9 frame and dropped thirty names for crowding while about
+    // 930 px of canvas either side held nothing at all. These reach out into
+    // that ground — twelve directions at four radii — and anything placed here
+    // is drawn with a leader back to its node.
+    const FAR: [number, number][] = [];
+    for (const r of [5.6, 8.2, 11.5, 15.5])
+      for (let k = 0; k < 12; k++) {
+        const th = (k / 12) * Math.PI * 2;
+        FAR.push([r * Math.cos(th) * 1.9, r * Math.sin(th)]);
+      }
+
     const BRIGHT_MAX = 0, DIM_MAX = 0.16;
     this.labelRects.clear();
+    this.labelNeedsLeader.clear();
     this.lastScreen.clear();
     for (const q of scr) this.lastScreen.set(q.id, { x: q.x, y: q.y, pxPerWorld: q.pxPerWorld });
     const panels: Box[] = [];
@@ -467,13 +484,19 @@ export class Scene {
           if (widths.length >= 4) break;
         }
       }
-      let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0, fits: false };
+      let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0, fits: false, far: false };
+      // The near anchors first; the far ring only if none of them worked. The
+      // far search costs 48 candidates a label, which is affordable for the
+      // forty or so that fail and would not be for all hundred and fifty.
+      for (const pass of [0, 1]) {
+      if (pass === 1 && best.fits && best.frac <= BRIGHT_MAX) break;
+      const anchors = pass === 0 ? CAND : FAR;
       for (const cand of widths) {
         const area = Math.max(cand.w * sh.h, 1);
         // A shortened label is only taken if a longer one could not be placed,
         // so length is worth a real penalty rather than a tie-break.
         const shortPenalty = cand.vis ? 0.55 : 0;
-        for (const [cx, cy] of CAND) {
+        for (const [cx, cy] of anchors) {
           const dx = cx * sh.emPx, dy = cy * sh.emPx;
           const x0 = sh.bx0 + dx, y0 = sh.by0 + dy;
           // NODE DISCS ARE OCCUPANCY, not a preference. Text drawn over a core
@@ -494,8 +517,14 @@ export class Scene {
           // re-anchored to one of the level-with-the-node candidates and ended
           // up with its own disc and both search-hit ticks sitting on the word
           // 'savoury'. The rule is exact rather than a coverage weight: the
-          // node's centre may not fall inside the text box.
-          if (own && own.x >= x0 && own.x <= x0 + cand.w && own.y >= y0 && own.y <= y0 + sh.h) continue;
+          // text box must clear the mark itself by 4 px, so the label never
+          // touches the dot it names.
+          if (own) {
+            const keep = own.r + 4;                       // the mark, plus air
+            const nx = Math.min(Math.max(own.x, x0), x0 + cand.w);
+            const ny = Math.min(Math.max(own.y, y0), y0 + sh.h);
+            if (Math.hypot(own.x - nx, own.y - ny) < keep) continue;
+          }
           const dc = discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area);
           const frac = Math.min(1, coverage(x0, y0, x0 + cand.w, y0 + sh.h, area) + dc);
           // Text-on-text decides the tier; text-on-marker only breaks ties; and
@@ -510,6 +539,8 @@ export class Scene {
           // another. Distance costs these labels five times what it costs a
           // placed node's, which is enough to keep attribution unambiguous
           // without pinning them to a side.
+              // Distance is charged the same on the far ring, so a label still
+          // takes the nearest free ground it can find rather than the emptiest.
           const away = Math.hypot(cx, cy) / 3.8 * (this.runMeta[b.i].held ? 5 : 1);
           // Coverage dominates: a CLEAR placement always beats a covered one,
           // however much shorter or further it is. Otherwise a full-length
@@ -521,9 +552,11 @@ export class Scene {
           // wins if it is meaningfully clearer, so labels do not jitter.
           const home = cx === 0 && cy === 0 && !cand.vis;
           if (score < best.score - (home ? 0 : 0.06) || (home && score <= best.score))
-            best = { frac, score, dx: cx, dy: cy, w: cand.w, vis: cand.vis, fits: true };
+            best = { frac, score, dx: cx, dy: cy, w: cand.w, vis: cand.vis, fits: true,
+                     far: pass === 1 };
         }
         if (best.frac <= 0 && !best.vis) break;   // placed whole and clear
+      }
       }
       this.runVisible[b.i] = best.vis;
       // Move the ellipsis back from the end of the full run to the cut point.
@@ -548,7 +581,20 @@ export class Scene {
       // instead of smearing it.
       const t = Math.max(0, 1 - (best.frac - BRIGHT_MAX) / (DIM_MAX - BRIGHT_MAX));
       const k = !best.fits ? 0 : best.frac <= BRIGHT_MAX ? 1 : t * t;
-      this.runAlphas[b.i] = this.runMeta[b.i].baseAlpha * k;
+      // A label that had to leave its own neighbourhood to find room is drawn
+      // WITH A LEADER, so travelling does not cost attribution. Dropping a name
+      // is now the last resort it was always supposed to be: reached only when
+      // no free ground exists on either ring.
+      if (k > 0.02 && best.far) this.labelNeedsLeader.add(this.runMeta[b.i].id);
+      // A LABEL IS LEGIBLE OR IT IS NOT DRAWN. The dim tier ramped smoothly to
+      // nothing, so labels shipped at 1.79:1 to 2.73:1 against the ground —
+      // present, unreadable, and competing with the ones that could be read.
+      // The floor is the alpha at which the ink reaches 3:1 on this ground:
+      // 0.0574 + a * 0.8481 = 0.2722 gives a = 0.26. Below it the label is not
+      // drawn at all, and the frame says so.
+      const DIM_FLOOR = 0.26;
+      const raw = this.runMeta[b.i].baseAlpha * k;
+      this.runAlphas[b.i] = raw >= DIM_FLOOR ? raw : 0;
       // ANY label that is drawn at all reserves its rect. Reserving only the
       // ones above a weight threshold let two suppressed labels be placed on
       // top of each other — the faded tier was not deconflicted against itself,
@@ -610,6 +656,14 @@ export class Scene {
    * frame, so both sides must come from that frame.
    */
   private lastScreen = new Map<NodeId, { x: number; y: number; pxPerWorld: number }>();
+
+  /**
+   * Labels placed on the FAR ring — out in open canvas, away from the node they
+   * name. Ruled by the Art Director in cycle 7: when the solver runs out of
+   * room it pushes a label outward with a leader rather than dropping it, and
+   * drops only when the canvas is genuinely full.
+   */
+  labelNeedsLeader = new Set<NodeId>();
 
   /**
    * Does the arbiter's reserved rectangle contain the glyphs that were drawn?

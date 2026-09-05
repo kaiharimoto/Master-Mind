@@ -409,7 +409,13 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
   float dist = max(-mv.z, 1e-4);
   vColor = aColor;
-  vAlpha = aAlpha * mix(1.0, 0.28, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
+  // A FLOOR, not a fade to nothing. At whole-brain framing every link is far,
+  // so the distance fade took the whole graph under the perceptual threshold at
+  // once: a rest filament measured (26,21,17) against an (18,14,11) ground —
+  // 1.06:1 — so the map's connections were present in the data and absent from
+  // the render. The floor is set from the contrast the ground demands: at 0.40
+  // of its rest alpha a filament blends to about (44,38,33), roughly 1.35:1.
+  vAlpha = aAlpha * mix(1.0, 0.40, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
   gl_Position = projectionMatrix * mv;
 }`;
 const LINE_FRAG = /* glsl */`
@@ -418,7 +424,7 @@ varying vec3 vColor;
 varying float vAlpha;
 void main() { gl_FragColor = vec4(vColor, vAlpha); }`;
 
-export interface LinkInstance { a: THREE.Vector3; b: THREE.Vector3; live: boolean; }
+export interface LinkInstance { a: THREE.Vector3; b: THREE.Vector3; live: boolean; cross?: boolean; }
 
 export class FilamentLayer {
   readonly mesh: THREE.LineSegments;
@@ -455,11 +461,18 @@ export class FilamentLayer {
     this.geo.setAttribute('aColor', this.col);
     this.geo.setAttribute('aAlpha', this.alp);
   }
-  build(links: LinkInstance[], restAlpha = 0.22, liveAlpha = 0.78) {
+  /**
+   * `crossAlpha` sits above the rest alpha. A link between two districts is the
+   * structural claim the map's geography rests on — that these thoughts belong
+   * to different neighbourhoods and are still connected — so it is drawn a step
+   * stronger than a link inside one district, where the proximity already says
+   * it.
+   */
+  build(links: LinkInstance[], restAlpha = 0.22, liveAlpha = 0.78, crossAlpha = 0.30) {
     this.grow(Math.max(links.length, 1));
     links.forEach((l, i) => {
       const c = l.live ? this.live : this.rest;
-      const a = l.live ? liveAlpha : restAlpha;
+      const a = l.live ? liveAlpha : l.cross ? crossAlpha : restAlpha;
       this.pos.setXYZ(i * 2, l.a.x, l.a.y, l.a.z);
       this.pos.setXYZ(i * 2 + 1, l.b.x, l.b.y, l.b.z);
       this.col.setXYZ(i * 2, c.r, c.g, c.b);

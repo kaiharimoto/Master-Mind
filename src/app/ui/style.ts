@@ -62,6 +62,23 @@ body.ar #search{width:300px}
 .sw.on{border-color:var(--ink)}
 .row{display:flex;gap:6px;margin-top:12px}
 .row button{flex:1}
+/* THE COMMITTING ACTION LOOKS LIKE ONE. Accept and Reject were the same
+   neutral outline token — fills a single level of red apart, labels at the
+   same contrast — in a feature whose whole claim is that nothing is applied
+   until you accept. Accept takes the amber the kind tag already uses; Reject
+   keeps the outline. Same size, same place: the pair still reads as a matched
+   choice, not a warning. */
+/* The rejection log: the strongest safety evidence in the build, set to be
+   read. One entry per line, the subject at reading contrast, the reason a step
+   below it, and the overflow as a count. */
+.rejected{margin-top:10px;border-left:2px solid #4A3A2A;padding:6px 0 6px 10px}
+.rejected h5{margin:0 0 5px;font-size:12px;font-weight:600;letter-spacing:.2px;color:var(--ink)}
+.rejected .r{font-size:12px;line-height:1.5;color:var(--ink);margin-bottom:2px}
+.rejected .r b{font-weight:600}
+.rejected .r span{color:var(--ink-dim)}
+.rejected .r.more{color:var(--ink-dim)}
+button.affirm{background:var(--hot);border-color:var(--hot);color:#1A1206;font-weight:600}
+button.affirm:hover{background:#FFC44D;border-color:#FFC44D}
 
 /* The panel never grows past the band between the top bar and the bottom bar,
    and it does NOT scroll as a whole: the prompt and reply bodies scroll inside

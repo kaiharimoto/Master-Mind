@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T05:04:17.425Z",
+  "lastRunAt": "2026-09-05T05:23:26.386Z",
   "lastRunCaptured": [
-    "19"
+    "14"
   ],
   "artifacts": [
     {
@@ -56,15 +56,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.4,
+      "seconds": 1.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 348173,
-        "sha256": "e8e90cf55201d3f981059bd303fc60209c4c3066cd80593139522851bef93abb"
+        "bytes": 455297,
+        "sha256": "d00ea58ffac201b6ebac02f56bc50ab40c49fc5f695bf73d69f81399333378ba"
       },
       "claims": {
         "ok": true,
@@ -103,6 +103,12 @@
         "lens": "canvas",
         "surface": "windows",
         "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 12,
+          "unlabelledListed": 0,
+          "mapName": "Fermentation notebook"
+        },
         "camera": {
           "yaw": 0.42,
           "pitch": 0.2,
@@ -114,9 +120,9 @@
           ]
         },
         "cameraPinned": true,
-        "labelsAudited": 117,
+        "labelsAudited": 138,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Recalibrate the pH meter",
+        "labelWorstOverhangOn": "Brettanomyces",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -132,7 +138,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:23:24.077Z"
+      "fileMtime": "2026-09-05T05:13:27.633Z"
     },
     {
       "id": "03",
@@ -254,15 +260,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.5,
+      "seconds": 1.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 433195,
-        "sha256": "e8eda67c87aac884cf9efe4dbab74de5cad55f393ed3f6b8aec11510939bd51c"
+        "bytes": 499625,
+        "sha256": "e90b4fdda123e6a9d37b24dd15cf33bebc8f688fc70c0c07aa0cae2d91bfb0f6"
       },
       "claims": {
         "ok": true,
@@ -307,6 +313,12 @@
         "lens": "expansion",
         "surface": "windows",
         "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 6,
+          "unlabelledListed": 6,
+          "mapName": "Fermentation notebook"
+        },
         "camera": {
           "yaw": 0.3,
           "pitch": 0.16,
@@ -318,9 +330,9 @@
           ]
         },
         "cameraPinned": true,
-        "labelsAudited": 115,
+        "labelsAudited": 144,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Recalibrate the pH meter",
+        "labelWorstOverhangOn": "Homofermentative",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -334,7 +346,7 @@
             ],
             "chroma": [
               0.055,
-              0.457
+              0.521
             ]
           },
           "lime": {
@@ -345,7 +357,7 @@
             ],
             "chroma": [
               0.045,
-              0.456
+              0.52
             ]
           },
           "amber": {
@@ -356,7 +368,7 @@
             ],
             "chroma": [
               0.047,
-              0.453
+              0.517
             ]
           },
           "coral": {
@@ -367,7 +379,7 @@
             ],
             "chroma": [
               0.059,
-              0.457
+              0.52
             ]
           },
           "azure": {
@@ -378,7 +390,7 @@
             ],
             "chroma": [
               0.048,
-              0.456
+              0.519
             ]
           },
           "bone": {
@@ -389,7 +401,7 @@
             ],
             "chroma": [
               0.054,
-              0.456
+              0.52
             ]
           },
           "magenta": {
@@ -400,7 +412,7 @@
             ],
             "chroma": [
               0.05,
-              0.354
+              0.404
             ]
           },
           "teal": {
@@ -410,14 +422,14 @@
               0.82
             ],
             "chroma": [
-              0.099,
-              0.455
+              0.104,
+              0.518
             ]
           }
         },
         "recencyChromaSpan": [
           0.045,
-          0.457
+          0.521
         ],
         "recencyChannelExercised": true
       },
@@ -431,7 +443,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:34:53.961Z"
+      "fileMtime": "2026-09-05T05:13:29.253Z"
     },
     {
       "id": "05",
@@ -897,8 +909,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 207254,
-        "sha256": "a47b1337663113495ca4b146a29d20ed016e69fd7b0ba1bde32b81f1287a6676"
+        "bytes": 345318,
+        "sha256": "f219d7e143aa7472cbbe06c6c3cbfa3d07cc7e184856decb859eccc21c425d63"
       },
       "claims": {
         "ok": true,
@@ -945,9 +957,9 @@
         "query": "koji",
         "node": "Koji-kin sourcing",
         "hits": 19,
-        "labelsAudited": 19,
+        "labelsAudited": 38,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Shio koji",
+        "labelWorstOverhangOn": "Bulk to 50% rise",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -988,7 +1000,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:23:31.145Z"
+      "fileMtime": "2026-09-05T05:17:19.529Z"
     },
     {
       "id": "11",
@@ -1255,15 +1267,15 @@
       "title": "Finder prompt export",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1,
+      "seconds": 1.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 266970,
-        "sha256": "aaa797db4005c35e8fd4521ec6186737a9ee98577a199bc703c6f1fbaa7b227f"
+        "bytes": 254732,
+        "sha256": "c5e418475cc3fc8058e2326d121ba7a268ae2ad8a26194ef103e9f371c92b935"
       },
       "claims": {
         "ok": true,
@@ -1285,12 +1297,20 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "noLabelUnderThePanel",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
       "result": {
         "promptChars": 2698,
         "hasPositions": true,
+        "labelsUnderThePanel": [],
+        "noLabelUnderThePanel": true,
         "hasInstructions": true,
         "mentionsUnplaced": true
       },
@@ -1299,12 +1319,12 @@
         "demonstrates": "the finder prompt export, preamble and position records together",
         "surface": "windows",
         "lens": null,
-        "fnSha": "51e64503fb0a6434"
+        "fnSha": "904c8c79130e761a"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:53.572Z"
+      "fileMtime": "2026-09-05T05:20:26.001Z"
     },
     {
       "id": "14",
@@ -1312,15 +1332,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.5,
+      "seconds": 2.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 282283,
-        "sha256": "df66de2dca5a54028221efc692b1ffb26247c7c50987096475217481f02eaf7d"
+        "bytes": 370373,
+        "sha256": "18c6e3f1c88798af2cefcab2bfda1f12f13a413670ec83d8706bb31cdbefb0ef"
       },
       "claims": {
         "ok": true,
@@ -1393,38 +1413,47 @@
         "allThreeKinds": true,
         "detailCrops": [
           {
-            "x": 450,
-            "y": 50,
-            "w": 646,
-            "h": 386
+            "x": 14,
+            "y": 442,
+            "w": 460,
+            "h": 366
           },
           {
             "x": 450,
             "y": 50,
-            "w": 646,
-            "h": 386
+            "w": 642,
+            "h": 510
           },
           {
-            "x": 466,
-            "y": 110,
-            "w": 814,
-            "h": 486
+            "x": 450,
+            "y": 50,
+            "w": 642,
+            "h": 510
+          },
+          {
+            "x": 546,
+            "y": 86,
+            "w": 702,
+            "h": 558
           }
         ],
         "detailMagnifications": [
-          1.98,
-          1.98,
-          1.57
+          2.09,
+          1.5,
+          1.5,
+          1.37
         ],
         "detailMagnificationsOfAppPixels": [
-          0.99,
-          0.99,
-          0.79
+          1.04,
+          0.75,
+          0.75,
+          0.68
         ],
         "detailStripPx": 82,
         "detailPanelHeights": [
           382,
-          382,
+          381,
+          381,
           382
         ],
         "detailRowBottomPx": 1080,
@@ -1442,7 +1471,7 @@
         ],
         "rejectedPairUnjoined": true,
         "detailIsMagnified": true,
-        "detailMagnificationFloor": 1.57,
+        "detailMagnificationFloor": 1.37,
         "cameraFrozenAcrossPanels": true,
         "rejectedId": "s2",
         "rejectionLeftNoTrace": true,
@@ -1453,12 +1482,12 @@
         "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch",
         "surface": "windows",
         "lens": null,
-        "fnSha": "3efad0406251632b"
+        "fnSha": "5bbeba039b3db20a"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:49:16.479Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:23:28.873Z"
     },
     {
       "id": "15",
@@ -1672,15 +1701,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 59.4,
+      "seconds": 76.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 3161334,
-        "sha256": "5ce9d8224c18d5feda3ad1e785478cf5289184ed6ce114d992dbebc921c1544d",
+        "bytes": 5048435,
+        "sha256": "8ff6606ee9ba7480a730d2b8eb369419c3e2e1da2f4a4f3e816060279b47250f",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -1737,22 +1766,22 @@
         "labelAuditsAcrossTake": 26,
         "labelWorstAuditFrame": {
           "f": 0,
-          "checked": 110,
+          "checked": 138,
           "gap": 0,
           "off": 0,
           "gapOn": {
-            "text": "Preserved lemon, batch 3",
+            "text": "Brettanomyces",
             "res": [
-              588,
-              870,
-              757,
-              885
+              885,
+              212,
+              989,
+              227
             ],
             "drawn": [
-              603,
-              879,
-              771,
-              895
+              841,
+              223,
+              946,
+              239
             ]
           },
           "offOn": null
@@ -1774,7 +1803,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:59:42.867Z"
+      "fileMtime": "2026-09-05T05:18:34.852Z"
     },
     {
       "id": "19",
@@ -1782,21 +1811,21 @@
       "title": "Capture, place, connect, refind",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 112.1,
-      "status": "claim-not-met",
+      "seconds": 133.5,
+      "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2022619,
-        "sha256": "6342e6671f812bda59baa01c55b6cdd767645e6ef30e4bbb3a7becc22409f262",
+        "bytes": 3032178,
+        "sha256": "4b0a1082762a8dee9ab60803d24e56dbbf8c9f50644b5249a5887c6de71dfc82",
         "seconds": 23,
         "fps": 30,
         "frames": 690
       },
       "claims": {
-        "ok": false,
+        "ok": true,
         "claims": [
           {
             "claim": "created",
@@ -1819,8 +1848,8 @@
           {
             "claim": "connectedAfterPlacing",
             "expected": true,
-            "actual": false,
-            "pass": false
+            "actual": true,
+            "pass": true
           },
           {
             "claim": "refoundBySearch",
@@ -1834,8 +1863,7 @@
             "actual": true,
             "pass": true
           }
-        ],
-        "why": "declared claim(s) not met: connectedAfterPlacing = false"
+        ]
       },
       "result": {
         "text": "Rehearse the fly-to twice",
@@ -1847,12 +1875,12 @@
           13.692161279398377
         ],
         "stayedPut": true,
-        "connectedTo": "Koji on pearl barley",
+        "connectedTo": "Vinegar from failed wine",
         "linksAcrossConnect": [
           208,
-          208
+          209
         ],
-        "connectedAfterPlacing": false,
+        "connectedAfterPlacing": true,
         "searchHits": 1,
         "flewToTheNewNode": true,
         "centredOnRefind": {
@@ -1885,12 +1913,12 @@
         "demonstrates": "the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put",
         "surface": "windows",
         "lens": null,
-        "fnSha": "feed270b4e4689df"
+        "fnSha": "8f6ace6323401f42"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-05T05:06:05.659Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-05T05:16:32.425Z"
     },
     {
       "id": "20",
@@ -1898,15 +1926,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 76.7,
+      "seconds": 83.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 614905,
-        "sha256": "d23e772c52cddf61369b7945e03335eb69b36e959ea6d6f570b9c1d2d45e306f",
+        "bytes": 634698,
+        "sha256": "3e25a3893495f5f7c5dd593c9aa968f7eacbf032401604236ba7080f5cf82f03",
         "seconds": 30,
         "fps": 30,
         "frames": 900
@@ -2040,18 +2068,18 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:51:17.121Z"
+      "fileMtime": "2026-09-05T05:21:58.825Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T05:06:11.104Z",
+  "finishedAt": "2026-09-05T05:23:30.559Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 787905,
-    "sha256": "eac00e71d25f68c80399453b3d2015fe3dc1554e91148adbba1880bd21fc4ad0"
+    "bytes": 790171,
+    "sha256": "abf08f7af4979f1345dfc0a7dc038e4df8bfa589a42385b390c8f646bd74a821"
   },
-  "captured": 19,
+  "captured": 20,
   "total": 20
 }

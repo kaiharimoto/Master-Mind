@@ -440,9 +440,16 @@ export class App {
     if (!this.hits.length) return;
     if (step) this.hitIndex = (this.hitIndex + step + this.hits.length) % this.hits.length;
     const id = this.hits[this.hitIndex];
-    // Deliberately does NOT select: the node you flew to wears the search-hit
-    // signature, which is the state the flight was about. Clicking selects it.
-    this.select(null);
+    // FLYING TO A HIT SELECTS IT. It used to deliberately not, on the reasoning
+    // that the search-hit signature was the state the flight was about — but
+    // with a query that matches nineteen thoughts, thirteen of them in frame,
+    // every one wore the identical signature and the one the camera had flown
+    // to was neither the brightest nor the largest thing on screen. Selecting
+    // puts it on the top rung of the ladder, brings its filaments live, and
+    // opens it for editing, which is what a person who just found a thought
+    // wants next. Selection first, then the flight, so the panel-clearing pan
+    // is absorbed by the flight rather than fighting it.
+    this.select(id);
     this.controls.flyTo(id, 1300, this.lens === 'expansion' ? 15 : 12);
   }
 
@@ -675,9 +682,16 @@ export class App {
     this.leaderFor.clear();
     for (const s of scr) {
       const n = this.store.doc.nodes[s.id];
-      if (!n || n.placed) continue;
+      if (!n) continue;
       const r = this.scene.labelRects.get(s.id);
       if (!r || r.alpha <= 0.02) continue;
+      // A label pushed out to the far ring ALWAYS gets a leader: it is out in
+      // open canvas by design, and without the line it names nothing. Held
+      // thoughts get one when their name is nearer a neighbour's dot than
+      // their own. Every other label sits against its node and needs none.
+      const far = this.scene.labelNeedsLeader.has(s.id);
+      if (!far && !n.placed) { /* held: fall through to the ambiguity test */ }
+      else if (!far) continue;
       // AMBIGUITY IS THE TEST, not distance. A leader is drawn exactly when the
       // node nearest this label's box is NOT the node it names — which is the
       // only case a reader can get wrong. Everywhere else the pairing is plain
@@ -688,7 +702,7 @@ export class App {
       };
       let closest = s, cd = near(s);
       for (const q of scr) { const d = near(q); if (d < cd) { cd = d; closest = q; } }
-      if (closest.id === s.id) continue;
+      if (!far && closest.id === s.id) continue;
       this.leaderFor.add(s.id);
       const x = s.x / dpr, y = s.y / dpr;
       const tx = Math.min(Math.max(x, r.x0 / dpr), r.x1 / dpr);
@@ -1083,21 +1097,34 @@ export class App {
       <div class="row"><button data-t="finder-parse">Parse reply</button></div>
       <div class="tail">
       ${this.lastParse && !this.lastParse.ok ? `<div class="err" data-t="finder-error">${esc(this.lastParse.error ?? 'parse failed')}</div>` : ''}
-      ${this.lastParse?.dropped.length ? `<div class="note" data-t="finder-dropped">${this.lastParse.dropped.length} entr${this.lastParse.dropped.length === 1 ? 'y' : 'ies'} rejected: ${esc(
+      ${this.lastParse?.dropped.length ? (() => {
         // A rejection that PROTECTED A POSITION is the most important one to
         // surface: it is the map's central invariant being enforced, and it was
         // being pushed off the end of a three-item list by ordinary parse
         // rejections.
-        [...this.lastParse.dropped]
-          .sort((a, b) => (/placed/.test(b.why) ? 1 : 0) - (/placed/.test(a.why) ? 1 : 0))
-          .slice(0, 4).map(d => `${d.what} — ${d.why}`).join(' · '))}${this.lastParse.dropped.length > 4 ? ` · +${this.lastParse.dropped.length - 4} more` : ''}</div>` : ''}
+        //
+        // Set as a LIST, not a run-on. This is the strongest safety evidence in
+        // the build and it was the least legible block on the panel — five
+        // lines of middot-separated prose at 3.53:1, under a headline at
+        // 14.93:1. One rejection per line, the subject at reading contrast and
+        // the reason a step below it, and the overflow as a count rather than
+        // trailing text.
+        const d = [...this.lastParse.dropped]
+          .sort((a, b) => (/placed/.test(b.why) ? 1 : 0) - (/placed/.test(a.why) ? 1 : 0));
+        const shown = d.slice(0, 4);
+        return `<div class="rejected" data-t="finder-dropped">` +
+          `<h5>${d.length} entr${d.length === 1 ? 'y' : 'ies'} rejected</h5>` +
+          shown.map(x => `<div class="r"><b>${esc(x.what)}</b> <span>${esc(x.why)}</span></div>`).join('') +
+          (d.length > 4 ? `<div class="r more">+${d.length - 4} more</div>` : '') +
+          `</div>`;
+      })() : ''}
       ${this.suggestions.length ? `
         <div class="note" data-t="finder-progress">Suggestion ${this.sugIndex + 1} of ${this.suggestions.length} · nothing is applied until you accept</div>
         ${cur ? `<div class="sug" data-t="finder-current">
           <div class="k" data-t="finder-kind">${cur.kind}</div>
           <div class="d">${esc(describe(cur, this.store.doc))}</div>
           <div class="w">${esc(cur.why || '—')}</div>
-          <div class="row"><button data-t="finder-accept">Accept</button><button data-t="finder-reject" class="ghost">Reject</button></div>
+          <div class="row"><button data-t="finder-accept" class="affirm">Accept</button><button data-t="finder-reject" class="ghost">Reject</button></div>
         </div>` : ''}
         <div class="note">Staged, one at a time: ${this.suggestions.map(s => s.kind).join(' · ')}</div>
       ` : ''}

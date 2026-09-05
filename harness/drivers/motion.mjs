@@ -347,7 +347,24 @@ export default [
     // three moments cropped to the nodes the suggestions actually touch, at the
     // magnification that space buys, so the filament that appears on accept and
     // never appears on reject can be seen rather than inferred.
-    const TOP = 616, BOT = 1080 - TOP, CELL = Math.floor(1920 / 3);
+    // FOUR detail cells: the panel itself, then the pair before, joined, and
+    // the rejected pair still apart. The top row draws each 1280 px frame into
+    // a 640 px panel, which turns the finder card — the artifact's actual
+    // subject — into grey mush; the panel had to be read somewhere.
+    const TOP = 616, BOT = 1080 - TOP, CELL = Math.floor(1920 / 4);
+    // The CARD and the rejection log, not the whole panel. The panel is 800 px
+    // tall and the detail cell is 382, so cropping all of it would put the
+    // subject BELOW the top row's own scale — a detail that is a reduction, the
+    // exact fault this row exists to answer.
+    const panelBox = await page.evaluate(() => {
+      const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const rs = ['[data-t=finder-dropped]', '[data-t=finder-current]', '[data-t=finder-progress]']
+        .map(sel => document.querySelector(sel)).filter(Boolean)
+        .map(e => e.getBoundingClientRect()).filter(r => r.width > 2 && r.height > 2);
+      if (!rs.length) return null;
+      return { x0: Math.min(...rs.map(r => r.left)) * dpr, y0: Math.min(...rs.map(r => r.top)) * dpr,
+               x1: Math.max(...rs.map(r => r.right)) * dpr, y1: Math.max(...rs.map(r => r.bottom)) * dpr };
+    });
     // ONE CROP PER PAIR, not one crop over every node the queue mentions. The
     // accepted pair and the rejected pair sit at opposite ends of this map, so a
     // shared rectangle came out 904 px wide — a x0.71 view, less detail than the
@@ -396,11 +413,11 @@ export default [
     // every detail panel — including the node the third panel exists to prove
     // nothing happened to — fell off the bottom of the frame.
     const rectTxt = (r) => `${r.w}x${r.h} at (${r.x}, ${r.y})`;
-    const capFor = (aR, rR) => [
-      `crop ${rectTxt(aR)} of the 1280x1080 frame · the pair the finder proposed joining` +
-        ' · the app toast is hidden in this row only',
+    const capFor = (aR, rR, pR) => [
+      `the staged card, its controls and the rejection log · crop ${rectTxt(pR)}`,
+      `crop ${rectTxt(aR)} of the 1280x1080 frame · the app toast is hidden in this row`,
       `a filament now runs between ${acceptedSug ? acceptedSug.texts.join(' and ') : 'the accepted pair'}` +
-        ` · same crop ${rectTxt(aR)} as the panel left of it`,
+        ` · same crop as the panel left of it`,
       `nothing runs between ${rejectedSug ? rejectedSug.texts.join(' and ') : 'the rejected pair'}` +
         ` · crop ${rectTxt(rR)}`,
     ];
@@ -409,7 +426,7 @@ export default [
     // rectangle fixes the line count, and the second uses it.
     const stripFor = (caps) => 34 + Math.max(1, ...caps.map(c => wrapCaption(c, CELL).lines.length)) * 21 + 6;
     const guessR = { x: 0, y: 0, w: 1280, h: 806 };
-    const detStrip = stripFor(capFor(guessR, guessR));
+    const detStrip = stripFor(capFor(guessR, guessR, guessR));
     const ASPECT = CELL / (BOT - detStrip);
     // A label hangs about an em clear of its node and runs well past it, so the
     // crop is padded generously enough to keep both names whole.
@@ -433,17 +450,32 @@ export default [
                w: Math.round(w / 2) * 2, h: Math.round(h / 2) * 2 };
     };
     const accRect = rectFor(accBox), rejRect = rectFor(rejBox);
-    const rects = [accRect, accRect, rejRect];
+    // The panel crop is anchored on the panel and grown to the cell's aspect,
+    // so the card, the Accept/Reject pair and the rejection log are all in it.
+    const panRect = (() => {
+      const VW = 1280, VH = 1080;
+      const b = panelBox ?? { x0: 0, y0: 0, x1: 460, y1: 900 };
+      let w = (b.x1 - b.x0) + 24, h = (b.y1 - b.y0) + 24;
+      if (w / h < ASPECT) w = h * ASPECT; else h = w / ASPECT;
+      if (w > VW) { w = VW; h = w / ASPECT; }
+      if (h > VH) { h = VH; w = h * ASPECT; }
+      const x = Math.max(0, Math.min(VW - w, b.x0 - 12));
+      const y = Math.max(0, Math.min(VH - h, (b.y0 + b.y1) / 2 - h / 2));
+      return { x: Math.round(x / 2) * 2, y: Math.round(y / 2) * 2,
+               w: Math.round(w / 2) * 2, h: Math.round(h / 2) * 2 };
+    })();
+    const rects = [panRect, accRect, accRect, rejRect];
     // AGAINST THE PANEL ABOVE, which is what 'detail' means here. The top row
     // draws the 1280 px frame into a 640 px panel, so a crop reported at x0.79
     // of the app's own pixels is x1.58 of the panel it is a detail of — and a
     // claim named 'isMagnified' passing on a number below 1 reads as the
     // opposite of what it asserts.
-    const TOP_SCALE = CELL / 1280;
+    // The TOP ROW's scale, which is three panels across 1920 — not this row's.
+    const TOP_SCALE = (1920 / 3) / 1280;
     const mags = rects.map(r => Number((CELL / r.w / TOP_SCALE).toFixed(2)));
     const magsOfApp = rects.map(r => Number((CELL / r.w).toFixed(2)));
     const cuts = [];
-    for (const [k, src] of [pre, midClean, postClean].entries())
+    for (const [k, src] of [pre, pre, midClean, postClean].entries())
       cuts.push(await H.crop(src, H.tmp(`14d${k}.png`), rects[k].x, rects[k].y, rects[k].w, rects[k].h));
     const rowA = H.tmp('14rowA.png'), rowB = H.tmp('14rowB.png');
     await H.compose([pre, mid, post], rowA, { mode: 'h', width: 1920, height: TOP,
@@ -452,12 +484,12 @@ export default [
                   `applied ${applied} · links ${linksBeforeAccept} → ${linksAfterAccept}`,
                   `rejected ${refused} · ${beforeReject === after ? 'links unchanged' : 'LINKS CHANGED'} · ` +
                   `${rejectedPairJoined ? 'A FILAMENT EXISTS' : 'no filament joins that pair'}`] });
-    const caps = capFor(accRect, rejRect);
+    const caps = capFor(accRect, rejRect, panRect);
     const realStrip = stripFor(caps);
     const panelH = rects.map(r => Math.round(Math.min(CELL / r.w, (BOT - realStrip) / r.h) * r.h));
     await H.compose(cuts, rowB, { mode: 'h', width: 1920, height: BOT,
-      labels: [`Detail ×${mags[0]} — the pair, before`, `Detail ×${mags[1]} — accepted: joined`,
-               `Detail ×${mags[2]} — rejected: still apart`],
+      labels: [`Detail ×${mags[0]} — the panel`, `Detail ×${mags[1]} — the pair, before`,
+               `Detail ×${mags[2]} — accepted: joined`, `Detail ×${mags[3]} — rejected: still apart`],
       sublabels: caps });
     await H.stack([rowA, rowB], H.out(this.file));
     const posAfter = await SCREEN();
@@ -751,8 +783,7 @@ export default [
     });
     await sleepFrames(page, 0, 2);
     const text = 'Rehearse the fly-to twice';
-    const targetText = 'Koji on pearl barley';
-    const targetId = await NODE_ID(page, targetText);
+    let targetText = null, targetId = null;
     let id = null, dropAt = null;
     const log = {};
     const steps = [
@@ -781,10 +812,29 @@ export default [
       // survive both.
       { at: 420, fn: async () => {
           log.linksBeforeConnect = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+          // The NEAREST placed neighbour on screen, chosen after the drop. A
+          // named target works on an eleven-node map; on the hundred-and-fifty
+          // node map the named node can be anywhere, including off frame, and
+          // the connect click landed on empty ground.
+          targetId = await page.evaluate((self) => {
+            const sc = window.mm.scene, d = window.mm.store.doc, el = sc.renderer.domElement;
+            const me = sc.screenPositions().find(p => p.id === self);
+            if (!me) return null;
+            let best = null;
+            for (const p of sc.screenPositions()) {
+              if (p.id === self || !d.nodes[p.id].placed) continue;
+              if (p.x < 40 || p.y < 90 || p.x > el.width - 40 || p.y > el.height - 60) continue;
+              const dd = Math.hypot(p.x - me.x, p.y - me.y);
+              if (!best || dd < best.d) best = { id: p.id, d: dd };
+            }
+            return best && best.id;
+          }, id);
+          targetText = targetId
+            ? await page.evaluate(i => window.mm.store.doc.nodes[i].text, targetId) : null;
           await page.click('[data-t=ed-link]');
         } },
       { at: 450, fn: async () => {
-          const t = await SCREEN_OF(page, targetId);
+          const t = targetId ? await SCREEN_OF(page, targetId) : null;
           if (t) await page.mouse.click(t.x, t.y);
           log.linksAfterConnect = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
           log.connected = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)

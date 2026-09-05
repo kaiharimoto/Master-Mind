@@ -535,16 +535,14 @@ export default [
   id: '13', file: '13_finder_prompt.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { hasPositions: true, hasInstructions: true, mentionsUnplaced: true },
+  requires: { hasPositions: true, hasInstructions: true, mentionsUnplaced: true,
+              noLabelUnderThePanel: true },
   demonstrates: 'the finder prompt export, preamble and position records together', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder prompt export',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
-    await FRAME_ALL(page, 1.10);
     await page.click('[data-t=open-finder]');
     await page.click('[data-t=finder-generate]');
-    // Scroll the prompt to where the node JSON with positions is visible.
-    await page.evaluate(() => window.mm.clearOfPanels());
     // Tall enough to hold the instruction preamble and the first position
     // records in one frame, scrolled to the top rather than into the middle of
     // a record: the artifact is specified as JSON *plus* instructions.
@@ -556,10 +554,33 @@ export default [
       const p = document.getElementById('finder');
       if (p) p.style.width = '640px';
     });
+    // FRAMED AFTER THE PANEL IS ITS FINAL SIZE. The map used to be fitted, then
+    // cleared of a 430 px panel, and only then was the panel widened to 640 —
+    // so the fit had been solved against a band that no longer existed and
+    // 'Opening: where did you park?' was clipped mid-word by the panel edge.
+    await sleepFrames(page, 0, 2);
+    await FRAME_ALL(page, 1.10);
     await sleepFrames(page, 0, 2);
     await H.shot(page, cdp, H.out(this.file));
     const p = await page.evaluate(() => document.querySelector('[data-t=finder-prompt]').value);
+    // No label may be cut by the panel that sits over the map.
+    const clipped = await page.evaluate(() => {
+      const sc = window.mm.scene, el = sc.renderer.domElement;
+      const f = document.getElementById('finder');
+      if (!f) return [];
+      const dpr = el.width / Math.max(window.innerWidth, 1);
+      const r = f.getBoundingClientRect();
+      const box = { x0: r.left * dpr, y0: r.top * dpr, x1: r.right * dpr, y1: r.bottom * dpr };
+      const out = [];
+      for (const [id, q] of sc.labelRects) {
+        if (q.alpha <= 0.02) continue;
+        if (q.x1 > box.x0 && q.x0 < box.x1 && q.y1 > box.y0 && q.y0 < box.y1)
+          out.push(window.mm.store.doc.nodes[id].text);
+      }
+      return out;
+    });
     return { promptChars: p.length, hasPositions: /"pos":\s*\[/.test(p),
+             labelsUnderThePanel: clipped, noLabelUnderThePanel: clipped.length === 0,
              hasInstructions: p.includes('Return ONLY JSON'), mentionsUnplaced: p.includes('"unplaced"') };
   },
 },
