@@ -119,6 +119,25 @@ export class Controls {
 
   // -- picking and dragging ------------------------------------------------
 
+  /**
+   * The last cluster move: what was grabbed, how far it travelled, and how far
+   * any member drifted relative to the others. Moving a district is the only
+   * act in the build that writes many positions at once, so it reports what it
+   * did rather than leaving "the internal arrangement is preserved" on trust.
+   */
+  lastClusterMove: { label: string; members: number; travelled: number; drift: number } | null = null;
+  private clusterStart: { ids: NodeId[]; offsets: Vec3[]; centroid: Vec3 } | null = null;
+
+  private snapshotCluster(ids: NodeId[]) {
+    const ns = ids.map(i => this.store.doc.nodes[i]).filter(Boolean);
+    if (!ns.length) return null;
+    const c: Vec3 = [0, 0, 0];
+    for (const n of ns) { c[0] += n.pos[0]; c[1] += n.pos[1]; c[2] += n.pos[2]; }
+    c[0] /= ns.length; c[1] /= ns.length; c[2] /= ns.length;
+    return { ids: ns.map(n => n.id), centroid: c,
+             offsets: ns.map(n => [n.pos[0] - c[0], n.pos[1] - c[1], n.pos[2] - c[2]] as Vec3) };
+  }
+
   private beginDrag(id: NodeId, cluster: boolean) {
     const n = this.store.node(id);
     if (!n) return;
@@ -132,7 +151,8 @@ export class Controls {
       const label = n.label;
       this.dragCluster = Object.values(this.store.doc.nodes)
         .filter(m => m.placed && m.label === label).map(m => m.id);
-    } else this.dragCluster = null;
+      this.clusterStart = this.snapshotCluster(this.dragCluster);
+    } else { this.dragCluster = null; this.clusterStart = null; }
   }
 
   private moveDrag(sx: number, sy: number) {
@@ -153,7 +173,25 @@ export class Controls {
 
   private endDrag() {
     if (this.dragging) this.hooks.onDragEnd?.();
-    this.dragging = null; this.dragCluster = null;
+    if (this.dragCluster && this.clusterStart && this.dragMoved) {
+      const end = this.snapshotCluster(this.clusterStart.ids);
+      const n0 = this.store.node(this.clusterStart.ids[0]);
+      if (end && n0) {
+        let drift = 0;
+        for (let i = 0; i < end.offsets.length; i++) {
+          const a = this.clusterStart.offsets[i], b = end.offsets[i];
+          drift = Math.max(drift, Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]));
+        }
+        this.lastClusterMove = {
+          label: n0.label || '(unlabelled)', members: end.ids.length,
+          travelled: Math.hypot(end.centroid[0] - this.clusterStart.centroid[0],
+                                end.centroid[1] - this.clusterStart.centroid[1],
+                                end.centroid[2] - this.clusterStart.centroid[2]),
+          drift,
+        };
+      }
+    }
+    this.dragging = null; this.dragCluster = null; this.clusterStart = null;
   }
 
   /** The cluster a node belongs to — used by the hand "grab cluster" pose too. */

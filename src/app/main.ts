@@ -513,6 +513,7 @@ export class App {
     // rather than on the chrome refresh, which does not run every frame.
     this.renderReticle();
     this.renderHidden();
+    this.renderClusterProof();
   }
 
   /** Render at a given virtual time. The capture harness steps this at 1/30 s. */
@@ -595,6 +596,27 @@ export class App {
     const n = this.scene.suppressed;
     chip.className = n > 0 && !this.panelOpen() ? 'show' : '';
     chip.textContent = n > 0 ? `${n} label${n === 1 ? '' : 's'} hidden at this zoom — move closer to read them` : '';
+  }
+
+  /**
+   * What a cluster move actually did. A district move writes many positions at
+   * once — the only act in the build that does — and its guarantee is that the
+   * members keep their arrangement exactly. The numbers are shown rather than
+   * promised: how far the district travelled, and the largest distance any one
+   * member moved relative to the others.
+   */
+  private renderClusterProof() {
+    let chip = document.getElementById('clusterproof');
+    const m = this.controls?.lastClusterMove ?? null;
+    if (!m) { chip?.remove(); return; }
+    if (!chip) {
+      chip = el('div', { id: 'clusterproof', 'data-t': 'cluster-proof' });
+      document.body.appendChild(chip);
+    }
+    chip.className = this.panelOpen() ? '' : 'show';
+    chip.innerHTML =
+      `cluster <b>${esc(m.label)}</b> · ${m.members} nodes moved together<br>` +
+      `travelled <b>${m.travelled.toFixed(2)}</b> · internal arrangement drift <b>${m.drift.toFixed(6)}</b>`;
   }
 
   private renderActivity() {

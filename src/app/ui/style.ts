@@ -141,6 +141,10 @@ tr.map:hover{background:var(--panel)}
 #reticle .n{font-size:11px;letter-spacing:.3px;color:var(--ink-faint);background:var(--panel);
   border:1px solid var(--line);padding:4px 9px;white-space:nowrap}
 #reticle.on .n{color:var(--ink)}
+#clusterproof{position:fixed;left:12px;top:56px;z-index:25;background:var(--panel);border:1px solid #3A2F26;
+  padding:8px 11px;font-size:11px;letter-spacing:.3px;color:var(--ink-dim);display:none;line-height:1.55}
+#clusterproof.show{display:block}
+#clusterproof b{color:var(--ink);font-family:"DejaVu Sans Mono",monospace}
 #hidden{position:fixed;right:12px;top:56px;z-index:24;background:var(--panel);border:1px solid var(--line);
   padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}
 #hidden.show{display:block}

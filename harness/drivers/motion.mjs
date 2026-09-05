@@ -342,7 +342,7 @@ export default [
       // Tracking off, then reframe so the mouse-only tail is shown on a
       // composed map rather than wherever the last gesture left the camera.
       { at: 780, fn: async () => { await page.click('[data-t=hands-chip]'); } },
-      { at: 795, fn: async () => page.evaluate(() => window.mm.frameAll(1.02)) },
+      { at: 770, fn: async () => page.evaluate(() => window.mm.frameAll(1.02)) },
       // Grab one named cluster with the mouse and move it, held long enough
       // that the same members are readable before and after and their spacing
       // can be seen to be unchanged.
@@ -368,11 +368,17 @@ export default [
           await page.mouse.up(); await page.keyboard.up('Alt');
           after = await H.clusterState(page, 'Koji');
         } },
-      { at: 960, fn: async () => page.click('[data-t=tool-spread]') },
-      { at: 1000, fn: async () => page.click('[data-t=tool-gather]') },
-      { at: 1040, fn: async () => page.click('[data-t=tool-two]') },
+      // The camera is held still from 820 to 950 — before the grab, through it
+      // and after the release — so the cluster is the only thing that moves,
+      // and the app's own cluster readout states what it did: how many nodes
+      // travelled together, how far, and the largest drift between them.
+      // Each mouse equivalent then gets its own beat with room to be sampled;
+      // cycle 4's Gather click was too brief to survive a contact sheet.
+      { at: 1000, fn: async () => page.click('[data-t=tool-spread]') },
+      { at: 1070, fn: async () => page.click('[data-t=tool-gather]') },
+      { at: 1140, fn: async () => page.click('[data-t=tool-two]') },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 38, onFrame: script(steps) });
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: script(steps) });
     const uniq = [...new Set(poses)].filter(p => p !== 'none');
     // "Moved" is a question about the CENTROID; "arrangement preserved" is a
     // question about each member's offset FROM that centroid. The old check

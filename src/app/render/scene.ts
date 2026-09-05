@@ -46,7 +46,12 @@ export interface CameraPose { target: THREE.Vector3; yaw: number; pitch: number;
  * the hue's own luminance-preserving grey. A hue whose full chroma is smaller
  * than the step cannot carry it and is floored instead of going achromatic.
  */
-const RECENCY_STEP = 0.20, SETTLED_FLOOR = 0.28;
+// Widened at the settled end. The channel was measurable but did not read at a
+// glance: within a hue family the 10th-to-90th-percentile saturation spread ran
+// only 0.37 to 0.52. With depth no longer competing for saturation (D-014) and
+// chroma far better preserved by the OKLab ladder (D-013), there is room to
+// separate the ends further.
+const RECENCY_STEP = 0.30, SETTLED_FLOOR = 0.22;
 const SETTLED_CACHE = new Map<number, number>();
 function settledSat(c: THREE.Color): number {
   const key = c.getHex();

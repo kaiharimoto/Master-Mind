@@ -352,3 +352,66 @@ Uniform RGB scaling leaves `(max−min)/max` exactly where it was, so the entire
 declared chroma range stays reserved for recency (D-007) and depth reads purely
 as lightness. The fade floor was softened from 0.30 to 0.46 to match the change
 of channel.
+
+
+---
+
+## When each decision first became visible in the evidence
+
+The Auditor found D-013 quoting measurements that cycle 3's own artifact 07 does
+not show — because a decision recorded in the cycle it was *taken* is first
+visible in the cycle whose evidence is captured *after* it. Both are stated here
+so a reader diffing the record against a frame is never misled.
+
+| Decision | Decided in | First visible in | Where to check it |
+|---|---|---|---|
+| D-004 organic-bioluminescent | cycle 1 | cycle 1 | every artifact |
+| D-005 palette | cycle 0 | cycle 1 | 02, 07 |
+| D-006 five states | cycle 0 | cycle 1 | 07 |
+| D-007 recency = chroma | cycle 0 | cycle 1 (span widened cycle 2, cycle 5) | 02 |
+| D-010 two-finger V | cycle 0 | cycle 1 | 17 |
+| D-011 frame-accurate video | cycle 0 | cycle 1 | 16–20 |
+| D-012 label re-anchoring | cycle 2 | cycle 3 | 02, 04, 06 |
+| D-013 one reference lightness | cycle 3 | **cycle 4** (rebuilt in OKLab cycle 4, visible cycle 5) | 06, 07, 10 |
+| D-014 depth attenuates luminance | cycle 3 | **cycle 4** | 10, 18 |
+| D-015 rung spacing and gamut mapping | cycle 4 | **cycle 5** | 07 |
+
+The measurements quoted inside a decision name the artifact they were taken
+from. Where a decision was revised after its first capture, both the original
+and the revision are stated in that decision's own entry rather than the
+original being edited away.
+
+## D-015 · The rungs are absolute, and gamut-mapped in OKLab  · cycle 4 · SETTLED
+
+D-013 fixed the ladder's *ordering* by drawing every hue at one reference
+lightness, and picked the dimmest hue's level so nothing would clip. Measured in
+cycle 4 that cost more than it bought: the world lost about a third of its
+light, on-screen chroma fell about a quarter, and the top two rungs came out
+**0.014 apart — less than the 0.033 residual variance between two nodes in the
+same state.** Above the third rung the ladder was being carried by ring geometry
+alone, which is the failure D-006 exists to prevent.
+
+**Decision.** Each state has an **absolute relative-luminance rung**, spaced
+across the band that is actually available rather than as multipliers of a
+reference:
+
+| | plain | connected | unplaced | search hit | selected |
+|---|---:|---:|---:|---:|---:|
+| rung | 0.30 | 0.44 | 0.57 | 0.69 | 0.80 |
+| measured on 07 (core centre) | 0.346 | 0.507 | 0.669 | 0.795 | 0.897 |
+
+Every step is at least 0.10, and the variance *within* a rung is 0.002 — down
+from 0.033. A hue is taken to its rung in **OKLab**: the hue angle is fixed, the
+lightness lands exactly, and chroma is reduced only as far as the sRGB gamut
+requires there. Plain amber measures saturation 0.96 where the previous
+RGB-space normalisation left it at 0.35.
+
+**What it still costs.** A hue cannot be both very light and fully saturated, so
+the top rungs carry less chroma than the bottom ones — coral keeps about 70 % of
+its chroma at *selected* and all of it at *plain*. That is a property of colour,
+not a choice, and the selected state is additionally carried by its heavy ring.
+
+**Not a reopening of D-005 or D-006.** The palette is the same eight hues; the
+states are the same five, in the same order, still dual-coded with ring
+geometry. What changed is the numbers the lightness channel uses, so that the
+channel does the job D-006 gave it.
