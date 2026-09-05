@@ -132,7 +132,21 @@ export const STATE_LUM: Record<NodeState, number> = {
  * gradient within a state — and it still costs only luminance, so chroma stays
  * reserved for recency (D-014, refined by D-016).
  */
-export const DEPTH_SHARE = 0.55;
+// 0.35, not 0.55.
+//
+// The share of a rung's headroom that depth is allowed to spend. At 0.55 a
+// distant PLAIN node bottomed out at luminance 0.172, which against the 0.10
+// ground is 1.48:1 — a hair over the 1.45 visibility floor in the best case,
+// and under it wherever the local ground is lifted by a filament or a
+// neighbour. That is how nine labels on artifact 02 came to name marks a
+// reader cannot pick out, and it went unnoticed because the check that should
+// have caught it was sampling the wrong frame's coordinates and passing.
+//
+// At 0.35 the same node bottoms out at 0.204, or 1.69:1, with room to spare.
+// Depth still reads as a gradient within each state and the bands stay
+// disjoint, so D-014 and D-016 both hold; what changes is that the floor is
+// now above the threshold at which a mark stops being a mark.
+export const DEPTH_SHARE = 0.35;
 /** The ground the lowest rung fades toward; nothing is drawn below it. */
 const LUM_GROUND = 0.10;
 const LUM_ORDER: NodeState[] = ['plain', 'connected', 'unplaced', 'searchHit', 'selected'];

@@ -48,7 +48,8 @@ const labelAudit = async (page) => {
              tightText: r.tightestPair ? r.tightestPair.map(id => nodes[id].text) : null,
              truncatedText: r.truncatedIds.slice(0, 60).map(id => nodes[id].text) };
   });
-  return { labelsAudited: a.checked, labelWorstOverhangPx: a.worstGapPx,
+  return { arbiterSeq: a.seq,
+           labelsAudited: a.checked, labelWorstOverhangPx: a.worstGapPx,
            labelWorstOverhangOn: a.worstText,
            labelWorstOffFramePx: a.worstOffFramePx, labelWorstOffFrameOn: a.offText,
            labelArbiterAgreesWithDraw: a.checked > 0 && a.worstGapPx === 0,
@@ -101,15 +102,50 @@ const labelAudit = async (page) => {
  * artifact is a payload, not evidence. What survives into the manifest is the
  * count that failed and the worst few, by id and contrast.
  */
-const labelsAndMarkers = async (H, page, file) => {
+const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
   const a = await labelAudit(page);
   const anchors = a.labelAnchors ?? [];
   delete a.labelAnchors;
   const m = await H.sampleDiscs(H.out(file), anchors);
   return { ...a, markerContrast: m,
            labelsWithoutVisibleMarker: m.invisible ?? null,
-           everyDrawnLabelHasAVisibleMarker: m.checked > 0 && m.invisible === 0 };
+           everyDrawnLabelHasAVisibleMarker: m.checked > 0 && m.invisible === 0,
+           // THE AUDIT AND THE IMAGE MUST BE THE SAME FRAME.
+           //
+           // The audit reads the arbiter's stored output. If anything rendered
+           // between the screenshot and the audit, the numbers describe a later
+           // layout than the picture — which is exactly how artifact 02 came to
+           // certify noTwoDrawnLabelsOverlap on a frame with two superimposed
+           // labels in it. Nothing checked; now the arbiter counts its runs and
+           // the capture fails if the count moved across the shot.
+           arbiterSeqAtShot: seqAtShot, arbiterSeqAtAudit: a.arbiterSeq,
+           auditDescribesTheShippedFrame: seqAtShot !== null && seqAtShot === a.arbiterSeq };
 };
+
+/**
+ * Hold the frame still, take the picture, and read the arbiter's counter —
+ * with no render able to slip between them.
+ *
+ * The audit reads the arbiter's stored output, so it describes whatever layout
+ * ran last. Between a screenshot and an audit the animation loop was free to
+ * run again, and cycle 9's artifact 02 certified `noTwoDrawnLabelsOverlap` on a
+ * frame with two superimposed labels because the numbers came from a later
+ * layout than the picture. The loop is stopped for the duration; the counter is
+ * read on both sides of the shot and compared, so this is enforced rather than
+ * hoped for.
+ */
+const seqOf = (page) => page.evaluate(() => window.mm.scene.deconflictSeq);
+const stillShot = async (H, page, cdp, file) => {
+  // The animation loop is stopped so nothing renders on its own, and the
+  // counter is read AFTER the shot: taking a still drives one render of its own
+  // — that render is the shipped frame — so the layout to compare the audit
+  // against is the one that exists when the pixels have been grabbed, not the
+  // one before.
+  await page.evaluate(() => window.mm.stop());
+  await H.shot(page, cdp, file);
+  return seqOf(page);
+};
+const resume = (page) => page.evaluate(() => window.mm.start());
 
 /**
  * How much of the recency channel this frame actually exercises.
@@ -238,7 +274,7 @@ export default [
               // the two claims above passed throughout because neither of them
               // looks at one label against another. These two do.
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyLabelStaysBesideItsNode: true },
+              everyLabelStaysBesideItsNode: true, auditDescribesTheShippedFrame: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
@@ -250,9 +286,9 @@ export default [
     // proof from elsewhere. Frozen here, a cycle-over-cycle pixel diff of 02 IS
     // the position proof. Derived once from frameAll(1.10) at this pose.
     await POSE(page, PIN['02']);
-    await H.shot(page, cdp, H.out(this.file));
+    const seq02 = await stillShot(H, page, cdp, H.out(this.file));
     return { ...await H.modelStats(page), camera: PIN['02'], cameraPinned: true,
-             ...(await labelsAndMarkers(H, page, this.file)) };
+             ...(await labelsAndMarkers(H, page, this.file, seq02)) };
   },
 },
 {
@@ -407,7 +443,7 @@ export default [
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
               everyLabelInsideTheFrame: true, recencyChannelExercised: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyLabelStaysBesideItsNode: true },
+              everyLabelStaysBesideItsNode: true, auditDescribesTheShippedFrame: true },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {
@@ -419,9 +455,9 @@ export default [
     // fitAll, so the whole map and the holding ring are in frame and clear of
     // the pose bar — and stay exactly there in every future cycle.
     await POSE(page, PIN['04']);
-    await H.shot(page, cdp, H.out(this.file));
+    const seq04 = await stillShot(H, page, cdp, H.out(this.file));
     return { ...await H.modelStats(page), camera: PIN['04'], cameraPinned: true,
-             ...(await labelsAndMarkers(H, page, this.file)), ...(await recencySpan(page)) };
+             ...(await labelsAndMarkers(H, page, this.file, seq04)), ...(await recencySpan(page)) };
   },
 },
 {
@@ -431,7 +467,8 @@ export default [
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
               countMatchesMarkers: true, everyHeldLabelAttributable: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true },
+              everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true,
+              auditDescribesTheShippedFrame: true },
   demonstrates: 'the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
   async run(H) {
@@ -541,7 +578,7 @@ export default [
     await POSE(page, { target: aim, yaw: bestYaw, pitch: 0.10, dist: hi });
     await sleepFrames(page, 0, 3);
     const sep = await heldSeparation();
-    await H.shot(page, cdp, H.out(this.file));
+    const seq06 = await stillShot(H, page, cdp, H.out(this.file));
     const st = await H.modelStats(page);
     const frac = await ringHeightFrac();
     // ATTRIBUTION, measured on the frame that ships. A holding ring packs its
@@ -579,7 +616,7 @@ export default [
     // Audience critic counted 10 label strings against 5 markers in one crop of
     // it, and nothing in this driver was looking: every claim above is about
     // the eight HELD names, so the other thirty-odd went unmeasured.
-    return { ...(await labelsAndMarkers(H, page, this.file)),
+    return { ...(await labelsAndMarkers(H, page, this.file, seq06)),
              ...st, holdingOrigin: h.origin, holdingRadius: h.radius,
              heldMarkerYaw: +bestYaw.toFixed(3),
              heldMarkerWorstGapPx: sep.worst, heldMarkerClosestPair: sep.pair,

@@ -490,7 +490,7 @@ export class Scene {
     this.labelRects.clear();
     this.labelNeedsLeader.clear();
     this.lastScreen.clear();
-    for (const q of scr) this.lastScreen.set(q.id, { x: q.x, y: q.y, pxPerWorld: q.pxPerWorld });
+    for (const q of scr) this.lastScreen.set(q.id, { x: q.x, y: q.y, pxPerWorld: q.pxPerWorld, r: q.r });
     const panels: Box[] = [];
     const taken: Box[] = [];
     // Node markers are occluders too: text landing on a disc is as unreadable as
@@ -858,6 +858,7 @@ export class Scene {
     // label to hide, and counting it would overstate what the view is omitting.
     // Counted from the same map the frame is drawn from, so the number the
     // chrome prints and the labels that are actually missing cannot disagree.
+    this.deconflictSeq++;
     this.suppressed = 0;
     this.suppressedIds.length = 0;
     this.shortened = 0;
@@ -920,7 +921,20 @@ export class Scene {
    * audit has to answer is whether the arbiter and the draw agreed in ONE
    * frame, so both sides must come from that frame.
    */
-  private lastScreen = new Map<NodeId, { x: number; y: number; pxPerWorld: number }>();
+  private lastScreen = new Map<NodeId, { x: number; y: number; pxPerWorld: number; r: number }>();
+  /**
+   * How many times the label arbiter has run.
+   *
+   * The audit reads the arbiter's stored output, so it describes whatever frame
+   * the arbiter last laid out — which is the shipped frame only if nothing
+   * rendered between the screenshot and the audit. Nothing guaranteed that, and
+   * the cycle-9 Auditor found the consequence: artifact 02 certified
+   * noTwoDrawnLabelsOverlap on a frame containing two superimposed labels,
+   * because the numbers came from a later layout than the picture. Counted, so
+   * a capture can require that the audit and the image are the same frame
+   * instead of assuming it.
+   */
+  deconflictSeq = 0;
   /** Each label's chosen anchor last frame, in the node's own frame. */
   private lastPlacement = new Map<NodeId, { dx: number; dy: number; w: number; vis: number; far: boolean; span: number }>();
 
@@ -945,7 +959,7 @@ export class Scene {
     worstOffFramePx: number; worstOffFrame: string | null;
     overlappingPairs: number; worstPairOverlapPx: number; worstPair: [string, string] | null;
     tightestPairGapPx: number | null; tightestPair: [string, string] | null;
-    truncated: number; truncatedIds: string[];
+    truncated: number; truncatedIds: string[]; seq: number;
     worstDisplacementPx: number; worstDisplacement: string | null;
     farFromNode: number; farFromNodeIds: string[]; worstReservedDisplacementPx: number;
     worstDisplacementEm: number;
@@ -996,7 +1010,7 @@ export class Scene {
     // that are plainly there measured as missing. Conflating the two is what
     // made the displacement cap look unbound; separating them is the fix for
     // both halves.
-    const fresh = new Map(this.screenPositions().map(q => [q.id, q]));
+    const fresh = byId;   // the arbiter's own projection; see deconflictSeq
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const res = this.labelRects.get(meta.id);
@@ -1080,7 +1094,8 @@ export class Scene {
         const gap = Math.hypot(Math.max(0, -ox), Math.max(0, -oy));
         if (gap < tightest) { tightest = gap; tightestPair = [A.id, B.id]; }
       }
-    return { checked, worstGapPx: Number(worst.toFixed(2)), worst: worstId,
+    return { seq: this.deconflictSeq,
+             checked, worstGapPx: Number(worst.toFixed(2)), worst: worstId,
              worstOffFramePx: Number(off.toFixed(2)), worstOffFrame: offId,
              overlappingPairs: pairs, worstPairOverlapPx: Number(worstArea.toFixed(1)), worstPair,
              tightestPairGapPx: Number.isFinite(tightest) ? Number(tightest.toFixed(2)) : null, tightestPair,
