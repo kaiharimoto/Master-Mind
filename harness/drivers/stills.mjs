@@ -244,16 +244,66 @@ export default [
 },
 {
   id: '06', file: '06_holding_cluster.png', kind: 'png',
-  demonstrates: 'the holding cluster: unplaced nodes in the dashed ring with the holding count', minW: 1920, minH: 1080,
+  // Claims this artifact must carry; a capture that fails one is a FAILED
+  // capture rather than a record with a false flag inside it.
+  requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
+              countMatchesMarkers: true },
+  demonstrates: 'the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
   async run(H) {
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas' });
     const h = await page.evaluate(() => window.mm.store.doc.holding);
-    await POSE(page, { target: h.origin, yaw: 0.35, pitch: 0.10, dist: h.radius * 4.2 });
+    // SOLVE the distance instead of guessing a multiple of the radius. At a
+    // fixed 4.2x the ring sat in the middle of the frame with the bottom half
+    // of the composition empty and the frame's loudest text belonging to a
+    // district this artifact is not about. The distance is searched so the
+    // boundary's own projected height fills the frame, measured through the
+    // app's projection rather than assumed from the radius.
+    const ringHeightFrac = () => page.evaluate((hh) => {
+      const sc = window.mm.scene, el = sc.renderer.domElement;
+      const pts = [];
+      for (let k = 0; k < 24; k++) {
+        const a = (k / 24) * Math.PI * 2;
+        for (const p of [[Math.cos(a), 0, Math.sin(a)], [Math.cos(a), Math.sin(a), 0]])
+          pts.push([hh.origin[0] + p[0] * hh.radius, hh.origin[1] + p[1] * hh.radius,
+                    hh.origin[2] + p[2] * hh.radius]);
+      }
+      let lo = 1e9, hi = -1e9;
+      for (const p of pts) { const q = sc.project(p); if (!q) return null;
+                             lo = Math.min(lo, q.y); hi = Math.max(hi, q.y); }
+      return (hi - lo) / el.height;
+    }, h);
+    const TARGET = 0.80;
+    let lo = h.radius * 1.2, hi = h.radius * 8;
+    for (let i = 0; i < 22; i++) {
+      const mid = (lo + hi) / 2;
+      await POSE(page, { target: h.origin, yaw: 0.35, pitch: 0.10, dist: mid });
+      await sleepFrames(page, 0, 1);
+      const f = await ringHeightFrac();
+      if (f === null || f > TARGET) lo = mid; else hi = mid;
+    }
+    await POSE(page, { target: h.origin, yaw: 0.35, pitch: 0.10, dist: hi });
     await sleepFrames(page, 0, 3);
     await H.shot(page, cdp, H.out(this.file));
     const st = await H.modelStats(page);
-    return { ...st, holdingOrigin: h.origin, holdingRadius: h.radius };
+    const frac = await ringHeightFrac();
+    const held = await page.evaluate(() => {
+      const sc = window.mm.scene, d = window.mm.store.doc, el = sc.renderer.domElement;
+      const ids = Object.values(d.nodes).filter(n => !n.placed).map(n => n.id);
+      const scr = sc.screenPositions().filter(p => ids.includes(p.id));
+      const inFrame = scr.filter(p => p.x > 0 && p.y > 0 && p.x < el.width && p.y < el.height);
+      const badge = document.querySelector('[data-t=holding-count]');
+      return { held: ids.length, onScreen: scr.length, inFrame: inFrame.length,
+               badge: badge ? badge.textContent.replace(/\D+/g, '') : null };
+    });
+    return { ...st, holdingOrigin: h.origin, holdingRadius: h.radius,
+             cameraDistance: +hi.toFixed(3), ringHeightFraction: +Number(frac ?? 0).toFixed(3),
+             heldNodes: held,
+             // The ring is the subject: it has to be the thing the frame is of.
+             holdingRingFillsFrame: (frac ?? 0) >= 0.55,
+             everyHeldNodeInFrame: held.inFrame === held.held,
+             // The badge counts what the frame shows, not what the driver hopes.
+             countMatchesMarkers: held.badge !== null && Number(held.badge) === held.held };
   },
 },
 {
