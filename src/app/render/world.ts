@@ -41,7 +41,35 @@ export function hue(key: ColorKey | string): THREE.Color {
  * and a measurement nobody else can reproduce is not evidence. Rec.709 on
  * linear values is what the pixels in the frame actually are.
  */
-const relLum = (r: number, g: number, b: number) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
+/**
+ * Rec.709 weights on the ENCODED channel values. This is *luma*, not relative
+ * luminance, and it is now named for what it is.
+ *
+ * F-029 replaced Rec.601 coefficients with Rec.709 and stopped there. The
+ * sRGB-to-linear transfer step was never added, so what the report called
+ * relative luminance was Rec.709-weighted luma of gamma-encoded values — and
+ * the whole point of that correction had been that an outsider sampling the
+ * shipped frame should reproduce the manifest. The cycle-8 Art Director did
+ * exactly that, with the standard definition, and measured the two connected
+ * cores at 0.1594 and 0.1817 against a reported spread of 0.0002. A second
+ * yardstick problem inside the fix for the first one.
+ *
+ * The ladder is SOLVED in this space and stays solved in it: measured properly
+ * the bands are still disjoint and the within-rung spread is 29 % of the
+ * smallest inter-rung gap, so the palette is not what is wrong and the Art
+ * Director ruled explicitly that it should not change. What was wrong is the
+ * word. Both numbers are reported now — see relLuminance — so the manifest can
+ * be reproduced by either definition and neither is called something it is not.
+ */
+const luma709 = (r: number, g: number, b: number) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+/**
+ * TRUE relative luminance: linearise the sRGB channels, then weight them.
+ * What a reader measuring the shipped frame with the standard definition gets.
+ */
+export const relLuminance = (r: number, g: number, b: number) =>
+  0.2126 * s2lPub(r) + 0.7152 * s2lPub(g) + 0.0722 * s2lPub(b);
+const s2lPub = (c: number) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
 
 const s2l = (c: number) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
 const l2s = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
@@ -138,7 +166,7 @@ export function stateColour(key: ColorKey | string, state: NodeState): THREE.Col
         const L = (lo + hi) / 2;
         const v = oklab2rgb(L, a0 * t, b0 * t);
         const c = v.map(x => Math.min(1, Math.max(0, x))) as [number, number, number];
-        if (relLum(c[0], c[1], c[2]) < target) lo = L; else hi = L;
+        if (luma709(c[0], c[1], c[2]) < target) lo = L; else hi = L;
       }
       return (lo + hi) / 2;
     };
@@ -148,7 +176,7 @@ export function stateColour(key: ColorKey | string, state: NodeState): THREE.Col
       const t = (lo + hi) / 2;
       const v = oklab2rgb(solveL(t), a0 * t, b0 * t);
       const fits = v.every(x => x >= -0.002 && x <= 1.002) &&
-                   Math.abs(relLum(Math.min(1, Math.max(0, v[0])), Math.min(1, Math.max(0, v[1])),
+                   Math.abs(luma709(Math.min(1, Math.max(0, v[0])), Math.min(1, Math.max(0, v[1])),
                                    Math.min(1, Math.max(0, v[2]))) - target) < 0.004;
       if (fits) { best = v.map(x => Math.min(1, Math.max(0, x))) as [number, number, number]; lo = t; }
       else hi = t;
@@ -191,7 +219,8 @@ void main() {
   mv.xy += position.xy * 2.0 * halfW;
   gl_Position = projectionMatrix * mv;
   vQuad = position.xy * 2.0;
-  // Rec.709, the same weighting the palette is solved against (see relLum).
+  // Rec.709 on encoded values, the same weighting the palette is solved
+  // against (see luma709) — luma, deliberately, not relative luminance.
   // A desaturating mix has to hold luminance constant, and it can only do that
   // if it agrees with the function that set the luminance in the first place.
   float lum = dot(iColor, vec3(0.2126, 0.7152, 0.0722));

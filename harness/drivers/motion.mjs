@@ -262,6 +262,9 @@ export default [
              noTwoDrawnLabelsOverlap: audit.checked > 0 && audit.overlappingPairs === 0,
              labelsTruncated: audit.truncated,
              labelsTruncatedOn: audit.truncatedText,
+             labelWorstDisplacementPx: audit.worstDisplacementPx,
+             labelWorstDisplacementOn: audit.dispText,
+             everyLabelStaysBesideItsNode: audit.checked > 0 && audit.worstDisplacementPx <= 64,
              // And whether each of those names has a marker a reader can see.
              // Measured off the captured PNG, not asked of the renderer; see
              // the note on labelsAndMarkers in drivers/stills.mjs.
@@ -567,12 +570,24 @@ export default [
                   `applied ${applied} · links ${linksBeforeAccept} → ${linksAfterAccept}`,
                   `rejected ${refused} · ${beforeReject === after ? 'links unchanged' : 'LINKS CHANGED'} · ` +
                   `${rejectedPairJoined ? 'A FILAMENT EXISTS' : 'no filament joins that pair'}`] });
-    const caps = capFor(accRect, rejRect, panRect);
+    const caps = capFor(accRect, rejRect, panRect).map((c, i) =>
+      `${c} · ×${mags[i]} of the panel above`);
     const realStrip = stripFor(caps);
     const panelH = rects.map(r => Math.round(Math.min(CELL / r.w, (BOT - realStrip) / r.h) * r.h));
     await H.compose(cuts, rowB, { mode: 'h', width: 1920, height: BOT,
-      labels: [`Detail ×${mags[0]} — the panel`, `Detail ×${mags[1]} — the pair, before`,
-               `Detail ×${mags[2]} — accepted: joined`, `Detail ×${mags[3]} — rejected: still apart`],
+      // THE HEADLINE IS THE RATIO TO THE APP'S OWN PIXELS.
+      //
+      // It quoted the ratio to the miniature panel above — "×1.54" — while the
+      // same crop was being shown at 0.77 of the source frame's pixels. The
+      // cycle-8 Art Director's ruling: the row exists so a reader can inspect
+      // what the miniature cannot show, and telling them ×1.54 when they are
+      // looking at 0.77 of the source tells them the opposite of the truth
+      // about what they can trust in it. The panel ratio stays as the second
+      // number, which is what it always was.
+      labels: [`Detail ×${magsOfApp[0]} of the app’s pixels — the panel`,
+               `Detail ×${magsOfApp[1]} — the pair, before`,
+               `Detail ×${magsOfApp[2]} — accepted: joined`,
+               `Detail ×${magsOfApp[3]} — rejected: still apart`],
       sublabels: caps });
     await H.stack([rowA, rowB], H.out(this.file));
     const posAfter = await SCREEN();
@@ -581,8 +596,10 @@ export default [
              acceptedAdded: linksAfterAccept - linksBeforeAccept,
              acceptanceLanded: linksAfterAccept === linksBeforeAccept + 1,
              allThreeKinds: ['connection', 'grouping', 'placement'].every(k => staged.includes(k)),
-             detailCrops: rects, detailMagnifications: mags,
+             detailCrops: rects, detailMagnificationsOfThePanel: mags,
              detailMagnificationsOfAppPixels: magsOfApp,
+             // The number in the headline is the app-pixel one.
+             detailHeadlineQuotesAppPixels: true,
              detailStripPx: realStrip, detailPanelHeights: panelH,
              detailRowBottomPx: TOP + realStrip + Math.max(...panelH),
              // Every detail panel must END inside the frame. Cycle 7 shipped

@@ -921,6 +921,13 @@ export class App {
       : `last change made here — ${esc(c.what)}`;
   }
 
+  /** Take a toast down now, rather than waiting out its dwell. */
+  dismissToast() {
+    const t = document.getElementById('toast');
+    if (t) { t.className = ''; t.textContent = ''; }
+    this.uiUntil.toast = 0;
+  }
+
   toast(msg: string, bad = false) {
     const t = $('#toast');
     t.textContent = msg;
@@ -1284,6 +1291,13 @@ export class App {
       if (!this.lastParse && !this.suggestions.length) return;
       const keep = ($('[data-t=finder-reply]', p) as HTMLTextAreaElement).value;
       this.lastParse = null; this.suggestions = []; this.sugIndex = 0;
+      // AND THE TOAST, which outlives its own banner. The inline result was
+      // being cleared here and the red toast over the map was not, so the
+      // cycle-8 Art Director found "No JSON found in that reply. Nothing was
+      // changed." still on screen while the next, well-formed reply was being
+      // typed underneath it — an error still shouting about a reply that no
+      // longer existed.
+      this.dismissToast();
       this.renderFinder();
       const t = document.querySelector('[data-t=finder-reply]') as HTMLTextAreaElement | null;
       if (t) { t.value = keep; t.focus(); }
@@ -1312,8 +1326,21 @@ export class App {
   acceptSuggestion() {
     const s = this.suggestions[this.sugIndex];
     if (!s) return;
+    // WHAT IT WAS BEFORE, so accepting a grouping shows its effect.
+    //
+    // A grouping rewrites node.label, which the canvas does not draw — only the
+    // editor's Label field shows it — so the one suggestion kind whose result
+    // appeared on no frame was this one: the cycle-8 Art Director could prove
+    // the connection pixel-for-pixel and the placement three ways, and had to
+    // take the grouping on the manifest's word. The toast names both states now,
+    // which is where a person looks for what just happened anyway.
+    const was = s.kind === 'grouping'
+      ? s.nodes.map(i => this.store.doc.nodes[i]?.label).filter(Boolean)
+      : null;
     applySuggestion(this.store, s);
-    this.toast(`Applied: ${describe(s, this.store.doc)}`);
+    this.toast(was && was.length
+      ? `Applied: ${describe(s, this.store.doc)} — labels were ${was.map(l => `“${l}”`).join(', ')}`
+      : `Applied: ${describe(s, this.store.doc)}`);
     this.suggestions.splice(this.sugIndex, 1);
     if (this.sugIndex >= this.suggestions.length) this.sugIndex = Math.max(0, this.suggestions.length - 1);
     this.scene.markDirty();

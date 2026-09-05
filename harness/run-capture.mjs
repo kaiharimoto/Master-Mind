@@ -91,6 +91,17 @@ const crop = (src, out, x, y, w, h) => new Promise((res, rej) => {
  * PNG is the value the shader wrote. Decoding it first measured plain at 0.071
  * against a 0.26 rung and would have made every number in D-015 look wrong.
  */
+/**
+ * Both yardsticks, at every sampled point.
+ *
+ * `luma` is Rec.709 on the raw bytes — the framebuffer value the shader wrote,
+ * which is what the palette is solved in. `relLuminance` linearises first and
+ * is the standard definition, which is what an outside reader measuring the
+ * shipped PNG gets. F-029 corrected the coefficients and left the transfer
+ * function, so the manifest reported the first and called it the second, and
+ * the cycle-8 Art Director measured 0.1594 against a claimed 0.4242. Reporting
+ * both means either measurement reproduces and neither carries the other's name.
+ */
 const samplePixels = async (png, points, patch = 1) => {
   const raw = await new Promise((res) => {
     const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
@@ -109,17 +120,19 @@ const samplePixels = async (png, points, patch = 1) => {
   const [W, H] = dim;
   const out = {};
   if (!raw.length || !W || !H) return out;
+  const s2l = (c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
   for (const pt of points) {
-    let sum = 0, n = 0;
+    let sum = 0, lin = 0, n = 0;
     for (let dy = -patch; dy <= patch; dy++) for (let dx = -patch; dx <= patch; dx++) {
       const x = pt.x + dx, y = pt.y + dy;
       if (x < 0 || y < 0 || x >= W || y >= H) continue;
       const i = (y * W + x) * 3;
       if (i + 2 >= raw.length) continue;
       sum += (0.2126 * raw[i] + 0.7152 * raw[i + 1] + 0.0722 * raw[i + 2]) / 255;
+      lin += 0.2126 * s2l(raw[i] / 255) + 0.7152 * s2l(raw[i + 1] / 255) + 0.0722 * s2l(raw[i + 2] / 255);
       n++;
     }
-    if (n) out[pt.id] = Number((sum / n).toFixed(4));
+    if (n) out[pt.id] = { luma: Number((sum / n).toFixed(4)), relLuminance: Number((lin / n).toFixed(4)) };
   }
   return out;
 };

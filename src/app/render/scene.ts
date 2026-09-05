@@ -573,6 +573,23 @@ export class Scene {
           // same certainty. A small margin settles it.
           const M = 8;
           if (x0 < M || y0 < M || x0 + cand.w > VW - M || y0 + sh.h > VH - M) continue;
+          // A LABEL STAYS BESIDE THE THING IT NAMES. Hard cap, not a score.
+          //
+          // The far ring bought about thirty more drawn labels on the whole-map
+          // frames and paid for them in orphans: the cycle-8 Art Director
+          // counted 18 label runs in artifact 02 sitting entirely clear of every
+          // node, against 1 in cycle 7, with label ink overhanging the node
+          // field by 277 px against 46. Its ruling — and this call is the Art
+          // Director's to make under §04 — is that displacement is capped at
+          // about two line-heights and a label that cannot be placed inside
+          // that is dropped rather than relocated. A suppressed label costs one
+          // label; an orphan costs one label and adds a false object, text that
+          // looks like it names something and does not.
+          //
+          // The wider anchor search is kept, because it demonstrably helped the
+          // sparse frames — the directions survive, the reach does not.
+          const MAX_DISP = 3.0;   // em, about two line-heights at this metric
+          if (Math.hypot(cx, cy) > MAX_DISP) continue;
           // NOR IS ACROSS THE LABEL'S OWN MARKER. A node's own disc is left out
           // of the coverage sum — a label is supposed to sit beside its node
           // and would otherwise be penalised for doing so — but that is not a
@@ -806,12 +823,14 @@ export class Scene {
     overlappingPairs: number; worstPairOverlapPx: number; worstPair: [string, string] | null;
     tightestPairGapPx: number | null; tightestPair: [string, string] | null;
     truncated: number; truncatedIds: string[];
+    worstDisplacementPx: number; worstDisplacement: string | null;
     anchors: { id: string; x: number; y: number; r: number;
                x0: number; y0: number; x1: number; y1: number }[];
   } {
     const el = this.renderer.domElement;
     let worst = 0, worstId: string | null = null, checked = 0;
     let off = 0, offId: string | null = null;
+    let worstDisp = 0, worstDispId: string | null = null;
     // EVERY DRAWN LABEL'S BOX, kept so the drawn set can be compared against
     // ITSELF.
     //
@@ -855,6 +874,16 @@ export class Scene {
       // as one that was never drawn. Counted here so the frame can say it.
       if (this.text.isTruncated(i)) truncatedIds.push(meta.id);
       const q = byId.get(meta.id);
+      // HOW FAR THIS NAME TRAVELLED FROM WHAT IT NAMES, in pixels, measured on
+      // the drawn box. The audit reported 150 labels drawn and never once asked
+      // how far each had moved, which is why eighteen orphans on artifact 02
+      // reached a critic instead of a gate.
+      if (q) {
+        const nx = Math.min(Math.max(q.x, drawn.x0), drawn.x1);
+        const ny = Math.min(Math.max(q.y, drawn.y0), drawn.y1);
+        const d = Math.hypot(q.x - nx, q.y - ny);
+        if (d > worstDisp) { worstDisp = d; worstDispId = meta.id; }
+      }
       if (q) anchors.push({ id: meta.id, x: Number(q.x.toFixed(2)), y: Number(q.y.toFixed(2)),
                             r: Number(q.r.toFixed(2)),
                             x0: Number(drawn.x0.toFixed(2)), y0: Number(drawn.y0.toFixed(2)),
@@ -891,7 +920,8 @@ export class Scene {
              worstOffFramePx: Number(off.toFixed(2)), worstOffFrame: offId,
              overlappingPairs: pairs, worstPairOverlapPx: Number(worstArea.toFixed(1)), worstPair,
              tightestPairGapPx: Number.isFinite(tightest) ? Number(tightest.toFixed(2)) : null, tightestPair,
-             truncated: truncatedIds.length, truncatedIds, anchors };
+             truncated: truncatedIds.length, truncatedIds, anchors,
+             worstDisplacementPx: Number(worstDisp.toFixed(1)), worstDisplacement: worstDispId };
   }
 
   /**

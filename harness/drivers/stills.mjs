@@ -74,6 +74,9 @@ const labelAudit = async (page) => {
            // The frame said "0 labels hidden" while 43 of 150 were cut.
            labelsTruncated: a.truncated,
            labelsTruncatedOn: a.truncatedText,
+           labelWorstDisplacementPx: a.worstDisplacementPx,
+           labelWorstDisplacementOn: a.dispText,
+           everyLabelStaysBesideItsNode: a.checked > 0 && a.worstDisplacementPx <= 64,
            labelAnchors: a.anchors };
 };
 
@@ -559,7 +562,12 @@ export default [
   id: '07', file: '07_five_node_states.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { ok: true, ladderMonotonic: true, ladderStepsClearScatter: true },
+  // THE LADDER MUST HOLD IN THE READER'S YARDSTICK, NOT ONLY IN THE BUILDER'S.
+  // It was gated on the framebuffer measure alone, which is the space the
+  // palette is solved in — so the gate could not fail for the reason the
+  // cycle-8 Art Director's measurement raised. Both are required now.
+  requires: { ok: true, ladderMonotonic: true, ladderStepsClearScatter: true,
+              ladderMonotonicInRelLuminance: true, ladderStepsClearScatterInRelLuminance: true },
   demonstrates: 'the five node states side by side with the legend, with the luminance ladder measured off the shipped frame', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Five node states staged',
   async run(H) {
@@ -601,23 +609,47 @@ export default [
                                               x: Math.round(p.x), y: Math.round(p.y) }));
     });
     const lum = await H.samplePixels(H.out(this.file), centres);
-    const byState = {};
-    for (const c of centres) {
-      const st = states[c.text];
-      if (!st || lum[c.id] == null) continue;
-      (byState[st] ??= []).push(lum[c.id]);
-    }
     const ORDER = ['plain', 'connected', 'unplaced', 'searchHit', 'selected'];
     const mean = (a) => a.reduce((x, y) => x + y, 0) / a.length;
-    const rung = {}, spread = {};
-    for (const st of ORDER) if (byState[st]) {
-      rung[st] = Number(mean(byState[st]).toFixed(4));
-      spread[st] = Number((Math.max(...byState[st]) - Math.min(...byState[st])).toFixed(4));
-    }
-    const present = ORDER.filter(st => rung[st] != null);
-    const steps = present.slice(1).map((st, i) => Number((rung[st] - rung[present[i]]).toFixed(4)));
+    // THE LADDER, IN BOTH YARDSTICKS. `luma` is the framebuffer value the
+    // palette is solved in; `relLuminance` is the standard definition an
+    // outside reader measures the shipped PNG with. The report claimed the
+    // second and printed the first, and the cycle-8 Art Director caught it.
+    // Neither is dropped: the ladder has to hold in both, and if it ever holds
+    // in only one, the frame says which.
+    const ladder = (pick) => {
+      const byState = {};
+      for (const c of centres) {
+        const st = states[c.text];
+        if (!st || lum[c.id] == null) continue;
+        (byState[st] ??= []).push(pick(lum[c.id]));
+      }
+      const rung = {}, spread = {};
+      for (const st of ORDER) if (byState[st]) {
+        rung[st] = Number(mean(byState[st]).toFixed(4));
+        spread[st] = Number((Math.max(...byState[st]) - Math.min(...byState[st])).toFixed(4));
+      }
+      const present = ORDER.filter(st => rung[st] != null);
+      const steps = present.slice(1).map((st, i) => Number((rung[st] - rung[present[i]]).toFixed(4)));
+      return { rung, spread, steps, present,
+               monotonic: steps.every(v => v > 0),
+               minStep: steps.length ? Math.min(...steps) : 0,
+               maxSpread: Math.max(0, ...present.map(st => spread[st])),
+               clears: steps.length > 0 && Math.min(...steps) > Math.max(0, ...present.map(st => spread[st])) };
+    };
+    const L = ladder(v => v.luma), R = ladder(v => v.relLuminance);
+    const rung = L.rung, spread = L.spread, steps = L.steps, present = L.present;
     return { statesInFrame: [...seen].sort(), byNode: states,
-             measuredRungs: rung, withinRungSpread: spread, rungSteps: steps,
+             // Named for what it is: Rec.709 weights on the encoded framebuffer
+             // bytes. It is NOT relative luminance and is no longer called that.
+             measuredRungsLuma709: rung, withinRungSpreadLuma709: spread, rungStepsLuma709: steps,
+             // And the standard definition, linearised, which is what a critic
+             // sampling this PNG will get.
+             measuredRungsRelLuminance: R.rung, withinRungSpreadRelLuminance: R.spread,
+             rungStepsRelLuminance: R.steps,
+             ladderMonotonicInRelLuminance: R.monotonic,
+             ladderStepsClearScatterInRelLuminance: R.clears,
+             minRungStepRelLuminance: R.minStep, maxWithinRungSpreadRelLuminance: R.maxSpread,
              // The ladder must climb, and every step must clear the within-rung
              // scatter by a margin — otherwise two nodes in the same state are
              // as far apart as two nodes in different ones.
