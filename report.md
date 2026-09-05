@@ -250,6 +250,31 @@ cycle-2 response: a probe of the new deconflictor rendered the old one.
 if the build fails, and records the bundle's size and sha256 in the manifest, so
 the evidence set states which build produced it. **Verified.**
 
+**F-017 · The holding boundary was drawn at half the radius the model declares.**
+Found by the Audience in cycle 4 as "three unplaced nodes sit outside the dashed
+circle", and it was not a projection artefact: the shell's uniform is the quad's
+half-extent while the dashed ring is drawn at half the quad, so passing the
+declared radius drew a circle of **half** that radius. Members of the holding
+cluster had been sitting outside the very boundary the `holding N` chip was
+counting them into, in every cycle.
+**Fix:** the uniform takes twice the intended world radius, and the radius is
+solved each frame from the members' own projected positions — the boundary is
+drawn in screen space while its members sit in 3D, so a member nearer the camera
+can project outside a circle that contains it in world terms. **Verified**: all
+eight members inside the boundary at the framing artifact 06 uses.
+
+**F-018 · A capture could report a false machine-checked claim as `captured`.**
+See the cycle-3 section, finding H1. Recorded here because it is the class of
+fault §09 names, not merely an artifact defect: `clusterMoved: false,
+clusterInternalArrangementPreserved: false` sat inside a record whose status read
+`captured` with `error: null` for two consecutive cycles, because verification
+looked only at resolution, frame rate and duration.
+**Fix:** a driver declares the claims its artifact must carry, and a capture that
+fails one is a **failed capture**. Sixteen of the twenty artifacts declare theirs.
+The underlying behaviour turned out to be correct — the grab always translated
+the cluster rigidly, max member drift `0.000000` — so this was a false negative,
+which is exactly why it survived: nothing looked, and the frames looked fine.
+
 ---
 
 ## Deviations ledger
@@ -555,6 +580,64 @@ one instance of it went undetected for two cycles because nothing was looking.
 | H16 | Audience · a17 | Through the pose section the map is too small for node labels, so spread, gather and grab read as a slight change of scale rather than as distinguishable operations | **Fixed by making the operation legible as a number.** The hand panel carries the live **view distance** alongside the pose and its metrics, the way artifact 05's before/after readout does for a single pose — so the three map-scale operations are distinguishable at the framing they need in order to have room to happen at all. |
 
 
+## Cycle 4 — the critics' findings and what was done
+
+**Total 86.75/100 · every category above its minimum · NOT regression-free.**
+88.0 → 86.75. The regression is mine and its cause is a single change: the
+lightness normalisation that fixed cycle 3's inverted state ladder cost more
+than it bought.
+
+| Critic | Category | C3 | C4 | Weight | Minimum | |
+|---|---|---:|---:|---:|---:|---|
+| The Audience | 01 Core workflow | 22 | 21.5 | 25 | 20 | −0.5 |
+| The Audience | 02 Landmarks live | 22 | 22 | 25 | 20 | — |
+| The Auditor | 03 One model and sacred positions | 17.5 | 17.5 | 20 | 17 | — · **hard gate met** |
+| The Auditor | 04 Evidence and report integrity | 13.5 | 13 | 15 | 13 | −0.5 · **hard gate met** |
+| The Art Director | 05 Quality compliance | 8.5 | 8.5 | 10 | 8 | — |
+| The Art Director | 06 Finder round-trip | 4.5 | 4.25 | 5 | 4 | −0.25 |
+| | **Total** | 88.0 | **86.75** | 100 | | |
+
+Twenty-one findings: none blocking, eight major, thirteen minor.
+
+**The Auditor named the two concrete losses that cost the regression-free
+verdict**, and both were caption-and-crop faults rather than anything structural:
+artifact 12's provenance line overflowed and took the `camera frozen from 11`
+clause off the frame — *"the whole licence for reading its pixels the way I read
+them"* — and artifact 03's right panel sliced labels mid-word at its edge. Both
+are fixed below.
+
+### The eight major findings
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| J1 | Audience · a06 | The reference-lightness fix drew every hue at the dimmest hue's level, so the world lost about half its luminance and a quarter to a third of its chroma — *"the chroma cost the record says was avoided"* | **Accepted in full; the fix was half-done and is now finished in OKLab.** Each state has an **absolute** relative-luminance rung — 0.30 / 0.44 / 0.57 / 0.69 / 0.80 — and a hue is taken to its rung with its hue angle fixed and chroma reduced only as far as the sRGB gamut requires. Measured on 07: **selected 0.897, search hit 0.795, unplaced 0.669, connected 0.507, plain 0.346.** Plain amber's saturation is back to **0.96 from 0.35**. `DIRECTION.md` D-015. |
+| J2 | Art Director · a07 | The ladder is monotonic but its top is collapsed: the selected-to-search-hit step is **0.014** while two nodes in the *same* state differ by 0.033 — above the third rung the ladder is carried by ring geometry alone | **Fixed, and measured against the number asked for.** Every step is now at least **0.102**, against the 0.05 requested; the residual variance *within* a rung is **0.002**, down from 0.033. |
+| J3 | Auditor · a12 | The provenance line is cut mid-word and has lost the `camera frozen from 11` clause, which is what licenses reading identical pixels between 11 and 12 as identical world positions | **Fixed.** Captions are two lines and each is sized to its own panel, so a clause can no longer be pushed off the frame — a caption that will not fit is split, never truncated. `CAMERA FROZEN FROM 11` is set in caps on the second line. |
+| J4 | Auditor · a06 | `DIFF.json` called six artifacts *unchanged* while the node-state ladder was rebuilt underneath them — the unplaced core fell from 0.997 to 0.461, which is the entire subject of artifact 06. SSIM is blind to it because the structure did not move | **Fixed as prescribed.** The diff now masks to pixels above the ground and compares **peak luminance, mean luminance and lit-pixel count** cycle over cycle, beside SSIM. A move of more than 10 % in any of them forces `changed` regardless of SSIM, with the numbers in the row. |
+| J5 | Auditor · a03 | Nothing on the AR hero or on artifact 16 says the Android surface is Chromium under a device profile rather than a physical device — the disclosure 05, 11 and 12 all carry | **Fixed.** The lens tag carries it on every frame of both, read from the runtime rather than typed: `chromium 141.0.7390.37 · android device profile` and, in AR, `real orientation + touch events · no camera pass-through`. |
+| J6 | Audience · a03 | Nothing in the picture marks the hero as AR rather than as a second canvas, and there is no in-frame note of what stands in for the phone camera | **Fixed, both halves.** The absence is declared on the frame in the same style as artifact 05's synthesised-capture banner. And the AR lens has an affordance a desk lens has no use for: a **reticle that names the node the device is pointed at**, visible in a still. |
+| J7 | Auditor · a17 | The closed-fist cluster grab — the only operation in the build that writes many positions at once — is the one write path never shown as a frozen-camera before and after | **Fixed, and made a product feature rather than a capture trick.** Every cluster move is now measured by the app and stated on screen: `cluster Koji · 16 nodes moved together · travelled 17.52 · internal arrangement drift 0.000000`. The take holds its camera still through the grab beat, so the cluster is the only thing that moves. |
+| J8 | Art Director · a02 | A second tier of labels is faded but not gone, so the whole-brain view reads as two competing text layers — one legible, one a mid-grey smear | **Fixed.** The faded tier ramps to **zero by 16 % coverage**, panels and the frame edge are occluders so no label is cut mid-word, and truncation scales with node density. What it costs is stated on the frame — `N labels hidden at this zoom — move closer to read them` — counted only for nodes actually on screen. |
+
+### The thirteen minor findings
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| J9 | Audience · a06 | Three of the eight unplaced nodes sit **outside** the drawn dashed boundary that the `holding 8` chip counts them into | **Fixed, and it was a real rendering bug.** The shell's uniform is a quad half-extent and the ring is drawn at half the quad, so the boundary had always been drawn at **half the radius the model declares**. It is now sized from the members' own projections every frame, so every node the chip counts is visibly inside it. Recorded as F-017. |
+| J10 | Auditor · a03 | The right panel slices labels mid-word at its edge | **Fixed.** The frame edge is reserved in the arbiter, so a label whose best anchor still crosses it re-anchors inward or fades — the same treatment a buried label gets. |
+| J11 | Art Director · a14 | The still contradicts itself: the pill reads `Rejected — no trace left on the map` over a panel reading `Suggestion 1 of 4` with an untouched card. Two moments in one frame prove neither | **Fixed as prescribed.** 14 is a rejection-boundary pair: the staged card with the named pair on the left, the same map one click later on the right, with `links unchanged · queue advanced` measured under it. |
+| J12 | Auditor · a20 | `substantive: true` was set on a reworded description while the frames were identical at every timestamp | **Fixed.** `substantive` now requires a **measured** output change — the SSIM or subject-luminance test must fire — and a pure description edit is reported as `recipe reworded, output unchanged`. |
+| J13 | Auditor · a11 | Both twin composites run on the 11-node map, so the one-model claim is demonstrated only at eleven nodes | **Fixed without moving the artifact off the map where a reader can count.** The twin now also opens the **150-node map on both surfaces in the same take** and prints its position-ledger digest on each half: `map-fermentation 150 nodes · pos sha 2e0c939c6c — same both sockets`. |
+| J14 | Auditor · a07 | D-013 quotes measurements that cycle 3's own artifact 07 does not show | **Fixed, and the general form of the fault addressed.** `DIRECTION.md` now carries a table giving, for every decision, the cycle it was **taken** in *and* the cycle whose evidence **first shows it**. A decision recorded in the cycle it was taken cannot be visible until the next capture, and the record now says so rather than leaving a reader to find the mismatch. |
+| J15 | Art Director · a07 | The connected ring is the least assertive lit state — it reads as a dark halo rather than as a ring | **Fixed.** Ring geometry draws at a fixed **signature lightness** independent of the core's rung, so the core's rung alone carries the ladder and the geometry alone carries the signature. |
+| J16 | Art Director · a13 | No frame shows a suggestion rejected for trying to relocate an already-placed node | **Fixed.** The rejection existed in the validator and in the reply fixture, but was being pushed off the end of a three-item list. Rejections that **protected a position** now sort first, and the frame leads with `placement of "Positions are the memory" — that node is already placed — placed positions are not the finder's to change`. |
+| J17 | Audience · a17 | No captioned mouse equivalent for Gather, though the button is in every frame | **Fixed.** It was firing, but too briefly to survive a contact sheet. Each mouse equivalent now gets its own beat with room to be sampled, and the take runs 41 s. |
+| J18 | Audience · a17 | Nothing identifies which cluster the fist grabbed or shows its arrangement preserved | **Fixed** — the cluster readout in J7 names it and prints the drift. |
+| J19 | Audience · a08 | The editor panel clips a label mid-word in both halves, and the same appears in 09 | **Fixed** — panels are occluders in the arbiter now (J8). |
+| J20 | Audience · a04 | A minority of labels are faded to near-invisibility, so the frame does not quite deliver "the entire map legible" | **Addressed by reducing the number rather than by adding a floor.** Truncation scales with density, and the candidate set is seventeen anchors, so fewer labels reach the suppressed tier; what remains hidden is **stated on the frame with a count**. A floor was declined for the third cycle running, for the reason the Art Director gives in J8: a half-drawn label is the smear. |
+| J21 | Art Director · a02 | Recency chroma is present but does not read at a glance: within a hue family the 10th–90th percentile saturation spread is only 0.37–0.52 | **Fixed by widening the span at the settled end**, which there is now room for: depth no longer competes for saturation (D-014) and the OKLab ladder preserves far more chroma. The channel is unchanged; the span moved from 0.20 to 0.30 of a hue's own chroma. |
+
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
@@ -619,17 +702,24 @@ cycle 2 makes it.
 
 ## Capture failures
 
-**No artifact has failed its check in any cycle.** Both cycles recorded 20/20
+**One artifact has failed a capture: artifact 14, in the cycle-5 run.** It was a
+driver fault, it was recorded as `driver-error` by the harness rather than
+passed off as captured, it was fixed at the driver and recaptured before the set
+was frozen, and it is the first row below. Every other cycle recorded 20/20
 captured as defined, at or above every declared minimum resolution and duration.
-The failures below are harness faults, recorded because §09 makes a silently
-re-scoped or swallowed failure fatal — a failure is a finding here even when it
-costs no artifact.
+
+The rest are harness faults that cost no artifact. All of them are recorded
+because §09 makes a silently re-scoped or swallowed failure fatal — a failure is
+a finding here even when nothing is lost by it.
 
 | Cycle | Fault | What it cost | Resolution |
 |---|---|---|---|
+| 5 | Artifact 14's driver was captured at 960 px wide, and below 1200 px the surface drops the desk-only controls — including the Finder button the artifact is about. `page.click` timed out and the capture was recorded `driver-error` | One artifact in the cycle-5 run; recaptured before the set was frozen | The driver was wrong, not the rule: a narrow surface *should* drop desk controls. Captured at 1280 px instead, which is above the threshold and still a mild downscale into a 960 px panel |
 | 1 | The critics read the live `evidence/` directory while fixes were being recaptured into it; `17_hand_vocabulary.mp4` changed under a review and was briefly unreadable | One critic read a half-written file | Each cycle is now frozen to an immutable `evidence/cycles/cycle-N/` before any critic is dispatched, and the briefs point there |
 | 1 | The twin driver dragged a node on the Android surface with mouse events, on a surface that listens only for touch — nothing moved, and the sync proof would have been vacuous | Nothing: caught before it shipped | Switched to CDP touch events, and the driver now **throws** if the dragged node's position is unchanged |
 | 2 | `run-capture.mjs` exited non-zero *after* all 20 artifacts had passed their checks — a promise left over from a closed browser rejecting during teardown. `cycle.mjs` printed `capture run reported a failure` with no cause attached | Nothing to the evidence set; the diagnostic was lost | Late unhandled rejections and exceptions are now caught, named, written to `MANIFEST.lateFaults` and printed, and `cycle.mjs` reports the exit status and signal |
 
-Every capture failure that has cost an artifact: **none.** Every capture whose
-definition was narrowed to make it pass: **none.**
+Every capture failure that has cost an artifact **in a frozen, reviewed set**:
+none — artifact 14's cycle-5 failure was fixed and recaptured before the set was
+frozen, and the failure is recorded here rather than erased by the recapture.
+Every capture whose **definition** was narrowed to make it pass: **none.**

@@ -185,9 +185,13 @@ export default [
   demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
   async run(H) {
-    // Captured at the panel's own size so the composite needs no downscaling.
+    // 1280 wide, not 960: below 1200 px the surface drops the desk-only controls
+    // — including the Finder button this artifact is about — which is a product
+    // rule, not a capture inconvenience. Cycle 5's first attempt at 960 failed
+    // its capture on exactly that, and the driver was wrong, not the rule.
+    // 1280 -> 960 is a mild downscale and keeps the panel legible.
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk',
-                                        width: 960, height: 1080 });
+                                        width: 1280, height: 1080 });
     await FRAME_ALL(page, 1.12);
     await page.click('[data-t=open-finder]');
     await page.evaluate(() => window.mm.clearOfPanels());
