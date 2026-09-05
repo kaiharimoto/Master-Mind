@@ -41,11 +41,18 @@ export const PIN = {
 const labelAudit = async (page) => {
   const a = await page.evaluate(() => {
     const r = window.mm.scene.labelDrawAudit();
-    return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null };
+    return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null,
+             offText: r.worstOffFrame ? window.mm.store.doc.nodes[r.worstOffFrame].text : null };
   });
   return { labelsAudited: a.checked, labelWorstOverhangPx: a.worstGapPx,
            labelWorstOverhangOn: a.worstText,
-           labelArbiterAgreesWithDraw: a.checked > 0 && a.worstGapPx === 0 };
+           labelWorstOffFramePx: a.worstOffFramePx, labelWorstOffFrameOn: a.offText,
+           labelArbiterAgreesWithDraw: a.checked > 0 && a.worstGapPx === 0,
+           // The arbiter's box agreeing with the drawn box says nothing about
+           // either being ON SCREEN. Two labels shipped in cycle 7 with ink in
+           // column 0 of a frame whose own audit reported a worst overhang of
+           // 0 px, because nothing compared a box against the viewport.
+           everyLabelInsideTheFrame: a.checked > 0 && a.worstOffFramePx === 0 };
 };
 
 /**
@@ -120,7 +127,8 @@ export default [
 },
 {
   id: '02', file: '02_canvas_large_map.png', kind: 'png',
-  requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true },
+  requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
+              everyLabelInsideTheFrame: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
@@ -225,7 +233,7 @@ export default [
 {
   id: '04', file: '04_mind_expansion.png', kind: 'png',
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
-              recencyChannelExercised: true },
+              everyLabelInsideTheFrame: true, recencyChannelExercised: true },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {

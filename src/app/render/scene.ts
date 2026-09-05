@@ -428,15 +428,22 @@ export class Scene {
     // reads as a rendering fault rather than as a label that did not fit. Off-
     // frame margins are reserved so such a label re-anchors inward or fades,
     // the same treatment a buried one gets.
+    // The frame edge is a HARD constraint, not an occluder to be scored.
+    //
+    // Seeding the off-frame margins as coverage only demoted a clipped label to
+    // the dim tier: a label with 3 % of its area past the edge still drew at
+    // two-thirds weight with its first glyph cut in half — 'Salt tolerance
+    // curve' and 'Heterofermentative' both had ink in column 0 of artifact 10,
+    // in a frame whose own audit reported a worst overhang of 0 px, because the
+    // audit compared the drawn box against the RESERVED box and neither was
+    // ever compared against the viewport. A candidate that does not fit inside
+    // the frame is now rejected outright; a label with no candidate that fits
+    // is not drawn, and is counted in the suppressed total like any other.
     const VW = this.renderer.domElement.width, VH = this.renderer.domElement.height;
-    const OFF = 4000;
-    panels.push({ i: -1, x0: -OFF, y0: -OFF, x1: 0, y1: VH + OFF, pri: -1, z: -1 });
-    panels.push({ i: -1, x0: VW, y0: -OFF, x1: VW + OFF, y1: VH + OFF, pri: -1, z: -1 });
-    panels.push({ i: -1, x0: -OFF, y0: -OFF, x1: VW + OFF, y1: 0, pri: -1, z: -1 });
-    panels.push({ i: -1, x0: -OFF, y0: VH, x1: VW + OFF, y1: VH + OFF, pri: -1, z: -1 });
     taken.push(...panels);
     for (const b of boxes) {
       const sh = shape[b.i];
+      const own = byId.get(this.runMeta[b.i].id);
       const span = this.text.spans[b.i];
       const glyphs = span.glyphRight;
       // Widths this label is willing to be drawn at, longest first. A label is
@@ -458,7 +465,7 @@ export class Scene {
           if (widths.length >= 4) break;
         }
       }
-      let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0 };
+      let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0, fits: false };
       for (const cand of widths) {
         const area = Math.max(cand.w * sh.h, 1);
         // A shortened label is only taken if a longer one could not be placed,
@@ -472,6 +479,17 @@ export class Scene {
           // with bone glyphs at 0.87 sitting across it — so a marker counts
           // against a placement exactly as heavily as another label does, and
           // feeds the same tier decision.
+          // Off the frame is not a placement at all.
+          if (x0 < 0 || y0 < 0 || x0 + cand.w > VW || y0 + sh.h > VH) continue;
+          // NOR IS ACROSS THE LABEL'S OWN MARKER. A node's own disc is left out
+          // of the coverage sum — a label is supposed to sit beside its node
+          // and would otherwise be penalised for doing so — but that is not a
+          // licence to be drawn THROUGH it. 'Sweet vs savoury paths' was
+          // re-anchored to one of the level-with-the-node candidates and ended
+          // up with its own disc and both search-hit ticks sitting on the word
+          // 'savoury'. The rule is exact rather than a coverage weight: the
+          // node's centre may not fall inside the text box.
+          if (own && own.x >= x0 && own.x <= x0 + cand.w && own.y >= y0 && own.y <= y0 + sh.h) continue;
           const dc = discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area);
           const frac = Math.min(1, coverage(x0, y0, x0 + cand.w, y0 + sh.h, area) + dc);
           // Text-on-text decides the tier; text-on-marker only breaks ties; and
@@ -490,7 +508,7 @@ export class Scene {
           // wins if it is meaningfully clearer, so labels do not jitter.
           const home = cx === 0 && cy === 0 && !cand.vis;
           if (score < best.score - (home ? 0 : 0.06) || (home && score <= best.score))
-            best = { frac, score, dx: cx, dy: cy, w: cand.w, vis: cand.vis };
+            best = { frac, score, dx: cx, dy: cy, w: cand.w, vis: cand.vis, fits: true };
         }
         if (best.frac <= 0 && !best.vis) break;   // placed whole and clear
       }
@@ -516,7 +534,7 @@ export class Scene {
       // covered, so a demoted label stops competing with the one on top of it
       // instead of smearing it.
       const t = Math.max(0, 1 - (best.frac - BRIGHT_MAX) / (DIM_MAX - BRIGHT_MAX));
-      const k = best.frac <= BRIGHT_MAX ? 1 : t * t;
+      const k = !best.fits ? 0 : best.frac <= BRIGHT_MAX ? 1 : t * t;
       this.runAlphas[b.i] = this.runMeta[b.i].baseAlpha * k;
       // ANY label that is drawn at all reserves its rect. Reserving only the
       // ones above a weight threshold let two suppressed labels be placed on
@@ -565,10 +583,13 @@ export class Scene {
    * property the whole deconfliction rests on: a certified-disjoint bright tier
    * means nothing if the boxes are not where the text is.
    */
-  labelDrawAudit(): { checked: number; worstGapPx: number; worst: string | null } {
+  labelDrawAudit(): { checked: number; worstGapPx: number; worst: string | null;
+                      worstOffFramePx: number; worstOffFrame: string | null } {
     const scr = this.screenPositions();
     const byId = new Map(scr.map(s => [s.id, s]));
+    const el = this.renderer.domElement;
     let worst = 0, worstId: string | null = null, checked = 0;
+    let off = 0, offId: string | null = null;
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const res = this.labelRects.get(meta.id);
@@ -579,8 +600,13 @@ export class Scene {
       checked++;
       const gap = Math.max(res.x0 - drawn.x0, drawn.x1 - res.x1, res.y0 - drawn.y0, drawn.y1 - res.y1);
       if (gap > worst) { worst = gap; worstId = meta.id; }
+      // And how far outside the FRAME the drawn glyphs run. The reserved box
+      // agreeing with the drawn box says nothing about either being on screen.
+      const out = Math.max(-drawn.x0, drawn.x1 - el.width, -drawn.y0, drawn.y1 - el.height);
+      if (out > off) { off = out; offId = meta.id; }
     }
-    return { checked, worstGapPx: Number(worst.toFixed(2)), worst: worstId };
+    return { checked, worstGapPx: Number(worst.toFixed(2)), worst: worstId,
+             worstOffFramePx: Number(off.toFixed(2)), worstOffFrame: offId };
   }
 
   /**

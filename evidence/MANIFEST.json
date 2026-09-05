@@ -6,9 +6,11 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T04:04:16.161Z",
+  "lastRunAt": "2026-09-05T04:23:22.860Z",
   "lastRunCaptured": [
-    "19"
+    "02",
+    "04",
+    "10"
   ],
   "artifacts": [
     {
@@ -63,8 +65,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 349310,
-        "sha256": "227d9c7d6b47cba2a7589b6033f9c424e0285a05b26d22b1ec33f099b7651a64"
+        "bytes": 348173,
+        "sha256": "e8e90cf55201d3f981059bd303fc60209c4c3066cd80593139522851bef93abb"
       },
       "claims": {
         "ok": true,
@@ -83,6 +85,12 @@
           },
           {
             "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrame",
             "expected": true,
             "actual": true,
             "pass": true
@@ -110,8 +118,11 @@
         "cameraPinned": true,
         "labelsAudited": 117,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Coffee cherry cascara ferment?",
-        "labelArbiterAgreesWithDraw": true
+        "labelWorstOverhangOn": "Recalibrate the pH meter",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
+        "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true
       },
       "pageErrors": [],
       "recipe": {
@@ -122,8 +133,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:12.108Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T04:23:24.077Z"
     },
     {
       "id": "03",
@@ -241,15 +252,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.7,
+      "seconds": 1.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 389272,
-        "sha256": "b7a0f7b7ca86adcf3413def35655ba5859fc0b42100e224908d54492ce221449"
+        "bytes": 378916,
+        "sha256": "057c7ba2719726b77d88beaacdf0dd007d2ed38244f5117a63c6bd34ff2c0784"
       },
       "claims": {
         "ok": true,
@@ -268,6 +279,12 @@
           },
           {
             "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrame",
             "expected": true,
             "actual": true,
             "pass": true
@@ -299,10 +316,13 @@
           ]
         },
         "cameraPinned": true,
-        "labelsAudited": 120,
+        "labelsAudited": 115,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Recalibrate the pH meter",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
         "recencyByDistrict": {
           "violet": {
             "n": 18,
@@ -408,8 +428,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:16.412Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T04:23:25.577Z"
     },
     {
       "id": "05",
@@ -801,15 +821,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 5.4,
+      "seconds": 5.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 217849,
-        "sha256": "fdfcb1dcc274bceac14a2d1dbe28d4ea427d907c5085d92e606460ca7ba97cf0"
+        "bytes": 207254,
+        "sha256": "a47b1337663113495ca4b146a29d20ed016e69fd7b0ba1bde32b81f1287a6676"
       },
       "claims": {
         "ok": true,
@@ -843,6 +863,12 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -850,10 +876,13 @@
         "query": "koji",
         "node": "Koji-kin sourcing",
         "hits": 19,
-        "labelsAudited": 40,
+        "labelsAudited": 19,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Ask M about her crock",
+        "labelWorstOverhangOn": "Shio koji",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
         "flownHitCentred": true,
         "hitsInFrame": 13,
         "severalHitsShown": true,
@@ -885,12 +914,12 @@
         "demonstrates": "search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it",
         "surface": "windows",
         "lens": null,
-        "fnSha": "f0f9bd4216282901"
+        "fnSha": "081211a9ab14a06e"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:41.576Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T04:23:31.145Z"
     },
     {
       "id": "11",
@@ -1728,7 +1757,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T04:05:16.012Z"
     },
     {
@@ -1884,12 +1913,12 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T04:05:19.455Z",
+  "finishedAt": "2026-09-05T04:23:32.512Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 781895,
-    "sha256": "37318b6ba91be2c47d1c5258dd7b74cce3d363cf83b338f058d088dac27947a5"
+    "bytes": 781996,
+    "sha256": "c5de24b4a485fb9cdf620bcdfe00d5573134c1064b27b48dc30bfa9f2753b35e"
   },
   "captured": 20,
   "total": 20

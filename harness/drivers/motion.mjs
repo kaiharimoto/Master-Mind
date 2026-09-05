@@ -145,7 +145,8 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { positionUnchanged: true, severalHitsShown: true, severalHitsMatched: true,
-              flownHitCentred: true, labelArbiterAgreesWithDraw: true },
+              flownHitCentred: true, labelArbiterAgreesWithDraw: true,
+              everyLabelInsideTheFrame: true },
   demonstrates: 'search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
   async run(H) {
@@ -182,13 +183,16 @@ export default [
     // (F-025), so this artifact audits it too.
     const audit = await page.evaluate(() => {
       const r = window.mm.scene.labelDrawAudit();
-      return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null };
+      return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null,
+               offText: r.worstOffFrame ? window.mm.store.doc.nodes[r.worstOffFrame].text : null };
     });
     const nodeText = await page.evaluate(i => window.mm.store.doc.nodes[i].text, id);
     return { query: QUERY, node: nodeText, hits: hitCount,
              labelsAudited: audit.checked, labelWorstOverhangPx: audit.worstGapPx,
              labelWorstOverhangOn: audit.worstText,
+             labelWorstOffFramePx: audit.worstOffFramePx, labelWorstOffFrameOn: audit.offText,
              labelArbiterAgreesWithDraw: audit.checked > 0 && audit.worstGapPx === 0,
+             everyLabelInsideTheFrame: audit.checked > 0 && audit.worstOffFramePx === 0,
              // The flight ends ON the hit, not near it.
              flownHitCentred: !!scr && Math.abs(scr.x - 960) < 40 && Math.abs(scr.y - 540) < 40,
              hitsInFrame,
