@@ -1146,6 +1146,53 @@ to it corrected a claim that was *false* about the baseline, which is a differen
 thing from relabelling a claim that was true and badly named. It takes effect
 from cycle 9.
 
+## Cycle 8 — the Art Director's findings and what was done
+
+Verbatim in `evidence/critics/art-director-cycle-8.md`. **05 Quality compliance
+8 of 10, at its floor; 06 Finder round-trip 4.5 of 5.**
+
+**Cycle 8 totals 84.5 / 100** — 21 + 21 + 17 + 13 + 8 + 4.5 — with every
+category at or above its minimum, against 82.0 at cycle 7 with one category
+below. It is **not regression-free**, on the Auditor's finding.
+
+Three critics, reading the same frozen set independently and none of them seeing
+the build history, found the same defect and measured it three different ways:
+the Audience by counting truncations and reading two names as one, the Auditor
+by label-glyph ink area, the Art Director by counting label runs with no node
+near them. Each of them also traced it to the same place — two claims that are
+true and do not say what I read them as saying.
+
+| # | Finding | Measured, then done |
+|---|---|---|
+| C1 | a02/a04/a10 — labels drawn where there is no node to name: **18 orphaned runs on 02 against 1 in cycle 7**, ink overhanging the node field by 277 px against 46 | **Fixed as ruled.** Adjacency is a hard constraint, not a score: no candidate more than **2.6 em** — about two line-heights — from the nearest edge of its own node's mark, and a label that cannot be placed inside that is dropped. `everyLabelStaysBesideItsNode` is required on 02, 04, 06 and 10, asserted in the label's own type size because 40 px is far beside 12 px type and adjacent beside 24 px type. After: **0 orphans on 02 and 04**, worst displacement 2.60 em. |
+| C2 | a02/a04 — colliding labels blended so the illegible spot is the brightest thing on screen | **The collisions are gone** (0 overlapping pairs on every artifact that carries labels). One correction to the finding: the text material is `NormalBlending` and always was, so the compositing was source-over, not additive. The *observation* was exact — the overlap peaked about 30 % above a clean label — and two source-over glyph runs over a dark ground do brighten where they cross. |
+| C3 | a14/a20 — the accepted **grouping** is the one suggestion type whose effect is never shown | **Fixed in the app, not in the capture.** A grouping rewrites `node.label`, which the canvas does not draw, so there was nothing on any frame to point at. The accept toast now names both states: *Applied: Group 2 nodes as "Framing" — labels were "arc", "ground"*. |
+| C4 | a02 — label type is weakest at exactly the framing the detail standard names first, 5.98:1 at 8 px | **Open.** The crowding that forced the smallest sizes is what C1 and C2 just removed, so this is measured again in cycle 9 before the clamp floor is raised — changing both at once would leave neither attributable. |
+| C5 | a07 — the "relative luminance" yardstick still is not the standard one | **Fixed, and this is the finding I mind most.** F-029 replaced Rec.601 with Rec.709 and never added the sRGB-to-linear step, so what this report called relative luminance was Rec.709-weighted **luma of gamma-encoded values** — a second yardstick fault inside the fix for the first, and reproducibility by an outsider was the entire point of that fix. The function is named `luma709` for what it is, true `relLuminance` is added beside it, and artifact 07 reports the ladder in **both** and is gated on both — it had been gated only on the space the palette is solved in, so the gate could not have failed for this reason. Measured: relative luminance rungs **0.0759 / 0.1683 / 0.2781 / 0.4195 / 0.6233**, monotonic, smallest step 0.0924 against a within-rung spread of 0.022. Those reproduce the Art Director's own independent figures. The palette did not change: it was not what was wrong, and the ruling was explicit that it should not. |
+| C6 | a14 — the detail row headlines ×1.54 while showing 0.77 of the app's pixels | **Fixed as ruled.** The headline is the app-pixel ratio; the panel ratio is the second line. |
+| C7 | a20 — a stale parse-error toast survives into the next attempt | **Fixed.** The inline banner was cleared on edit and the toast over the map was not, so an error stayed up while the next reply was typed under it. |
+| C8 | the holding boundary ring is the one piece of world chrome | **Open, and its reasoning recorded.** Not scored as a breach; making it the live drop boundary during a drag is a change to a working affordance and is deferred rather than done under time pressure. |
+
+The delegated ruling went against a change I made this cycle and it is
+implemented as given, including the part I would not have chosen: **artifact 02
+now draws 66 of 150 labels where cycle 8 drew 145**, and the frame says "84
+labels hidden · 36 shortened at this zoom". The arithmetic in the ruling is the
+reason — a suppressed label costs one label; an orphan costs one label and adds
+a false object — and the call is the Art Director's to make under §04.
+
+Setting that cap was easy and believing my own measurement of it was not. The
+audit read node positions from a **fresh projection** while reading label boxes
+from the frame the deconflictor had laid out, so it subtracted two different
+cameras and reported 81.7 px of displacement for a label placed under a 48 px
+cap. That is F-025 — the arbiter and the draw disagreeing — recurring **inside
+the instrument written to catch F-025**, and it made the cap look unbound while
+it was binding. Corrected, the same label measures 32.4 px. The deeper lesson is
+that there are two questions here and they are not interchangeable: *how far did
+this label travel from its node* is about the frame the deconflictor built, and
+*is there a mark under this label in the shipped PNG* is about the pixels.
+Feeding the pixel sampler the deconflictor's coordinates made six markers on
+artifact 02 that are plainly there measure as missing.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
