@@ -257,6 +257,18 @@ export class App {
     const reach = el0.width * 0.22;
     const on = !!best && best.d < reach;
     const n = on ? this.store.doc.nodes[best!.id] : null;
+    // WHAT YOU ARE AIMED AT IS LIT. An AR frame is a dense field of names at
+    // any distance, and without this nothing in it was designed to be looked at
+    // first — the reticle named a thought and the thought looked like every
+    // other thought. The aimed node takes the top rung of the ladder and brings
+    // its filaments live, which is the same treatment a selected node gets,
+    // WITHOUT opening the editor: aiming is not selecting, and a panel would
+    // cover the thing it is about.
+    const aimed = on ? best!.id : null;
+    if (aimed !== this.aimedAt) {
+      this.aimedAt = aimed;
+      this.scene.setSelection(aimed ?? this.selected);
+    }
     const label = $('[data-t=reticle-node]', r);
     r.classList.toggle('on', on);
     label.textContent = n
@@ -718,6 +730,9 @@ export class App {
 
   /** Which labels needed a leader this frame, for anything checking the frame. */
   readonly leaderFor = new Set<NodeId>();
+
+  /** The node the AR reticle is currently aimed at, if any. */
+  private aimedAt: NodeId | null = null;
 
   /**
    * The names the frame could not label, listed in the margin it cannot fill.

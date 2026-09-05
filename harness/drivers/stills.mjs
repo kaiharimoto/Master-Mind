@@ -175,7 +175,12 @@ export default [
                   .map(v => v / ns.length);
       const h = d.holding.origin, p = mm.scene.pose;
       p.target.set((c[0] * 0.70 + h[0] * 0.30), (c[1] * 0.70 + h[1] * 0.30), (c[2] * 0.70 + h[2] * 0.30));
-      p.dist = Math.hypot(c[0] - h[0], c[1] - h[1], c[2] - h[2]) * 1.42;
+      // At 1.42 the hero was two dense text fields at uniform weight with
+      // nothing designed to be looked at first, and at 0.92 it was denser
+      // still. Framing alone was never going to give it a subject; the
+      // reticle's aimed node now takes the top rung of the ladder and its
+      // filaments come live, so the frame has one thing to look at first.
+      p.dist = Math.hypot(c[0] - h[0], c[1] - h[1], c[2] - h[2]) * 1.18;
     });
     const anchorId = await NODE_ID(page, 'Sauerkraut by weight');
     const panel = async (o, tag) => {

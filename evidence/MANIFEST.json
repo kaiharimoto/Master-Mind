@@ -6,12 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T05:26:26.257Z",
+  "lastRunAt": "2026-09-05T05:28:48.962Z",
   "lastRunCaptured": [
-    "02",
-    "04",
-    "06",
-    "10"
+    "03"
   ],
   "artifacts": [
     {
@@ -140,7 +137,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T05:26:27.633Z"
     },
     {
@@ -149,15 +146,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3.2,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 1037116,
-        "sha256": "1c773aa25e96d4ba799a04a9dd220991cade1d8efe787a3f212939d0e8b3948e"
+        "bytes": 1391176,
+        "sha256": "ad872a2e1d3f9ff1b0add239890568ae22218349ce7a3809cf1fd46f9c5a744a"
       },
       "claims": {
         "ok": true,
@@ -190,6 +187,12 @@
         "lens": "ar",
         "surface": "android",
         "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 0,
+          "unlabelledListed": 0,
+          "mapName": "Fermentation notebook"
+        },
         "panels": [
           {
             "sent": {
@@ -207,8 +210,8 @@
               "pitch": -0.269
             },
             "anchor": {
-              "x": 314,
-              "y": 501
+              "x": 253,
+              "y": 460
             }
           },
           {
@@ -227,8 +230,8 @@
               "pitch": -0.339
             },
             "anchor": {
-              "x": 431,
-              "y": 322
+              "x": 378,
+              "y": 220
             }
           }
         ],
@@ -238,10 +241,10 @@
         },
         "gyroDroveTheView": true,
         "headingChanged": 62,
-        "anchorMovedOnScreen": 214,
+        "anchorMovedOnScreen": 271,
         "anchorMovedOnScreenXY": [
-          117,
-          -179
+          125,
+          -240
         ],
         "positionsUnchangedBetweenPanels": true
       },
@@ -250,12 +253,12 @@
         "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations",
         "surface": "android",
         "lens": null,
-        "fnSha": "164d084af1e706ec"
+        "fnSha": "1e2d90017445b65c"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:25:53.854Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T05:28:51.784Z"
     },
     {
       "id": "04",
@@ -445,7 +448,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T05:26:29.149Z"
     },
     {
@@ -654,7 +657,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T05:26:32.057Z"
     },
     {
@@ -1008,7 +1011,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T05:26:37.581Z"
     },
     {
@@ -2082,12 +2085,12 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T05:26:39.416Z",
+  "finishedAt": "2026-09-05T05:28:53.364Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 790174,
-    "sha256": "f8115e7863e8811a91e9d481776f7884df0d231189b47036e5af34d169697ad1"
+    "bytes": 790282,
+    "sha256": "179d5297b5f61727aeef8adcc2fc440e4f5cdb31858d1d1aaea2ac09b2565288"
   },
   "captured": 20,
   "total": 20
