@@ -920,11 +920,17 @@ export class App {
   private renderMaps() {
     const o = document.getElementById('maps');
     if (!o) return;
+    // WHAT YOU HAVE TYPED SURVIVES A REDRAW. The whole overlay is rebuilt
+    // whenever the map list arrives from the service, which can happen between
+    // a person typing a name and pressing Create — and the new input started
+    // empty, so the map was created as 'Untitled map' and the name was gone.
+    // Artifact 01's capture failed on exactly that.
+    const typed = (o.querySelector('[data-t=maps-new-name]') as HTMLInputElement | null)?.value ?? '';
     o.innerHTML = `
       <button class="close" data-t="maps-close">Close</button>
       <h1>Maps</h1><p class="sub">Unlimited maps. Open one to reach every lens on this surface.</p>
       <div class="row" style="max-width:520px;margin:0 0 16px">
-        <input data-t="maps-new-name" placeholder="name a new map…" style="flex:2">
+        <input data-t="maps-new-name" placeholder="name a new map…" style="flex:2" value="${esc(typed)}">
         <button data-t="maps-create" style="flex:0 0 auto">Create map</button>
       </div>
       <table><thead><tr><th>Map</th><th>Nodes</th><th>Last opened</th><th style="width:210px"></th></tr></thead>

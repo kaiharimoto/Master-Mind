@@ -6,9 +6,28 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T05:58:17.008Z",
+  "lastRunAt": "2026-09-05T05:39:38.573Z",
   "lastRunCaptured": [
-    "01"
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
   ],
   "artifacts": [
     {
@@ -17,26 +36,16 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.4,
-      "status": "captured",
-      "error": null,
+      "seconds": 16.6,
+      "status": "driver-error",
+      "error": "page.waitForFunction: Timeout 15000ms exceeded.\n    at Object.run (/home/user/Master-Mind/harness/drivers/stills.mjs:108:16)\n    at async runDriver (/home/user/Master-Mind/harness/run-capture.mjs:545:18)\n    at async file:///home/user/Master-Mind/harness/run-capture.mjs:618:41",
       "check": {
-        "ok": true,
-        "width": 1920,
-        "height": 1080,
-        "bytes": 141451,
-        "sha256": "943767483fc9f7532179b40659ea8257711450e1cc8bdb7358c43219231f6a0b"
+        "ok": false,
+        "why": "not produced"
       },
       "claims": {
         "ok": true,
         "claims": []
-      },
-      "result": {
-        "maps": {
-          "map-talk": 11,
-          "map-fermentation": 150
-        },
-        "note": "create/rename/delete driven through the real buttons; three states composited"
       },
       "pageErrors": [],
       "recipe": {
@@ -45,10 +54,7 @@
         "lens": null,
         "fnSha": "98f7cded25ce50cc"
       },
-      "capturedInCycle": 8,
-      "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-05T05:58:19.211Z"
+      "capturedInCycle": 8
     },
     {
       "id": "02",
@@ -137,7 +143,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:39:56.985Z"
     },
     {
@@ -257,7 +263,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:00.484Z"
     },
     {
@@ -448,7 +454,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:02.153Z"
     },
     {
@@ -507,7 +513,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:20.193Z"
     },
     {
@@ -657,7 +663,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:23.485Z"
     },
     {
@@ -755,7 +761,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:24.701Z"
     },
     {
@@ -824,7 +830,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:26.851Z"
     },
     {
@@ -905,7 +911,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:29.794Z"
     },
     {
@@ -1011,7 +1017,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:36.433Z"
     },
     {
@@ -1059,7 +1065,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:49.538Z"
     },
     {
@@ -1270,7 +1276,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:53.017Z"
     },
     {
@@ -1335,7 +1341,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:54.653Z"
     },
     {
@@ -1498,7 +1504,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:40:57.690Z"
     },
     {
@@ -1540,7 +1546,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:41:00.985Z"
     },
     {
@@ -1621,7 +1627,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:43:01.401Z"
     },
     {
@@ -1704,7 +1710,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:51:14.025Z"
     },
     {
@@ -1814,7 +1820,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:52:29.225Z"
     },
     {
@@ -1929,7 +1935,7 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:54:35.619Z"
     },
     {
@@ -2079,19 +2085,19 @@
       },
       "capturedInCycle": 8,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T05:55:59.926Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T05:58:20.800Z",
+  "finishedAt": "2026-09-05T05:56:03.418Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 790364,
-    "sha256": "e5716bd1e7ee07ca183bb656fd439a2a3456413424ccf41f57b1a9615bc5428d"
+    "bytes": 790282,
+    "sha256": "179d5297b5f61727aeef8adcc2fc440e4f5cdb31858d1d1aaea2ac09b2565288"
   },
-  "captured": 20,
+  "captured": 19,
   "total": 20
 }

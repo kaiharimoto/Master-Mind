@@ -766,7 +766,7 @@ only copy of a score he is not allowed to alter (§09).
 
 ## Cycle 7 — findings from the work itself
 
-Eleven findings came out of cycle 7's own work rather than from a critic. Two are
+Twelve findings came out of cycles 7 and 8's own work rather than from a critic. Two are
 recorded because a capture **failed** on them, which §09 makes a finding rather
 than something to route around; two more — F-026 and F-027 — are faults in the
 cross-cycle regression instrument itself, which means every "regression-free"
@@ -824,6 +824,23 @@ rectangle reserved for it, and two labels the arbiter had certified as disjoint
 landed on top of each other — *"Barley miso, 18 months"* overprinted by
 *"Amazake"* in artifact 10. Same class as F-015, in the one case F-015 did not
 cover.
+
+**F-031 — a typed name wiped by a background redraw.** Artifact 01's capture
+**failed** in cycle 8: `page.waitForFunction` timed out waiting for the map the
+driver had just created to appear by name. It had appeared — as *"Untitled
+map"*. The maps overlay rebuilds its whole DOM whenever the map list arrives
+from the sync service, which can land between a person typing a name and
+pressing **Create**; the rebuilt input starts empty, so the name is silently
+replaced by the placeholder. Cycle 8's heavier label solver widened that window
+enough to hit it every run. The fix is in the app, not the driver: the typed
+value survives the redraw. Recorded as a capture failure, and the artifact was
+recaptured before any critic read the set.
+
+Its second-order cost is recorded too. Fixing it changed the app bundle after
+nineteen of the twenty artifacts had already been captured, so **the whole cycle
+was recaptured** rather than shipping a frozen set whose artifacts came from two
+different builds. The manifest records one bundle hash per run and that hash
+has to be true of every artifact under it.
 
 **F-030 — a frozen set was written to, and nothing was guarding it.** Cycle 8's
 first run archived the working evidence directory **into
@@ -1116,7 +1133,7 @@ than against itself.
 
 ## Capture failures
 
-**Six capture failures have occurred, in cycles 5, 6 and 7.** Every one was
+**Seven capture failures have occurred, in cycles 5, 6, 7 and 8.** Every one was
 recorded by the harness as `driver-error` or `claim-not-met` rather than passed
 off as captured, every one was fixed at its cause, and every one was recaptured
 before the set was frozen. Three of the four were caught by machinery that
@@ -1130,6 +1147,7 @@ when nothing is lost by it.
 
 | Cycle | Fault | What it cost | Resolution |
 |---|---|---|---|
+| 8 | Artifact 01 recorded **`driver-error`**: the driver typed a map name, pressed Create, and waited for that name to appear. The map was created as *"Untitled map"* — the overlay had rebuilt itself from a sync response between the typing and the click, and the fresh input started empty | One artifact, one run, before the set was frozen for review. Fixing it changed the app bundle after nineteen artifacts were captured, so the **whole cycle was recaptured** | The typed value survives the redraw. Recorded as F-031: the fault was in the app, not in the driver, and the capture found it |
 | 7 | Artifact 14 recorded **`claim-not-met`** on `cameraFrozenAcrossPanels`, a claim that compared whole `screenPositions()` records including a degree-derived marker radius that legitimately grows when a link lands | One artifact, one run, before the set was frozen | The claim compares projected points. Recorded as F-020 — the claim was mis-stated, and the failure is the finding |
 | 7 | Artifact 14 recorded **`claim-not-met`** on `detailIsMagnified` at a ×1.0 bar that the geometry of this map cannot meet | One artifact, one run, before the set was frozen | The bar is restated as *strictly closer than the frame above it*, with its reason and every panel's measured magnification on the artifact. The take was **not** rearranged to meet the original bar. Recorded as F-022 |
 | 6 | The Wine target was closed on the twin's success path only. When the twin driver threw mid-sequence, the Windows binary, `wineserver` and Xvfb stayed alive and the capture process finished its work and then **never exited** — which reads as a slow capture rather than a leak | Cycle 6's first run hung after capturing; killed and re-run | The target is closed in a `finally`, so the platform boundary is torn down whether the take succeeds or fails |
