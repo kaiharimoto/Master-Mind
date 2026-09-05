@@ -732,13 +732,26 @@ export default [
   requires: { created: true, placed: true, stayedPut: true, connectedAfterPlacing: true,
               refoundBySearch: true, positionSurvivedTheWholeLoop: true },
   demonstrates: 'the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put', minW: 1920, minH: 1080,
-  minFps: 24, minSec: 15, surface: 'windows', map: 'map-talk', title: 'Capture, place, connect, refind',
+  // ON THE 150-NODE MAP. The loop was shot on the eleven-node map, where it is
+  // easiest to read and where crowding cannot test it — so the set proved the
+  // workflow and never proved it at scale.
+  minFps: 24, minSec: 15, surface: 'windows', map: 'map-fermentation', title: 'Capture, place, connect, refind',
   async run(H) {
-    const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-talk' });
+    const { page, cdp } = await H.app({ surface: 'windows', lens: 'canvas', map: 'map-fermentation' });
     await POSE(page, { yaw: 0.28, pitch: 0.12 });
     await FRAME_ALL(page, 1.14);
+    // Close enough to work in, wide enough to still be the 150-node map. At
+    // whole-map framing a node is about seven pixels across and the drag could
+    // not reliably pick the one it had just created; halving the distance puts
+    // the holding ring and its surrounding districts on screen together.
+    await page.evaluate(() => {
+      const p = window.mm.scene.pose, h = window.mm.store.doc.holding;
+      p.dist *= 0.5;
+      p.target.set(h.origin[0], h.origin[1] + p.dist * 0.16, h.origin[2]);
+    });
+    await sleepFrames(page, 0, 2);
     const text = 'Rehearse the fly-to twice';
-    const targetText = 'Method of loci';
+    const targetText = 'Koji on pearl barley';
     const targetId = await NODE_ID(page, targetText);
     let id = null, dropAt = null;
     const log = {};
