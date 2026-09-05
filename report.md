@@ -798,18 +798,23 @@ cycle 2 makes it.
 
 ## Capture failures
 
-**One artifact has failed a capture: artifact 14, in the cycle-5 run.** It was a
-driver fault, it was recorded as `driver-error` by the harness rather than
-passed off as captured, it was fixed at the driver and recaptured before the set
-was frozen, and it is the first row below. Every other cycle recorded 20/20
-captured as defined, at or above every declared minimum resolution and duration.
+**Four capture failures have occurred, in cycles 5 and 6.** Every one was
+recorded by the harness as `driver-error` or `claim-not-met` rather than passed
+off as captured, every one was fixed at its cause, and every one was recaptured
+before the set was frozen. Three of the four were caught by machinery that
+exists because an earlier cycle's finding demanded it.
 
-The rest are harness faults that cost no artifact. All of them are recorded
-because §09 makes a silently re-scoped or swallowed failure fatal — a failure is
-a finding here even when nothing is lost by it.
+**Every frozen, reviewed cycle recorded 20/20 captured as defined**, at or above
+every declared minimum resolution and duration. The remaining rows are harness
+faults that cost no artifact. All of them are recorded because §09 makes a
+silently re-scoped or swallowed failure fatal — a failure is a finding here even
+when nothing is lost by it.
 
 | Cycle | Fault | What it cost | Resolution |
 |---|---|---|---|
+| 6 | The Wine target was closed on the twin's success path only. When the twin driver threw mid-sequence, the Windows binary, `wineserver` and Xvfb stayed alive and the capture process finished its work and then **never exited** — which reads as a slow capture rather than a leak | Cycle 6's first run hung after capturing; killed and re-run | The target is closed in a `finally`, so the platform boundary is torn down whether the take succeeds or fails |
+| 6 | Artifact 12's caption referenced a binding declared after it, so the twin sequence threw. Artifact 11 recorded `driver-error`; artifact 12 recorded **`claim-not-met`**, listing all nine of its declared claims as unmet | Two artifacts in cycle 6's first run; both recaptured before the set was frozen | The after-positions are read before the caption that prints them. **This is the declared-claim gate doing its job**: without it, artifact 12 would have been recorded `captured` with nine `undefined` claims inside it — exactly the fault F-018 describes |
+| 6 | `compose` refused a caption whose longest clause had no break point, failing the capture rather than clipping it | One artifact, one run | `wrapCaption` breaks on separators first and then on spaces, so it does not depend on the caller having put separators in the right places |
 | 5 | Artifact 14's driver was captured at 960 px wide, and below 1200 px the surface drops the desk-only controls — including the Finder button the artifact is about. `page.click` timed out and the capture was recorded `driver-error` | One artifact in the cycle-5 run; recaptured before the set was frozen | The driver was wrong, not the rule: a narrow surface *should* drop desk controls. Captured at 1280 px instead, which is above the threshold and still a mild downscale into a 960 px panel |
 | 1 | The critics read the live `evidence/` directory while fixes were being recaptured into it; `17_hand_vocabulary.mp4` changed under a review and was briefly unreadable | One critic read a half-written file | Each cycle is now frozen to an immutable `evidence/cycles/cycle-N/` before any critic is dispatched, and the briefs point there |
 | 1 | The twin driver dragged a node on the Android surface with mouse events, on a surface that listens only for touch — nothing moved, and the sync proof would have been vacuous | Nothing: caught before it shipped | Switched to CDP touch events, and the driver now **throws** if the dragged node's position is unchanged |

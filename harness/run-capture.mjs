@@ -148,6 +148,19 @@ async function runDriver(d) {
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };
+      // The Wine target is closed in a FINALLY. It was closed on the success
+      // path only, so when the twin threw mid-sequence the Windows binary,
+      // wineserver and Xvfb stayed alive and the capture process never exited —
+      // the run finished its work and then hung, which looks like a slow
+      // capture rather than a leak.
+      let winCleanup = null;
+      try {
+        return await this._twin(driver, (c) => { winCleanup = c; });
+      } finally {
+        if (winCleanup) { try { winCleanup(); } catch { /* already gone */ } }
+      }
+    },
+    async _twin(driver, registerCleanup) {
       // The Windows side comes from the REAL win32-x64 binary running under
       // Wine when it is available, so the propagation proof crosses an actual
       // platform boundary rather than two tabs of the same browser.
@@ -170,6 +183,7 @@ async function runDriver(d) {
           w = { page: wp, cdp: wcdp, errs: [] };
           winSource = 'windows-binary-under-wine';
           winTarget = wt; winUA = wt.version?.['User-Agent'] ?? null;
+          if (wt.close) registerCleanup(wt.close);
         } catch (e) {
           void e;
           if (wt.close) wt.close();
@@ -376,7 +390,6 @@ async function runDriver(d) {
       after.movedNodeCoords = { id: moveId, before: posBefore, after: posAfter };
       after.bigMapCrossSurface = bigTwin;
       twinCache = { before, after };
-      if (winTarget && winTarget.close) winTarget.close();
       return before;
     },
   };

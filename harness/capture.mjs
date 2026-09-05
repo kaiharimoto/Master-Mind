@@ -129,9 +129,22 @@ export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame 
  * now takes as many lines as it needs, and the harness asserts that none was
  * dropped.
  */
-export function wrapCaption(text, cellW, size = 13, maxLines = 4) {
+export function wrapCaption(text, cellW, size = 13, maxLines = 5) {
   const perLine = Math.max(10, Math.floor((cellW - 34) / (size * 0.55)));
-  const parts = String(text).split(' · ');
+  // Break on ' · ' first, then on spaces if a single clause is still too long,
+  // so the helper does not depend on the caller having put separators in the
+  // right places. A caption is text, not a pre-formatted layout.
+  const parts = [];
+  for (const seg of String(text).split(' · ')) {
+    if (seg.length <= perLine) { parts.push(seg); continue; }
+    let acc = '';
+    for (const word of seg.split(' ')) {
+      const next = acc ? `${acc} ${word}` : word;
+      if (next.length <= perLine || !acc) { acc = next; continue; }
+      parts.push(acc); acc = word;
+    }
+    if (acc) parts.push(acc);
+  }
   const lines = [];
   let cur = '';
   for (const part of parts) {
