@@ -291,6 +291,21 @@ export class TextLayer {
    * at full length; shortening is a placement decision made per frame, so a
    * label in open ground is never clipped to solve crowding somewhere else.
    */
+  /**
+   * Was this run drawn SHORTENED — that is, is its ellipsis lit?
+   *
+   * Read from the alpha buffer the shader is drawing from rather than from the
+   * arbiter's intent, so it describes the frame that exists. `setRunAlphas`
+   * lights the ellipsis glyph only when the run was cut, so its alpha is the
+   * cut flag.
+   */
+  isTruncated(run: number): boolean {
+    const sp = this.spans[run];
+    if (!sp || sp.ellipsis < 0) return false;
+    const arr = this.aAlpha.array as Float32Array;
+    return arr[sp.start + sp.ellipsis] > 0.01;
+  }
+
   setRunAlphas(alphas: Float32Array, visible?: Int32Array) {
     const arr = this.aAlpha.array as Float32Array;
     for (let r = 0; r < this.spans.length && r < alphas.length; r++) {

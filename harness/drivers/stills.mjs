@@ -41,8 +41,12 @@ export const PIN = {
 const labelAudit = async (page) => {
   const a = await page.evaluate(() => {
     const r = window.mm.scene.labelDrawAudit();
-    return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null,
-             offText: r.worstOffFrame ? window.mm.store.doc.nodes[r.worstOffFrame].text : null };
+    const nodes = window.mm.store.doc.nodes;
+    return { ...r, worstText: r.worst ? nodes[r.worst].text : null,
+             offText: r.worstOffFrame ? nodes[r.worstOffFrame].text : null,
+             pairText: r.worstPair ? r.worstPair.map(id => nodes[id].text) : null,
+             tightText: r.tightestPair ? r.tightestPair.map(id => nodes[id].text) : null,
+             truncatedText: r.truncatedIds.slice(0, 60).map(id => nodes[id].text) };
   });
   return { labelsAudited: a.checked, labelWorstOverhangPx: a.worstGapPx,
            labelWorstOverhangOn: a.worstText,
@@ -52,7 +56,49 @@ const labelAudit = async (page) => {
            // either being ON SCREEN. Two labels shipped in cycle 7 with ink in
            // column 0 of a frame whose own audit reported a worst overhang of
            // 0 px, because nothing compared a box against the viewport.
-           everyLabelInsideTheFrame: a.checked > 0 && a.worstOffFramePx === 0 };
+           everyLabelInsideTheFrame: a.checked > 0 && a.worstOffFramePx === 0,
+           // AND NEITHER OF THE TWO ABOVE COMPARES ONE LABEL AGAINST ANOTHER.
+           // I read the pair as "no label collides with anything" and wrote
+           // that down; artifact 04 shipped 150 labels passing both while
+           // overprinting each other badly enough that a critic misread
+           // "Bacon: microbial succession" as "Paper: microbial succession".
+           // The overlap is measured now, on the drawn boxes, and the claim is
+           // stated in the terms it actually checks.
+           labelOverlappingPairs: a.overlappingPairs,
+           labelWorstPairOverlapPx: a.worstPairOverlapPx,
+           labelWorstPairOn: a.pairText,
+           labelTightestPairGapPx: a.tightestPairGapPx,
+           labelTightestPairOn: a.tightText,
+           noTwoDrawnLabelsOverlap: a.checked > 0 && a.overlappingPairs === 0,
+           // A shortened name is as unrecoverable to a reader as a hidden one.
+           // The frame said "0 labels hidden" while 43 of 150 were cut.
+           labelsTruncated: a.truncated,
+           labelsTruncatedOn: a.truncatedText,
+           labelAnchors: a.anchors };
+};
+
+/**
+ * The labels AND whether the things they name can be seen.
+ *
+ * Runs the in-app label audit, then measures each drawn label's own node marker
+ * off the captured PNG with a sampler that shares no code with the renderer.
+ * The app can only report where a node PROJECTS; whether its marker survived
+ * the depth fade into something a reader can distinguish from the ground is a
+ * question about pixels, and it goes unasked otherwise. A frame with 14 names
+ * and 4 visible dots satisfies every claim this driver made before today.
+ *
+ * The anchors themselves are dropped from the result — 150 rectangles per
+ * artifact is a payload, not evidence. What survives into the manifest is the
+ * count that failed and the worst few, by id and contrast.
+ */
+const labelsAndMarkers = async (H, page, file) => {
+  const a = await labelAudit(page);
+  const anchors = a.labelAnchors ?? [];
+  delete a.labelAnchors;
+  const m = await H.sampleDiscs(H.out(file), anchors);
+  return { ...a, markerContrast: m,
+           labelsWithoutVisibleMarker: m.invisible ?? null,
+           everyDrawnLabelHasAVisibleMarker: m.checked > 0 && m.invisible === 0 };
 };
 
 /**
@@ -142,7 +188,7 @@ export default [
     await POSE(page, PIN['02']);
     await H.shot(page, cdp, H.out(this.file));
     return { ...await H.modelStats(page), camera: PIN['02'], cameraPinned: true,
-             ...(await labelAudit(page)) };
+             ...(await labelsAndMarkers(H, page, this.file)) };
   },
 },
 {
@@ -260,7 +306,7 @@ export default [
     await POSE(page, PIN['04']);
     await H.shot(page, cdp, H.out(this.file));
     return { ...await H.modelStats(page), camera: PIN['04'], cameraPinned: true,
-             ...(await labelAudit(page)), ...(await recencySpan(page)) };
+             ...(await labelsAndMarkers(H, page, this.file)), ...(await recencySpan(page)) };
   },
 },
 {
@@ -339,7 +385,12 @@ export default [
       return { held: ids.length, onScreen: scr.length, inFrame: inFrame.length,
                badge: badge ? badge.textContent.replace(/\D+/g, '') : null };
     });
-    return { ...st, holdingOrigin: h.origin, holdingRadius: h.radius,
+    // The held cluster is not the only thing on this frame. The cycle-8
+    // Audience critic counted 10 label strings against 5 markers in one crop of
+    // it, and nothing in this driver was looking: every claim above is about
+    // the eight HELD names, so the other thirty-odd went unmeasured.
+    return { ...(await labelsAndMarkers(H, page, this.file)),
+             ...st, holdingOrigin: h.origin, holdingRadius: h.radius,
              cameraDistance: +hi.toFixed(3), ringHeightFraction: +Number(frac ?? 0).toFixed(3),
              heldNodes: held,
              // The ring is the subject: it has to be the thing the frame is of.

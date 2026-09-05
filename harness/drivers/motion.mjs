@@ -183,8 +183,12 @@ export default [
     // (F-025), so this artifact audits it too.
     const audit = await page.evaluate(() => {
       const r = window.mm.scene.labelDrawAudit();
-      return { ...r, worstText: r.worst ? window.mm.store.doc.nodes[r.worst].text : null,
-               offText: r.worstOffFrame ? window.mm.store.doc.nodes[r.worstOffFrame].text : null };
+      const nodes = window.mm.store.doc.nodes;
+      return { ...r, worstText: r.worst ? nodes[r.worst].text : null,
+               offText: r.worstOffFrame ? nodes[r.worstOffFrame].text : null,
+               pairText: r.worstPair ? r.worstPair.map(id => nodes[id].text) : null,
+               tightText: r.tightestPair ? r.tightestPair.map(id => nodes[id].text) : null,
+               truncatedText: r.truncatedIds.slice(0, 60).map(id => nodes[id].text) };
     });
     const nodeText = await page.evaluate(i => window.mm.store.doc.nodes[i].text, id);
     return { query: QUERY, node: nodeText, hits: hitCount,
@@ -193,6 +197,24 @@ export default [
              labelWorstOffFramePx: audit.worstOffFramePx, labelWorstOffFrameOn: audit.offText,
              labelArbiterAgreesWithDraw: audit.checked > 0 && audit.worstGapPx === 0,
              everyLabelInsideTheFrame: audit.checked > 0 && audit.worstOffFramePx === 0,
+             // Neither of the two above compares one label against another; see
+             // the note in drivers/stills.mjs.
+             labelOverlappingPairs: audit.overlappingPairs,
+             labelWorstPairOverlapPx: audit.worstPairOverlapPx,
+             labelWorstPairOn: audit.pairText,
+             labelTightestPairGapPx: audit.tightestPairGapPx,
+             labelTightestPairOn: audit.tightText,
+             noTwoDrawnLabelsOverlap: audit.checked > 0 && audit.overlappingPairs === 0,
+             labelsTruncated: audit.truncated,
+             labelsTruncatedOn: audit.truncatedText,
+             // And whether each of those names has a marker a reader can see.
+             // Measured off the captured PNG, not asked of the renderer; see
+             // the note on labelsAndMarkers in drivers/stills.mjs.
+             ...(await (async () => {
+               const m = await H.sampleDiscs(H.out('10_search_flyto_end.png'), audit.anchors ?? []);
+               return { markerContrast: m, labelsWithoutVisibleMarker: m.invisible ?? null,
+                        everyDrawnLabelHasAVisibleMarker: m.checked > 0 && m.invisible === 0 };
+             })()),
              // The flight ends ON the hit, not near it.
              flownHitCentred: !!scr && Math.abs(scr.x - 960) < 40 && Math.abs(scr.y - 540) < 40,
              hitsInFrame,

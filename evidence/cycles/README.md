@@ -38,3 +38,18 @@ From cycle 9 onward `harness/cycle.mjs` writes the ledger at freeze time and
 verifies the previous cycle's ledger before it will diff against that set; a
 mismatch exits 2 rather than producing a regression claim about a set that has
 changed since it was reviewed.
+
+## One post-freeze correction, recorded
+
+`cycle-8/DIFF.json` was rewritten after the set was frozen. The freeze-time copy
+was the comparison against the **corrupted** cycle-7 baseline (13 of 20 changed,
+02/04/06/10 wrongly absent); it was a false claim about the set and could not be
+left in front of the Auditor, whose whole category rests on that comparison. It
+was replaced by the re-run against the restored cycle-7 set (18 of 20 changed, 7
+substantive) and `cycle-8.sha256` was regenerated, **before** the Auditor and Art
+Director were dispatched. The Audience critic had already read the freeze-time
+copy; its comparison section is void for that reason and says so.
+
+No artifact was touched — only the derived diff file. This is the sole
+post-freeze edit to any frozen set in the run, and it is the reason the ledger
+is regenerated rather than silently reconciled.

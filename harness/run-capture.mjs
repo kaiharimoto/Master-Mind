@@ -124,6 +124,105 @@ const samplePixels = async (png, points, patch = 1) => {
   return out;
 };
 
+/**
+ * Per-node marker visibility, measured ON THE SHIPPED PIXELS.
+ *
+ * The cycle-8 Audience critic counted 14 label strings against 4 visible node
+ * markers in one crop of artifact 10, and 10 against 5 in artifact 06 — "a
+ * large part of every frame is disembodied text". Nothing in the app could have
+ * caught that: the label arbiter knows where a node PROJECTS, not whether its
+ * marker survived the depth fade into something a reader can see. A node deep
+ * in the fog is drawn near the ground luminance and its label is drawn at full
+ * weight, so the text is legible and the thing it names is not.
+ *
+ * So it is measured the way the ladder is measured after F-029 — off the
+ * captured frame, by a sampler that shares no code with the renderer. For each
+ * anchor: the PEAK Rec.709 luminance inside the marker disc, and the local
+ * ground as the MEDIAN of an annulus outside it, avoiding the label's own box
+ * so ink does not count as ground. Contrast is the WCAG ratio on those two.
+ * A marker at or below `min` is text with nothing under it.
+ */
+const sampleDiscs = async (png, discs, min = 1.6) => {
+  const raw = await new Promise((res) => {
+    const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+      { stdio: ['ignore', 'pipe', 'ignore'] });
+    const bufs = [];
+    p.stdout.on('data', d => bufs.push(d));
+    p.on('close', () => res(Buffer.concat(bufs)));
+  });
+  const [W, H] = await new Promise((res) => {
+    let o = '';
+    const p = spawn('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries',
+      'stream=width,height', '-of', 'csv=p=0', png], { stdio: ['ignore', 'pipe', 'ignore'] });
+    p.stdout.on('data', d => o += d);
+    p.on('close', () => res(o.trim().split(',').map(Number)));
+  });
+  if (!raw.length || !W || !H) return { checked: 0, invisible: [], error: 'frame not decodable' };
+  const lum = (x, y) => {
+    const i = (y * W + x) * 3;
+    return i + 2 < raw.length ? (0.2126 * raw[i] + 0.7152 * raw[i + 1] + 0.0722 * raw[i + 2]) / 255 : null;
+  };
+  const rows = [];
+  const offFrame = [];
+  for (const d of discs) {
+    const cx = Math.round(d.x), cy = Math.round(d.y);
+    const r = Math.max(1.5, d.r);
+    // A NODE THAT PROJECTS OFF THE FRAME IS THE FAILURE, NOT A ROW TO SKIP.
+    //
+    // The first version of this sampler `continue`d here, and on artifact 10 it
+    // silently dropped 18 of the 38 labels — every one of them a name drawn
+    // inside the frame for a node that is not in it, which is exactly what the
+    // critic reported and exactly what this check exists to catch. It would
+    // have reported "0 of 20 labels without a visible marker" on a frame with
+    // 18 unattached names. A measurement that skips its own failing cases is
+    // the F-030 shape again: the instrument agreeing with itself.
+    if (cx < 0 || cy < 0 || cx >= W || cy >= H) {
+      offFrame.push({ id: d.id, peak: null, ground: null, contrast: 0, why: 'node projects outside the frame' });
+      continue;
+    }
+    let peak = 0;
+    const ri = Math.ceil(r);
+    for (let dy = -ri; dy <= ri; dy++) for (let dx = -ri; dx <= ri; dx++) {
+      if (dx * dx + dy * dy > r * r) continue;
+      const x = cx + dx, y = cy + dy;
+      if (x < 0 || y < 0 || x >= W || y >= H) continue;
+      const l = lum(x, y);
+      if (l !== null && l > peak) peak = l;
+    }
+    // Ground: an annulus from 2.2r to 3.6r, excluding anything inside this
+    // label's own drawn box, so the name does not become its own background.
+    const g = [];
+    const ro = Math.ceil(r * 3.6);
+    for (let dy = -ro; dy <= ro; dy += 2) for (let dx = -ro; dx <= ro; dx += 2) {
+      const q = dx * dx + dy * dy;
+      if (q < (2.2 * r) ** 2 || q > ro * ro) continue;
+      const x = cx + dx, y = cy + dy;
+      if (x < 0 || y < 0 || x >= W || y >= H) continue;
+      if (d.x0 !== undefined && x >= d.x0 - 2 && x <= d.x1 + 2 && y >= d.y0 - 2 && y <= d.y1 + 2) continue;
+      const l = lum(x, y);
+      if (l !== null) g.push(l);
+    }
+    if (!g.length) continue;
+    g.sort((a, b) => a - b);
+    const ground = g[g.length >> 1];
+    const ratio = (Math.max(peak, ground) + 0.05) / (Math.min(peak, ground) + 0.05);
+    rows.push({ id: d.id, peak: Number(peak.toFixed(4)), ground: Number(ground.toFixed(4)),
+                contrast: Number(ratio.toFixed(2)) });
+  }
+  const invisible = [...offFrame, ...rows.filter(r => r.contrast < min)];
+  invisible.sort((a, b) => a.contrast - b.contrast);
+  return {
+    checked: rows.length + offFrame.length,
+    sampled: rows.length,
+    offFrame: offFrame.length,
+    threshold: min,
+    invisible: invisible.length,
+    worstContrast: rows.length ? Math.min(...rows.map(r => r.contrast)) : null,
+    invisibleIds: invisible.slice(0, 40).map(r => r.id),
+    weakest: invisible.slice(0, 8),
+  };
+};
+
 const modelStats = (page) => page.evaluate(() => {
   const d = window.mm.store.doc;
   // The numbers the app PRINTS ON THE FRAME, read back from the DOM that drew
@@ -207,7 +306,7 @@ async function runDriver(d) {
       pages.push(r);
       return r;
     },
-    shot, step, record, compose, stack, crop, samplePixels, modelStats, clusterState, clusterDelta, positions,
+    shot, step, record, compose, stack, crop, samplePixels, sampleDiscs, modelStats, clusterState, clusterDelta, positions,
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };

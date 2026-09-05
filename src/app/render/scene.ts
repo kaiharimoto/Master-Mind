@@ -689,11 +689,39 @@ export class Scene {
    * property the whole deconfliction rests on: a certified-disjoint bright tier
    * means nothing if the boxes are not where the text is.
    */
-  labelDrawAudit(): { checked: number; worstGapPx: number; worst: string | null;
-                      worstOffFramePx: number; worstOffFrame: string | null } {
+  labelDrawAudit(): {
+    checked: number; worstGapPx: number; worst: string | null;
+    worstOffFramePx: number; worstOffFrame: string | null;
+    overlappingPairs: number; worstPairOverlapPx: number; worstPair: [string, string] | null;
+    tightestPairGapPx: number | null; tightestPair: [string, string] | null;
+    truncated: number; truncatedIds: string[];
+    anchors: { id: string; x: number; y: number; r: number;
+               x0: number; y0: number; x1: number; y1: number }[];
+  } {
     const el = this.renderer.domElement;
     let worst = 0, worstId: string | null = null, checked = 0;
     let off = 0, offId: string | null = null;
+    // EVERY DRAWN LABEL'S BOX, kept so the drawn set can be compared against
+    // ITSELF.
+    //
+    // This audit reported `labelArbiterAgreesWithDraw` and
+    // `everyLabelInsideTheFrame` and I read the pair as "no label collides with
+    // anything". They do not say that. The first compares a label's reserved
+    // box against its own drawn box; the second compares that box against the
+    // viewport. NEITHER COMPARES ONE LABEL AGAINST ANOTHER, so a set of 150
+    // labels could pass both while overprinting each other, and on artifact 04
+    // it did: the cycle-8 Audience critic read "Bacon: microbial succession" as
+    // "Paper: microbial succession" where two labels crossed. The arbiter
+    // permits it by construction — a label whose clearest placement is up to
+    // DIM_MAX covered is still drawn, dimmed, and the legibility floor lets
+    // through everything up to about 7 % covered. That is a defensible design
+    // choice; reporting it as "no overlaps" was not a measurement.
+    const drawnBoxes: { id: string; x0: number; y0: number; x1: number; y1: number }[] = [];
+    const anchors: { id: string; x: number; y: number; r: number;
+                     x0: number; y0: number; x1: number; y1: number }[] = [];
+    const truncatedIds: string[] = [];
+    const scr = this.screenPositions();
+    const byId = new Map(scr.map(q => [q.id, q]));
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const res = this.labelRects.get(meta.id);
@@ -708,9 +736,51 @@ export class Scene {
       // agreeing with the drawn box says nothing about either being on screen.
       const out = Math.max(-drawn.x0, drawn.x1 - el.width, -drawn.y0, drawn.y1 - el.height);
       if (out > off) { off = out; offId = meta.id; }
+      drawnBoxes.push({ id: meta.id, ...drawn });
+      // A SHORTENED LABEL IS NOT THE THOUGHT. The frame reported
+      // "0 labels hidden" on artifact 04 while 43 of its 150 names were cut to
+      // an ellipsis — true as stated and misleading as read, because a name
+      // truncated to "Coffee cherry cascara…" is as unrecoverable to a reader
+      // as one that was never drawn. Counted here so the frame can say it.
+      if (this.text.isTruncated(i)) truncatedIds.push(meta.id);
+      const q = byId.get(meta.id);
+      if (q) anchors.push({ id: meta.id, x: Number(q.x.toFixed(2)), y: Number(q.y.toFixed(2)),
+                            r: Number(q.r.toFixed(2)),
+                            x0: Number(drawn.x0.toFixed(2)), y0: Number(drawn.y0.toFixed(2)),
+                            x1: Number(drawn.x1.toFixed(2)), y1: Number(drawn.y1.toFixed(2)) });
     }
+    // Pairwise, on the DRAWN boxes — n is at most a few hundred.
+    //
+    // Overlap is not the only way two names become one. The critic read
+    // "Bacon: microbial succession" as "Paper: microbial succession"; the boxes
+    // do not in fact overlap, so what it saw was two labels close enough to run
+    // together. The nearest-neighbour gap is therefore measured alongside the
+    // overlap, because "no two boxes intersect" is a weaker property than
+    // "no two names read as one" and I have already once mistaken the first for
+    // the second.
+    let pairs = 0, worstArea = 0, worstPair: [string, string] | null = null;
+    let tightest = Infinity, tightestPair: [string, string] | null = null;
+    for (let a = 0; a < drawnBoxes.length; a++)
+      for (let b = a + 1; b < drawnBoxes.length; b++) {
+        const A = drawnBoxes[a], B = drawnBoxes[b];
+        const ox = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0);
+        const oy = Math.min(A.y1, B.y1) - Math.max(A.y0, B.y0);
+        if (ox > 0 && oy > 0) {
+          pairs++;
+          if (ox * oy > worstArea) { worstArea = ox * oy; worstPair = [A.id, B.id]; }
+          if (0 < tightest) { tightest = 0; tightestPair = [A.id, B.id]; }
+          continue;
+        }
+        // Separation between two disjoint rectangles: 0 on an axis they
+        // straddle, so a pair sharing rows is measured by its column gap.
+        const gap = Math.hypot(Math.max(0, -ox), Math.max(0, -oy));
+        if (gap < tightest) { tightest = gap; tightestPair = [A.id, B.id]; }
+      }
     return { checked, worstGapPx: Number(worst.toFixed(2)), worst: worstId,
-             worstOffFramePx: Number(off.toFixed(2)), worstOffFrame: offId };
+             worstOffFramePx: Number(off.toFixed(2)), worstOffFrame: offId,
+             overlappingPairs: pairs, worstPairOverlapPx: Number(worstArea.toFixed(1)), worstPair,
+             tightestPairGapPx: Number.isFinite(tightest) ? Number(tightest.toFixed(2)) : null, tightestPair,
+             truncated: truncatedIds.length, truncatedIds, anchors };
   }
 
   /**
