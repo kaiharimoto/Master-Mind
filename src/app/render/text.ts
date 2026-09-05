@@ -142,6 +142,21 @@ export interface RunSpan {
    * and are never shortened.
    */
   glyphRight: number[];
+  /**
+   * Glyph indices at which a WORD ends, so a shortened label is cut between
+   * words rather than mid-glyph. A fragment that looks like a finished phrase
+   * is worse than a hidden label: the reader cannot tell a short thought from a
+   * truncated one.
+   */
+  wordEnds: number[];
+  /**
+   * The index of this run's ellipsis glyph, and its laid-out right edge. Every
+   * single-line run carries one, drawn only when the run is shortened and moved
+   * to sit immediately after the last visible glyph.
+   */
+  ellipsis: number;
+  ellipsisLeftEm: number;
+  ellipsisWidthEm: number;
 }
 
 export class TextLayer {
@@ -245,14 +260,15 @@ export class TextLayer {
       // The tail fade marks a label that was CUT. A label drawn whole ends where
       // the word ends and must not be dimmed for it — the fade was being applied
       // to every label's last two glyphs, so complete names read as truncated.
-      const cut = vis < count;
+      const sp = this.spans[r];
+      const cut = vis < (sp.ellipsis >= 0 ? count - 1 : count);
       for (let k = 0; k < count; k++) {
-        const tail = vis - k;
-        arr[start + k] = k >= vis ? 0
-          : !cut ? alphas[r]
-          : tail <= 1 ? alphas[r] * 0.45
-          : tail === 2 ? alphas[r] * 0.75
-          : alphas[r];
+        // The ellipsis is drawn ONLY when the run is shortened, and everything
+        // that survives is drawn at full weight: a fragment that fades out
+        // reads as a finished phrase, which is a worse failure than a hidden
+        // label because the reader cannot tell the two apart.
+        if (k === sp.ellipsis) { arr[start + k] = cut ? alphas[r] : 0; continue; }
+        arr[start + k] = k >= vis ? 0 : alphas[r];
       }
     }
     this.aAlpha.needsUpdate = true;
@@ -263,12 +279,16 @@ export class TextLayer {
    * colliding label to a free side of its own node rather than only dimming it:
    * the label stays attached to the node it names, and no node moves.
    */
-  setRunShifts(shifts: Float32Array) {
+  setRunShifts(shifts: Float32Array, ellipsisDx?: Float32Array) {
     const arr = this.aShift.array as Float32Array;
     for (let r = 0; r < this.spans.length && r * 2 + 1 < shifts.length; r++) {
-      const { start, count } = this.spans[r];
+      const sp = this.spans[r];
+      const { start, count } = sp;
       for (let k = 0; k < count; k++) {
-        arr[(start + k) * 2] = shifts[r * 2];
+        // The ellipsis carries the run's shift plus its own move back to the
+        // cut point, so it sits immediately after the last surviving word.
+        const extra = k === sp.ellipsis && ellipsisDx ? ellipsisDx[r] : 0;
+        arr[(start + k) * 2] = shifts[r * 2] + extra;
         arr[(start + k) * 2 + 1] = shifts[r * 2 + 1];
       }
     }
@@ -285,6 +305,7 @@ export class TextLayer {
       const lines = wrap(run.text, run.perLine ?? perLine, maxLines);
       laid.push({ run, lines });
       for (const l of lines) for (const ch of l) if (m.chars[ch]) total++;
+      if (lines.length === 1) total++;   // the run's own ellipsis glyph
     }
     this.grow(Math.max(total, 1));
     // A rebuild clears any re-anchoring from the previous frame; deconfliction
@@ -307,6 +328,8 @@ export class TextLayer {
       const vSide = above ? -1 : 1;   // which way the block hangs off the node
       let ex0 = Infinity, ex1 = -Infinity, ey0 = Infinity, ey1 = -Infinity;
       const glyphRight: number[] = [];
+      const wordEnds: number[] = [];
+      let ellipsisIdx = -1, ellipsisLeft = 0, ellipsisW = 0;
       lines.forEach((line, li) => {
         let width = 0;
         for (const ch of line) width += (m.chars[ch]?.adv ?? 0);
@@ -319,7 +342,7 @@ export class TextLayer {
           const g = m.chars[ch];
           if (!g) continue;
           const rx = pen - m.pad / m.glyph, ry = baseY - (cellEm - baseTop);
-          if (lines.length === 1) glyphRight.push(pen + g.adv);
+          if (lines.length === 1) { glyphRight.push(pen + g.adv); if (ch === ' ') wordEnds.push(glyphRight.length - 1); }
           if (rx < ex0) ex0 = rx;
           if (rx + cellEm > ex1) ex1 = rx + cellEm;
           if (ry < ey0) ey0 = ry;
@@ -335,11 +358,40 @@ export class TextLayer {
           i++;
         }
       });
+      // One ellipsis glyph per single-line run, laid out after the text. It is
+      // drawn only when the run is shortened, and shifted back to the cut point.
+      if (lines.length === 1) {
+        const g = m.chars['…'] ?? m.chars['.'];
+        if (g) {
+          // The ellipsis belongs to THIS run's block: same vertical offset and
+          // same side of the node as its own glyphs. Giving it the below-node
+          // constants while the run hung above put every above-run's ellipsis a
+          // full block below its own text, reading as a stray mark in front of
+          // whatever label sat there — '… Rye starts fastest'.
+          const pen = glyphRight.length ? glyphRight[glyphRight.length - 1] : 0;
+          const rx = pen - m.pad / m.glyph;
+          const ry = -(cellEm - baseTop);
+          ellipsisIdx = i - spanStart;
+          // Recorded as the PEN, the same basis as glyphRight, so the shift that
+          // moves it back to a cut point is exact rather than a pad off.
+          ellipsisLeft = pen;
+          ellipsisW = g.adv;
+          this.aRect.setXYZW(i, rx, ry, cellEm, cellEm);
+          this.aUV.setXYZW(i, g.u0, g.v0, g.u1, g.v1);
+          this.aAnchor.setXYZ(i, run.anchor.x, run.anchor.y, run.anchor.z);
+          this.aColor.setXYZ(i, run.color.r, run.color.g, run.color.b);
+          this.aNodeSize.setX(i, run.nodeSizeWorld);
+          this.aAlpha.setX(i, 0);
+          this.aOff.setXY(i, emY, vSide);
+          i++;
+        }
+      }
       if (!Number.isFinite(ex0)) { ex0 = ex1 = ey0 = ey1 = 0; }
       this.spans.push({ start: spanStart, count: i - spanStart, widthEm: widest,
                         lines: lines.length, above, side: run.side ?? 0,
                         x0Em: ex0, x1Em: ex1, y0Em: emY + ey0, y1Em: emY + ey1, vSide,
-                        glyphRight });
+                        glyphRight, wordEnds, ellipsis: ellipsisIdx,
+                        ellipsisLeftEm: ellipsisLeft, ellipsisWidthEm: ellipsisW });
     }
     for (const a of [this.aRect, this.aUV, this.aAnchor, this.aColor, this.aNodeSize, this.aAlpha, this.aOff]) a.needsUpdate = true;
     this.geo.instanceCount = i;

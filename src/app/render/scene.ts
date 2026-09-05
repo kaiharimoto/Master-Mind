@@ -88,6 +88,7 @@ export class Scene {
   private runAlphas = new Float32Array(0);
   private runShifts = new Float32Array(0);
   private runVisible = new Int32Array(0);
+  private runEllipsisDx = new Float32Array(0);
   private dirty = true;
 
   constructor(readonly canvas: HTMLCanvasElement, fontMeta: FontMeta, atlas: THREE.Texture) {
@@ -207,6 +208,7 @@ export class Scene {
     if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
     if (this.runShifts.length !== this.runMeta.length * 2) this.runShifts = new Float32Array(this.runMeta.length * 2);
     if (this.runVisible.length !== this.runMeta.length) this.runVisible = new Int32Array(this.runMeta.length);
+    if (this.runEllipsisDx.length !== this.runMeta.length) this.runEllipsisDx = new Float32Array(this.runMeta.length);
 
     // A filament is live when it touches the selection or a search hit.
     const links: LinkInstance[] = [];
@@ -427,12 +429,18 @@ export class Scene {
       // is a last resort before fading, not a lens-wide clamp applied to every
       // name to solve crowding somewhere else. Multi-line runs are never
       // shortened (there is no single tail to fade).
+      // Cut points are WORD BOUNDARIES, longest first, and a shortened label
+      // always carries its ellipsis — so it announces itself as shortened
+      // rather than reading as a finished phrase. Where no whole word survives,
+      // the label is not shortened at all and takes its chances on being faded.
       const widths: { w: number; vis: number }[] = [{ w: sh.w, vis: 0 }];
-      if (glyphs.length >= 6) {
-        for (const keep of [0.72, 0.5, 0.34]) {
-          const k = Math.max(5, Math.floor(glyphs.length * keep));
-          if (k >= glyphs.length) continue;
-          widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * sh.emPx, 6), vis: k });
+      if (span.ellipsis >= 0 && span.wordEnds.length) {
+        const ellW = span.ellipsisWidthEm * sh.emPx;
+        for (let wi = span.wordEnds.length - 1; wi >= 0; wi--) {
+          const k = span.wordEnds[wi];
+          if (k < 3 || k >= glyphs.length) continue;
+          widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * sh.emPx + ellW, 6), vis: k });
+          if (widths.length >= 4) break;
         }
       }
       let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0 };
@@ -472,6 +480,10 @@ export class Scene {
         if (best.frac <= 0 && !best.vis) break;   // placed whole and clear
       }
       this.runVisible[b.i] = best.vis;
+      // Move the ellipsis back from the end of the full run to the cut point.
+      this.runEllipsisDx[b.i] = best.vis
+        ? (span.glyphRight[best.vis - 1] - span.ellipsisLeftEm)
+        : 0;
       this.runShifts[b.i * 2] = best.dx;
       this.runShifts[b.i * 2 + 1] = -best.dy;   // screen y grows downward; the shader's y does not
       const px = { x0: sh.bx0 + best.dx * sh.emPx, y0: sh.by0 + best.dy * sh.emPx };
@@ -499,7 +511,7 @@ export class Scene {
                                  pri: b.pri, z: b.z });
     }
     this.text.setRunAlphas(this.runAlphas, this.runVisible);
-    this.text.setRunShifts(this.runShifts);
+    this.text.setRunShifts(this.runShifts, this.runEllipsisDx);
     // Counted only for nodes actually ON SCREEN. A node behind the camera has no
     // label to hide, and counting it would overstate what the view is omitting.
     this.suppressed = 0;

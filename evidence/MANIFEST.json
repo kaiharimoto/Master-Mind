@@ -6,10 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T02:10:03.085Z",
+  "lastRunAt": "2026-09-05T02:55:50.561Z",
   "lastRunCaptured": [
-    "11",
-    "12"
+    "04"
   ],
   "artifacts": [
     {
@@ -229,15 +228,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 1.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 402423,
-        "sha256": "9b5d038f0285953864b2abdcbd26548b9864c4dd84b0c2e7a6ab5648395adb68"
+        "bytes": 393123,
+        "sha256": "2be802db86a27776b7fb62ae3c7f502a8fb797f750278e8833562f4e215635fa"
       },
       "claims": {
         "ok": true,
@@ -284,8 +283,8 @@
         "fnSha": "45fc3b745339efe7"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:44:35.968Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T02:55:52.056Z"
     },
     {
       "id": "05",
@@ -693,7 +692,7 @@
         "fnSha": "861f6cca2f545723"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T02:10:11.439Z"
     },
     {
@@ -866,7 +865,7 @@
         "fnSha": "936d2e118cf8cc23"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T02:10:12.848Z"
     },
     {
@@ -1426,12 +1425,12 @@
       "fileMtime": "2026-09-05T01:54:57.650Z"
     }
   ],
-  "finishedAt": "2026-09-05T02:10:14.496Z",
+  "finishedAt": "2026-09-05T02:55:53.676Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 777959,
-    "sha256": "c455b475e5877a0b7f051ad07674f90aee5ee701fb30c8db732d760d08a9d75b"
+    "bytes": 778874,
+    "sha256": "755edf12bfbe7daef8a5ce568dae117e07a1075bb19ee1dd96bc26b135830190"
   },
   "captured": 20,
   "total": 20
