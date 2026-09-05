@@ -292,7 +292,8 @@ export default [
 {
   id: '04', file: '04_mind_expansion.png', kind: 'png',
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
-              everyLabelInsideTheFrame: true, recencyChannelExercised: true },
+              everyLabelInsideTheFrame: true, recencyChannelExercised: true,
+              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Mind expansion overview',
   async run(H) {
@@ -314,7 +315,8 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
-              countMatchesMarkers: true, everyHeldLabelAttributable: true },
+              countMatchesMarkers: true, everyHeldLabelAttributable: true,
+              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true },
   demonstrates: 'the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
   async run(H) {

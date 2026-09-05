@@ -433,7 +433,7 @@ export class Scene {
     // Panels are seeded into the reserved set before any label is placed, so
     // they win against everything.
     const dpr = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
-    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled']) {
+    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled', '#hitbreak']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e) continue;
       const r = e.getBoundingClientRect();

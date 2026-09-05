@@ -146,7 +146,14 @@ export default [
   // capture rather than a record with a false flag inside it.
   requires: { positionUnchanged: true, severalHitsShown: true, severalHitsMatched: true,
               flownHitCentred: true, labelArbiterAgreesWithDraw: true,
-              everyLabelInsideTheFrame: true },
+              everyLabelInsideTheFrame: true,
+              // Declared now that the arbiter can satisfy them. Both were
+              // measured on the cycle-8 frame first and both failed there —
+              // 18 of 38 names for nodes outside the frame, and a pair of
+              // labels 0.00 px apart — so they are gates on a fixed fault, not
+              // gates written to describe what the code already did.
+              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
+              searchMatchReasonShown: true },
   demonstrates: 'search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
   async run(H) {
@@ -191,7 +198,20 @@ export default [
                truncatedText: r.truncatedIds.slice(0, 60).map(id => nodes[id].text) };
     });
     const nodeText = await page.evaluate(i => window.mm.store.doc.nodes[i].text, id);
+    // The match REASON, read off the chrome rather than recomputed, so the
+    // artifact cannot report a breakdown the frame does not print.
+    const breakdown = await page.evaluate(() => {
+      const e = document.querySelector('[data-t=search-breakdown]');
+      return e && getComputedStyle(e).display !== 'none' ? e.textContent.trim() : null;
+    });
+    const labelHits = await page.evaluate(() => window.mm.hitLabelMatches.length);
     return { query: QUERY, node: nodeText, hits: hitCount,
+             searchBreakdown: breakdown, hitsMatchedOnLabel: labelHits,
+             // A lit node whose visible words do not contain the query is
+             // correct behaviour and unreadable as such unless the frame says
+             // why. It says why or this capture failed.
+             searchMatchReasonShown: !!breakdown && /\d+\s+hits?/.test(breakdown) &&
+               (labelHits === 0 || /in the label/.test(breakdown)),
              labelsAudited: audit.checked, labelWorstOverhangPx: audit.worstGapPx,
              labelWorstOverhangOn: audit.worstText,
              labelWorstOffFramePx: audit.worstOffFramePx, labelWorstOffFrameOn: audit.offText,

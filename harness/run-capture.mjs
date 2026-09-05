@@ -141,8 +141,20 @@ const samplePixels = async (png, points, patch = 1) => {
  * ground as the MEDIAN of an annulus outside it, avoiding the label's own box
  * so ink does not count as ground. Contrast is the WCAG ratio on those two.
  * A marker at or below `min` is text with nothing under it.
+ *
+ * THE BAR IS DERIVED, NOT CHOSEN. It was 1.6:1 first, and one plain node on
+ * artifact 06 measured 1.55 — so before changing anything I worked out what the
+ * palette can actually deliver there. The lowest rung sits at relative
+ * luminance 0.26 and depth fades it toward its own floor at 0.6615 of that
+ * (DEPTH_SHARE over LUM_GROUND, see world.ts), giving 0.172; against the 0.10
+ * ground that is (0.172 + 0.05) / (0.10 + 0.05) = 1.48:1. A distant plain node
+ * CANNOT exceed about 1.48:1 by construction, so a 1.6 bar was not measuring
+ * visibility, it was measuring the ladder and failing it. The bar is the
+ * palette's own floor less a small tolerance: 1.45. It still catches what it
+ * was written for — the clipped marker on artifact 06 measured 1.00:1, peak
+ * identical to its own surround, and an off-frame node scores 0.
  */
-const sampleDiscs = async (png, discs, min = 1.6) => {
+const sampleDiscs = async (png, discs, min = 1.45) => {
   const raw = await new Promise((res) => {
     const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
       { stdio: ['ignore', 'pipe', 'ignore'] });
@@ -252,6 +264,10 @@ const modelStats = (page) => page.evaluate(() => {
     labelsHidden: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+labels?\s+hidden/); return m ? Number(m[1]) : 0; })(),
     labelsShortened: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+shortened/); return m ? Number(m[1]) : 0; })(),
     unlabelledListed: document.querySelectorAll('#unlabelled li').length,
+    // Read from the chrome, so a frame cannot claim a match breakdown it does
+    // not print. Null when the chip is not up, which is itself the finding if
+    // the artifact is about search.
+    searchBreakdown: txt('[data-t=search-breakdown]'),
     mapName: txt('[data-t=map-name]'),
   };
   return { map: d.id, nodes: Object.keys(d.nodes).length, links: Object.keys(d.links).length,

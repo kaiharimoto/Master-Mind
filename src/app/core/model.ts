@@ -231,7 +231,17 @@ export function resolveStates(
   return out;
 }
 
-export function searchMatches(doc: MapDoc, q: string): MMNode[] {
+/**
+ * Search hits WITH THE FIELD EACH ONE MATCHED ON.
+ *
+ * Search reads a node's text and its district label, which is right — a reader
+ * looking for "koji" wants the whole Koji district, not only the notes that
+ * spell it out. But the frame never said so, and the cycle-8 Audience critic
+ * read artifact 10 as lighting up nodes whose visible words contain no "koji"
+ * with nothing on screen explaining why. Correct behaviour is not
+ * self-evidently correct behaviour; the reason has to be on the frame.
+ */
+export function searchHits(doc: MapDoc, q: string): { n: MMNode; field: 'text' | 'label' }[] {
   const needle = q.trim().toLowerCase();
   if (!needle) return [];
   return nodeList(doc)
@@ -247,5 +257,9 @@ export function searchMatches(doc: MapDoc, q: string): MMNode[] {
     })
     .filter(r => r.score >= 0)
     .sort((a, b) => a.score - b.score || (a.n.id < b.n.id ? -1 : 1))
-    .map(r => r.n);
+    .map(r => ({ n: r.n, field: (r.score === 2 || r.score === 4 ? 'label' : 'text') as 'text' | 'label' }));
+}
+
+export function searchMatches(doc: MapDoc, q: string): MMNode[] {
+  return searchHits(doc, q).map(r => r.n);
 }

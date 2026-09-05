@@ -204,6 +204,11 @@ tr.map:hover{background:var(--panel)}
    auto sizing leaves it at its intrinsic 300x150 and every line outside that
    box is clipped away — which is why the first attempt drew eight lines and
    showed none of them. */
+#hitbreak{position:fixed;top:52px;right:16px;z-index:23;display:none;
+  padding:5px 10px;border-radius:6px;background:rgba(14,12,10,0.92);
+  border:1px solid rgba(255,255,255,0.14);font-size:12px;letter-spacing:0.01em;
+  color:var(--ink);white-space:nowrap;pointer-events:none}
+#hitbreak.show{display:block}
 #leaders{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:21;pointer-events:none}
 #leaders line{stroke:#6E6157;stroke-width:1;opacity:.5}
 #clusterproof b{color:var(--ink);font-family:"DejaVu Sans Mono",monospace}

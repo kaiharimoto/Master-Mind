@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import {
   type MapDoc, type MMNode, type NodeId, type ColorKey, COLOR_KEYS, PALETTE,
-  holdingNodes, searchMatches, nodeList, recencyOf,
+  holdingNodes, searchHits, nodeList, recencyOf,
 } from './core/model.js';
 import { Store, newId } from './core/store.js';
 import { SyncClient, type MapSummary } from './core/syncClient.js';
@@ -441,10 +441,67 @@ export class App {
   }
 
   search(q: string) {
-    this.hits = searchMatches(this.store.doc, q).map(n => n.id);
+    const found = searchHits(this.store.doc, q);
+    this.hits = found.map(r => r.n.id);
+    // WHICH FIELD each hit matched on, kept so the frame can say it. Search
+    // reads a node's district label as well as its text — a reader looking for
+    // "koji" wants the Koji district, not only the notes that spell it out —
+    // but artifact 10 lit nineteen nodes, several of whose visible words
+    // contain no "koji", with nothing on screen explaining the match. The
+    // behaviour was right and the frame was silent, which a reader cannot tell
+    // apart from the behaviour being wrong.
+    this.hitLabelMatches = found.filter(r => r.field === 'label').map(r => r.n.id);
+    this.hitQuery = q.trim();
     this.hitIndex = 0;
     this.scene.setHits(this.hits);
     this.refresh();
+  }
+
+  /** Hits that matched on the district label rather than on the thought's text. */
+  hitLabelMatches: NodeId[] = [];
+  private hitQuery = '';
+
+  /**
+   * The match, broken down by where it was found.
+   *
+   * "19 hits · 6 in the text, 13 in the label 'Koji'" — so a reader who cannot
+   * see the query in a lit node's words is told why it is lit rather than left
+   * to conclude the search is wrong.
+   */
+  private renderHitBreakdown() {
+    let chip = document.getElementById('hitbreak');
+    if (!chip) {
+      chip = el('div', { id: 'hitbreak', 'data-t': 'search-breakdown' });
+      document.body.appendChild(chip);
+    }
+    const n = this.hits.length;
+    if (!n || !this.hitQuery) { chip.className = ''; chip.textContent = ''; return; }
+    const lab = this.hitLabelMatches.length, txt = n - lab;
+    const labels = [...new Set(this.hitLabelMatches
+      .map(id => this.store.doc.nodes[id]?.label).filter(Boolean))];
+    const parts = [`${n} hit${n === 1 ? '' : 's'}`];
+    if (txt) parts.push(`${txt} in the text`);
+    if (lab) parts.push(`${lab} in the label ${labels.map(l => `“${l}”`).join(', ')}`);
+    chip.textContent = parts.join(' · ');
+    chip.className = 'show';
+    // ANCHORED UNDER THE SEARCH BOX, and kept clear of whatever panel is open.
+    // Pinned to the top right it was drawn underneath the editor — which the
+    // flight opens, every time, because flying to a hit selects it — so the
+    // breakdown existed and no reader could see it. It is measured into place
+    // instead: under the input it explains, shifted left of any open panel.
+    const box = document.getElementById('search')?.getBoundingClientRect();
+    if (box) {
+      chip.style.top = `${Math.round(box.bottom + 8)}px`;
+      const w = chip.getBoundingClientRect().width;
+      let right = window.innerWidth - box.right;
+      for (const sel of ['#editor', '#finder', '#states']) {
+        const e = document.querySelector(sel) as HTMLElement | null;
+        if (!e) continue;
+        const r = e.getBoundingClientRect();
+        if (r.width > 2 && r.height > 2) right = Math.max(right, window.innerWidth - r.left + 10);
+      }
+      chip.style.right = `${Math.round(Math.min(right, Math.max(8, window.innerWidth - w - 8)))}px`;
+    }
   }
 
   /** Search flies the view to the node in its actual place, in every lens. */
@@ -674,6 +731,7 @@ export class App {
       ? `${parts.join(' · ')} at this zoom — move closer to read them` : '';
     this.renderUnlabelled();
     this.renderLeaders();
+    this.renderHitBreakdown();
   }
 
   /**
