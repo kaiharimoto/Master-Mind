@@ -263,7 +263,7 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
-              countMatchesMarkers: true },
+              countMatchesMarkers: true, everyHeldLabelAttributable: true },
   demonstrates: 'the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
   async run(H) {
@@ -303,6 +303,28 @@ export default [
     await H.shot(page, cdp, H.out(this.file));
     const st = await H.modelStats(page);
     const frac = await ringHeightFrac();
+    // ATTRIBUTION, measured on the frame that ships. A holding ring packs its
+    // dots close together and the names radiate outward, so a label can finish
+    // nearer a neighbour's dot than its own — which makes the cluster unreadable
+    // however legible the type is. For each held label: is the nearest node to
+    // its box its own?
+    const attribution = await page.evaluate(() => {
+      const sc = window.mm.scene, d = window.mm.store.doc;
+      const scr = sc.screenPositions();
+      const rows = [];
+      for (const [id, r] of sc.labelRects) {
+        if (r.alpha <= 0.02 || d.nodes[id].placed) continue;
+        const near = (p) => {
+          const x = Math.min(Math.max(p.x, r.x0), r.x1), y = Math.min(Math.max(p.y, r.y0), r.y1);
+          return Math.hypot(p.x - x, p.y - y);
+        };
+        const ds = scr.map(p => ({ id: p.id, d: near(p) })).sort((a, b) => a.d - b.d);
+        rows.push({ text: d.nodes[id].text, own: +ds.find(x => x.id === id).d.toFixed(1),
+                    nearestIsOwn: ds[0].id === id, hasLeader: window.mm.leaderFor.has(id),
+                    margin: +(ds[1].d - ds[0].d).toFixed(1) });
+      }
+      return rows;
+    });
     const held = await page.evaluate(() => {
       const sc = window.mm.scene, d = window.mm.store.doc, el = sc.renderer.domElement;
       const ids = Object.values(d.nodes).filter(n => !n.placed).map(n => n.id);
@@ -316,6 +338,14 @@ export default [
              cameraDistance: +hi.toFixed(3), ringHeightFraction: +Number(frac ?? 0).toFixed(3),
              heldNodes: held,
              // The ring is the subject: it has to be the thing the frame is of.
+             heldLabelAttribution: attribution,
+             heldLabelsNearestOwnNode: attribution.filter(r => r.nearestIsOwn).length,
+             heldLabelsWithLeader: attribution.filter(r => r.hasLeader).length,
+             // Every held name is attributable: either the thought it names is
+             // the nearest one to it, or a line joins the two. A name a reader
+             // can pin to the wrong dot is worse than one that is not drawn.
+             everyHeldLabelAttributable: attribution.length > 0 &&
+               attribution.every(r => r.nearestIsOwn || r.hasLeader),
              holdingRingFillsFrame: (frac ?? 0) >= 0.55,
              everyHeldNodeInFrame: held.inFrame === held.held,
              // The badge counts what the frame shows, not what the driver hopes.

@@ -164,7 +164,7 @@ export class App {
     // operable if tracking misbehaves live (§07/05).
     const tools = $('#tools');
     for (const p of HAND_VOCAB) {
-      const SHORT: Record<string, string> = { fist: 'Grab', spread: 'Spread', gather: 'Gather', two: 'Select' };
+      const SHORT: Record<string, string> = { fist: 'Grab', spread: 'Closer', gather: 'Back', two: 'Select' };
       const b = el('button', { 'data-t': `tool-${p.id}`, title: `${p.name} — ${p.mouse}` }, SHORT[p.id] ?? p.name);
       b.addEventListener('click', () => this.runHandOperation(p.id, true));
       tools.appendChild(b);
@@ -646,7 +646,64 @@ export class App {
     chip.className = n > 0 && !this.panelOpen() && !this.rightPanelOpen() ? 'show' : '';
     chip.textContent = n > 0 ? `${n} label${n === 1 ? '' : 's'} hidden at this zoom — move closer to read them` : '';
     this.renderUnlabelled();
+    this.renderLeaders();
   }
+
+  /**
+   * A line from each held thought to its own name.
+   *
+   * The holding ring packs unplaced nodes close together and their labels
+   * radiate outward, so a name can finish nearer a neighbour's dot than its
+   * own: measured on artifact 06, four of eight held labels had some other
+   * dot as their nearest. The count is small — it is one ring — and the line
+   * carries attribution rather than decoration, so it is drawn rather than
+   * left to the reader to guess. Placed nodes get none: their labels sit
+   * against open ground and the pairing is not in doubt.
+   */
+  private renderLeaders() {
+    let svg = document.getElementById('leaders') as unknown as SVGSVGElement | null;
+    if (!svg) {
+      svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('id', 'leaders');
+      svg.setAttribute('data-t', 'label-leaders');
+      document.body.appendChild(svg);
+    }
+    const el0 = this.scene.renderer.domElement;
+    const dpr = el0.width / Math.max(window.innerWidth, 1);
+    const scr = this.scene.screenPositions();
+    const parts: string[] = [];
+    this.leaderFor.clear();
+    for (const s of scr) {
+      const n = this.store.doc.nodes[s.id];
+      if (!n || n.placed) continue;
+      const r = this.scene.labelRects.get(s.id);
+      if (!r || r.alpha <= 0.02) continue;
+      // AMBIGUITY IS THE TEST, not distance. A leader is drawn exactly when the
+      // node nearest this label's box is NOT the node it names — which is the
+      // only case a reader can get wrong. Everywhere else the pairing is plain
+      // and a line would be decoration.
+      const near = (p: { x: number; y: number }) => {
+        const px = Math.min(Math.max(p.x, r.x0), r.x1), py = Math.min(Math.max(p.y, r.y0), r.y1);
+        return Math.hypot(p.x - px, p.y - py);
+      };
+      let closest = s, cd = near(s);
+      for (const q of scr) { const d = near(q); if (d < cd) { cd = d; closest = q; } }
+      if (closest.id === s.id) continue;
+      this.leaderFor.add(s.id);
+      const x = s.x / dpr, y = s.y / dpr;
+      const tx = Math.min(Math.max(x, r.x0 / dpr), r.x1 / dpr);
+      const ty = Math.min(Math.max(y, r.y0 / dpr), r.y1 / dpr);
+      const len = Math.hypot(tx - x, ty - y) || 1;
+      const rad = Math.max(s.r / dpr, 3) + 2;
+      const k = Math.min(rad / len, 0.9);
+      parts.push(`<line x1="${(x + (tx - x) * k).toFixed(1)}" y1="${(y + (ty - y) * k).toFixed(1)}" ` +
+                 `x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}"></line>`);
+    }
+    svg.innerHTML = parts.join('');
+  }
+
+  /** Which labels needed a leader this frame, for anything checking the frame. */
+  readonly leaderFor = new Set<NodeId>();
 
   /**
    * The names the frame could not label, listed in the margin it cannot fill.

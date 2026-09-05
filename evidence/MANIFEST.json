@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T04:34:52.681Z",
+  "lastRunAt": "2026-09-05T04:41:49.545Z",
   "lastRunCaptured": [
-    "04"
+    "06"
   ],
   "artifacts": [
     {
@@ -430,7 +430,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T04:34:53.961Z"
     },
     {
@@ -498,15 +498,15 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.3,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 185144,
-        "sha256": "281775b76a5d9f82bd690814ae727f4152deb8e3f3c7677fa833e9ed54d01954"
+        "bytes": 179216,
+        "sha256": "a3715ca85f693c89addeefe8d62927f16658c105bcf10eb70b793db1d35aa531"
       },
       "claims": {
         "ok": true,
@@ -525,6 +525,12 @@
           },
           {
             "claim": "countMatchesMarkers",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyHeldLabelAttributable",
             "expected": true,
             "actual": true,
             "pass": true
@@ -553,6 +559,67 @@
           "inFrame": 8,
           "badge": "8"
         },
+        "heldLabelAttribution": [
+          {
+            "text": "Ask M about her crock",
+            "own": 38.4,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 110.5
+          },
+          {
+            "text": "Nixtamal plus koji",
+            "own": 25.9,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 3.2
+          },
+          {
+            "text": "Sour cherry kvass",
+            "own": 21.6,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 106.1
+          },
+          {
+            "text": "Coffee cherry cascara ferment?",
+            "own": 33.8,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 12.7
+          },
+          {
+            "text": "Recalibrate the pH meter",
+            "own": 17.3,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 27.2
+          },
+          {
+            "text": "Read the succession paper",
+            "own": 30.6,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 65.8
+          },
+          {
+            "text": "Black garlic: 60C for 40 days",
+            "own": 10.2,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 8.1
+          },
+          {
+            "text": "Preserved lemon, batch 3",
+            "own": 87.8,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 51.8
+          }
+        ],
+        "heldLabelsNearestOwnNode": 6,
+        "heldLabelsWithLeader": 2,
+        "everyHeldLabelAttributable": true,
         "holdingRingFillsFrame": true,
         "everyHeldNodeInFrame": true,
         "countMatchesMarkers": true
@@ -562,12 +629,12 @@
         "demonstrates": "the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them",
         "surface": "windows",
         "lens": null,
-        "fnSha": "e0b9561c5854dfb4"
+        "fnSha": "ad16b81e68f4ef1c"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:59:44.468Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T04:41:52.389Z"
     },
     {
       "id": "07",
@@ -1915,12 +1982,12 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T04:34:55.476Z",
+  "finishedAt": "2026-09-05T04:41:54.159Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 785446,
-    "sha256": "99ac11e01e27f7f5e3a8653b104443d1df35864c8c7e77d5a5cb8b670836574a"
+    "bytes": 787567,
+    "sha256": "320ef852184977438f3afac51cedb3e654811534f70d4de95b6d9143346a5c74"
   },
   "captured": 20,
   "total": 20

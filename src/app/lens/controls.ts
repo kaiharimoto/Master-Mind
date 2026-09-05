@@ -63,8 +63,20 @@ export class Controls {
   // -- camera --------------------------------------------------------------
 
   orbit(dx: number, dy: number) {
-    this.scene.pose.yaw -= dx * 0.0055;
-    this.scene.pose.pitch = clamp(this.scene.pose.pitch + dy * 0.0045, -1.45, 1.45);
+    const yaw = -dx * 0.0055, pitch = dy * 0.0045;
+    this.scene.pose.yaw += yaw;
+    this.scene.pose.pitch = clamp(this.scene.pose.pitch + pitch, -1.45, 1.45);
+    // RE-AIM, don't just orbit. In the AR lens the pose is rebuilt from the
+    // device's absolute heading on every orientation event, so a finger drag
+    // was overwritten within a frame — the gesture fired, the caption said
+    // 'Look around', and nothing lasted. Carrying the same delta into the gyro
+    // base means the drag offsets where the device's heading points: you can
+    // aim at a district behind you without turning all the way round, and the
+    // vantage stays where you put it as the phone keeps moving.
+    if (this.gyroBase) {
+      this.gyroBase.yaw += yaw;
+      this.gyroBase.pitch = clamp(this.gyroBase.pitch + pitch, -1.45, 1.45);
+    }
   }
   zoom(factor: number) {
     this.scene.pose.dist = clamp(this.scene.pose.dist * factor, this.minDist, this.maxDist);
@@ -263,7 +275,7 @@ export class Controls {
     el.addEventListener('wheel', e => {
       e.preventDefault();
       this.zoom(e.deltaY > 0 ? 1.12 : 1 / 1.12);
-      this.hooks.onGestureFired(e.deltaY > 0 ? 'mouse-scroll-down' : 'mouse-scroll-up', e.deltaY > 0 ? 'Gather' : 'Spread');
+      this.hooks.onGestureFired(e.deltaY > 0 ? 'mouse-scroll-down' : 'mouse-scroll-up', e.deltaY > 0 ? 'Pull back' : 'Move closer');
     }, { passive: false });
     el.addEventListener('contextmenu', e => e.preventDefault());
   }
@@ -325,7 +337,7 @@ export class Controls {
       } else if (this.orbiting) {
         this.orbit(x - this.downAt.x, y - this.downAt.y);
         this.downAt.x = x; this.downAt.y = y;
-        this.hooks.onGestureFired('dragempty', 'Look around');
+        this.hooks.onGestureFired('dragempty', this.gyroBase ? 'Re-aim the vantage' : 'Orbit the map');
       }
     }, { passive: false });
 

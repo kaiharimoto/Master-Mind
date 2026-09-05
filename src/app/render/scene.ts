@@ -84,7 +84,7 @@ export class Scene {
   private hits = new Set<NodeId>();
   private screenCache: { id: NodeId; x: number; y: number; r: number; z: number; pxPerWorld: number }[] = [];
   /** Run order and priority for label deconfliction, rebuilt with the text. */
-  private runMeta: { id: NodeId; priority: number; baseAlpha: number; nodeSizeWorld: number }[] = [];
+  private runMeta: { id: NodeId; priority: number; baseAlpha: number; nodeSizeWorld: number; held: boolean }[] = [];
   private runAlphas = new Float32Array(0);
   private runShifts = new Float32Array(0);
   private runVisible = new Int32Array(0);
@@ -196,7 +196,7 @@ export class Scene {
       // in the one case F-015 did not cover.
       const labelSize = st === 'searchHit' ? size * 1.9 : size;
       this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0,
-                          nodeSizeWorld: labelSize });
+                          nodeSizeWorld: labelSize, held: !n.placed });
       // Unplaced nodes sit in a ring. Their labels are pushed to the outward
       // side so they radiate from the holding cluster rather than pile onto it.
       const side: -1 | 0 | 1 = n.placed ? 0 : (n.pos[0] < doc.holding.origin[0] ? -1 : 1);
@@ -497,7 +497,14 @@ export class Scene {
           // an unpenalised anchor could push a name out to open ground where it
           // read cleanly but attached ambiguously — a label that names the
           // wrong thought costs more than one that cannot be read.
-          const away = Math.hypot(cx, cy) / 3.8;
+          // A HELD THOUGHT'S LABEL STAYS NEXT TO IT. The holding cluster is a
+          // tight ring of unplaced nodes, so a label re-anchored two rings out
+          // lands nearer a neighbour's dot than its own: measured on artifact
+          // 06, 'Nixtamal plus koji' ended 30 px from one dot and 32 px from
+          // another. Distance costs these labels five times what it costs a
+          // placed node's, which is enough to keep attribution unambiguous
+          // without pinning them to a side.
+          const away = Math.hypot(cx, cy) / 3.8 * (this.runMeta[b.i].held ? 5 : 1);
           // Coverage dominates: a CLEAR placement always beats a covered one,
           // however much shorter or further it is. Otherwise a full-length
           // label that could only be placed 20 % buried would win over the same

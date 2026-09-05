@@ -178,6 +178,17 @@ tr.map:hover{background:var(--panel)}
 #unlabelled li{list-style:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #unlabelled i{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:7px;
   vertical-align:middle}
+/* Leaders for held thoughts. In the holding ring the dots are close together
+   and the names radiate outward, so a label can end up nearer a neighbour's
+   dot than its own — measured on artifact 06, only four of eight labels had
+   their own dot as the nearest. The line joins each name to the thought it
+   belongs to. It carries attribution, so it is not decoration. */
+/* width/height explicitly: an <svg> is a REPLACED element, so inset:0 with
+   auto sizing leaves it at its intrinsic 300x150 and every line outside that
+   box is clipped away — which is why the first attempt drew eight lines and
+   showed none of them. */
+#leaders{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:21;pointer-events:none}
+#leaders line{stroke:#6E6157;stroke-width:1;opacity:.5}
 #clusterproof b{color:var(--ink);font-family:"DejaVu Sans Mono",monospace}
 #hidden{position:fixed;right:12px;top:56px;z-index:24;background:var(--panel);border:1px solid var(--line);
   padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}
