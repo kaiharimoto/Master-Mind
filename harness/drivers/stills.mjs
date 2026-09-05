@@ -11,7 +11,22 @@ import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, orient, sleepFrames } from
  * changed or the camera did, and the camera cannot.
  */
 export const PIN = {
+  // 02 has NEVER been re-pinned and will not be. It is the unbroken instrument:
+  // a pixel diff of 02 against any earlier cycle is a position check with no
+  // camera change to explain away.
   '02': { yaw: 0.42, pitch: 0.20, dist: 120.110861, target: [4.227, -4.996, 0.6945] },
+  // 04 is pinned at the same values it has had since cycle 4, and a re-pin was
+  // tried and REVERTED in cycle 5.
+  //
+  // The Audience asked for it to be framed so the node cloud fills the usable
+  // width. Measured across sixteen camera angles, the best available fill is
+  // 47 % of frame width against this angle's 42 % — about 12 % more on-screen
+  // text — and the frame it produces is worse: the map body climbs to the top,
+  // the holding cluster falls to the bottom-left corner with a dead band
+  // between them, and 47 labels are suppressed against 43. The remaining margin
+  // is the map's own aspect — a tall cloud with the holding cluster well below
+  // it — against a 16:9 frame, not a framing error. Breaking a position
+  // regression instrument for that is a bad trade, so it was not taken.
   '04': { yaw: 0.30, pitch: 0.16, dist: 128.755009, target: [4.227, -4.996, 0.6945] },
 };
 
@@ -213,7 +228,8 @@ export default [
   id: '09', file: '09_connect_edit.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true },
+  requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true,
+              editorWroteToTheModel: true },
   demonstrates: 'connect and edit before/after: a new filament created between two named nodes', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Connect and edit',
   async run(H) {
@@ -250,6 +266,9 @@ export default [
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
     const before = await H.tmpShot(page, cdp, '09a');
 
+    const colourBefore = await page.evaluate(i => window.mm.store.doc.nodes[i].color, a);
+    const textBefore = await page.evaluate(i => window.mm.store.doc.nodes[i].text, a);
+
     // Connect through the editor's own control and a click on the second node —
     // the same path a user takes.
     await page.click('[data-t=ed-link]');
@@ -257,21 +276,38 @@ export default [
     await page.mouse.click(s.x, s.y);
     await sleepFrames(page, 0, 2);
     await SELECT(page, A);
+    // And EDIT, through the same panel. The editor was being shown as a static
+    // prop beside the connect proof — offering controls but never seen writing
+    // to the model. The colour swatch moves its outline, the node's core changes
+    // hue, and the text the canvas renders changes with the field.
+    await page.click('[data-t=ed-colour-teal]');
+    await page.fill('[data-t=ed-text]', `${A} · aged 60d`);
+    await page.evaluate(t => {
+      const el = document.querySelector('[data-t=ed-text]');
+      el.value = t; el.dispatchEvent(new Event('input', { bubbles: true }));
+    }, `${A} · aged 60d`);
+    await sleepFrames(page, 0, 2);
     // Clear the transient toast so the frame shows the result, not the prompt
     // that preceded it.
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     await sleepFrames(page, 0, 3);
     const after = await H.tmpShot(page, cdp, '09b');
+    const colourAfter = await page.evaluate(i => window.mm.store.doc.nodes[i].color, a);
+    const textAfter = await page.evaluate(i => window.mm.store.doc.nodes[i].text, a);
     await H.compose([before, after], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
       labels: [`Before — “${A}” selected, no link to “${B}”`,
-               `After — the filament exists, editor open on text, colour and label`] });
+               `After — the filament exists, and the editor has written to the node`],
+      sublabels: [`colour ${colourBefore} · text “${textBefore}”`,
+                  `colour ${colourAfter} · text “${textAfter}” — both changed through the panel, position untouched`] });
 
     const linkedAfter = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
     const moved = await page.evaluate(() => Object.fromEntries(
       Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos])));
     return { between: [A, B], linkedBefore, linkedAfter, connectedByThisCapture: !linkedBefore && linkedAfter,
-             nodeCount: Object.keys(moved).length, editorOpen: true };
+             nodeCount: Object.keys(moved).length, editorOpen: true,
+             colourBefore, colourAfter, textBefore, textAfter,
+             editorWroteToTheModel: colourBefore !== colourAfter && textBefore !== textAfter };
   },
 },
 {

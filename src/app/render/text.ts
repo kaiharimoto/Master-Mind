@@ -21,6 +21,15 @@ export interface TextRun {
   nodeSizeWorld: number; alpha: number; above?: boolean;
   /** -1 sets the label to the left of the node, +1 to the right, 0 centred. */
   side?: -1 | 0 | 1;
+  /**
+   * Characters per line for THIS run, overriding the lens default.
+   *
+   * Truncation is a local problem: a label in open ground has nothing to
+   * collide with and should render whole, while one inside a dense district has
+   * to give up characters to stay legible at all. A single lens-wide clamp
+   * traded whole words everywhere to solve crowding somewhere.
+   */
+  perLine?: number;
 }
 
 /** Greedy wrap to at most `maxLines` lines of about `perLine` characters. */
@@ -243,7 +252,7 @@ export class TextLayer {
     let total = 0;
     const laid: { run: TextRun; lines: string[] }[] = [];
     for (const run of runs) {
-      const lines = wrap(run.text, perLine, maxLines);
+      const lines = wrap(run.text, run.perLine ?? perLine, maxLines);
       laid.push({ run, lines });
       for (const l of lines) for (const ch of l) if (m.chars[ch]) total++;
     }

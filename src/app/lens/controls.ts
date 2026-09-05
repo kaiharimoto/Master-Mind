@@ -163,15 +163,23 @@ export class Controls {
       this.store.moveCluster(this.dragCluster, d);
       this.dragLast.copy(world);
     } else {
-      const n = this.store.node(this.dragging);
+      // A node in flight is still HELD. Placement is committed on release, not
+      // on the first pixel of movement: clearing the unplaced flag at drag-start
+      // made the holding count report intent rather than outcome, so the chip
+      // fell to 4 while the node was still visibly inside the dashed boundary
+      // and under the cursor. Position tracks the drag; state does not.
       const pos: Vec3 = [world.x, world.y, world.z];
-      if (n && !n.placed) this.store.place(this.dragging, pos);
-      else this.store.move(this.dragging, pos);
+      this.store.move(this.dragging, pos);
     }
     this.scene.markDirty();
   }
 
   private endDrag() {
+    // The thought lands here, and the holding count falls here.
+    if (this.dragging && this.dragMoved && !this.dragCluster) {
+      const n = this.store.node(this.dragging);
+      if (n && !n.placed) this.store.place(this.dragging, [n.pos[0], n.pos[1], n.pos[2]]);
+    }
     if (this.dragging) this.hooks.onDragEnd?.();
     if (this.dragCluster && this.clusterStart && this.dragMoved) {
       const end = this.snapshotCluster(this.clusterStart.ids);

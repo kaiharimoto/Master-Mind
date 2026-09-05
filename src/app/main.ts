@@ -646,7 +646,12 @@ export class App {
     const touch = TOUCH_VOCAB.find(t => t.id === id);
     const hand = HAND_VOCAB.find(h => h.id === id || `mouse:${h.id}` === id);
     const name = touch?.name ?? hand?.name ?? (id === 'gyro' ? 'Gyroscope' : id);
-    const label = id.startsWith('mouse') ? `${name} (mouse equivalent)` : name;
+    // A mouse-equivalent caption names the INPUT, not the pose it stands in for.
+    // Three of the four read "Open palm (mouse equivalent)" and so never said
+    // what a mouse user actually does; the vocabulary already knows.
+    const label = id.startsWith('mouse')
+      ? `${hand ? hand.mouse.split(', or ')[0] : name} — the ${name} equivalent`
+      : name;
     g.innerHTML = `<span class="n">${esc(label)}</span> <span class="o">— ${esc(detail)}</span>`;
     g.classList.add('show');
     this.uiUntil.gesture = this.now() + 2600;

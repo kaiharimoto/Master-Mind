@@ -228,11 +228,15 @@ void main() {
   } else if (st == 3) {                            // search hit: four ticks
     // Long and thin, so they read as marks pointing at the node rather than as
     // four little squares sitting beside it.
-    float radial = smoothstep(CORE * 1.72 - aa, CORE * 1.72 + aa, r)
-                 * (1.0 - smoothstep(CORE * 2.62 - aa, CORE * 2.62 + aa, r));
+    // A full crosshair span rather than four short marks. At the end of a
+    // fly-to the hit fills the frame and the ticks were the faintest thing in
+    // it — the state was being told apart from 'selected' by being marginally
+    // brighter, which is the dual coding failing exactly where it matters most.
+    float radial = smoothstep(CORE * 1.70 - aa, CORE * 1.70 + aa, r)
+                 * (1.0 - smoothstep(CORE * 3.30 - aa, CORE * 3.30 + aa, r));
     float f = fract(u * 4.0);
     float d = min(f, 1.0 - f);
-    ring = radial * (1.0 - smoothstep(0.018, 0.036, d));
+    ring = radial * (1.0 - smoothstep(0.026, 0.048, d));
     // Tinted from the node's own hue, lifted toward bone. Pure white squares
     // read as a transform gizmo's drag handles rather than as a state.
     ringCol = mix(sig, vec3(0.955, 0.918, 0.862), 0.42);

@@ -156,6 +156,19 @@ export class Scene {
     this.runMeta = [];
     const posOf = new Map<NodeId, THREE.Vector3>();
     const textCol = new THREE.Color(TEXT_COLOR);
+    // How many other nodes sit within a short world radius of each node. This is
+    // the density that decides how much of a label has room to be drawn.
+    const CROWD_R = 7.5, CROWD_R2 = CROWD_R * CROWD_R;
+    const crowding = new Map<NodeId, number>();
+    for (let i = 0; i < ns.length; i++) {
+      let c = 0;
+      for (let j = 0; j < ns.length; j++) {
+        if (i === j) continue;
+        const dx = ns[i].pos[0] - ns[j].pos[0], dy = ns[i].pos[1] - ns[j].pos[1], dz = ns[i].pos[2] - ns[j].pos[2];
+        if (dx * dx + dy * dy + dz * dz < CROWD_R2) c++;
+      }
+      crowding.set(ns[i].id, c);
+    }
     for (const n of ns) {
       const st: NodeState = states.get(n.id) ?? 'plain';
       const p = new THREE.Vector3(n.pos[0], n.pos[1], n.pos[2]);
@@ -187,6 +200,13 @@ export class Scene {
       // side so they radiate from the holding cluster rather than pile onto it.
       const side: -1 | 0 | 1 = n.placed ? 0 : (n.pos[0] < doc.holding.origin[0] ? -1 : 1);
       runs.push({
+        // Truncation is decided PER NODE from how crowded its own neighbourhood
+        // is, in world space so it is stable as the camera moves. A label in
+        // open ground renders whole; one inside a dense district gives up
+        // characters to stay placeable. A single lens-wide clamp traded whole
+        // words everywhere to solve crowding somewhere — the hero came back
+        // reading "Saccharomyces…" where it had read "Saccharomyces cerevisiae".
+        perLine: Math.round(28 - 13 * Math.min(1, (crowding.get(n.id) ?? 0) / 9)),
         // A search hit wears four ticks at 1.9x its core radius. Anchoring the
         // label to the core radius put the text straight through the south
         // tick, so the state signature was overdrawn by its own label. The
@@ -202,13 +222,7 @@ export class Scene {
     }
     this.nodes.build(inst);
     const p = LENS_PROFILE[this.lens];
-    // Truncation is a density measure, not a lens constant. A short line keeps a
-    // 150-node overview readable by leaving room between labels; on an 11-node
-    // map it would clip names for nothing. It scales with how many nodes are
-    // actually competing for the frame.
-    const perLine = Math.round(Math.max(p.textPerLine,
-      Math.min(28, 28 - (Object.keys(doc.nodes).length - 24) * 0.09)));
-    this.text.build(runs, perLine, p.textLines);
+    this.text.build(runs, 28, p.textLines);
     if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
     if (this.runShifts.length !== this.runMeta.length * 2) this.runShifts = new Float32Array(this.runMeta.length * 2);
 
@@ -425,8 +439,14 @@ export class Scene {
         const dx = cx * sh.emPx, dy = cy * sh.emPx;
         const x0 = sh.bx0 + dx, y0 = sh.by0 + dy;
         const frac = coverage(x0, y0, x0 + sh.w, y0 + sh.h, area);
-        // Text-on-text decides the tier; text-on-marker only breaks ties.
-        const score = frac + 0.34 * discCover(this.runMeta[b.i].id, x0, y0, x0 + sh.w, y0 + sh.h, area);
+        // Text-on-text decides the tier; text-on-marker only breaks ties; and a
+        // label that wanders pays for the distance. Inside a tight cluster an
+        // unpenalised anchor could push a name out to open ground where it read
+        // cleanly but attached ambiguously — a label that names the wrong
+        // thought costs more than one that cannot be read.
+        const away = Math.hypot(cx, cy) / 3.8;
+        const score = frac + 0.34 * discCover(this.runMeta[b.i].id, x0, y0, x0 + sh.w, y0 + sh.h, area)
+                           + 0.22 * away;
         // The unshifted anchor is preferred: a candidate only wins if it is
         // meaningfully clearer, so labels do not jitter between placements.
         if (score < best.score - (cx === 0 && cy === 0 ? 0 : 0.06) ||
