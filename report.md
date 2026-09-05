@@ -766,7 +766,7 @@ only copy of a score he is not allowed to alter (§09).
 
 ## Cycle 7 — findings from the work itself
 
-Nine findings came out of cycle 7's own work rather than from a critic. Two are
+Ten findings came out of cycle 7's own work rather than from a critic. Two are
 recorded because a capture **failed** on them, which §09 makes a finding rather
 than something to route around; two more — F-026 and F-027 — are faults in the
 cross-cycle regression instrument itself, which means every "regression-free"
@@ -824,6 +824,20 @@ rectangle reserved for it, and two labels the arbiter had certified as disjoint
 landed on top of each other — *"Barley miso, 18 months"* overprinted by
 *"Amazake"* in artifact 10. Same class as F-015, in the one case F-015 did not
 cover.
+
+**F-029 — the ladder's yardstick was mis-named.** Everything about the state
+ladder called its measure *relative luminance*, and the function was Rec.601
+luma. The renderer writes linear values, so a critic sampling the shipped frame
+with the standard Rec.709 definition measured two nodes on one rung at 0.4107
+and 0.4713 — a spread of 0.060 against a reported 0.0002, and the plain and
+connected rungs inverted. **The ladder was sound; the yardstick was not the one
+the word names**, and a measurement only the builder's own sampler can reproduce
+is not evidence. `relLum`, the shader's desaturation mix and the harness sampler
+are Rec.709 now, so the palette is solved in the space a reader measures in. An
+independent sampler over the shipped artifact 07 reproduces the manifest: plain
+0.2975 / 0.2984, connected 0.4242 / 0.4249, unplaced 0.5615–0.5637, selected
+0.8003 — within-rung spread at most 0.002 against a minimum step of 0.114.
+D-015 carries the correction.
 
 **F-028 — a stated measurement that did not reproduce.** This report claimed
 **100 % pose accuracy** on the held-out clip. It does not reproduce: re-run in

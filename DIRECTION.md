@@ -433,14 +433,34 @@ rungs in force are:
 | | plain | connected | unplaced | search hit | selected |
 |---|---:|---:|---:|---:|---:|
 | rung, cycle 5 onward | 0.26 | 0.37 | 0.48 | 0.59 | 0.70 |
-| measured on 07 (core centre, cycle 7) | 0.288 | 0.425 | 0.562 | 0.676 | 0.801 |
+| measured on 07 (core centre, cycle 8) | 0.2975 | 0.4247 | 0.5628 | 0.6769 | 0.8025 |
 
-Every step is at least 0.114 and the widest scatter *within* a rung is 0.028, so
+Every step is at least 0.114 and the widest scatter *within* a rung is 0.002, so
 the property D-015 was made to guarantee is unchanged; only the numbers moved.
 From cycle 7 these are not restated from the source — artifact 07's driver reads
 them off the frame it just wrote, at each node's own core centre, and the
 capture fails if the ladder stops climbing or a step stops clearing the
 within-rung scatter.
+
+### Correction, cycle 8 — "relative luminance" now means what it says
+
+The function the whole ladder is solved against was **Rec.601 luma**
+(0.299/0.587/0.114) while every reference to it, here and in the report, called
+the result *relative luminance*. The renderer writes linear values into the
+framebuffer, so a reader sampling the shipped frame with the standard
+definition — Rec.709, 0.2126/0.7152/0.0722 — measured something else: two nodes
+equalised onto one rung came out **0.4107 and 0.4713**, a spread of 0.060
+against a reported 0.0002, with the plain and connected rungs inverted. The
+ladder was doing its job; the yardstick was mis-named, and a number nobody else
+can reproduce is not evidence.
+
+`relLum`, the shader's desaturation mix and the harness's sampler are all
+Rec.709 now, so the palette is solved in the same space a reader measures in.
+The rungs are unchanged; the RGB each hue lands on shifted, since a green needs
+less signal and a red more to reach the same true luminance. Verified by an
+independent sampler over the shipped artifact 07: the two *plain* cores measure
+0.2975 and 0.2984, the two *connected* 0.4242 and 0.4249, the four *unplaced*
+0.5615–0.5637, *selected* 0.8003. Recorded as F-029.
 
 **This amendment is a correction of the record, not a new decision.** The change
 happened in cycle 5's code and this table was not updated with it, so for two
