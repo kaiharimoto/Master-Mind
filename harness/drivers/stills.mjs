@@ -174,7 +174,12 @@ export default [
 {
   id: '02', file: '02_canvas_large_map.png', kind: 'png',
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
-              everyLabelInsideTheFrame: true },
+              everyLabelInsideTheFrame: true,
+              // The cycle-8 Auditor called 02 a regression: +85.5 % label ink,
+              // three unreadable overprinted pairs where cycle 7 had none, and
+              // the two claims above passed throughout because neither of them
+              // looks at one label against another. These two do.
+              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {

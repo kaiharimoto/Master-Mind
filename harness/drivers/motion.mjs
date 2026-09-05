@@ -15,8 +15,9 @@ export default [
   id: '05', file: '05_hand_tracking.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { operationTookEffect: true, declaredSynthetic: true },
-  demonstrates: 'Windows hand tracking: an open-palm spread shown before and after in one framing', minW: 1920, minH: 1080,
+  requires: { operationTookEffect: true, declaredSynthetic: true,
+              captionMatchesTheAppsVocabulary: true },
+  demonstrates: 'Windows hand tracking: an open-palm move-closer shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
   async run(H) {
@@ -43,13 +44,46 @@ export default [
     const after = await H.tmpShot(page, cdp, '05b', 3200);
     const distAfter = await page.evaluate(() => window.mm.scene.pose.dist);
     const f = await page.evaluate(() => ({ ...window.mm.hands.frame, landmarks: window.mm.hands.frame.landmarks.length }));
-    const v = f.pose === 'spread' ? 'Open palm — spread the map' : 'Gathered hand — gather the map';
+    // THE CAPTION IS READ FROM THE APP'S OWN VOCABULARY, not written beside it.
+    //
+    // It was a hardcoded string, and when the vocabulary was renamed everywhere
+    // else — the chip in this very frame, artifact 15's reference table,
+    // artifact 17's overlays — this caption kept saying "Open palm — spread the
+    // map". The cycle-8 Auditor found it: the last place in the whole set still
+    // asserting a layout-deforming operation the build no longer has, in a
+    // caption its own frame contradicts, and neither of this artifact's claims
+    // looked at the caption. Taking the words from HAND_VOCAB means the caption
+    // cannot drift from the app again, because there is only one copy.
+    const vocab = await page.evaluate(p => {
+      const h = window.mm.handVocab.find(x => x.id === p);
+      return h ? { name: h.name, operation: h.operation } : null;
+    }, f.pose);
+    // The vocabulary's operation string is a sentence with an explanatory
+    // clause — "Move closer — the map fills more of the frame; no thought
+    // moves" — and set whole into a panel caption it ran off the right edge of
+    // the frame. The caption takes the operation's leading clause and states
+    // the position guarantee separately; both halves still come from the app's
+    // own string, and captionMatchesTheAppsVocabulary asserts that what is
+    // printed is a prefix of it rather than a paraphrase beside it.
+    const opHead = vocab ? vocab.operation.split(' — ')[0] : null;
+    const v = vocab ? `${vocab.name} — ${opHead}` : `pose ${f.pose}`;
     await H.compose([before, after], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
       labels: [`Before — hand detected, pose not yet acting  ·  view distance ${distBefore.toFixed(1)}`,
-               `After — ${v}  ·  view distance ${distAfter.toFixed(1)}`] });
+               `After — ${v}  ·  view distance ${distAfter.toFixed(1)}`],
+      // The position guarantee goes in the SUBLABEL, which is wrapped. Set into
+      // the headline it ran off the right edge of a 960 px panel and the frame
+      // shipped reading "· view distance" with no number — a caption clipped by
+      // the fix for a caption that was wrong.
+      sublabels: ['', 'no thought moves: the vantage travels, the map does not'] });
     const src = await page.evaluate(() => ({ label: window.mm.hands.sourceLabel,
                                              synthetic: window.mm.hands.synthetic }));
-    return { pose: f.pose, landmarks: f.landmarks, tipsOut: f.reach, fan: +f.spreadRatio.toFixed(3),
+    return { pose: f.pose, poseName: vocab?.name ?? null, operation: vocab?.operation ?? null,
+             captionHead: v,
+             // Printed text is a PREFIX of the app's own string, not a
+             // paraphrase written next to it.
+             captionMatchesTheAppsVocabulary: !!vocab && !!opHead &&
+               vocab.operation.startsWith(opHead) && v === `${vocab.name} — ${opHead}`,
+             landmarks: f.landmarks, tipsOut: f.reach, fan: +f.spreadRatio.toFixed(3),
              confidence: +f.confidence.toFixed(3),
              distBefore: +distBefore.toFixed(2), distAfter: +distAfter.toFixed(2),
              operationTookEffect: Math.abs(distAfter - distBefore) > 0.5,

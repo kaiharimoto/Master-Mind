@@ -39,6 +39,9 @@ const ago = (t: number) => {
 };
 
 export class App {
+  /** The hand and touch vocabularies, so nothing outside the app rewrites them. */
+  handVocab = HAND_VOCAB;
+  touchVocab = TOUCH_VOCAB;
   surface: Surface;
   lens: LensKind = 'canvas';
   scene!: Scene;
@@ -1370,6 +1373,13 @@ declare global { interface Window { mm: App; TEXT_COLOR: string } }
 const params = new URLSearchParams(location.search);
 const surface = (params.get('surface') === 'android' ? 'android' : 'windows') as Surface;
 const app = new App(surface);
+// The vocabularies, reachable from outside the app.
+//
+// Captions in the evidence set were writing the operation names beside the app
+// rather than reading them from it, and when the vocabulary was renamed one
+// caption kept the old words — asserting an operation the build no longer had.
+// There is one copy of these strings and anything that names an operation takes
+// them from here.
 window.mm = app;
 window.TEXT_COLOR = TEXT_COLOR;
 app.boot({
