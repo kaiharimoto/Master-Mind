@@ -94,7 +94,16 @@ export async function shot(page, cdp, out, ms = 0) {
  * Record video by stepping the app's own clock at a fixed timebase.
  * `onFrame(i, tMs)` may drive interactions between frames.
  */
-export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame = null, startMs = 0 }) {
+/**
+ * `auditEvery`/`auditInto` sample the label arbiter DURING the take.
+ *
+ * The stills carry a zero-overhang guarantee, and it did not hold in motion: a
+ * label ran off the left edge of artifact 18's final frame reading '…eks',
+ * because the check only ever ran at still-capture time. A guarantee that is
+ * only checked where it is convenient is not a guarantee.
+ */
+export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame = null, startMs = 0,
+                                          auditEvery = 0, auditInto = null }) {
   const total = Math.ceil(seconds * fps);
   mkdirSync(dirname(out), { recursive: true });
   const ff = spawn('ffmpeg', [
@@ -111,6 +120,24 @@ export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame 
     const t = startMs + (i / fps) * 1000;
     if (onFrame) await onFrame(i, t, total);
     await step(page, t);
+    if (auditEvery && auditInto && i % auditEvery === 0) {
+      auditInto.push(await page.evaluate((f) => {
+        const sc = window.mm.scene, d = window.mm.store.doc;
+        const r = sc.labelDrawAudit();
+        const detail = (id) => {
+          if (!id) return null;
+          const res = sc.labelRects.get(id);
+          const i2 = sc.runMeta.findIndex(m => m.id === id);
+          const sp = sc.screenPositions().find(p => p.id === id);
+          const dr = i2 >= 0 && sp ? sc.text.drawnRect(i2, sp.x, sp.y, sp.pxPerWorld) : null;
+          return { text: d.nodes[id].text,
+                   res: res && [Math.round(res.x0), Math.round(res.y0), Math.round(res.x1), Math.round(res.y1)],
+                   drawn: dr && [Math.round(dr.x0), Math.round(dr.y0), Math.round(dr.x1), Math.round(dr.y1)] };
+        };
+        return { f, checked: r.checked, gap: r.worstGapPx, off: r.worstOffFramePx,
+                 gapOn: detail(r.worst), offOn: detail(r.worstOffFrame) };
+      }, i));
+    }
     const buf = await grab(cdp, { format: 'jpeg', quality: 94 });
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
   }

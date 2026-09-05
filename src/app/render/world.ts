@@ -28,7 +28,20 @@ export function hue(key: ColorKey | string): THREE.Color {
   return c;
 }
 
-const relLum = (r: number, g: number, b: number) => 0.299 * r + 0.587 * g + 0.114 * b;
+/**
+ * Relative luminance — the REAL one, Rec.709 weights.
+ *
+ * This was Rec.601 luma (0.299/0.587/0.114) while everything around it called
+ * the result "relative luminance". The renderer writes linear values into the
+ * framebuffer (colour management off, LinearSRGB output), so a critic sampling
+ * the shipped frame with the standard definition measures something else
+ * entirely: two nodes equalised to the same rung here came out 0.4107 and
+ * 0.4713 there — a spread of 0.060 against a reported 0.0002, and the plain and
+ * connected rungs inverted. The ladder was sound; the yardstick was mis-named,
+ * and a measurement nobody else can reproduce is not evidence. Rec.709 on
+ * linear values is what the pixels in the frame actually are.
+ */
+const relLum = (r: number, g: number, b: number) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
 const s2l = (c: number) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
 const l2s = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
@@ -178,7 +191,10 @@ void main() {
   mv.xy += position.xy * 2.0 * halfW;
   gl_Position = projectionMatrix * mv;
   vQuad = position.xy * 2.0;
-  float lum = dot(iColor, vec3(0.299, 0.587, 0.114));
+  // Rec.709, the same weighting the palette is solved against (see relLum).
+  // A desaturating mix has to hold luminance constant, and it can only do that
+  // if it agrees with the function that set the luminance in the first place.
+  float lum = dot(iColor, vec3(0.2126, 0.7152, 0.0722));
   vColor = mix(vec3(lum), iColor, iSat);
   vState = iState;
   // Distance fades toward the dark. Never to nothing: no zoom level where

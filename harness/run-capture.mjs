@@ -84,7 +84,8 @@ const crop = (src, out, x, y, w, h) => new Promise((res, rej) => {
  * those numbers off the shipped frame — rather than restating them from the
  * source that produced it — is what lets an artifact carry its own proof, and
  * what stops the prose in report.md and the pixels drifting apart.
- * The weighting is relLum() from world.ts — 0.299/0.587/0.114 — applied to the
+ * The weighting is relLum() from world.ts — Rec.709, 0.2126/0.7152/0.0722 —
+ * applied to the
  * framebuffer values directly, with NO sRGB decode: the renderer runs with
  * colour management off and an output space of LinearSRGB, so a byte in the
  * PNG is the value the shader wrote. Decoding it first measured plain at 0.071
@@ -115,7 +116,7 @@ const samplePixels = async (png, points, patch = 1) => {
       if (x < 0 || y < 0 || x >= W || y >= H) continue;
       const i = (y * W + x) * 3;
       if (i + 2 >= raw.length) continue;
-      sum += (0.299 * raw[i] + 0.587 * raw[i + 1] + 0.114 * raw[i + 2]) / 255;
+      sum += (0.2126 * raw[i] + 0.7152 * raw[i + 1] + 0.0722 * raw[i + 2]) / 255;
       n++;
     }
     if (n) out[pt.id] = Number((sum / n).toFixed(4));
@@ -125,9 +126,25 @@ const samplePixels = async (png, points, patch = 1) => {
 
 const modelStats = (page) => page.evaluate(() => {
   const d = window.mm.store.doc;
+  // The numbers the app PRINTS ON THE FRAME, read back from the DOM that drew
+  // them. A cross-cycle diff that compares only SSIM and luminance called a
+  // frame 'unchanged' while the counter on that very frame moved from 26 to 41;
+  // these give the diff something semantic to compare, and they are read from
+  // the chrome rather than recomputed, so they cannot silently agree with a
+  // model the frame does not show.
+  const txt = (sel) => { const e = document.querySelector(sel);
+    return e && getComputedStyle(e).display !== 'none' ? e.textContent.trim() : null; };
+  const num = (sel) => { const t = txt(sel); const m = t && t.match(/\d+/); return m ? Number(m[0]) : null; };
+  const onFrame = {
+    holdingBadge: num('[data-t=holding-count]'),
+    labelsHidden: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)/); return m ? Number(m[1]) : 0; })(),
+    unlabelledListed: document.querySelectorAll('#unlabelled li').length,
+    mapName: txt('[data-t=map-name]'),
+  };
   return { map: d.id, nodes: Object.keys(d.nodes).length, links: Object.keys(d.links).length,
            holding: Object.values(d.nodes).filter(n => !n.placed).length,
-           lens: window.mm.lens, surface: window.mm.surface, sync: window.mm.sync.status };
+           lens: window.mm.lens, surface: window.mm.surface, sync: window.mm.sync.status,
+           onFrame };
 });
 
 /** A stable signature of a cluster's internal arrangement, centroid-relative. */
@@ -244,7 +261,29 @@ async function runDriver(d) {
       // projected x had moved — from that frame alone "only the dragged node
       // moved" was no longer checkable. The exact pose is captured here and
       // restored immediately before every shot, on both halves.
-      for (const p of [w, a]) { await POSE(p.page, pose); await FRAME_ALL(p.page, 1.34); }
+      // FRAMED WITH THE EDITOR'S FOOTPRINT RESERVED. The frozen camera was
+      // solved against the empty viewport, and the AFTER half then opens the
+      // node editor over the right of it — which put the amber 'Closing: build
+      // your own' node entirely behind the panel in both surfaces, so the one
+      // artifact headlined noNodeDropped showed ten of eleven nodes. The panel
+      // is a fixed width, so opening it on any node reserves the same band;
+      // it is opened, the fit is solved against the band that is left, and it
+      // is closed again before the camera is frozen.
+      for (const p of [w, a]) {
+        await POSE(p.page, pose);
+        await p.page.evaluate(() => {
+          const first = Object.keys(window.mm.store.doc.nodes)[0];
+          window.mm.select(first);
+        });
+        await sleepFrames(p.page, 0, 2);
+        // 1.06, not the 1.34 that was right when the whole viewport was
+        // available: reserving the editor band already costs about a quarter of
+        // the width, and keeping the old margin on top of it left the map small
+        // in a mostly empty frame.
+        await FRAME_ALL(p.page, 1.06);
+        await p.page.evaluate(() => window.mm.select(null));
+        await sleepFrames(p.page, 0, 2);
+      }
       const frozen = await w.page.evaluate(() => {
         const s = window.mm.scene.pose;
         return { yaw: s.yaw, pitch: s.pitch, dist: s.dist, target: [s.target.x, s.target.y, s.target.z] };
@@ -262,6 +301,21 @@ async function runDriver(d) {
         });
         if (off.length) throw new Error(`twin ${when}: ${off.length} node(s) outside the frame (${off.slice(0, 3).join(', ')})`);
       };
+      // ...and not behind the app's own chrome either. Off the edge and under
+      // a panel are the same failure for an artifact whose claim is that every
+      // node is still there.
+      const chromeCover = (p) => p.page.evaluate(() => {
+        const boxes = ['#editor', '#finder', '#states', '#top', '#tools']
+          .map(sel => document.querySelector(sel))
+          .filter(e => e && getComputedStyle(e).display !== 'none')
+          .map(e => e.getBoundingClientRect())
+          .filter(r => r.width > 2 && r.height > 2);
+        const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+        return window.mm.scene.screenPositions()
+          .filter(s => boxes.some(r => s.x / dpr >= r.left && s.x / dpr <= r.right &&
+                                       s.y / dpr >= r.top && s.y / dpr <= r.bottom))
+          .map(s => s.id);
+      });
       await allVisible(w, 'before/windows'); await allVisible(a, 'before/android');
       const prov = {
         w: await w.page.evaluate(() => window.mm.provenance()),
@@ -333,6 +387,7 @@ async function runDriver(d) {
       // reader can check by eye that only the dragged node moved.
       for (const p of [w, a]) await freeze(p);
       await allVisible(w, 'after/windows'); await allVisible(a, 'after/android');
+      const coveredW = await chromeCover(w), coveredA = await chromeCover(a);
       // The pair is framed on the small map because that is where a reader can
       // COUNT the nodes and read the coordinates. The 150-node map is checked
       // across the same two sockets in the same take and reported as a ledger
@@ -473,6 +528,9 @@ async function runDriver(d) {
       after.cameraFrozen = frozen;
       after.everyNodeInFrame = true; // asserted above; the capture throws otherwise
       after.movedNodeCoords = { id: moveId, before: posBefore, after: posAfter };
+      after.nodesUnderChrome = { windows: coveredW, android: coveredA };
+      // Every node the artifact counts must be visible, not merely present.
+      after.everyNodeUnoccludedByChrome = coveredW.length === 0 && coveredA.length === 0;
       after.bigMapCrossSurface = bigTwin;
       // The 150-node map is SHOWN on both sockets in this artifact, not only
       // digested into a caption clause.

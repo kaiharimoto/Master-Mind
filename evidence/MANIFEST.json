@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T04:41:49.545Z",
+  "lastRunAt": "2026-09-05T04:58:44.771Z",
   "lastRunCaptured": [
-    "06"
+    "18"
   ],
   "artifacts": [
     {
@@ -633,7 +633,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T04:41:52.389Z"
     },
     {
@@ -642,15 +642,15 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.2,
+      "seconds": 1.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 179410,
-        "sha256": "04b6860ec7d9b8ab325505299674f1f0a46bcba6b97b00726749a9db637400e9"
+        "bytes": 178065,
+        "sha256": "aa9e91bd9efc3b468d882f9a6945db6d7b451f977ae06e50254740e844986f12"
       },
       "claims": {
         "ok": true,
@@ -697,28 +697,28 @@
           "Timebox to 18 minutes": "unplaced"
         },
         "measuredRungs": {
-          "plain": 0.291,
-          "connected": 0.4252,
-          "unplaced": 0.5627,
-          "searchHit": 0.6768,
-          "selected": 0.8021
+          "plain": 0.2975,
+          "connected": 0.4247,
+          "unplaced": 0.5628,
+          "searchHit": 0.6769,
+          "selected": 0.8025
         },
         "withinRungSpread": {
-          "plain": 0.0187,
-          "connected": 0.0002,
-          "unplaced": 0.0013,
+          "plain": 0.002,
+          "connected": 0.0005,
+          "unplaced": 0.0005,
           "searchHit": 0,
           "selected": 0
         },
         "rungSteps": [
-          0.1342,
-          0.1375,
+          0.1272,
+          0.1381,
           0.1141,
-          0.1253
+          0.1256
         ],
         "ladderMonotonic": true,
         "minRungStep": 0.1141,
-        "maxWithinRungSpread": 0.0187,
+        "maxWithinRungSpread": 0.002,
         "ladderStepsClearScatter": true,
         "ok": true
       },
@@ -732,7 +732,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:31.940Z"
+      "fileMtime": "2026-09-05T04:47:30.765Z"
     },
     {
       "id": "08",
@@ -996,15 +996,15 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 10.7,
+      "seconds": 11.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 195706,
-        "sha256": "c6a6a13ca15de6e2b898c542973f0247905116169e05ea16b956ca5202cdb4a2"
+        "bytes": 164580,
+        "sha256": "4e665ffc75cb68e0239607c1b8565e8629315b426e149288cc7c13c75b2d1063"
       },
       "claims": {
         "ok": true,
@@ -1036,7 +1036,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:49.476Z"
+      "fileMtime": "2026-09-05T04:51:45.142Z"
     },
     {
       "id": "12",
@@ -1051,8 +1051,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 661798,
-        "sha256": "289a64a79ab032bb5b726b95ab2864a7e51069840b282c7262877be2b443da58"
+        "bytes": 634984,
+        "sha256": "20b5328792b772a24e853029a1476e4ffde8550d27f4fd67e3f191d7d4af2dee"
       },
       "claims": {
         "ok": true,
@@ -1122,6 +1122,12 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "everyNodeUnoccludedByChrome",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -1134,9 +1140,9 @@
           -3.1
         ],
         "movedTo": [
-          3.212312035458714,
-          -0.2401182946903213,
-          -7.089073212336796
+          6.224564346905375,
+          2.1243814001730583,
+          -8.559369780986067
         ],
         "positionEditPropagated": true,
         "onlyTheDraggedNodeMoved": true,
@@ -1159,7 +1165,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 25296,
+            "serverPid": 25144,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -1170,7 +1176,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 25296,
+            "serverPid": 25144,
             "actor": "android-twin",
             "status": "live"
           }
@@ -1179,7 +1185,7 @@
         "cameraFrozen": {
           "yaw": 0.34,
           "pitch": 0.16,
-          "dist": 31.318370396952474,
+          "dist": 53.41637354938651,
           "target": [
             -0.15000000000000036,
             -3.3499999999999996,
@@ -1195,11 +1201,16 @@
             -3.1
           ],
           "after": [
-            3.212312035458714,
-            -0.2401182946903213,
-            -7.089073212336796
+            6.224564346905375,
+            2.1243814001730583,
+            -8.559369780986067
           ]
         },
+        "nodesUnderChrome": {
+          "windows": [],
+          "android": []
+        },
+        "everyNodeUnoccludedByChrome": true,
         "bigMapCrossSurface": {
           "nodes": {
             "windows": 150,
@@ -1236,7 +1247,7 @@
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:52.273Z"
+      "fileMtime": "2026-09-05T04:51:47.993Z"
     },
     {
       "id": "13",
@@ -1301,15 +1312,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.4,
+      "seconds": 2.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 295206,
-        "sha256": "b4b2ba35854e2bfc223850611a205734966124ba83cf7a43401e626422cf0ad3"
+        "bytes": 282283,
+        "sha256": "df66de2dca5a54028221efc692b1ffb26247c7c50987096475217481f02eaf7d"
       },
       "claims": {
         "ok": true,
@@ -1355,6 +1366,12 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "detailRowInsideFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -1378,27 +1395,40 @@
           {
             "x": 450,
             "y": 50,
-            "w": 624,
-            "h": 392
+            "w": 646,
+            "h": 386
           },
           {
             "x": 450,
             "y": 50,
-            "w": 624,
-            "h": 392
+            "w": 646,
+            "h": 386
           },
           {
-            "x": 474,
-            "y": 88,
-            "w": 806,
-            "h": 508
+            "x": 466,
+            "y": 110,
+            "w": 814,
+            "h": 486
           }
         ],
         "detailMagnifications": [
-          1.03,
-          1.03,
+          1.98,
+          1.98,
+          1.57
+        ],
+        "detailMagnificationsOfAppPixels": [
+          0.99,
+          0.99,
           0.79
         ],
+        "detailStripPx": 82,
+        "detailPanelHeights": [
+          382,
+          382,
+          382
+        ],
+        "detailRowBottomPx": 1080,
+        "detailRowInsideFrame": true,
         "detailNodesFound": 4,
         "acceptedId": "s1",
         "acceptedNodes": [
@@ -1412,7 +1442,7 @@
         ],
         "rejectedPairUnjoined": true,
         "detailIsMagnified": true,
-        "detailMagnificationFloor": 0.79,
+        "detailMagnificationFloor": 1.57,
         "cameraFrozenAcrossPanels": true,
         "rejectedId": "s2",
         "rejectionLeftNoTrace": true,
@@ -1423,12 +1453,12 @@
         "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch",
         "surface": "windows",
         "lens": null,
-        "fnSha": "5b51c1c6176689d9"
+        "fnSha": "3efad0406251632b"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:40:56.004Z"
+      "fileMtime": "2026-09-05T04:49:16.479Z"
     },
     {
       "id": "15",
@@ -1642,15 +1672,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 62.9,
+      "seconds": 59.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 3231161,
-        "sha256": "d468d672a0c2f184dd92ed3eee18308998a3c93808a842b0aa303c83e9c80278",
+        "bytes": 3161334,
+        "sha256": "5ce9d8224c18d5feda3ad1e785478cf5289184ed6ce114d992dbebc921c1544d",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -1672,6 +1702,12 @@
           },
           {
             "claim": "endsOnTheHit",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrameThroughout",
             "expected": true,
             "actual": true,
             "pass": true
@@ -1698,6 +1734,32 @@
             "text": "Koji-accelerated garum"
           }
         ],
+        "labelAuditsAcrossTake": 26,
+        "labelWorstAuditFrame": {
+          "f": 0,
+          "checked": 110,
+          "gap": 0,
+          "off": 0,
+          "gapOn": {
+            "text": "Preserved lemon, batch 3",
+            "res": [
+              588,
+              870,
+              757,
+              885
+            ],
+            "drawn": [
+              603,
+              879,
+              771,
+              895
+            ]
+          },
+          "offOn": null
+        },
+        "labelWorstOverhangAcrossTake": 0,
+        "labelWorstOffFrameAcrossTake": 0,
+        "everyLabelInsideTheFrameThroughout": true,
         "steppedToASecondHit": true,
         "severalHitsMatched": true,
         "endsOnTheHit": true
@@ -1707,12 +1769,12 @@
         "demonstrates": "search fly-to in motion: whole-map framing to one hit of several, then on to the next",
         "surface": "windows",
         "lens": null,
-        "fnSha": "de9c3f5fd1bb2ad6"
+        "fnSha": "a60024ab92924687"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T03:49:13.792Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T04:59:42.867Z"
     },
     {
       "id": "19",
@@ -1982,12 +2044,12 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T04:41:54.159Z",
+  "finishedAt": "2026-09-05T04:59:45.705Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 787567,
-    "sha256": "320ef852184977438f3afac51cedb3e654811534f70d4de95b6d9143346a5c74"
+    "bytes": 787905,
+    "sha256": "eac00e71d25f68c80399453b3d2015fe3dc1554e91148adbba1880bd21fc4ad0"
   },
   "captured": 20,
   "total": 20

@@ -180,6 +180,24 @@ export async function diffEvidence(curDir, prevDir) {
         }
       }
     }
+    // THE NUMBERS THE FRAME ITSELF PRINTS. SSIM and luminance are global and
+    // blind to semantics: cycle 7 was called 'unchanged' on artifact 05 while
+    // the counter drawn on that frame moved from 26 hidden labels to 41. Where
+    // an artifact reports what its chrome said, those values are diffed as
+    // first-class fields and any move is named in whatChanged.
+    {
+      const pc = prevById.get(a.id)?.result?.onFrame, cc = a.result?.onFrame;
+      if (pc && cc) {
+        const moved = Object.keys(cc).filter(k => JSON.stringify(cc[k]) !== JSON.stringify(pc[k]));
+        if (moved.length) {
+          row.onFrameChanged = moved.map(k => `${k} ${JSON.stringify(pc[k])} -> ${JSON.stringify(cc[k])}`);
+          if (row.verdict === 'unchanged') {
+            row.verdict = 'changed';
+            row.why = `the frame's own counters moved: ${row.onFrameChanged.join(', ')}`;
+          }
+        }
+      }
+    }
     // A similarity number cannot distinguish a re-framing from a bug fix from a
     // change to what the artifact demonstrates. The recipe fingerprint can, so
     // substantive change is named rather than left to a reviewer to notice.
@@ -305,9 +323,16 @@ export async function diffEvidence(curDir, prevDir) {
     ...header,
     notes,
     rows, positions,
+    // Every row lands in exactly one bucket, and they sum to the set size. The
+    // four buckets used to total 19 of 20 because 'uncomparable' was in none of
+    // them, which reads as a missing row rather than a stated one.
     summary: { unchanged: rows.filter(r => r.verdict === 'unchanged').length,
                changed: changed.length, new: rows.filter(r => r.verdict === 'new').length,
-               missing: missing.length, changedIds: changed, missingIds: missing,
+               missing: missing.length,
+               uncomparable: rows.filter(r => r.verdict === 'uncomparable').length,
+               total: rows.length,
+               changedIds: changed, missingIds: missing,
+               uncomparableIds: rows.filter(r => r.verdict === 'uncomparable').map(r => r.id),
                substantiveIds: rows.filter(r => r.substantive).map(r => r.id) },
   };
 }

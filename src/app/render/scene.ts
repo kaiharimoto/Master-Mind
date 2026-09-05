@@ -57,7 +57,7 @@ function settledSat(c: THREE.Color): number {
   const key = c.getHex();
   let v = SETTLED_CACHE.get(key);
   if (v === undefined) {
-    const lum = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+    const lum = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
     const chroma = Math.hypot(c.r - lum, c.g - lum, c.b - lum);
     v = chroma < 1e-4 ? SETTLED_FLOOR : Math.min(Math.max(1 - RECENCY_STEP / chroma, SETTLED_FLOOR), 0.92);
     SETTLED_CACHE.set(key, v);
@@ -377,6 +377,8 @@ export class Scene {
     // frame: see suppressed().
     const BRIGHT_MAX = 0, DIM_MAX = 0.16;
     this.labelRects.clear();
+    this.lastScreen.clear();
+    for (const q of scr) this.lastScreen.set(q.id, { x: q.x, y: q.y, pxPerWorld: q.pxPerWorld });
     const panels: Box[] = [];
     const taken: Box[] = [];
     // Node markers are occluders too: text landing on a disc is as unreadable as
@@ -479,8 +481,12 @@ export class Scene {
           // with bone glyphs at 0.87 sitting across it — so a marker counts
           // against a placement exactly as heavily as another label does, and
           // feeds the same tier decision.
-          // Off the frame is not a placement at all.
-          if (x0 < 0 || y0 < 0 || x0 + cand.w > VW || y0 + sh.h > VH) continue;
+          // Off the frame is not a placement at all — and flush against the
+          // edge is not one either. A label whose first glyph begins at x=0 is
+          // whole, but it reads as one that was cut, which costs the reader the
+          // same certainty. A small margin settles it.
+          const M = 8;
+          if (x0 < M || y0 < M || x0 + cand.w > VW - M || y0 + sh.h > VH - M) continue;
           // NOR IS ACROSS THE LABEL'S OWN MARKER. A node's own disc is left out
           // of the coverage sum — a label is supposed to sit beside its node
           // and would otherwise be penalised for doing so — but that is not a
@@ -594,6 +600,18 @@ export class Scene {
   labelRects = new Map<NodeId, { x0: number; y0: number; x1: number; y1: number; alpha: number }>();
 
   /**
+   * The projected positions the LAST deconfliction ran against.
+   *
+   * The audit below used to re-project at the moment it was called, which is
+   * the same thing only while the camera is still. Sampled mid-flight it
+   * compared boxes reserved at one camera against glyphs measured at another
+   * and reported a 178 px disagreement that was entirely its own. What the
+   * audit has to answer is whether the arbiter and the draw agreed in ONE
+   * frame, so both sides must come from that frame.
+   */
+  private lastScreen = new Map<NodeId, { x: number; y: number; pxPerWorld: number }>();
+
+  /**
    * Does the arbiter's reserved rectangle contain the glyphs that were drawn?
    *
    * Reported as the worst gap in pixels over every visible label. Zero means
@@ -603,15 +621,13 @@ export class Scene {
    */
   labelDrawAudit(): { checked: number; worstGapPx: number; worst: string | null;
                       worstOffFramePx: number; worstOffFrame: string | null } {
-    const scr = this.screenPositions();
-    const byId = new Map(scr.map(s => [s.id, s]));
     const el = this.renderer.domElement;
     let worst = 0, worstId: string | null = null, checked = 0;
     let off = 0, offId: string | null = null;
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const res = this.labelRects.get(meta.id);
-      const s = byId.get(meta.id);
+      const s = this.lastScreen.get(meta.id);
       if (!res || !s || res.alpha <= 0.02) continue;
       const drawn = this.text.drawnRect(i, s.x, s.y, s.pxPerWorld);
       if (!drawn) continue;

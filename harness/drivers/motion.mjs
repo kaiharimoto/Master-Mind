@@ -221,7 +221,8 @@ export default [
   requires: { positionsIdenticalAcrossSurfaces: true, positionEditPropagated: true, onlyTheDraggedNodeMoved: true,
               everyOtherPositionUnchanged: true, noNodeDropped: true, editPropagated: true,
               concurrentConflictKeptBoth: true, bothSurfacesAgreeOnNode: true, twoDistinctSockets: true,
-              bigMapShownOnBothSurfaces: true, bigMapLedgersIdentical: true },
+              bigMapShownOnBothSurfaces: true, bigMapLedgersIdentical: true,
+              everyNodeUnoccludedByChrome: true },
   demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows at the same frozen camera, and the 150-node map on those same two sockets under one camera', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — after',
   async run(H) { return H.twin(this, 'after'); },
@@ -232,7 +233,8 @@ export default [
   // capture rather than a record with a false flag inside it.
   requires: { allThreeKinds: true, rejectionLeftNoTrace: true, rejectedIsGone: true,
               acceptanceLanded: true, cameraFrozenAcrossPanels: true,
-              rejectedPairUnjoined: true, detailIsMagnified: true },
+              rejectedPairUnjoined: true, detailIsMagnified: true,
+              detailRowInsideFrame: true },
   demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
   async run(H) {
@@ -388,15 +390,26 @@ export default [
     });
     // The caption strip is solved before the crops are, so the panels fill the
     // row exactly instead of being letterboxed inside it.
-    const detCaps = [
-      `crop {C0} of the 1280x1080 frame · the pair the finder proposed joining`,
-      `a filament now runs between ${acceptedSug ? acceptedSug.texts.join(' and ') : 'the accepted pair'}`,
-      `nothing runs between ${rejectedSug ? rejectedSug.texts.join(' and ') : 'the rejected pair'}`,
+    // The strip is solved from the captions that are ACTUALLY passed, not from
+    // a shorter draft of them. Sizing it from the draft and then passing longer
+    // text made the strip taller than the geometry assumed, and about 30 px of
+    // every detail panel — including the node the third panel exists to prove
+    // nothing happened to — fell off the bottom of the frame.
+    const rectTxt = (r) => `${r.w}x${r.h} at (${r.x}, ${r.y})`;
+    const capFor = (aR, rR) => [
+      `crop ${rectTxt(aR)} of the 1280x1080 frame · the pair the finder proposed joining` +
+        ' · the app toast is hidden in this row only',
+      `a filament now runs between ${acceptedSug ? acceptedSug.texts.join(' and ') : 'the accepted pair'}` +
+        ` · same crop ${rectTxt(aR)} as the panel left of it`,
+      `nothing runs between ${rejectedSug ? rejectedSug.texts.join(' and ') : 'the rejected pair'}` +
+        ` · crop ${rectTxt(rR)}`,
     ];
-    const detStrip = (() => {
-      const n = Math.max(1, ...detCaps.map(c => wrapCaption(c, CELL).lines.length));
-      return 34 + n * 21 + 6;
-    })();
+    // Solved in two passes: the strip depends on the caption, the caption on the
+    // crop rectangle, and the rectangle on the strip. One pass with a generous
+    // rectangle fixes the line count, and the second uses it.
+    const stripFor = (caps) => 34 + Math.max(1, ...caps.map(c => wrapCaption(c, CELL).lines.length)) * 21 + 6;
+    const guessR = { x: 0, y: 0, w: 1280, h: 806 };
+    const detStrip = stripFor(capFor(guessR, guessR));
     const ASPECT = CELL / (BOT - detStrip);
     // A label hangs about an em clear of its node and runs well past it, so the
     // crop is padded generously enough to keep both names whole.
@@ -421,7 +434,14 @@ export default [
     };
     const accRect = rectFor(accBox), rejRect = rectFor(rejBox);
     const rects = [accRect, accRect, rejRect];
-    const mags = rects.map(r => Number((CELL / r.w).toFixed(2)));
+    // AGAINST THE PANEL ABOVE, which is what 'detail' means here. The top row
+    // draws the 1280 px frame into a 640 px panel, so a crop reported at x0.79
+    // of the app's own pixels is x1.58 of the panel it is a detail of — and a
+    // claim named 'isMagnified' passing on a number below 1 reads as the
+    // opposite of what it asserts.
+    const TOP_SCALE = CELL / 1280;
+    const mags = rects.map(r => Number((CELL / r.w / TOP_SCALE).toFixed(2)));
+    const magsOfApp = rects.map(r => Number((CELL / r.w).toFixed(2)));
     const cuts = [];
     for (const [k, src] of [pre, midClean, postClean].entries())
       cuts.push(await H.crop(src, H.tmp(`14d${k}.png`), rects[k].x, rects[k].y, rects[k].w, rects[k].h));
@@ -432,13 +452,13 @@ export default [
                   `applied ${applied} · links ${linksBeforeAccept} → ${linksAfterAccept}`,
                   `rejected ${refused} · ${beforeReject === after ? 'links unchanged' : 'LINKS CHANGED'} · ` +
                   `${rejectedPairJoined ? 'A FILAMENT EXISTS' : 'no filament joins that pair'}`] });
-    const rectTxt = (r) => `${r.w}x${r.h} at (${r.x}, ${r.y})`;
+    const caps = capFor(accRect, rejRect);
+    const realStrip = stripFor(caps);
+    const panelH = rects.map(r => Math.round(Math.min(CELL / r.w, (BOT - realStrip) / r.h) * r.h));
     await H.compose(cuts, rowB, { mode: 'h', width: 1920, height: BOT,
       labels: [`Detail ×${mags[0]} — the pair, before`, `Detail ×${mags[1]} — accepted: joined`,
                `Detail ×${mags[2]} — rejected: still apart`],
-      sublabels: [detCaps[0].replace('{C0}', rectTxt(accRect)) + ' · the app toast is hidden in this row only',
-                  `${detCaps[1]} · same crop ${rectTxt(accRect)} as the panel left of it`,
-                  `${detCaps[2]} · crop ${rectTxt(rejRect)}`] });
+      sublabels: caps });
     await H.stack([rowA, rowB], H.out(this.file));
     const posAfter = await SCREEN();
     const remaining = await page.evaluate(() => window.mm.suggestions.map(s => s.kind));
@@ -447,15 +467,20 @@ export default [
              acceptanceLanded: linksAfterAccept === linksBeforeAccept + 1,
              allThreeKinds: ['connection', 'grouping', 'placement'].every(k => staged.includes(k)),
              detailCrops: rects, detailMagnifications: mags,
+             detailMagnificationsOfAppPixels: magsOfApp,
+             detailStripPx: realStrip, detailPanelHeights: panelH,
+             detailRowBottomPx: TOP + realStrip + Math.max(...panelH),
+             // Every detail panel must END inside the frame. Cycle 7 shipped
+             // this artifact with ink in its last row and glyphs bisected.
+             detailRowInsideFrame: TOP + realStrip + Math.max(...panelH) <= 1080,
              detailNodesFound: (accBox ? accBox.n : 0) + (rejBox ? rejBox.n : 0),
              acceptedId: acceptedSug && acceptedSug.id, acceptedNodes: acceptedSug && acceptedSug.nodes,
              rejectedKind: rejectedSug && rejectedSug.kind, rejectedNodes: rejectedSug && rejectedSug.nodes,
              // The pair the rejected suggestion named is joined by no link.
              rejectedPairUnjoined: !rejectedPairJoined,
              // The detail row must be a CLOSER look, not a second copy of the
-             // top row, or the space it fills is padding. The top row draws the
-             // 1280 px frame into a 640 px panel, so the bar is: every detail
-             // panel is strictly closer than x0.50.
+             // top row, or the space it fills is padding. The bar is that
+             // every detail panel is strictly closer than the panel above it.
              //
              // The bar was first written as x1.0 — the app at its own pixels —
              // and the capture FAILED on it: the rejected pair spans 722 px of
@@ -465,7 +490,7 @@ export default [
              // conveniently placed suggestion instead, would be arranging the
              // take to suit the frame. The bar is restated with its reason and
              // every panel prints its own magnification. See report.md F-022.
-             detailIsMagnified: mags.every(m => m > 0.5),
+             detailIsMagnified: mags.every(m => m > 1),
              detailMagnificationFloor: Math.min(...mags),
              // The three panels are only comparable if the camera did not move
              // between them: a filament that appears could otherwise be a
@@ -643,7 +668,8 @@ export default [
   id: '18', file: '18_search_flyto.mp4', kind: 'mp4',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { steppedToASecondHit: true, severalHitsMatched: true, endsOnTheHit: true },
+  requires: { steppedToASecondHit: true, severalHitsMatched: true, endsOnTheHit: true,
+              everyLabelInsideTheFrameThroughout: true },
   demonstrates: 'search fly-to in motion: whole-map framing to one hit of several, then on to the next', minW: 1920, minH: 1080,
   minFps: 24, minSec: 10, surface: 'windows', map: 'map-fermentation',
   title: 'Search fly-to in motion',
@@ -676,13 +702,24 @@ export default [
       { at: 100, fn: async () => { await page.press('[data-t=search]', 'Enter'); await noteHit('first'); } },
       { at: 270, fn: async () => { await page.press('[data-t=search]', 'Enter'); await noteHit('next'); } },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 13, onFrame: script(steps) });
+    // The label guarantee, checked EVERY HALF SECOND OF THE TAKE rather than
+    // only on the still. Artifact 18's cycle-7 final frame had a label running
+    // off the left edge while the stills carried a zero-overhang claim.
+    const audits = [];
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 13, onFrame: script(steps),
+                                auditEvery: 15, auditInto: audits });
     const scr = landed.length ? await SCREEN_OF(page, landed[landed.length - 1].id) : null;
     const hits = await page.evaluate(() => window.mm.hits.length);
     return { query: q, endDistance: +(await page.evaluate(() => window.mm.scene.pose.dist)).toFixed(2),
              centred: scr ? { dx: Math.round(scr.x - 960), dy: Math.round(scr.y - 540) } : null,
              hits, landedOn: landed,
              // Two different hits, in one take, from one query.
+             labelAuditsAcrossTake: audits.length,
+             labelWorstAuditFrame: audits.slice().sort((x, y) => Math.max(y.gap, y.off) - Math.max(x.gap, x.off))[0],
+             labelWorstOverhangAcrossTake: Math.max(0, ...audits.map(a => a.gap)),
+             labelWorstOffFrameAcrossTake: Math.max(0, ...audits.map(a => a.off)),
+             everyLabelInsideTheFrameThroughout: audits.length > 0 &&
+               audits.every(a => a.off === 0 && a.gap === 0),
              steppedToASecondHit: landed.length === 2 && landed[0].id !== landed[1].id,
              severalHitsMatched: hits >= 3,
              endsOnTheHit: !!scr && Math.abs(scr.x - 960) < 40 && Math.abs(scr.y - 540) < 40 };
