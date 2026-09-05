@@ -11,11 +11,11 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 |---|---|
 | Phase | review |
 | Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
-| Review cycle | **7 captured and frozen**; critics running against `evidence/cycles/cycle-7/` |
-| Rubric score | **88.0 / 100** at cycle 6 — no category below its minimum, both hard gates met |
-| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 (cycles 1–6) |
+| Review cycle | **8 captured and frozen**; critics running against `evidence/cycles/cycle-8/` |
+| Rubric score | **82.0 / 100** at cycle 7 — **category 05 below its minimum (6 against 8)**, both hard gates met |
+| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 (cycles 1–7) |
 | Artifacts captured | **20 of 20, all as defined**, in every frozen cycle |
-| Positions | **identical for seven consecutive cycles**, compared as model values |
+| Positions | **identical for eight consecutive cycles**, compared as model values |
 | Exit condition | total ≥ 90, both hard gates, two consecutive regression-free cycles — or the 15-cycle cap with a final report listing every unmet gate |
 | Cold start | **passed** — 161 positions verified against the committed fixtures as model values |
 
@@ -116,8 +116,24 @@ faults above.
 
 ## NEXT ACTION
 
-Read the three cycle-7 critic verdicts as they arrive, **write each one to
-`evidence/critics/<role>-cycle-7.md` verbatim before responding to it**, record
-scores and findings in `report.md`, and open cycle 8 against whichever category
-is furthest from its weight. Cycle 6 stood at 88.0; the exit needs +2 and two
-consecutive regression-free cycles.
+Read the three cycle-8 critic verdicts as they arrive, **write each one to
+`evidence/critics/<role>-cycle-8.md` verbatim before responding to it**, record
+scores and findings in `report.md`, and open cycle 9.
+
+Cycle 7 fell to 82.0 with quality compliance at 6 against a minimum of 8 — the
+first category below a minimum in the run. Cycle 8 answers both of that cycle's
+blocking findings at the mechanism, with the gains measured on the shipped
+frames:
+
+- **Every label is drawn.** Artifacts 02, 04 and 06 draw 150 of 150 with zero
+  hidden, zero overlaps of any kind, and every drawn label at 3:1 or better
+  against the ground. Cycle 6 hid 26 and 17; cycle 7 hid 33 and 30.
+- **Filaments are visible.** The two modal filament values are (34,27,22) and
+  (46,38,32) against an (18,14,11) ground — 1.49:1 and 1.90:1, against the
+  1.06:1 the Art Director measured and the 1.35:1 the ruling asked for.
+- The far ring and its leaders implement the Art Director's binding ruling:
+  a label pushed into free canvas rather than dropped, and dropped only when
+  the canvas is genuinely full.
+
+The exit needs total ≥ 90, every category at or above its minimum, and two
+consecutive regression-free cycles — so cycles 8 and 9 both.
