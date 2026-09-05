@@ -275,6 +275,23 @@ The underlying behaviour turned out to be correct — the grab always translated
 the cluster rigidly, max member drift `0.000000` — so this was a false negative,
 which is exactly why it survived: nothing looked, and the frames looked fine.
 
+**F-019 · A failed capture left the previous run's file on disk.**
+Found in cycle 5 while responding to the Audience: a `compose` failure in
+artifact 03 was recorded as `driver-error`, and the frame from the run *before*
+it stayed in the output directory. The manifest said the capture had failed and
+the directory held a frame from another build. Frozen into a cycle, that is an
+artifact whose provenance its own manifest denies — and it would have looked
+entirely normal to a critic, because the frame was a real frame, just not the
+one the record described.
+**Fix:** a driver error deletes the artifact file, so a failed capture is
+**visibly missing** rather than silently stale. **Verified** by reproducing the
+compose failure and confirming the file is removed.
+
+The compose failure itself was an apostrophe in a caption: `esc()` escapes `'`
+for ffmpeg's `drawtext`, and ffmpeg's own parser did not accept the escape
+inside a single-quoted filter argument. The caption uses a typographic
+apostrophe, which is not a filter metacharacter.
+
 ---
 
 ## Deviations ledger

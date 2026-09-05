@@ -437,6 +437,17 @@ for (const d of list) {
   const t0 = Date.now();
   process.stdout.write(`  ${d.id} ${d.file} … `);
   const { result, error, pageErrors } = await runDriver(d);
+  // A FAILED CAPTURE MUST NOT LEAVE THE PREVIOUS FILE BEHIND.
+  //
+  // A compose failure in artifact 03 was recorded as `driver-error` while the
+  // file from the run before it stayed on disk — so the manifest said the
+  // capture failed and the directory held a frame from another build. Frozen
+  // into a cycle, that is an artifact whose provenance the manifest denies.
+  // The file is removed, so a failed capture is visibly missing.
+  if (error) {
+    const stale = resolve(OUTDIR, d.file);
+    if (existsSync(stale)) { rmSync(stale, { force: true }); }
+  }
   const check = await verify(d, resolve(OUTDIR, d.file));
   const claims = checkClaims(d, result);
   const entry = { id: d.id, file: d.file, title: d.title, kind: d.kind,

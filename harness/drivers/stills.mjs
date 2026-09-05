@@ -135,9 +135,22 @@ export default [
     const hdg = (g) => (g ? Math.round(g.alpha) : null);
     const cap = (p) => `device heading ${hdg(p.gyro)}° · tilt ${p.gyro ? Math.round(p.gyro.beta) : '—'}° · ` +
                        `“Sauerkraut by weight” at x=${p.anchor ? p.anchor.x : '—'} px · every node position unchanged`;
+    // The titles say what the frame PROVES, and the measurement carries the
+    // headline. The panels used to be titled as a projection demonstration
+    // while the footer said there is no camera pass-through — the claim and the
+    // evidence were reading against each other at a glance. What this frame
+    // actually establishes is a gyroscopic vantage over a map that does not
+    // move, and the anchor node's travel is the falsifiable part of it.
+    const shift = A.anchor && B.anchor ? Math.abs(B.anchor.x - A.anchor.x) : null;
     await H.compose([A.file, B.file], H.out(this.file), { mode: 'h', width: 2560, height: 1440,
-      labels: [`Held at heading ${hdg(A.gyro)}° — the same map`, `Turned to heading ${hdg(B.gyro)}° — the same map, seen from elsewhere`],
-      sublabels: [cap(A), cap(B)] });
+      labels: [`Gyroscopic vantage — device held at heading ${hdg(A.gyro)}°`,
+               `Turned to heading ${hdg(B.gyro)}° — every node position unchanged`],
+      sublabels: [cap(A), cap(B)],
+      sublabels2: [
+        'cold first launch from the committed seed · the app’s own deviceorientation listener moves the vantage; nothing writes the camera',
+        shift === null ? 'anchor not resolved'
+          : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px across the frame while its stored position did not change`,
+      ] });
 
     const st = await H.modelStats(page);
     const same = JSON.stringify(A.positions) === JSON.stringify(B.positions);
