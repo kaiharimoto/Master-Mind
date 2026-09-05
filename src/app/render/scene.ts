@@ -491,6 +491,9 @@ export class Scene {
     this.labelNeedsLeader.clear();
     this.lastScreen.clear();
     for (const q of scr) this.lastScreen.set(q.id, { x: q.x, y: q.y, pxPerWorld: q.pxPerWorld, r: q.r });
+    this.lastPose = { dist: this.pose.dist, yaw: this.pose.yaw, pitch: this.pose.pitch,
+                      target: this.pose.target.toArray() as [number, number, number] };
+    this.lastCanvas = [this.renderer.domElement.width, this.renderer.domElement.height];
     const panels: Box[] = [];
     const taken: Box[] = [];
     // Node markers are occluders too: text landing on a disc is as unreadable as
@@ -935,6 +938,10 @@ export class Scene {
    * instead of assuming it.
    */
   deconflictSeq = 0;
+  /** The camera the arbiter last laid labels out against. */
+  lastPose: { dist: number; yaw: number; pitch: number; target: [number, number, number] } | null = null;
+  /** The canvas size the arbiter laid labels out against. */
+  lastCanvas: [number, number] | null = null;
   /** Each label's chosen anchor last frame, in the node's own frame. */
   private lastPlacement = new Map<NodeId, { dx: number; dy: number; w: number; vis: number; far: boolean; span: number }>();
 

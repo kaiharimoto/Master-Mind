@@ -106,6 +106,42 @@ const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
   const a = await labelAudit(page);
   const anchors = a.labelAnchors ?? [];
   delete a.labelAnchors;
+  if (process.env.MM_DEBUG_MARKERS) {
+    const dbg = await page.evaluate((ids) => {
+      const sc = window.mm.scene, d = window.mm.store.doc;
+      const fresh = new Map(sc.screenPositions().map(q => [q.id, q]));
+      return ids.map(i => ({ id: i, text: d.nodes[i]?.text, placed: d.nodes[i]?.placed,
+        fresh: fresh.has(i) ? [Math.round(fresh.get(i).x), Math.round(fresh.get(i).y), +fresh.get(i).r.toFixed(1)] : null }));
+    }, anchors.slice(0, 200).map(a => a.id));
+    const byId = new Map(anchors.map(a => [a.id, a]));
+    const poses = await page.evaluate(() => ({
+      arbiter: window.mm.scene.lastPose,
+      now: { dist: window.mm.scene.pose.dist, yaw: window.mm.scene.pose.yaw,
+             pitch: window.mm.scene.pose.pitch, target: window.mm.scene.pose.target.toArray() },
+    }));
+    const sizes = await page.evaluate(() => ({
+      canvas: [window.mm.scene.renderer.domElement.width, window.mm.scene.renderer.domElement.height],
+      inner: [window.innerWidth, window.innerHeight], dpr: window.devicePixelRatio,
+      lastCanvas: window.mm.scene.lastCanvas,
+    }));
+    const det = await page.evaluate(() => {
+      const sc = window.mm.scene;
+      const a = new Map(sc.screenPositions().map(q => [q.id, [q.x, q.y]]));
+      const b = new Map(sc.screenPositions().map(q => [q.id, [q.x, q.y]]));
+      let worstAB = 0, worstId = null;
+      for (const [id, p] of a) { const q = b.get(id); if (!q) continue;
+        const d = Math.hypot(p[0]-q[0], p[1]-q[1]); if (d > worstAB) { worstAB = d; worstId = id; } }
+      return { n: a.size, worstBetweenTwoCalls: +worstAB.toFixed(3), worstId };
+    });
+    console.log('    [markers] two consecutive screenPositions() calls:', JSON.stringify(det));
+    console.log('    [markers] sizes', JSON.stringify(sizes));
+    console.log('    [markers] arbiter pose', JSON.stringify(poses.arbiter));
+    console.log('    [markers] audit   pose', JSON.stringify(poses.now));
+    console.log('    [markers] first 4 anchors, arbiter vs fresh:');
+    for (const row of dbg.slice(0, 4))
+      console.log('      ', row.id, JSON.stringify(row.fresh), 'arbiter',
+                  JSON.stringify([byId.get(row.id).x, byId.get(row.id).y, byId.get(row.id).r]), row.text);
+  }
   const m = await H.sampleDiscs(H.out(file), anchors);
   return { ...a, markerContrast: m,
            labelsWithoutVisibleMarker: m.invisible ?? null,
