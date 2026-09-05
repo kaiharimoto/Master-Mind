@@ -14,51 +14,51 @@
   ],
   "passes": 3,
   "poseAccuracyPerPass": [
-    0.997,
-    0.997,
+    1,
+    0.994,
     0.997
   ],
   "poseAccuracyRange": [
-    0.997,
-    0.997
+    0.994,
+    1
   ],
-  "detectionRate": 0.99,
+  "detectionRate": 0.993,
   "poseAccuracy": 0.997,
   "rows": [
     {
       "pose": "two",
-      "correct": 271,
-      "frames": 271,
+      "correct": 246,
+      "frames": 246,
       "rate": 1,
       "saw": {
-        "two": 271
+        "two": 246
       }
     },
     {
       "pose": "gather",
-      "correct": 270,
-      "frames": 270,
+      "correct": 245,
+      "frames": 245,
       "rate": 1,
       "saw": {
-        "gather": 270
+        "gather": 245
       }
     },
     {
       "pose": "spread",
-      "correct": 271,
-      "frames": 271,
+      "correct": 247,
+      "frames": 247,
       "rate": 1,
       "saw": {
-        "spread": 271
+        "spread": 247
       }
     },
     {
       "pose": "fist",
-      "correct": 270,
-      "frames": 273,
-      "rate": 0.989,
+      "correct": 248,
+      "frames": 251,
+      "rate": 0.988,
       "saw": {
-        "fist": 270,
+        "fist": 248,
         "NO_HAND": 3
       }
     }
