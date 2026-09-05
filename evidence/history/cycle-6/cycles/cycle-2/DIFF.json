@@ -1,0 +1,264 @@
+{
+  "cycle": 2,
+  "previousCycle": 0,
+  "capturedNow": 20,
+  "capturedPrev": 2,
+  "rows": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.968603,
+      "verdict": "changed"
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.82244,
+      "verdict": "changed"
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.862199,
+      "verdict": "changed"
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.747756,
+      "verdict": "changed"
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.956455,
+      "verdict": "changed"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.937266,
+      "verdict": "changed"
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.876442,
+      "verdict": "changed"
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.992655,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.993173,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.943115,
+      "verdict": "changed"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.825283,
+      "verdict": "changed"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.784802,
+      "verdict": "changed"
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.938203,
+      "verdict": "changed"
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 0.864997,
+      "seconds": {
+        "cur": 34,
+        "prev": 34
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1427445,
+        "prev": 1232570
+      },
+      "bitrateDelta": 0.158,
+      "verdict": "changed"
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.9,
+      "ssim": 0.791384,
+      "seconds": {
+        "cur": 38,
+        "prev": 36
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 6524012,
+        "prev": 6673826
+      },
+      "bitrateDelta": -0.022,
+      "verdict": "changed"
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.960313,
+      "seconds": {
+        "cur": 13,
+        "prev": 13
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1740384,
+        "prev": 1917284
+      },
+      "bitrateDelta": -0.092,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 0.88988,
+      "seconds": {
+        "cur": 18,
+        "prev": 18
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 284492,
+        "prev": 293283
+      },
+      "bitrateDelta": -0.03,
+      "verdict": "changed"
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "status": "captured",
+      "threshold": 0.95,
+      "ssim": 0.865735,
+      "seconds": {
+        "cur": 30,
+        "prev": 26
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 586338,
+        "prev": 542855
+      },
+      "bitrateDelta": 0.08,
+      "verdict": "changed"
+    }
+  ],
+  "positions": {
+    "compared": true,
+    "moved": [],
+    "added": [],
+    "removed": [],
+    "identical": true
+  },
+  "summary": {
+    "unchanged": 5,
+    "changed": 15,
+    "new": 0,
+    "missing": 0,
+    "changedIds": [
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "11",
+      "12",
+      "13",
+      "14",
+      "16",
+      "17",
+      "19",
+      "20"
+    ],
+    "missingIds": []
+  }
+}

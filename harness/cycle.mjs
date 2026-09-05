@@ -16,7 +16,18 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const EV = resolve(ROOT, 'evidence');
 const cycle = Number(process.argv[2] ?? 1);
 const skipCapture = process.argv.includes('--skip-capture');
-const prevDir = resolve(EV, `history/cycle-${cycle - 1}`);
+// THE PREVIOUS CYCLE IS THE FROZEN SET THE CRITICS READ, not whatever was in
+// evidence/ when this cycle started.
+//
+// history/cycle-N is a snapshot of the WORKING directory taken at the start of
+// cycle N+1, so every artifact recaptured between the two cycles was already
+// in it — and the cross-cycle diff, which is the regression instrument the
+// Auditor's verdict rests on, silently skipped exactly the artifacts that had
+// changed. Cycle 7 reported 5 of 20 changed when the true figure against the
+// frozen cycle-6 set was 20. See report.md F-026.
+const frozenPrev = resolve(EV, `cycles/cycle-${cycle - 1}`);
+const historyPrev = resolve(EV, `history/cycle-${cycle - 1}`);
+const prevDir = existsSync(join(frozenPrev, 'MANIFEST.json')) ? frozenPrev : historyPrev;
 
 let lastRun = null;
 const run = (args) => {
@@ -56,7 +67,7 @@ console.log('contact sheets written');
 // 4. Diff against the previous cycle.
 const diff = await diffEvidence(EV, prevDir);
 writeFileSync(join(EV, 'DIFF.json'), JSON.stringify(diff, null, 2));
-console.log(`diff vs cycle-${cycle - 1}: ${JSON.stringify(diff.summary)}`);
+console.log(`diff vs cycle-${cycle - 1} (${prevDir === frozenPrev ? 'frozen set' : 'working snapshot — no frozen set found'}): ${JSON.stringify(diff.summary)}`);
 console.log(`positions: ${diff.positions.compared ? (diff.positions.identical ? 'IDENTICAL' : `${diff.positions.moved.length} MOVED`) : 'no previous set'}`);
 
 // 5. Freeze the set the critics read.

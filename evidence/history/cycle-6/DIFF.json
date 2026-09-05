@@ -1,0 +1,586 @@
+{
+  "cycle": 6,
+  "previousCycle": 5,
+  "previousCycleSource": "derived from the snapshot directory being diffed",
+  "capturedNow": 20,
+  "capturedPrev": 20,
+  "capturedPrevSource": "artifact files actually present in the previous snapshot",
+  "previousManifestSelfReport": {
+    "cycle": 5,
+    "captured": 20
+  },
+  "headerDisagreement": null,
+  "rowsVsCapturedPrev": "ok",
+  "rows": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 33327,
+          "meanLum": 0.564,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 33327,
+          "meanLum": 0.564,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      }
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.892496,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 74073,
+          "meanLum": 0.3156,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 74681,
+          "meanLum": 0.3291,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.041,
+        "litDelta": 0.008
+      }
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.720445,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 203809,
+          "meanLum": 0.4138,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 180762,
+          "meanLum": 0.4273,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.032,
+        "litDelta": 0.127
+      },
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (f0c6f01da86a243f -> cc6453acaa698523); demonstrates now: \"AR lens hero on Android at cold first launch, one map at two device orientations\"",
+      "substantive": true
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.872442,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 89135,
+          "meanLum": 0.3538,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 81763,
+          "meanLum": 0.3614,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.021,
+        "litDelta": 0.09
+      }
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.760104,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 300969,
+          "meanLum": 0.3844,
+          "peakLum": 0.9982
+        },
+        "prev": {
+          "litPixels": 291539,
+          "meanLum": 0.3921,
+          "peakLum": 0.9982
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.02,
+        "litDelta": 0.032
+      }
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.942574,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 53122,
+          "meanLum": 0.4576,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 52465,
+          "meanLum": 0.4366,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.048,
+        "litDelta": 0.013
+      }
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.998676,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 69346,
+          "meanLum": 0.4639,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 70148,
+          "meanLum": 0.4655,
+          "peakLum": 0.9067
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.003,
+        "litDelta": 0.011
+      }
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.948288,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 82364,
+          "meanLum": 0.5061,
+          "peakLum": 0.9982
+        },
+        "prev": {
+          "litPixels": 83282,
+          "meanLum": 0.5107,
+          "peakLum": 1
+        },
+        "peakDelta": 0.002,
+        "meanDelta": 0.009,
+        "litDelta": 0.011
+      }
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.813814,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 93144,
+          "meanLum": 0.5423,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 92352,
+          "meanLum": 0.536,
+          "peakLum": 0.9991
+        },
+        "peakDelta": 0.001,
+        "meanDelta": 0.012,
+        "litDelta": 0.009
+      },
+      "whatChanged": "capture script changed (6e709a235d8786a7 -> 8ae3f9c207e1d6fe); demonstrates now: \"connect and edit before/after: a new filament created between two named nodes\"",
+      "substantive": true
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.951582,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 63150,
+          "meanLum": 0.4757,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 60841,
+          "meanLum": 0.4854,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.02,
+        "litDelta": 0.038
+      }
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.857278,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 72330,
+          "meanLum": 0.5139,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 74629,
+          "meanLum": 0.5127,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.002,
+        "litDelta": 0.031
+      }
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.771044,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 95521,
+          "meanLum": 0.5247,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 94443,
+          "meanLum": 0.5112,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.026,
+        "litDelta": 0.011
+      }
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.998814,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 106136,
+          "meanLum": 0.4798,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 107027,
+          "meanLum": 0.4808,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.002,
+        "litDelta": 0.008
+      }
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.74158,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 74115,
+          "meanLum": 0.4186,
+          "peakLum": 0.9607
+        },
+        "prev": {
+          "litPixels": 86114,
+          "meanLum": 0.4529,
+          "peakLum": 0.996
+        },
+        "peakDelta": 0.035,
+        "meanDelta": 0.076,
+        "litDelta": 0.139
+      },
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (4bac6c7d3ff070d4 -> a0064fc35ae0471b); demonstrates now: \"the finder review stage: parsed suggestions with accept and reject controls\"",
+      "substantive": true
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 78269,
+          "meanLum": 0.4072,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 78269,
+          "meanLum": 0.4072,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      }
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": null,
+      "seconds": {
+        "cur": 34,
+        "prev": 34
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1789653,
+        "prev": 1763104
+      },
+      "bitrateDelta": 0.015,
+      "verdict": "uncomparable",
+      "subject": {
+        "cur": {
+          "litPixels": 264609,
+          "meanLum": 0.4425,
+          "peakLum": 0.9978
+        },
+        "prev": {
+          "litPixels": 87420,
+          "meanLum": 0.3614,
+          "peakLum": 0.97
+        },
+        "peakDelta": 0.029,
+        "meanDelta": 0.224,
+        "litDelta": 2.027
+      },
+      "subjectChanged": true
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.9,
+      "ssim": null,
+      "seconds": {
+        "cur": 41,
+        "prev": 41
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 7910162,
+        "prev": 6598443
+      },
+      "bitrateDelta": 0.199,
+      "verdict": "uncomparable",
+      "subject": {
+        "cur": {
+          "litPixels": 760231,
+          "meanLum": 0.3383,
+          "peakLum": 0.9813
+        },
+        "prev": {
+          "litPixels": 191810,
+          "meanLum": 0.3225,
+          "peakLum": 0.9488
+        },
+        "peakDelta": 0.034,
+        "meanDelta": 0.049,
+        "litDelta": 2.963
+      },
+      "subjectChanged": true
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": null,
+      "seconds": {
+        "cur": 11,
+        "prev": 11
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1889347,
+        "prev": 1743964
+      },
+      "bitrateDelta": 0.083,
+      "verdict": "uncomparable",
+      "subject": {
+        "cur": {
+          "litPixels": 430257,
+          "meanLum": 0.3252,
+          "peakLum": 0.958
+        },
+        "prev": {
+          "litPixels": 121245,
+          "meanLum": 0.2906,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0.057,
+        "meanDelta": 0.119,
+        "litDelta": 2.549
+      },
+      "subjectChanged": true
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": null,
+      "seconds": {
+        "cur": 18,
+        "prev": 18
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 344004,
+        "prev": 314293
+      },
+      "bitrateDelta": 0.095,
+      "verdict": "uncomparable",
+      "subject": {
+        "cur": {
+          "litPixels": 286067,
+          "meanLum": 0.4508,
+          "peakLum": 0.9868
+        },
+        "prev": {
+          "litPixels": 93606,
+          "meanLum": 0.3614,
+          "peakLum": 0.9635
+        },
+        "peakDelta": 0.024,
+        "meanDelta": 0.247,
+        "litDelta": 2.056
+      },
+      "subjectChanged": true
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "status": "captured",
+      "threshold": 0.95,
+      "ssim": null,
+      "seconds": {
+        "cur": 30,
+        "prev": 30
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 620739,
+        "prev": 619014
+      },
+      "bitrateDelta": 0.003,
+      "verdict": "uncomparable",
+      "subject": {
+        "cur": {
+          "litPixels": 380030,
+          "meanLum": 0.3964,
+          "peakLum": 0.9587
+        },
+        "prev": {
+          "litPixels": 123071,
+          "meanLum": 0.3261,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0.058,
+        "meanDelta": 0.216,
+        "litDelta": 2.088
+      },
+      "subjectChanged": true
+    }
+  ],
+  "positions": {
+    "compared": true,
+    "moved": [],
+    "added": [],
+    "removed": [],
+    "identical": true
+  },
+  "summary": {
+    "unchanged": 4,
+    "changed": 11,
+    "new": 0,
+    "missing": 0,
+    "changedIds": [
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "14"
+    ],
+    "missingIds": [],
+    "substantiveIds": [
+      "03",
+      "09",
+      "14"
+    ]
+  }
+}

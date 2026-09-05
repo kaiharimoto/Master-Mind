@@ -52,12 +52,36 @@ async function ssimImages(a, b) {
  * minutes per artifact on a CPU-only box and tells you nothing the sheets do
  * not. Duration and frame rate are compared exactly, separately.
  */
+const dims = async (f) => {
+  const r = await run('ffprobe', ['-v', 'error', '-select_streams', 'v:0',
+    '-show_entries', 'stream=width,height', '-of', 'csv=p=0', f]);
+  const [w, h] = r.out.trim().split(',').map(Number);
+  return Number.isFinite(w) && Number.isFinite(h) ? { w, h } : null;
+};
+
 async function ssimVideos(a, b) {
   const sa = a.replace(/([^/]+)\.mp4$/, 'sheets/$1_sheet.png');
   const sb = b.replace(/([^/]+)\.mp4$/, 'sheets/$1_sheet.png');
-  if (existsSync(sa) && existsSync(sb)) return ssimImages(sa, sb);
+  // Sheets only if they are the SAME SHAPE. Cycle 7 moved the timestamp into a
+  // gutter under each tile, which made every sheet taller; SSIM cannot compare
+  // two different geometries and returned null, so five of the six videos came
+  // back 'uncomparable' — a change to a review aid silently disabling the
+  // regression instrument for a third of the set. Where the sheets disagree the
+  // videos themselves are compared instead.
+  if (existsSync(sa) && existsSync(sb)) {
+    const [da, db] = [await dims(sa), await dims(sb)];
+    if (da && db && da.w === db.w && da.h === db.h) return ssimImages(sa, sb);
+  }
+  // THE WHOLE TAKE, not its first four seconds.
+  //
+  // The direct comparison was capped at `-t 4`, so a change anywhere after the
+  // fourth second was invisible to it. Artifact 20's cycle-7 take rejects a
+  // placement at 24 s: over four seconds it scored 0.99 and read UNCHANGED;
+  // over its full duration it scores 0.909 against a 0.950 threshold. Both
+  // streams are scaled to 480 wide first, which is what makes the full
+  // duration affordable — about three seconds per pair on this box.
   const r = await run('ffmpeg', ['-i', a, '-i', b, '-lavfi',
-    'ssim', '-t', '4', '-f', 'null', '-']);
+    '[0:v]scale=480:-2[x];[1:v]scale=480:-2[y];[x][y]ssim', '-f', 'null', '-']);
   const m = /All:([0-9.]+)/.exec(r.err);
   return m ? Number(m[1]) : null;
 }
@@ -113,6 +137,14 @@ export async function diffEvidence(curDir, prevDir) {
                   threshold: SSIM_THRESHOLD[a.id] ?? 0.99 };
     if (!existsSync(A)) { row.verdict = 'missing'; rows.push(row); continue; }
     if (!existsSync(B)) { row.verdict = 'new'; rows.push(row); continue; }
+    if (a.kind === 'mp4') {
+      const sa = join(curDir, 'sheets', a.file.replace('.mp4', '_sheet.png'));
+      const sb = join(prevDir, 'sheets', a.file.replace('.mp4', '_sheet.png'));
+      const [da, db] = existsSync(sa) && existsSync(sb) ? [await dims(sa), await dims(sb)] : [null, null];
+      row.ssimMethod = da && db && da.w === db.w && da.h === db.h
+        ? 'contact sheet, 20 frames spanning the take'
+        : 'the take itself, full duration at 480 px wide';
+    }
     row.ssim = a.kind === 'mp4' ? await ssimVideos(B, A) : await ssimImages(B, A);
     if (a.kind === 'mp4') {
       const [pa, pb] = [await probe(A), await probe(B)];
@@ -123,6 +155,14 @@ export async function diffEvidence(curDir, prevDir) {
     }
     row.verdict = row.ssim === null ? 'uncomparable'
       : row.ssim >= row.threshold ? 'unchanged' : 'changed';
+    // An uncomparable row must say WHY it could not be compared. Left blank it
+    // reads like an unchanged one in a summary count.
+    if (row.verdict === 'uncomparable' && !row.why) {
+      const [da, db] = [await dims(A), await dims(B)];
+      row.why = da && db && (da.w !== db.w || da.h !== db.h)
+        ? `frame geometry changed this cycle: ${db.w}x${db.h} -> ${da.w}x${da.h}, so SSIM has nothing to compare`
+        : 'SSIM produced no score for this pair';
+    }
     // The subject test, beside SSIM rather than instead of it.
     const [sa, sb] = [await subject(A), await subject(B)];
     if (sa && sb) {
@@ -249,8 +289,21 @@ export async function diffEvidence(curDir, prevDir) {
       `${prevFilesOnDisk} previous files`
     : 'ok';
 
+  // The per-artifact thresholds were derived from the CONTACT-SHEET method. A
+  // cycle that falls back to comparing the takes themselves is measuring on a
+  // different noise floor, and a reader weighing a 'changed' verdict needs to
+  // know which. Said here rather than left to be inferred from the rows.
+  const fallback = rows.filter(r => r.ssimMethod && r.ssimMethod.startsWith('the take'));
+  const notes = [];
+  if (fallback.length) notes.push(
+    `${fallback.length} video(s) compared as takes rather than through their contact sheets ` +
+    `(${fallback.map(r => r.id).join(', ')}) — the sheets changed shape this cycle. The thresholds in ` +
+    `SSIM_THRESHOLD were calibrated on the sheet method, so these scores sit on a different noise floor; ` +
+    `the fallback scores lower, so it errs toward reporting change.`);
+
   return {
     ...header,
+    notes,
     rows, positions,
     summary: { unchanged: rows.filter(r => r.verdict === 'unchanged').length,
                changed: changed.length, new: rows.filter(r => r.verdict === 'new').length,
