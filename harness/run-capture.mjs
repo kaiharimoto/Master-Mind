@@ -634,6 +634,12 @@ async function runDriver(d) {
       const before = {
         windowsSurface: winSource, windowsUserAgent: winUA,
         positionsIdenticalAcrossSurfaces: same(pw0, pa0),
+        // The BEFORE half carries its panels' provenance too. Only the after
+        // half did, so artifact 11's record named the Android runtime alone —
+        // on the one artifact whose whole subject is that there are two of them.
+        provenance: { windows: prov.w, android: prov.a },
+        panelRuntimes: { windows: prov.w.runtime, android: prov.a.runtime },
+        panelRasterisers: { windows: prov.w.gl, android: prov.a.gl },
         nodeCount: { windows: Object.keys(pw0).length, android: Object.keys(pa0).length },
       };
       const movedOnly = (before0, after0) => {
@@ -701,9 +707,34 @@ async function runDriver(d) {
   try { result = await d.run.call(d, H); }
   catch (e) { error = e.message + '\n' + (e.stack || '').split('\n').slice(1, 4).join('\n'); }
   const errs = pages.flatMap(p => p.errs);
+  // WHICH RUNTIME ACTUALLY DREW THIS ONE.
+  //
+  // "Windows" is two different things across the set: artifacts 11 and 12 drive
+  // the packaged win32-x64 binary under Wine, and every other Windows artifact
+  // runs the same app in headless Chromium on Linux. Both are declared on their
+  // own frames, so nothing was hidden — but as the cycle-8 Auditor put it, a
+  // reader comparing 02 against 11 is comparing two substitutions without being
+  // told they differ. Recorded per artifact so the difference is in the record
+  // and not only in two badges a reader has to notice and compare.
+  let runtimes = null;
+  try {
+    const seen = [];
+    for (const p of pages) {
+      const pv = await p.page.evaluate(() => window.mm?.provenance?.() ?? null).catch(() => null);
+      if (pv) seen.push(`${pv.surface}: ${pv.runtime} · ${pv.platform}`);
+    }
+    // The twin's Windows half is reached over CDP rather than opened here, so
+    // it is not in `pages` and a naive sweep would record the twin artifacts as
+    // Android-only — the one place in the set where the distinction matters
+    // most. Its provenance is already captured per panel; use it.
+    const pr = result?.provenance;
+    if (pr?.windows) seen.unshift(`windows: ${pr.windows.runtime} · ${pr.windows.platform}`);
+    if (pr?.android) seen.push(`android: ${pr.android.runtime} · ${pr.android.platform}`);
+    runtimes = [...new Set(seen)];
+  } catch { runtimes = null; }
   await browser.close();
   S.close();
-  return { result, error, pageErrors: errs };
+  return { result, error, pageErrors: errs, runtimes };
 }
 
 /**
@@ -771,7 +802,7 @@ console.log(`capturing ${list.length} artifact(s) into ${OUTDIR}`);
 for (const d of list) {
   const t0 = Date.now();
   process.stdout.write(`  ${d.id} ${d.file} … `);
-  const { result, error, pageErrors } = await runDriver(d);
+  const { result, error, pageErrors, runtimes } = await runDriver(d);
   // A FAILED CAPTURE MUST NOT LEAVE THE PREVIOUS FILE BEHIND.
   //
   // A compose failure in artifact 03 was recorded as `driver-error` while the
@@ -799,6 +830,8 @@ for (const d of list) {
                   // what changed, not only how much.
                   recipe: { demonstrates: d.demonstrates ?? null,
                             surface: d.surface ?? null, lens: d.lens ?? null,
+                            // Not the declared surface — the runtime that ran.
+                            runtimes: runtimes ?? null,
                             fnSha: createHash('sha256').update(String(d.run)).digest('hex').slice(0, 16) },
                   // WHICH CYCLE THIS FILE CAME FROM. capturedInThisRun answers a
                   // narrower question — a cycle is several runs, since a single

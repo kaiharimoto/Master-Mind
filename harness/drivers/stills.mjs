@@ -418,7 +418,8 @@ export default [
   // capture rather than a record with a false flag inside it.
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
               countMatchesMarkers: true, everyHeldLabelAttributable: true,
-              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true },
+              noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
+              everyHeldMarkerCountable: true },
   demonstrates: 'the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
   async run(H) {
@@ -444,17 +445,54 @@ export default [
                              lo = Math.min(lo, q.y); hi = Math.max(hi, q.y); }
       return (hi - lo) / el.height;
     }, h);
+    // THE ANGLE IS SOLVED TOO, for a countable cluster.
+    //
+    // The cycle-8 Auditor found two of the eight held markers at roughly
+    // (853,556) and (848,567) — 11 px apart, overlapping enough to read as one
+    // dot at 1×, on the artifact whose point is that the waiting count is
+    // glanceable. Their positions are the model's and are not the render's to
+    // change: nudging a marker apart on screen would be drawing a thought
+    // somewhere it does not live, which is the one thing this whole project
+    // refuses to do, and moving them in the seed would void every position
+    // regression claim in the run (§09).
+    //
+    // What a person would do instead is look from a different angle. The nodes
+    // are at different points in space, so a vantage exists from which they
+    // separate. The yaw is searched for the one that maximises the SMALLEST
+    // on-screen gap between any two held markers, and the distance is then
+    // solved at that yaw as before. Nothing moves; the camera walks around the
+    // ring until every waiting thought is its own dot.
+    const heldSeparation = async () => page.evaluate(() => {
+      const held = new Set(Object.values(window.mm.store.doc.nodes).filter(n => !n.placed).map(n => n.id));
+      const pts = window.mm.scene.screenPositions().filter(q => held.has(q.id));
+      let worst = Infinity, pair = null;
+      for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+        const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y) - (pts[i].r + pts[j].r);
+        if (d < worst) { worst = d; pair = [pts[i].id, pts[j].id]; }
+      }
+      return { worst: Number.isFinite(worst) ? +worst.toFixed(1) : null, pair, n: pts.length };
+    });
+    const probeDist = h.radius * 3.2;
+    let bestYaw = 0.35, bestSep = -Infinity;
+    for (let k = 0; k < 24; k++) {
+      const y = (k / 24) * Math.PI * 2;
+      await POSE(page, { target: h.origin, yaw: y, pitch: 0.10, dist: probeDist });
+      await sleepFrames(page, 0, 1);
+      const sep = await heldSeparation();
+      if (sep.worst !== null && sep.worst > bestSep) { bestSep = sep.worst; bestYaw = y; }
+    }
     const TARGET = 0.80;
     let lo = h.radius * 1.2, hi = h.radius * 8;
     for (let i = 0; i < 22; i++) {
       const mid = (lo + hi) / 2;
-      await POSE(page, { target: h.origin, yaw: 0.35, pitch: 0.10, dist: mid });
+      await POSE(page, { target: h.origin, yaw: bestYaw, pitch: 0.10, dist: mid });
       await sleepFrames(page, 0, 1);
       const f = await ringHeightFrac();
       if (f === null || f > TARGET) lo = mid; else hi = mid;
     }
-    await POSE(page, { target: h.origin, yaw: 0.35, pitch: 0.10, dist: hi });
+    await POSE(page, { target: h.origin, yaw: bestYaw, pitch: 0.10, dist: hi });
     await sleepFrames(page, 0, 3);
+    const sep = await heldSeparation();
     await H.shot(page, cdp, H.out(this.file));
     const st = await H.modelStats(page);
     const frac = await ringHeightFrac();
@@ -495,6 +533,11 @@ export default [
     // the eight HELD names, so the other thirty-odd went unmeasured.
     return { ...(await labelsAndMarkers(H, page, this.file)),
              ...st, holdingOrigin: h.origin, holdingRadius: h.radius,
+             heldMarkerYaw: +bestYaw.toFixed(3),
+             heldMarkerWorstGapPx: sep.worst, heldMarkerClosestPair: sep.pair,
+             // Every waiting thought is its own dot: the tightest pair of held
+             // markers clears both their radii by at least four pixels.
+             everyHeldMarkerCountable: sep.worst !== null && sep.worst >= 4,
              cameraDistance: +hi.toFixed(3), ringHeightFraction: +Number(frac ?? 0).toFixed(3),
              heldNodes: held,
              // The ring is the subject: it has to be the thing the frame is of.
