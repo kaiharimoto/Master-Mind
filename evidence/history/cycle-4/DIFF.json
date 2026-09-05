@@ -1,0 +1,288 @@
+{
+  "cycle": 4,
+  "previousCycle": 3,
+  "previousCycleSource": "derived from the snapshot directory being diffed",
+  "capturedNow": 20,
+  "capturedPrev": 20,
+  "capturedPrevSource": "artifact files actually present in the previous snapshot",
+  "previousManifestSelfReport": {
+    "cycle": 3,
+    "captured": 20
+  },
+  "headerDisagreement": null,
+  "rowsVsCapturedPrev": "ok",
+  "rows": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.906998,
+      "verdict": "changed",
+      "whatChanged": "capture script changed (2be50f6227c58941 -> e78dba1ab8559b1b); demonstrates now: \"canvas lens at whole-map framing on Windows, 150 nodes with seed provenance\"",
+      "substantive": true
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.712833,
+      "verdict": "changed",
+      "whatChanged": "demonstrates: \"AR lens hero on Android at cold first launch, gyro-oriented vantage\" -> \"AR lens hero on Android at cold first launch, one map at two device orientations\"; capture script changed (541963290281fac2 -> f0c6f01da86a243f); demonstrates now: \"AR lens hero on Android at cold first launch, one map at two device orientations\"",
+      "substantive": true
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.875373,
+      "verdict": "changed",
+      "whatChanged": "capture script changed (3aea3c4d4dee4b9e -> 45fc3b745339efe7); demonstrates now: \"mind-expansion lens, the whole map and the holding cluster on screen at once\"",
+      "substantive": true
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.723549,
+      "verdict": "changed"
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.992521,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.999051,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.991482,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.982359,
+      "verdict": "changed"
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.983198,
+      "verdict": "changed"
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.998843,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.982736,
+      "verdict": "changed"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.999128,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.999151,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 0.986549,
+      "seconds": {
+        "cur": 34,
+        "prev": 34
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1468539,
+        "prev": 1490391
+      },
+      "bitrateDelta": -0.015,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.9,
+      "ssim": 0.76385,
+      "seconds": {
+        "cur": 38,
+        "prev": 38
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 7467758,
+        "prev": 6898578
+      },
+      "bitrateDelta": 0.083,
+      "verdict": "changed",
+      "whatChanged": "capture script changed (354710394ab2f268 -> 67d5583527e606d2); demonstrates now: \"Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents\"",
+      "substantive": true
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.856032,
+      "seconds": {
+        "cur": 11,
+        "prev": 13
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1818216,
+        "prev": 1743204
+      },
+      "bitrateDelta": 0.043,
+      "verdict": "changed",
+      "whatChanged": "capture script changed (09637db3ed7de0b1 -> f4c96238bbcdea68); demonstrates now: \"search fly-to in motion, from whole-map framing to the hit\"",
+      "substantive": true
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 0.996219,
+      "seconds": {
+        "cur": 18,
+        "prev": 18
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 288640,
+        "prev": 293409
+      },
+      "bitrateDelta": -0.016,
+      "verdict": "unchanged"
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "status": "captured",
+      "threshold": 0.95,
+      "ssim": 0.996249,
+      "seconds": {
+        "cur": 30,
+        "prev": 30
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 576357,
+        "prev": 582470
+      },
+      "bitrateDelta": -0.01,
+      "verdict": "changed",
+      "whatChanged": "capture script changed (a87839dd578fdc49 -> 03ffcf35f1749546); demonstrates now: \"the finder round-trip in motion, including a malformed reply and an accepted placement\"",
+      "substantive": true,
+      "why": "recipe changed: capture script changed (a87839dd578fdc49 -> 03ffcf35f1749546); demonstrates now: \"the finder round-trip in motion, including a malformed reply and an accepted placement\""
+    }
+  ],
+  "positions": {
+    "compared": true,
+    "moved": [],
+    "added": [],
+    "removed": [],
+    "identical": true
+  },
+  "summary": {
+    "unchanged": 10,
+    "changed": 10,
+    "new": 0,
+    "missing": 0,
+    "changedIds": [
+      "02",
+      "03",
+      "04",
+      "05",
+      "09",
+      "10",
+      "12",
+      "17",
+      "18",
+      "20"
+    ],
+    "missingIds": [],
+    "substantiveIds": [
+      "02",
+      "03",
+      "04",
+      "17",
+      "18",
+      "20"
+    ]
+  }
+}
