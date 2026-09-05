@@ -450,8 +450,16 @@ async function runDriver(d) {
         w: await w.page.evaluate(() => window.mm.provenance()),
         a: await a.page.evaluate(() => window.mm.provenance()),
       };
+      // The RASTERISER is named too, per panel and from that panel's own
+      // context. The cycle-8 Auditor found the two map regions identical to the
+      // byte and concluded the pixels could not corroborate two renders — the
+      // premise being that two Chromium majors cannot rasterise identically.
+      // They can when they drive the same software backend, which both of these
+      // do; that is why the panels match, and a reader should be able to read
+      // it off the frame instead of taking the inference either way.
       const provLine = (p, claimed) =>
-        `${p.runtime} · ${p.platform} · ${claimed} · socket #${p.socket} on ${p.transport.replace('ws://', '')} · sync ${p.status}`;
+        `${p.runtime} · ${p.platform} · ${claimed} · socket #${p.socket} on ${p.transport.replace('ws://', '')} · sync ${p.status}` +
+        ` · raster ${p.gl ?? 'unreported'}`;
       await sleepFrames(w.page, 0, 3); await sleepFrames(a.page, 0, 3);
       const pw0 = await positions(w.page), pa0 = await positions(a.page);
       const bw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w0.png'));
@@ -654,6 +662,25 @@ async function runDriver(d) {
       after.provenance = { windows: provAfter.w, android: provAfter.a };
       after.twoDistinctSockets = provAfter.w.socket !== provAfter.a.socket &&
                                  provAfter.w.socket != null && provAfter.a.socket != null;
+      // TWO RUNTIMES, ONE RASTERISER — both stated, because the second is why
+      // the panels' pixels match and the first is what the artifact is about.
+      //
+      // The cycle-8 Auditor measured the two map regions as identical to the
+      // byte and read that as the pixels being unable to corroborate two
+      // renders. Measured again on a fresh capture the band is not quite
+      // identical — 341 differing subpixels of 2.5 million, max channel
+      // difference 2 — but that is close enough that the objection stands: near
+      // identity is not evidence of two processes and could equally be evidence
+      // of one. The answer is not to argue it. Each panel names the runtime it
+      // is and the rasteriser it drew through, both read from that process's own
+      // context, so a reader can see that the runtimes differ and that the
+      // backend is shared, and knows which of the two facts explains the match.
+      after.panelRuntimes = { windows: provAfter.w.runtime, android: provAfter.a.runtime };
+      after.panelRasterisers = { windows: provAfter.w.gl, android: provAfter.a.gl };
+      after.panelRuntimesDiffer = !!provAfter.w.runtime && !!provAfter.a.runtime &&
+        (provAfter.w.runtime !== provAfter.a.runtime || provAfter.w.platform !== provAfter.a.platform);
+      after.eachPanelNamesItsRasteriser = !!provAfter.w.gl && !!provAfter.a.gl &&
+        provAfter.w.gl !== 'unavailable' && provAfter.a.gl !== 'unavailable';
       after.cameraFrozen = frozen;
       after.everyNodeInFrame = true; // asserted above; the capture throws otherwise
       after.movedNodeCoords = { id: moveId, before: posBefore, after: posAfter };

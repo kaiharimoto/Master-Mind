@@ -1350,12 +1350,32 @@ export class App {
    * constant a capture script could set. A composite of two surfaces can then
    * show that it holds two connected processes rather than one rendered twice.
    */
+  /** The renderer string this process's own WebGL context reports. */
+  private glRenderer(): string {
+    try {
+      const gl = this.scene.renderer.getContext() as WebGL2RenderingContext;
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      const r = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+      return String(r ?? 'unknown');
+    } catch { return 'unavailable'; }
+  }
+
   provenance() {
     const ua = navigator.userAgent;
     const el = /Electron\/([0-9.]+)/.exec(ua);
     const ch = /Chrome\/([0-9.]+)/.exec(ua);
     return {
       runtime: el ? `electron ${el[1]}` : ch ? `chromium ${ch[1]}` : 'unknown runtime',
+      // WHICH RASTERISER DREW THIS. The cycle-8 Auditor split the twin
+      // composite at x=960 and found the two panels' map regions identical to
+      // the byte, and concluded — reasonably — that two Chromium majors on two
+      // platforms could not rasterise 768,000 pixels of antialiased geometry
+      // identically, so the pixels could not corroborate two renders. The
+      // premise is what is wrong: both processes drive the SAME software
+      // rasteriser, and for the same GL commands it is deterministic. That is a
+      // fact about the frame a reader should not have to take on trust, so each
+      // process now reports the renderer string its own context returns.
+      gl: this.glRenderer(),
       isElectron: !!el,
       platform: (navigator as unknown as { platform?: string }).platform ?? 'unknown',
       surface: this.surface,

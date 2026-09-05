@@ -297,6 +297,12 @@ export default [
   requires: { positionsIdenticalAcrossSurfaces: true, positionEditPropagated: true, onlyTheDraggedNodeMoved: true,
               everyOtherPositionUnchanged: true, noNodeDropped: true, editPropagated: true,
               concurrentConflictKeptBoth: true, bothSurfacesAgreeOnNode: true, twoDistinctSockets: true,
+              // The panels' map regions are near-identical in pixels, so the
+              // pixels alone cannot say whether this is one render or two. Both
+              // halves of the answer are on the frame and both are required:
+              // the runtimes differ, and each names the rasteriser it drew
+              // through — which is shared, and is why they match.
+              panelRuntimesDiffer: true, eachPanelNamesItsRasteriser: true,
               bigMapShownOnBothSurfaces: true, bigMapLedgersIdentical: true,
               everyNodeUnoccludedByChrome: true },
   demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows at the same frozen camera, and the 150-node map on those same two sockets under one camera', minW: 1920, minH: 1080,
