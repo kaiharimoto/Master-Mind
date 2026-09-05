@@ -711,7 +711,9 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true,
-              editorWroteToTheModel: true, recencyMatchesModel: true },
+              editorWroteToTheModel: true, recencyMatchesModel: true,
+              // Only the link and the editor changed — the names included.
+              everyOtherLabelHeldItsPlace: true },
   demonstrates: 'connect and edit before/after: a new filament created between two named nodes', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Connect and edit',
   async run(H) {
@@ -747,6 +749,18 @@ export default [
     const linkedBefore = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
     const before = await H.tmpShot(page, cdp, '09a');
+    // WHERE EVERY NAME SAT, relative to the node it names. This composite's
+    // whole claim is that between the panels only the link and the editor
+    // changed; the cycle-9 Audience found a label moving 115 px and
+    // un-truncating across it, because the arbiter re-solved from scratch and
+    // one longer text re-shuffled its neighbours. Measured, so the claim is
+    // checked rather than asserted.
+    const placements = () => page.evaluate(() => {
+      const au = window.mm.scene.labelDrawAudit();
+      return Object.fromEntries(au.anchors.map(n =>
+        [n.id, [Math.round(n.x0 - n.x), Math.round(n.y0 - n.y), Math.round(n.x1 - n.x0)]]));
+    });
+    const placedBefore = await placements();
 
     const colourBefore = await page.evaluate(i => window.mm.store.doc.nodes[i].color, a);
     const textBefore = await page.evaluate(i => window.mm.store.doc.nodes[i].text, a);
@@ -774,6 +788,22 @@ export default [
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     await sleepFrames(page, 0, 3);
     const after = await H.tmpShot(page, cdp, '09b');
+    const placedAfter = await placements();
+    // THE TWO NODES THIS CAPTURE ACTED ON ARE EXPECTED TO MOVE. The edited
+    // node's text got longer, so its box is a different size; and the node at
+    // the far end of the new filament changes state from plain to connected,
+    // which grows its mark, so its label sits a few pixels further out. Both of
+    // those ARE the change the artifact demonstrates.
+    //
+    // Every other name present in both panels must sit in exactly the same
+    // place. Written as `id !== a` first, this claim failed on 'Shio koji' —
+    // the far end — and the honest reading of that failure was not that the
+    // renderer was wrong but that the claim was naming the wrong exemption.
+    // The two endpoints are named explicitly rather than the rule loosened.
+    const acted = new Set([a, b]);
+    const shifted = Object.keys(placedBefore).filter(id => !acted.has(id) && placedAfter[id] &&
+      JSON.stringify(placedBefore[id]) !== JSON.stringify(placedAfter[id]));
+    const bothPanels = Object.keys(placedBefore).filter(id => placedAfter[id]).length;
     const colourAfter = await page.evaluate(i => window.mm.store.doc.nodes[i].color, a);
     const textAfter = await page.evaluate(i => window.mm.store.doc.nodes[i].text, a);
     await H.compose([before, after], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
@@ -805,6 +835,10 @@ export default [
       return { shown, when, pct, ok: shown.includes(when) && shown.includes(`${pct}%`) };
     });
     return { between: [A, B], linkedBefore, linkedAfter, connectedByThisCapture: !linkedBefore && linkedAfter,
+             labelsInBothPanels: bothPanels, labelsThatShifted: shifted.length,
+             labelsThatShiftedOn: shifted.slice(0, 8),
+             labelPlacementsBefore: placedBefore, labelPlacementsAfter: placedAfter,
+             everyOtherLabelHeldItsPlace: shifted.length === 0 && bothPanels > 0,
              nodeCount: Object.keys(moved).length, editorOpen: true,
              colourBefore, colourAfter, textBefore, textAfter,
              recencyShown: recency.shown, recencyMatchesModel: recency.ok,

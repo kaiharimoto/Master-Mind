@@ -17,7 +17,7 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { operationTookEffect: true, declaredSynthetic: true,
-              captionMatchesTheAppsVocabulary: true },
+              captionMatchesTheAppsVocabulary: true, headlineMatchesTheHud: true },
   demonstrates: 'Windows hand tracking: an open-palm move-closer shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
@@ -43,7 +43,18 @@ export default [
       await page.waitForTimeout(10);
     }
     const after = await H.tmpShot(page, cdp, '05b', 3200);
-    const distAfter = await page.evaluate(() => window.mm.scene.pose.dist);
+    // READ OFF THE FRAME, not from the model after it. The headline was taking
+    // the camera distance after the shot while the HUD in the picture had been
+    // rendered a moment earlier, so cycle 9 shipped a panel whose HUD said
+    // 'view 135.5' under a headline that said 133.5 — two numbers for one
+    // quantity, on a demo that lives on measured claims. The webcam HUD is what
+    // the frame states, so the frame's own text is the source.
+    const hudAfter = await page.evaluate(() => {
+      const e = document.querySelector('[data-t=hand-geom]');
+      const m = e && /view\s+([0-9.]+)/.exec(e.textContent ?? '');
+      return m ? Number(m[1]) : null;
+    });
+    const distAfter = hudAfter ?? await page.evaluate(() => window.mm.scene.pose.dist);
     const f = await page.evaluate(() => ({ ...window.mm.hands.frame, landmarks: window.mm.hands.frame.landmarks.length }));
     // THE CAPTION IS READ FROM THE APP'S OWN VOCABULARY, not written beside it.
     //
@@ -87,6 +98,11 @@ export default [
              landmarks: f.landmarks, tipsOut: f.reach, fan: +f.spreadRatio.toFixed(3),
              confidence: +f.confidence.toFixed(3),
              distBefore: +distBefore.toFixed(2), distAfter: +distAfter.toFixed(2),
+             distAfterReadFromTheFrame: hudAfter !== null,
+             // The number in the headline and the number in the picture are one
+             // number, or this capture failed.
+             headlineMatchesTheHud: hudAfter !== null &&
+               Math.abs(hudAfter - distAfter) < 0.05,
              operationTookEffect: Math.abs(distAfter - distBefore) > 0.5,
              captureSource: src.label, declaredSynthetic: src.synthetic };
   },
@@ -315,6 +331,7 @@ export default [
               // the runtimes differ, and each names the rasteriser it drew
               // through — which is shared, and is why they match.
               panelRuntimesDiffer: true, eachPanelNamesItsRasteriser: true,
+              clusterMoveCrossedTheBoundary: true,
               bigMapShownOnBothSurfaces: true, bigMapLedgersIdentical: true,
               everyNodeUnoccludedByChrome: true },
   demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows at the same frozen camera, and the 150-node map on those same two sockets under one camera', minW: 1920, minH: 1080,
@@ -729,7 +746,12 @@ export default [
   requires: {
     clusterMoved: true,
     clusterInternalArrangementPreserved: true,
-    clusterMovePropagatedToTheOtherSurface: true,
+    // NOT clusterMovePropagatedToTheOtherSurface. It was declared here and the
+    // cycle-9 Audience was right that this take shows one surface, so its
+    // frames cannot corroborate it — a claim standing where its evidence is
+    // not. The measurement stays in the record below; the CLAIM moved to
+    // artifact 12, where two surfaces are on screen and a whole district is
+    // shown crossing between them.
     count: (n) => n >= 4,
   },
   demonstrates: 'Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents', minW: 1920, minH: 1080,

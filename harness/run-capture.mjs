@@ -522,6 +522,60 @@ async function runDriver(d) {
       }
       await w.page.waitForFunction(({ i, p }) => JSON.stringify(window.mm.store.doc.nodes[i].pos) === JSON.stringify(p),
                                    { i: moveId, p: posAfter }, { timeout: 20000 });
+      // A CLUSTER MOVE ACROSS THE BOUNDARY, where two surfaces are on screen.
+      //
+      // The closed fist is the one hand pose that writes positions, and its
+      // propagation was asserted on artifact 17 — a single-surface take whose
+      // frames could not corroborate it. The cycle-9 Audience was right that a
+      // claim belongs where its evidence is. It is proved here instead: the
+      // Windows side moves a whole district at once, and the Android side is
+      // waited on until its ledger for that district equals Windows'. Many
+      // positions written by one act, crossing a real platform boundary.
+      const clusterLedger = (pg, label) => pg.evaluate((l) => JSON.stringify(
+        Object.values(window.mm.store.doc.nodes).filter(n => n.placed && n.label === l)
+          .sort((x, y) => (x.id < y.id ? -1 : 1))
+          .map(n => [n.id, n.pos.map(v => +v.toFixed(6))])), label);
+      const CLUSTER = await w.page.evaluate(() => {
+        const d = window.mm.store.doc;
+        const counts = {};
+        for (const n of Object.values(d.nodes)) if (n.placed) counts[n.label] = (counts[n.label] ?? 0) + 1;
+        return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+      });
+      const clusterBeforeW = await clusterLedger(w.page, CLUSTER);
+      const clusterBeforeA = await clusterLedger(a.page, CLUSTER);
+      await w.page.evaluate((l) => {
+        const ids = Object.values(window.mm.store.doc.nodes)
+          .filter(n => n.placed && n.label === l).map(n => n.id);
+        window.mm.store.moveCluster(ids, [1.7, -1.1, 0.6]);
+      }, CLUSTER);
+      const clusterAfterW = await clusterLedger(w.page, CLUSTER);
+      let clusterArrived = false;
+      for (let k = 0; k < 60 && !clusterArrived; k++) {
+        await sleepFrames(a.page, 0, 1);
+        clusterArrived = (await clusterLedger(a.page, CLUSTER)) === clusterAfterW;
+      }
+      const clusterAfterA = await clusterLedger(a.page, CLUSTER);
+      // And put it back, so the district's positions are exactly what the seed
+      // says by the time the artifact's own ledger is taken. A propagation
+      // proof must not leave the map moved.
+      await w.page.evaluate((l) => {
+        const ids = Object.values(window.mm.store.doc.nodes)
+          .filter(n => n.placed && n.label === l).map(n => n.id);
+        window.mm.store.moveCluster(ids, [-1.7, 1.1, -0.6]);
+      }, CLUSTER);
+      for (let k = 0; k < 60; k++) {
+        await sleepFrames(a.page, 0, 1);
+        if ((await clusterLedger(a.page, CLUSTER)) === clusterBeforeA) break;
+      }
+      const clusterRestored = (await clusterLedger(w.page, CLUSTER)) === clusterBeforeW &&
+                              (await clusterLedger(a.page, CLUSTER)) === clusterBeforeA;
+      const clusterProof = {
+        district: CLUSTER,
+        members: JSON.parse(clusterBeforeW).length,
+        movedOnWindows: clusterAfterW !== clusterBeforeW,
+        arrivedOnAndroid: clusterArrived && clusterAfterA === clusterAfterW,
+        restored: clusterRestored,
+      };
       // A concurrent conflict on the same node: Windows writes a different
       // property at the same moment. Property-level LWW must keep both.
       await w.page.evaluate(i => { window.mm.select(i); window.mm.store.setLabel(i, 'demo'); }, id);
@@ -694,6 +748,12 @@ async function runDriver(d) {
       // is and the rasteriser it drew through, both read from that process's own
       // context, so a reader can see that the runtimes differ and that the
       // backend is shared, and knows which of the two facts explains the match.
+      after.clusterAcrossSurfaces = clusterProof;
+      // Many positions written by one act, arriving on the other surface — and
+      // the district put back, so this proof leaves the map exactly as it found
+      // it. All three or the capture failed.
+      after.clusterMoveCrossedTheBoundary = clusterProof.movedOnWindows &&
+        clusterProof.arrivedOnAndroid && clusterProof.restored && clusterProof.members > 1;
       after.panelRuntimes = { windows: provAfter.w.runtime, android: provAfter.a.runtime };
       after.panelRasterisers = { windows: provAfter.w.gl, android: provAfter.a.gl };
       after.panelRuntimesDiffer = !!provAfter.w.runtime && !!provAfter.a.runtime &&

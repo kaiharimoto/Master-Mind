@@ -440,7 +440,26 @@ export class Scene {
       boxes.push({ i, x0, x1: x0 + w, y0, y1: y0 + h, pri: meta.priority, z: s.z });
       this.runAlphas[i] = meta.baseAlpha;
     }
-    boxes.sort((a, b) => a.pri - b.pri || a.z - b.z);
+    // SETTLED LABELS CLAIM THEIR GROUND FIRST.
+    //
+    // Hysteresis alone was not enough: when one node's text grew, its longer
+    // box took ground a neighbour had been sitting in for many frames, and the
+    // neighbour — solved afterwards — had to move. So editing one thought still
+    // moved another thought's name, which is the fault artifact 09 exposes.
+    //
+    // Order fixes it. A label that already has a placement is offered its old
+    // ground before any label that needs new ground, so growth yields to
+    // settlement rather than evicting it. Pinned and selected names still come
+    // first of all: those are the ones the reader is looking at.
+    // Settlement comes before EVERYTHING, the selected node included. Exempting
+    // the selection was the obvious kindness and it is exactly what kept
+    // artifact 09 failing: the selected node is the one whose text just grew,
+    // so putting it first let its bigger box evict the neighbour it had been
+    // sitting beside. A label whose remembered ground is still free re-claims
+    // it; a label that needs NEW ground — including the one that just
+    // changed — competes for what is left, and there the selection still leads.
+    const settled = (i: number) => this.lastPlacement.has(this.runMeta[i].id) ? 0 : 1;
+    boxes.sort((a, b) => settled(a.i) - settled(b.i) || a.pri - b.pri || a.z - b.z);
 
 
     // The bright tier is DISJOINT: a label is drawn at full weight only when its
@@ -590,11 +609,56 @@ export class Scene {
         }
       }
       let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0, fits: false, far: false };
+      // A LABEL KEEPS THE PLACE IT HAD, IF THAT PLACE IS STILL FREE.
+      //
+      // The arbiter re-solved from scratch every frame, so one text edit
+      // re-shuffled the whole assignment: in artifact 09 the before and after
+      // panels are one frozen camera and one changed node, and "Sweet vs
+      // savoury paths" moved 115 px and un-truncated between them, in a
+      // composite whose entire claim is that only the link and the editor
+      // changed. That is a real product fault, not a capture one — a map that
+      // rearranges its own names because you renamed one thing is a map you
+      // cannot hold in your head, which is the whole premise here.
+      //
+      // Hysteresis, stated as a rule: last frame's anchor is tried FIRST, and
+      // if it still lands clear it is kept without a search. The offsets are in
+      // the node's own frame, so this survives the camera moving; only a label
+      // whose ground has actually been taken moves.
+      const prev = this.lastPlacement.get(this.runMeta[b.i].id);
+      // A remembered placement belongs to the text it was solved for. When the
+      // text changes the box changes, so the memory is dropped rather than
+      // stretched — this label is not settled any more and must find ground
+      // like any newcomer.
+      if (prev && prev.span !== sh.w) { this.lastPlacement.delete(this.runMeta[b.i].id); }
+      if (prev && prev.span === sh.w) {
+        const cand = { w: prev.vis > 0 ? prev.w : sh.w, vis: prev.vis };
+        const x0 = sh.bx0 + prev.dx * sh.emPx, y0 = sh.by0 + prev.dy * sh.emPx;
+        const area = Math.max(cand.w * sh.h, 1);
+        const M = 8;
+        const inFrame = x0 >= M && y0 >= M && x0 + cand.w <= VW - M && y0 + sh.h <= VH - M;
+        let ok = inFrame;
+        if (ok && own) {
+          const keep = own.r + 4;
+          const nx = Math.min(Math.max(own.x, x0), x0 + cand.w);
+          const ny = Math.min(Math.max(own.y, y0), y0 + sh.h);
+          if (Math.hypot(own.x - nx, own.y - ny) < keep) ok = false;
+          const MAX_DISP = 2.6 * sh.emPx;
+          if (ok && Math.hypot(own.x - nx, own.y - ny) > MAX_DISP) ok = false;
+        }
+        if (ok) {
+          const GX = 0.22 * sh.emPx, GY = 0.11 * sh.emPx;
+          const frac = Math.min(1, coverage(x0 - GX, y0 - GY, x0 + cand.w + GX, y0 + sh.h + GY, area) +
+                                   discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area));
+          if (frac <= BRIGHT_MAX)
+            best = { frac, score: -1, dx: prev.dx, dy: prev.dy, w: cand.w, vis: cand.vis,
+                     fits: true, far: prev.far };
+        }
+      }
       // The near anchors first; the far ring only if none of them worked. The
       // far search costs 48 candidates a label, which is affordable for the
       // forty or so that fail and would not be for all hundred and fifty.
       for (const pass of [0, 1]) {
-      if (pass === 1 && best.fits && best.frac <= BRIGHT_MAX) break;
+      if (best.fits && best.frac <= BRIGHT_MAX) break;   // kept its place; no search
       const anchors = pass === 0 ? CAND : FAR;
       for (const cand of widths) {
         const area = Math.max(cand.w * sh.h, 1);
@@ -772,9 +836,15 @@ export class Scene {
       // label the legibility floor had just cut to nothing still occupied its
       // rectangle and pushed other names off the map for room it was not
       // using.
-      if (this.runAlphas[b.i] > 0.02)
+      if (this.runAlphas[b.i] > 0.02) {
         taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h,
                      pri: b.pri, z: b.z });
+        // Remembered for the next frame, so a label that is happy stays put.
+        this.lastPlacement.set(this.runMeta[b.i].id,
+          { dx: best.dx, dy: best.dy, w: best.w, vis: best.vis, far: best.far, span: sh.w });
+      } else {
+        this.lastPlacement.delete(this.runMeta[b.i].id);
+      }
       // Where this label was actually DRAWN, in canvas pixels. Anything that
       // has to reason about a node's footprint on screen — a crop that must
       // not cut a name in half, a hit test, a safe area — needs the label's
@@ -851,6 +921,8 @@ export class Scene {
    * frame, so both sides must come from that frame.
    */
   private lastScreen = new Map<NodeId, { x: number; y: number; pxPerWorld: number }>();
+  /** Each label's chosen anchor last frame, in the node's own frame. */
+  private lastPlacement = new Map<NodeId, { dx: number; dy: number; w: number; vis: number; far: boolean; span: number }>();
 
   /**
    * Labels placed on the FAR ring — out in open canvas, away from the node they
