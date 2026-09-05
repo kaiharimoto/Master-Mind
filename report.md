@@ -213,8 +213,10 @@ raised digit as the thumb.
 names the four *operations*, not the poses, so this is a design choice inside
 the brief rather than a change to it — and it is recorded rather than quietly
 made. See `DIRECTION.md` D-010 for the measured separation and the held-out
-validation (99.0 % detection, 100 % pose accuracy on a clip the thresholds were
-not derived from). **Verified.**
+validation. **Verified.** The validation figure is **99.0 % detection and
+99.7 % pose accuracy** over three passes on a clip the thresholds were not
+derived from; the 100 % this section carried until cycle 7 was a single pass and
+did not reproduce — see F-028.
 
 **F-012 · Seed fixtures were finalised before the first capture, then frozen.**
 The seeds were regenerated three times during STEP 02 while node spacing and
@@ -764,7 +766,7 @@ only copy of a score he is not allowed to alter (§09).
 
 ## Cycle 7 — findings from the work itself
 
-Eight findings came out of cycle 7's own work rather than from a critic. Two are
+Nine findings came out of cycle 7's own work rather than from a critic. Two are
 recorded because a capture **failed** on them, which §09 makes a finding rather
 than something to route around; two more — F-026 and F-027 — are faults in the
 cross-cycle regression instrument itself, which means every "regression-free"
@@ -822,6 +824,20 @@ rectangle reserved for it, and two labels the arbiter had certified as disjoint
 landed on top of each other — *"Barley miso, 18 months"* overprinted by
 *"Amazake"* in artifact 10. Same class as F-015, in the one case F-015 did not
 cover.
+
+**F-028 — a stated measurement that did not reproduce.** This report claimed
+**100 % pose accuracy** on the held-out clip. It does not reproduce: re-run in
+cycle 7 the same validator measured 98.2 % and then 99.4 %. The probe runs over
+the real `getUserMedia` path against a browser-level fake camera (D-003), so it
+samples whatever frames the live stream delivers in the time it is given, and on
+a loaded box that is not the same set twice — both of those runs shared the
+machine with another heavy job. Making it deterministic would mean decoding the
+clip and feeding frames straight in, which is the exact shortcut the real-path
+requirement exists to prevent, so instead **the measurement is repeated and
+reported as a range**: three passes, 99.7 % each, 99.0 % detection, with the
+three misses all one pose (`fist` read as `NO_HAND` on 3 of 273 frames). The
+per-pass figures are written to `harness/clips/validation.json`. The claim in
+the report is corrected to what reproduces.
 
 **F-026 — the regression diff was comparing against the wrong set.** Each cycle
 archived the *working* `evidence/` directory to `history/cycle-N` at the start of

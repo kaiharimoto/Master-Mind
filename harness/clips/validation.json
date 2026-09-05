@@ -12,43 +12,54 @@
     "spread",
     "fist"
   ],
+  "passes": 3,
+  "poseAccuracyPerPass": [
+    0.997,
+    0.997,
+    0.997
+  ],
+  "poseAccuracyRange": [
+    0.997,
+    0.997
+  ],
   "detectionRate": 0.99,
-  "poseAccuracy": 1,
+  "poseAccuracy": 0.997,
   "rows": [
     {
       "pose": "two",
-      "correct": 125,
-      "frames": 125,
+      "correct": 271,
+      "frames": 271,
       "rate": 1,
       "saw": {
-        "two": 125
+        "two": 271
       }
     },
     {
       "pose": "gather",
-      "correct": 90,
-      "frames": 90,
+      "correct": 270,
+      "frames": 270,
       "rate": 1,
       "saw": {
-        "gather": 90
+        "gather": 270
       }
     },
     {
       "pose": "spread",
-      "correct": 72,
-      "frames": 72,
+      "correct": 271,
+      "frames": 271,
       "rate": 1,
       "saw": {
-        "spread": 72
+        "spread": 271
       }
     },
     {
       "pose": "fist",
-      "correct": 71,
-      "frames": 71,
-      "rate": 1,
+      "correct": 270,
+      "frames": 273,
+      "rate": 0.989,
       "saw": {
-        "fist": 71
+        "fist": 270,
+        "NO_HAND": 3
       }
     }
   ]

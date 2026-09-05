@@ -253,8 +253,14 @@ and, for open hands, how fanned they are. It never asks *which* digit is raised
 
 Validated on a **held-out clip** the thresholds were not derived from (different
 hand scale, 14° rotation instead of 5°, different drift, different background,
-poses in a different order): **99.0 % detection, 100 % pose accuracy**
+poses in a different order): **99.0 % detection, 99.7 % pose accuracy**
 (`harness/validate-poses.mjs`, results in `harness/clips/validation.json`).
+
+*Corrected in cycle 7.* This read 100 % until then, from a single pass that did
+not reproduce. The validator now runs three passes and reports the range; all
+three measure 99.7 %, and the misses are all one pose — `fist` read as `NO_HAND`
+on 3 of 273 frames. Recorded as F-028. The decision itself is unchanged; the
+number attached to it is the one that reproduces.
 
 ## D-011 · Video is rendered frame-accurate on the app's own clock  · cycle 0 · SETTLED
 

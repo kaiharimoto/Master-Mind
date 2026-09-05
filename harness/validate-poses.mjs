@@ -70,8 +70,38 @@ const ctx = await b.newContext({ permissions: ['camera'], viewport: { width: 640
 const page = await ctx.newPage();
 await page.goto('http://127.0.0.1:8737/probe.html');
 await page.waitForFunction(() => !!window.runProbe, null, { timeout: 30000 });
-const r = await page.evaluate(s => window.runProbe(s), 16);
+// THREE PASSES, and the spread is reported.
+//
+// The probe runs over the REAL getUserMedia path against a browser-level fake
+// camera (D-003), so it samples whatever frames the live stream delivers in the
+// time it is given — which on a CPU-only box is not the same set twice. A
+// single pass therefore produces a number that does not reproduce: two
+// consecutive runs measured 98.2 % and 99.4 % pose accuracy while report.md
+// stated 100 %. Making it deterministic would mean decoding the clip and
+// feeding frames in directly, which is exactly the shortcut the real-path
+// requirement exists to prevent. So the measurement is repeated and reported
+// as a range. See report.md F-028.
+const PASSES = 3;
+const runs = [];
+for (let i = 0; i < PASSES; i++) runs.push(await page.evaluate(s => window.runProbe(s), 16));
+const r = { frames: runs.reduce((a, c) => a + c.frames, 0),
+            hits: runs.reduce((a, c) => a + c.hits, 0),
+            detectionRate: 0, trace: runs.flatMap(c => c.trace) };
+r.detectionRate = +(r.hits / Math.max(r.frames, 1)).toFixed(3);
 await b.close(); srv.close();
+
+// Per-pass accuracy, so the spread is a number rather than an impression.
+const accuracyOf = (trace) => {
+  const SEG = HOLD + BLEND, CY = SEG * ORDER.length;
+  let right = 0, total = 0;
+  for (const f of trace) {
+    const tt = f.t % CY, i = Math.floor(tt / SEG);
+    if (tt - i * SEG >= HOLD) continue;
+    total++; if (f.pose === ORDER[i]) right++;
+  }
+  return total ? right / total : 0;
+};
+const perPass = runs.map(c => +accuracyOf(c.trace).toFixed(3));
 
 const SEGLEN = HOLD + BLEND, CYCLE = SEGLEN * ORDER.length;
 const per = {}; for (const k of ORDER) per[k] = { right: 0, total: 0, saw: {} };
@@ -86,8 +116,11 @@ const rows = ORDER.map(k => ({ pose: k, correct: per[k].right, frames: per[k].to
   rate: +(per[k].right / Math.max(per[k].total, 1)).toFixed(3), saw: per[k].saw }));
 const overall = rows.reduce((a, c) => a + c.correct, 0) / Math.max(rows.reduce((a, c) => a + c.frames, 0), 1);
 const report = { clip: 'harness/clips/validate.y4m', variant: VARIANT, order: ORDER,
+  passes: PASSES, poseAccuracyPerPass: perPass,
+  poseAccuracyRange: [Math.min(...perPass), Math.max(...perPass)],
   detectionRate: r.detectionRate, poseAccuracy: +overall.toFixed(3), rows };
 writeFileSync(resolve(ROOT, 'harness/clips/validation.json'), JSON.stringify(report, null, 2));
 for (const row of rows) console.log(`  ${row.pose.padEnd(7)} ${row.correct}/${row.frames}  ${(row.rate*100).toFixed(0)}%  ${JSON.stringify(row.saw)}`);
-console.log(`detection ${(r.detectionRate*100).toFixed(1)}%   pose accuracy ${(overall*100).toFixed(1)}%   (held-out clip)`);
+console.log(`detection ${(r.detectionRate*100).toFixed(1)}%   pose accuracy ${(overall*100).toFixed(1)}% ` +
+            `over ${PASSES} passes (per pass ${perPass.map(v => (v*100).toFixed(1)).join(', ')}%)   (held-out clip)`);
 process.exit(overall >= 0.9 ? 0 : 1);
