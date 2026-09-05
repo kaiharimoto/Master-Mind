@@ -346,6 +346,30 @@ export class Scene {
       const span = this.text.spans[i];
       this.runShifts[i * 2] = 0; this.runShifts[i * 2 + 1] = 0;
       if (!s || !span) { this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0 }; continue; }
+      // A NAME IS NOT DRAWN WITHOUT THE THING IT NAMES.
+      //
+      // The arbiter knows where a node PROJECTS and placed the label from that,
+      // whether or not the projection landed on the screen. On artifact 10 that
+      // put 18 of 38 names inside the frame for nodes outside it — measured off
+      // the captured PNG, not inferred — so nearly half the text on a frame
+      // about refinding a thought had nothing under it to refind. The frame's
+      // own claims all passed: they compared a label's box against its reserved
+      // box and against the viewport, and never against its node.
+      //
+      // Such a label is not suppressed-and-counted either. It is not a name the
+      // view is omitting; it is a name that does not belong to this view.
+      // The test is on the MARK, not on its centre. A centre-only test passed
+      // node 'Fido jars burp themselves' on artifact 06 at y = 4 px with a
+      // 16 px marker — a four-pixel sliver of a dot at the top edge, carrying a
+      // full-weight label. The independent sampler measured its peak luminance
+      // at 0.0815 against a ground of 0.0815: a contrast of 1.00, which is to
+      // say nothing at all was there to see. The rule is that a name is drawn
+      // only when the mark it names is WHOLLY on screen.
+      const el0 = this.renderer.domElement;
+      const rr = Math.min(Math.max(meta.nodeSizeWorld * s.pxPerWorld, p.nodeMinPx), p.nodeMaxPx);
+      if (s.x - rr < 0 || s.y - rr < 0 || s.x + rr > el0.width || s.y + rr > el0.height) {
+        this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0 }; continue;
+      }
       const emPx = Math.min(Math.max(em * s.pxPerWorld, p.textMinPx), p.textMaxPx);
       // The SHADER's formula, on the run's own clearance radius — not the core
       // radius screenPositions() reports.
@@ -526,7 +550,21 @@ export class Scene {
             if (Math.hypot(own.x - nx, own.y - ny) < keep) continue;
           }
           const dc = discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area);
-          const frac = Math.min(1, coverage(x0, y0, x0 + cand.w, y0 + sh.h, area) + dc);
+          // A GUTTER, NOT MERE NON-INTERSECTION.
+          //
+          // The bright tier's guarantee was that two boxes do not overlap, and
+          // I reported that as "no two labels collide". Measured, the tightest
+          // pair on artifact 04 sits 0.06 px apart and on artifact 10 exactly
+          // 0.00 px apart — "Rye starts fastest" against "Autolyse 40 min" —
+          // which is two names touching. A critic reading that frame ran two
+          // labels together into a third phrase, correctly. Disjoint boxes are
+          // not separated text, so the occupancy test runs on the box grown by
+          // a gutter: about a third of an em of air on the sides and a sixth
+          // above and below. Coverage is still expressed as a fraction of the
+          // label's OWN area, so intruding on the gutter costs in proportion to
+          // the name it crowds.
+          const GX = 0.34 * sh.emPx, GY = 0.17 * sh.emPx;
+          const frac = Math.min(1, coverage(x0 - GX, y0 - GY, x0 + cand.w + GX, y0 + sh.h + GY, area) + dc);
           // Text-on-text decides the tier; text-on-marker only breaks ties; and
           // a label that wanders pays for the distance. Inside a tight cluster
           // an unpenalised anchor could push a name out to open ground where it
@@ -587,8 +625,24 @@ export class Scene {
       // pops as the camera turns, decisive by the time a label is a tenth
       // covered, so a demoted label stops competing with the one on top of it
       // instead of smearing it.
+      // DRAWN MEANS CLEAR. The ramp is gone.
+      //
+      // It survived only over 0 < frac <= 0.0715 — the band between BRIGHT_MAX
+      // and where the legibility floor cut it — and inside that band a label
+      // was drawn on top of another one. That is how artifact 04 shipped a pair
+      // of names 0.06 px apart and artifact 10 a pair at 0.00 px while the
+      // manifest reported the bright tier as disjoint: the tier WAS disjoint,
+      // and the tier was not the whole drawn set. A property that holds of most
+      // of what is drawn is not an invariant, and I quoted it as one.
+      //
+      // Now a label is drawn only when its best placement, on either ring,
+      // intrudes on nothing — the gutter included. Everything else is
+      // suppressed, counted, and named in the margin, which is the honest
+      // version of what the dim tier was pretending to do. The cost is real:
+      // fewer names at whole-map framing. The frame says how many.
       const t = Math.max(0, 1 - (best.frac - BRIGHT_MAX) / (DIM_MAX - BRIGHT_MAX));
-      const k = !best.fits ? 0 : best.frac <= BRIGHT_MAX ? 1 : t * t;
+      void t;
+      const k = !best.fits || best.frac > BRIGHT_MAX ? 0 : 1;
       // A label that had to leave its own neighbourhood to find room is drawn
       // WITH A LEADER, so travelling does not cost attribution. Dropping a name
       // is now the last resort it was always supposed to be: reached only when

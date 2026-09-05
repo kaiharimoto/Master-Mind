@@ -166,7 +166,13 @@ const sampleDiscs = async (png, discs, min = 1.6) => {
   const offFrame = [];
   for (const d of discs) {
     const cx = Math.round(d.x), cy = Math.round(d.y);
-    const r = Math.max(1.5, d.r);
+    // The disc the app reports is the CORE radius; the mark a reader sees
+    // includes its ring and glow, and at whole-map framing the core can be
+    // under a pixel. Sampling the core alone measured four markers on artifact
+    // 06 at exactly ground luminance — a peak identical to its own surround to
+    // four decimals, which is the signature of a window that missed the mark
+    // rather than of a mark that is not there. The window is the drawn extent.
+    const r = Math.max(3.5, d.r * 1.6);
     // A NODE THAT PROJECTS OFF THE FRAME IS THE FAILURE, NOT A ROW TO SKIP.
     //
     // The first version of this sampler `continue`d here, and on artifact 10 it
@@ -206,7 +212,10 @@ const sampleDiscs = async (png, discs, min = 1.6) => {
     g.sort((a, b) => a - b);
     const ground = g[g.length >> 1];
     const ratio = (Math.max(peak, ground) + 0.05) / (Math.min(peak, ground) + 0.05);
-    rows.push({ id: d.id, peak: Number(peak.toFixed(4)), ground: Number(ground.toFixed(4)),
+    // x, y and the window are carried so a weak row can be LOOKED AT: the
+    // reader crops the frame there rather than taking the number on faith.
+    rows.push({ id: d.id, x: cx, y: cy, r: Number(r.toFixed(1)),
+                peak: Number(peak.toFixed(4)), ground: Number(ground.toFixed(4)),
                 contrast: Number(ratio.toFixed(2)) });
   }
   const invisible = [...offFrame, ...rows.filter(r => r.contrast < min)];
