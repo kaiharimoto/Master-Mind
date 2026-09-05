@@ -1087,6 +1087,65 @@ the palette's own floor less a tolerance, 1.45, with the derivation written
 where the number is. It still catches what it was built for: the clipped marker
 scored 1.00 and an off-frame node scores 0.
 
+## Cycle 8 — the Auditor's findings and what was done
+
+Verbatim in `evidence/critics/auditor-cycle-8.md`. **03 scored 17 of 20 and 04
+scored 13 of 15 — both hard gates met, both exactly at their minimum — and the
+verdict is that cycle 8 is NOT regression-free.** That declaration is recorded
+before the response to it and is not argued with: artifact 02, a named
+regression-watch artifact for category 03, lost its label declutter.
+
+Two things about this verdict are worth stating before the table.
+
+**It re-derived the restored baseline five ways rather than trusting the ledger
+I had just written**, which is the correct response to F-030 and the one I
+should have anticipated. The decisive check was one I had not thought of:
+cycle-7's own `DIFF.json` was never touched by the overwrite, it records the
+five cycle-7 video byte-sizes, and the restored files match all five exactly
+while cycle 8's differ by up to 8×. A file inside the set vouching for the set,
+which is the shape I got wrong, works here because *that* file predates the
+damage and could not have been rewritten by it.
+
+**It found the same defect the Audience found, from a different direction and
+with different numbers** — +85.5 % label ink on 02, +78.4 % on 04, named
+unreadable pairs — and it made the same diagnosis about why nothing caught it:
+`everyLabelInsideTheFrame` and `labelArbiterAgreesWithDraw` both pass and both
+are true, and neither looks at one label against another. Two critics reading
+the same set independently arriving at the same hole in my instrumentation is
+the strongest signal in this cycle.
+
+| # | Finding | Measured, then done |
+|---|---|---|
+| M1 | a02/a04 — label declutter regressed; the claims that guard labels cannot see it | **Fixed by the same change the Audience findings drove**, and the artifact the Auditor named was measured after it: artifact 02 at **145 labels, 0 overlapping pairs, tightest gap 2.14 px**, every marker visible, and the chip it had lost back on the frame reading "5 labels hidden · 39 shortened". `noTwoDrawnLabelsOverlap` and `everyDrawnLabelHasAVisibleMarker` are declared on 02 as well as 04, 06 and 10. |
+| M2 | a05 — the caption asserts "spread the map", an operation the build no longer has, contradicted by its own frame | **Fixed at the source.** The caption was a hardcoded string; it is read from `HAND_VOCAB` through the app now, so there is one copy and it cannot drift again. `captionMatchesTheAppsVocabulary` asserts the printed text is a **prefix of the app's own operation string**, not a paraphrase beside it, and is required. Set whole the sentence ran off a 960 px panel and shipped as "· view distance" with no number — a caption clipped by the fix for a caption that was wrong — so the guarantee moved to the wrapped sublabel. |
+| M3 | a11/a12 — the twin's panels are byte-identical, so the pixels cannot corroborate two renders | **Answered with a measurement, not an argument.** The premise is what is wrong: both processes drive the **same software rasteriser**, and for the same GL commands it is deterministic. Each process now reports the renderer string its own context returns and each panel prints it — `electron 33.4.11 · Win32 · wine` and `chromium 141.0.7390.37 · Linux x86_64`, both `raster ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)`. Different runtimes, one backend. `panelRuntimesDiffer` and `eachPanelNamesItsRasteriser` are required, so a run where the Wine binary silently fell back to a second headless Chromium now fails. On a fresh capture the band is in fact **not** byte-identical — 341 differing subpixels of 2.5 million, max channel difference 2 — but near-identity is no more evidence of two processes than identity is, so the objection stands as an objection and is answered rather than deflected. |
+| m1 | a01 and a15 carry zero machine-checked claims | **Both now carry them.** 15 is the set's source of truth for both vocabularies — the exact text M2's caption contradicted — and every operation and pose name it prints is compared against the string the app holds: **20 strings checked, 0 mismatches**, required. 01's subject is a table of node counts; the printed counts are compared against the model's (map-talk 11, map-fermentation 150). Getting 01 there exposed three things it had been getting away with — see below. |
+| m2 | `substantive` means "the recipe fingerprint changed", not "the output changed" | **Fixed, and the word now means what a reader takes it to mean.** The fingerprint flag is `recipeChanged`; `substantive` is set when the output moved materially. Re-run over cycle 8 it names **02 and 04** — the two the Auditor said it should — and `notes[]`, which was empty, writes each up in prose. |
+| m3 | "Windows" is two different runtimes across the set, uncross-referenced | **Fixed.** Each artifact's recipe records the runtime that actually ran it. The twin's Windows half is reached over CDP rather than opened by the harness, so a naive sweep recorded artifact 11 as Android-only — on the one artifact whose subject is that there are two of them. |
+| m4 | a06 — two of the eight held markers overlap and read as one dot | **Fixed by moving the camera, not the thoughts.** Their positions are the model's; nudging a marker apart on screen would draw a thought where it does not live, and moving them in the seed would void every position-regression claim in the run (§09). The yaw is searched over 24 vantages for the one maximising the smallest gap between held markers. Yaw 0.35 → 2.094; the tightest pair clears both radii by **56.2 px**, against roughly 11 px of centre separation before. `everyHeldMarkerCountable` is required. |
+| m5 | a17 — the one position-writing pose is never shown persisting | **Fixed at 17's claims**, which is one of the two options the finding offered. A second client joins the same map, is stopped from rendering so it costs the take nothing, and its ledger for the grabbed cluster is read before the grab and after the release. `clusterMovePropagatedToTheOtherSurface` requires that the peer's ledger changed and now equals the grabbing client's own. |
+
+Artifact 01's three incidental faults are worth naming because two of them are
+the same fault. Its caption said create, rename and delete were *"driven through
+the real buttons"* and **only create was** — the other two went straight to the
+sync request, past the controls a person uses. All three go through the row's own
+button now. And both of its waits were reading the wrong thing: the buttons toast
+`Created "Sprint retro".` and `Deleted "Retro - sprint 14".`, so a wait on
+`document.body.innerText` was satisfied by **the confirmation instead of by the
+table**. The create wait would have passed even if the row never appeared, and
+the delete wait timed out for fifteen seconds on a delete that had already
+succeeded — which is exactly the driver error artifact 01 failed with in the
+cycle-8 run, and which I had put down to something else. Both wait on the table
+row now. A third: answering the rename prompt with an em dash in the string left
+`window.prompt` returning nothing usable while every step reported success.
+
+One item is deferred with its reason. The improved `substantive`/`recipeChanged`
+diff is **not** back-applied to `evidence/cycles/cycle-8/DIFF.json`. That set was
+frozen and the Art Director was reading it; the one post-freeze edit already made
+to it corrected a claim that was *false* about the baseline, which is a different
+thing from relabelling a claim that was true and badly named. It takes effect
+from cycle 9.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:

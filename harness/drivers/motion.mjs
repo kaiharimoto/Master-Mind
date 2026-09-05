@@ -1,5 +1,6 @@
 // Sync, flow and video artifacts.
 import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, touch, sleepFrames, orient } from './util.mjs';
+import { createHash } from 'node:crypto';
 import { ORDER as REPLIES } from '../fixtures/replies.mjs';
 import { wrapCaption } from '../capture.mjs';
 
@@ -703,6 +704,7 @@ export default [
   requires: {
     clusterMoved: true,
     clusterInternalArrangementPreserved: true,
+    clusterMovePropagatedToTheOtherSurface: true,
     count: (n) => n >= 4,
   },
   demonstrates: 'Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents', minW: 1920, minH: 1080,
@@ -719,6 +721,23 @@ export default [
     await page.evaluate(() => {
       setInterval(() => { const f = window.mm.hands.frame; if (f.present) window.__pose(f.pose); }, 120);
     });
+    // A SECOND SOCKET, WATCHING. The closed fist is the one hand operation that
+    // WRITES positions, and nothing in the set showed its result reaching the
+    // other surface — the cycle-8 Auditor's m5. A second client joins the same
+    // map here and is stopped from rendering, so it costs the take nothing and
+    // its model is read before and after the grab: if the cluster move is real
+    // and committed, the peer's ledger changes to match.
+    const peer = await H.app({ surface: 'android', lens: 'canvas', map: 'map-fermentation',
+                               actor: 'hands-peer', width: 640, height: 480 });
+    await peer.page.evaluate(() => window.mm.stop());
+    const ledgerOf = async (pg) => pg.evaluate(() => {
+      const ns = Object.values(window.mm.store.doc.nodes)
+        .filter(n => n.label === 'Koji')
+        .sort((a, b) => (a.id < b.id ? -1 : 1))
+        .map(n => [n.id, n.pos.map(v => +v.toFixed(6))]);
+      return JSON.stringify(ns);
+    });
+    let peerBefore = null, peerAfter = null, ownAfter = null;
     // Cluster arrangement before any grab, so the video's claim is checkable.
     let grabAnchor = null, before = null, after = null;
     const steps = [
@@ -733,7 +752,8 @@ export default [
       // cluster is the only thing that moves. The state is sampled immediately
       // before the grab and immediately after the release — not at the ends of
       // the take, where the pose beats have moved the camera in between.
-      { at: 820, fn: async () => { before = await H.clusterState(page, 'Koji'); } },
+      { at: 820, fn: async () => { before = await H.clusterState(page, 'Koji');
+                                   peerBefore = await ledgerOf(peer.page); } },
       { at: 830, fn: async () => {
           const id = await NODE_ID(page, 'Koji on pearl barley');
           grabAnchor = await SCREEN_OF(page, id);
@@ -750,6 +770,12 @@ export default [
       { at: 890, fn: async () => {
           await page.mouse.up(); await page.keyboard.up('Alt');
           after = await H.clusterState(page, 'Koji');
+          ownAfter = await ledgerOf(page);
+          // Give the write a moment to cross the service before reading the peer.
+          for (let i = 0; i < 40 && peerAfter !== ownAfter; i++) {
+            await page.waitForTimeout(120);
+            peerAfter = await ledgerOf(peer.page);
+          }
         } },
       // The camera is held still from 820 to 950 — before the grab, through it
       // and after the release — so the cluster is the only thing that moves,
@@ -773,6 +799,14 @@ export default [
              clusterCentroidAfter: after ? after.centroid.map(v => +v.toFixed(3)) : null,
              clusterCentroidTravelled: dl ? dl.centroidTravelled : null,
              clusterMaxMemberDrift: dl ? dl.maxMemberDrift : null,
+             // The position-writing pose, proven to COMMIT: the peer's ledger
+             // for that cluster was one thing before the grab and is the
+             // grabbing client's own ledger after it.
+             clusterLedgerBeforeOnPeer: peerBefore ? createHash('sha256').update(peerBefore).digest('hex').slice(0, 12) : null,
+             clusterLedgerAfterOnPeer: peerAfter ? createHash('sha256').update(peerAfter).digest('hex').slice(0, 12) : null,
+             clusterLedgerAfterHere: ownAfter ? createHash('sha256').update(ownAfter).digest('hex').slice(0, 12) : null,
+             clusterMovePropagatedToTheOtherSurface:
+               !!peerBefore && !!peerAfter && !!ownAfter && peerAfter === ownAfter && peerAfter !== peerBefore,
              clusterMoved: !!dl && dl.centroidTravelled > 0.5,
              clusterInternalArrangementPreserved: !!dl && dl.sameMembers && dl.maxMemberDrift < 1e-3,
              mouseOnlyTail: true };
