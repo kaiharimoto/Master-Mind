@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T03:09:25.795Z",
+  "lastRunAt": "2026-09-05T03:17:19.304Z",
   "lastRunCaptured": [
-    "14"
+    "07"
   ],
   "artifacts": [
     {
@@ -55,15 +55,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.5,
+      "seconds": 1.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 358579,
-        "sha256": "2094ff27e2c0f5f1d14d6e379b7400269d954191346cc0af333f3b1455ad3e2f"
+        "bytes": 350517,
+        "sha256": "23e617e5f66db866c0821159aa075be9b6cdae236f19847a05e7620ae8a7d202"
       },
       "claims": {
         "ok": true,
@@ -111,7 +111,7 @@
       },
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:44:31.656Z"
+      "fileMtime": "2026-09-05T03:15:25.312Z"
     },
     {
       "id": "03",
@@ -228,15 +228,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.7,
+      "seconds": 1.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 393123,
-        "sha256": "2be802db86a27776b7fb62ae3c7f502a8fb797f750278e8833562f4e215635fa"
+        "bytes": 393247,
+        "sha256": "033e7c8f285a308e8285a1bc3f433d7f824f8d2499aadf9785b5e325c6ee5159"
       },
       "claims": {
         "ok": true,
@@ -284,7 +284,7 @@
       },
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T02:55:52.056Z"
+      "fileMtime": "2026-09-05T03:15:26.944Z"
     },
     {
       "id": "05",
@@ -396,7 +396,7 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1,
+      "seconds": 1.2,
       "status": "captured",
       "error": null,
       "check": {
@@ -411,6 +411,18 @@
         "claims": [
           {
             "claim": "ok",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "ladderMonotonic",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "ladderStepsClearScatter",
             "expected": true,
             "actual": true,
             "pass": true
@@ -438,18 +450,42 @@
           "Cut the history section?": "unplaced",
           "Timebox to 18 minutes": "unplaced"
         },
+        "measuredRungs": {
+          "plain": 0.288,
+          "connected": 0.4249,
+          "unplaced": 0.562,
+          "searchHit": 0.6761,
+          "selected": 0.8013
+        },
+        "withinRungSpread": {
+          "plain": 0.028,
+          "connected": 0.0008,
+          "unplaced": 0.0007,
+          "searchHit": 0,
+          "selected": 0
+        },
+        "rungSteps": [
+          0.1369,
+          0.1371,
+          0.1141,
+          0.1252
+        ],
+        "ladderMonotonic": true,
+        "minRungStep": 0.1141,
+        "maxWithinRungSpread": 0.028,
+        "ladderStepsClearScatter": true,
         "ok": true
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "the five node states side by side with the legend",
+        "demonstrates": "the five node states side by side with the legend, with the luminance ladder measured off the shipped frame",
         "surface": "windows",
         "lens": null,
-        "fnSha": "4789c920082222d8"
+        "fnSha": "1cb30f7bbb2450f4"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T01:44:51.340Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:17:20.188Z"
     },
     {
       "id": "08",
@@ -654,7 +690,7 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 9.9,
+      "seconds": 10.4,
       "status": "captured",
       "error": null,
       "check": {
@@ -693,7 +729,7 @@
       },
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T02:10:11.439Z"
+      "fileMtime": "2026-09-05T03:11:50.641Z"
     },
     {
       "id": "12",
@@ -707,9 +743,9 @@
       "check": {
         "ok": true,
         "width": 1920,
-        "height": 1080,
-        "bytes": 229112,
-        "sha256": "1ae297a8f7816b28aa769aa5ca508cc1d348dec70c6e62e8e4f3a8b5cd99a65d"
+        "height": 2160,
+        "bytes": 652575,
+        "sha256": "1fb00512cc07b918b0489a6f412876336706c4a409887db89963881846acd14c"
       },
       "claims": {
         "ok": true,
@@ -767,6 +803,18 @@
             "expected": true,
             "actual": true,
             "pass": true
+          },
+          {
+            "claim": "bigMapShownOnBothSurfaces",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "bigMapLedgersIdentical",
+            "expected": true,
+            "actual": true,
+            "pass": true
           }
         ]
       },
@@ -804,7 +852,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 509,
+            "serverPid": 16796,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -815,7 +863,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 509,
+            "serverPid": 16796,
             "actor": "android-twin",
             "status": "live"
           }
@@ -854,19 +902,33 @@
             "windows": "2e0c939c6c",
             "android": "2e0c939c6c"
           },
-          "identical": true
-        }
+          "identical": true,
+          "shown": true,
+          "camera": {
+            "yaw": 0.34,
+            "pitch": 0.16,
+            "dist": 122.82488576389757,
+            "target": [
+              4.227,
+              -4.996000000000002,
+              0.6945000000000014
+            ]
+          }
+        },
+        "bigMapShownOnBothSurfaces": true,
+        "bigMapLedgersIdentical": true,
+        "bigMapNodeCount": 150
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "twin composite AFTER: an Android drag and edit arriving on Windows, same frozen camera",
+        "demonstrates": "twin composite AFTER: an Android drag and edit arriving on Windows at the same frozen camera, and the 150-node map on those same two sockets under one camera",
         "surface": "twin",
         "lens": null,
         "fnSha": "936d2e118cf8cc23"
       },
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T02:10:12.848Z"
+      "fileMtime": "2026-09-05T03:11:53.438Z"
     },
     {
       "id": "13",
@@ -1055,7 +1117,7 @@
         "fnSha": "5b51c1c6176689d9"
       },
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-05T03:09:28.118Z"
     },
     {
@@ -1483,12 +1545,12 @@
       "fileMtime": "2026-09-05T01:54:57.650Z"
     }
   ],
-  "finishedAt": "2026-09-05T03:09:29.460Z",
+  "finishedAt": "2026-09-05T03:17:21.736Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 779031,
-    "sha256": "a5b1159ec6f6e17772552751b4f1a12a16542846ad94d2e71eb238ea292c0577"
+    "bytes": 779951,
+    "sha256": "f7d0f546cae5f1c6a7897e6035480f496350ab912954767e65c02ce3a41b5e6c"
   },
   "captured": 20,
   "total": 20

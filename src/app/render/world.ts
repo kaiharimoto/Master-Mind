@@ -78,6 +78,30 @@ export const STATE_LUM: Record<NodeState, number> = {
 };
 
 /**
+ * How far distance may darken a node — as a share of the gap DOWN TO THE RUNG
+ * BELOW its own state, never as a fixed fraction of black.
+ *
+ * A single floor for every state meant depth and state were spending the same
+ * channel with no arbitration: at whole-map framing a connected teal measured
+ * 0.223 and a plain violet 0.146, a spread of 0.077 where the ladder is built
+ * on steps of 0.11, so a near plain node and a far connected one were within a
+ * hair of each other. Bounding each state's fade inside its own band makes the
+ * bands DISJOINT: whatever their distances, a connected node is always lighter
+ * than any plain node, and so on up the ladder. Depth still reads — as a
+ * gradient within a state — and it still costs only luminance, so chroma stays
+ * reserved for recency (D-014, refined by D-016).
+ */
+export const DEPTH_SHARE = 0.55;
+/** The ground the lowest rung fades toward; nothing is drawn below it. */
+const LUM_GROUND = 0.10;
+const LUM_ORDER: NodeState[] = ['plain', 'connected', 'unplaced', 'searchHit', 'selected'];
+export const STATE_FADE_FLOOR: number[] = LUM_ORDER.map((st, i) => {
+  const lum = STATE_LUM[st];
+  const below = i === 0 ? LUM_GROUND : STATE_LUM[LUM_ORDER[i - 1]];
+  return (lum - DEPTH_SHARE * (lum - below)) / lum;
+});
+
+/**
  * A hue at an exact relative luminance, carrying as much of its own chroma as
  * the sRGB gamut allows there.
  *
@@ -139,6 +163,8 @@ uniform float uMinPx;
 uniform float uMaxPx;
 uniform float uFadeStart;
 uniform float uFadeEnd;
+uniform float uFadeFloor0; uniform float uFadeFloor1; uniform float uFadeFloor2;
+uniform float uFadeFloor3; uniform float uFadeFloor4;
 varying vec2  vQuad;
 varying vec3  vColor;
 varying float vState;
@@ -165,7 +191,15 @@ void main() {
   // at the end of a fly-to, the surrounding map is the thing that tells you
   // where the thought lives, and it had fallen to near-ground. A step above the
   // ground, not at it.
-  vFade = mix(1.0, 0.55, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
+  // The floor is the state's OWN band, so distance can never carry a node down
+  // into the range of a lower state. See STATE_FADE_FLOOR.
+  float fl = uFadeFloor0;
+  int sti = int(iState + 0.5);
+  if (sti == 1) fl = uFadeFloor1;
+  else if (sti == 2) fl = uFadeFloor2;
+  else if (sti == 3) fl = uFadeFloor3;
+  else if (sti == 4) fl = uFadeFloor4;
+  vFade = mix(1.0, fl, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
 }`;
 
 const NODE_FRAG = /* glsl */`
@@ -286,6 +320,11 @@ export class NodeLayer {
         uViewport: { value: new THREE.Vector2(1920, 1080) },
         uMinPx: { value: 7 }, uMaxPx: { value: 190 },
         uFadeStart: { value: 55 }, uFadeEnd: { value: 300 },
+        uFadeFloor0: { value: STATE_FADE_FLOOR[0] },
+        uFadeFloor1: { value: STATE_FADE_FLOOR[1] },
+        uFadeFloor2: { value: STATE_FADE_FLOOR[2] },
+        uFadeFloor3: { value: STATE_FADE_FLOOR[3] },
+        uFadeFloor4: { value: STATE_FADE_FLOOR[4] },
         uTime: { value: 0 },
         uI0: { value: STATE_INTENSITY.plain },
         uI1: { value: STATE_INTENSITY.connected },

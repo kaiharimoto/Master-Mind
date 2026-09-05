@@ -77,6 +77,52 @@ const crop = (src, out, x, y, w, h) => new Promise((res, rej) => {
   p.on('close', c => c === 0 ? res(out) : rej(new Error(e.slice(-500))));
 });
 
+/**
+ * Relative luminance at named points of a PNG this run just wrote.
+ *
+ * The state ladder is a decision with numbers in it (D-015, D-016). Reading
+ * those numbers off the shipped frame — rather than restating them from the
+ * source that produced it — is what lets an artifact carry its own proof, and
+ * what stops the prose in report.md and the pixels drifting apart.
+ * The weighting is relLum() from world.ts — 0.299/0.587/0.114 — applied to the
+ * framebuffer values directly, with NO sRGB decode: the renderer runs with
+ * colour management off and an output space of LinearSRGB, so a byte in the
+ * PNG is the value the shader wrote. Decoding it first measured plain at 0.071
+ * against a 0.26 rung and would have made every number in D-015 look wrong.
+ */
+const samplePixels = async (png, points, patch = 1) => {
+  const raw = await new Promise((res) => {
+    const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+      { stdio: ['ignore', 'pipe', 'ignore'] });
+    const bufs = [];
+    p.stdout.on('data', d => bufs.push(d));
+    p.on('close', () => res(Buffer.concat(bufs)));
+  });
+  const dim = await new Promise((res) => {
+    let o = '';
+    const p = spawn('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries',
+      'stream=width,height', '-of', 'csv=p=0', png], { stdio: ['ignore', 'pipe', 'ignore'] });
+    p.stdout.on('data', d => o += d);
+    p.on('close', () => res(o.trim().split(',').map(Number)));
+  });
+  const [W, H] = dim;
+  const out = {};
+  if (!raw.length || !W || !H) return out;
+  for (const pt of points) {
+    let sum = 0, n = 0;
+    for (let dy = -patch; dy <= patch; dy++) for (let dx = -patch; dx <= patch; dx++) {
+      const x = pt.x + dx, y = pt.y + dy;
+      if (x < 0 || y < 0 || x >= W || y >= H) continue;
+      const i = (y * W + x) * 3;
+      if (i + 2 >= raw.length) continue;
+      sum += (0.299 * raw[i] + 0.587 * raw[i + 1] + 0.114 * raw[i + 2]) / 255;
+      n++;
+    }
+    if (n) out[pt.id] = Number((sum / n).toFixed(4));
+  }
+  return out;
+};
+
 const modelStats = (page) => page.evaluate(() => {
   const d = window.mm.store.doc;
   return { map: d.id, nodes: Object.keys(d.nodes).length, links: Object.keys(d.links).length,
@@ -144,7 +190,7 @@ async function runDriver(d) {
       pages.push(r);
       return r;
     },
-    shot, step, record, compose, stack, crop, modelStats, clusterState, clusterDelta, positions,
+    shot, step, record, compose, stack, crop, samplePixels, modelStats, clusterState, clusterDelta, positions,
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };
@@ -292,6 +338,7 @@ async function runDriver(d) {
       // across the same two sockets in the same take and reported as a ledger
       // digest, so the one-model claim is not left resting on eleven nodes.
       let bigCheck = 'map-fermentation not checked';
+      let bigShots = null;
       try {
         for (const p of [w, a]) {
           await p.page.evaluate(() => window.mm.openMap('map-fermentation'));
@@ -300,8 +347,26 @@ async function runDriver(d) {
         const bw = await positions(w.page), ba = await positions(a.page);
         const dw = createHash('sha256').update(JSON.stringify(bw)).digest('hex').slice(0, 10);
         const da = createHash('sha256').update(JSON.stringify(ba)).digest('hex').slice(0, 10);
+        // SHOW it, do not only assert it. Until cycle 7 the 150-node check ran
+        // on the same two sockets in the same take and then appeared on the
+        // frame as the words 'not shown on screen' — so the one-model claim was
+        // visible at eleven nodes and only stated at a hundred and fifty. Both
+        // surfaces are framed by ONE camera, copied from the Windows side, so
+        // the two panels superpose and a reader can check the districts land in
+        // the same places rather than take the digest's word for it.
+        await FRAME_ALL(w.page, 1.06);
+        const bigPose = await w.page.evaluate(() => {
+          const s = window.mm.scene.pose;
+          return { yaw: s.yaw, pitch: s.pitch, dist: s.dist,
+                   target: [s.target.x, s.target.y, s.target.z] };
+        });
+        for (const p of [w, a]) { await POSE(p.page, bigPose); await sleepFrames(p.page, 0, 3); }
+        bigShots = { w: await shot(w.page, w.cdp, resolve(TMP, 'twin-w-big.png')),
+                     a: await shot(a.page, a.cdp, resolve(TMP, 'twin-a-big.png')),
+                     pose: bigPose };
         bigTwin = { nodes: { windows: Object.keys(bw).length, android: Object.keys(ba).length },
-                    sha: { windows: dw, android: da }, identical: dw === da };
+                    sha: { windows: dw, android: da }, identical: dw === da, shown: true,
+                    camera: bigPose };
         bigCheck = `map-fermentation ${Object.keys(bw).length}/${Object.keys(ba).length} nodes` +
                    (dw === da ? `, pos sha ${dw} identical on both sockets` : `, LEDGERS DIFFER ${dw} vs ${da}`);
         for (const p of [w, a]) {
@@ -337,7 +402,8 @@ async function runDriver(d) {
       // change nobody had declared.
       const moved = `Android dragged ${moveId} ${fmt(posBefore)} -> ${fmt(posAfter)}; ` +
                     `Android retexted+recoloured “Demo: search fly-to” while Windows relabelled it — both kept`;
-      await compose([aw, aa], resolve(OUTDIR, '12_sync_twin_after.png'), { mode: 'h', width: 1920, height: 1080,
+      const twinTop = bigShots ? resolve(TMP, 'twin-after-top.png') : resolve(OUTDIR, '12_sync_twin_after.png');
+      await compose([aw, aa], twinTop, { mode: 'h', width: 1920, height: 1080,
         labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'],
         sublabels: [
           `${moved} · ${driver.map} · ${Object.keys(pw1).length} nodes · pos sha ${sha12(pw1)}`,
@@ -345,10 +411,29 @@ async function runDriver(d) {
         ],
         sublabels2: [
           `${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · the built binary' : 'FALLBACK — not the built binary'}` +
-          ` · socket #${provAfter.w.socket} · CAMERA FROZEN FROM 11 · also verified this run, not shown on screen: ${bigCheck}`,
+          ` · socket #${provAfter.w.socket} · CAMERA FROZEN FROM 11 · the 150-node map is below, on these same two sockets`,
           `${provAfter.a.runtime} · android device profile · touch · socket #${provAfter.a.socket}` +
-          ` · CAMERA FROZEN FROM 11 · also verified this run, not shown on screen: ${bigCheck}`,
+          ` · CAMERA FROZEN FROM 11 · the 150-node map is below, on these same two sockets`,
         ] });
+      if (bigShots) {
+        const bigBot = resolve(TMP, 'twin-after-bot.png');
+        const cam = `one camera: yaw ${bigShots.pose.yaw.toFixed(3)} pitch ${bigShots.pose.pitch.toFixed(3)} ` +
+                    `dist ${bigShots.pose.dist.toFixed(1)}`;
+        await compose([bigShots.w, bigShots.a], bigBot, { mode: 'h', width: 1920, height: 1080,
+          labels: ['Windows — the 150-node map, same socket',
+                   'Android — the 150-node map, same socket'],
+          sublabels: [
+            `${bigTwin.nodes.windows} nodes · pos sha ${bigTwin.sha.windows} · ${cam}`,
+            `${bigTwin.nodes.android} nodes · pos sha ${bigTwin.sha.android} · ${cam}`,
+          ],
+          sublabels2: [
+            bigTwin.identical
+              ? `the two position ledgers are BYTE-IDENTICAL across the two processes at 150 nodes`
+              : `LEDGERS DIFFER: ${bigTwin.sha.windows} vs ${bigTwin.sha.android}`,
+            `${bigCheck} · socket #${provAfter.a.socket} vs #${provAfter.w.socket}`,
+          ] });
+        await stack([twinTop, bigBot], resolve(OUTDIR, '12_sync_twin_after.png'));
+      }
 
 
       const node = await w.page.evaluate(i => window.mm.store.doc.nodes[i], id);
@@ -389,6 +474,11 @@ async function runDriver(d) {
       after.everyNodeInFrame = true; // asserted above; the capture throws otherwise
       after.movedNodeCoords = { id: moveId, before: posBefore, after: posAfter };
       after.bigMapCrossSurface = bigTwin;
+      // The 150-node map is SHOWN on both sockets in this artifact, not only
+      // digested into a caption clause.
+      after.bigMapShownOnBothSurfaces = !!(bigTwin && bigTwin.shown);
+      after.bigMapLedgersIdentical = !!(bigTwin && bigTwin.identical);
+      after.bigMapNodeCount = bigTwin ? bigTwin.nodes.windows : 0;
       twinCache = { before, after };
       return before;
     },

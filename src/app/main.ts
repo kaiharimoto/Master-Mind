@@ -14,7 +14,7 @@ import { Scene, type LensKind } from './render/scene.js';
 import { TEXT_COLOR } from './render/world.js';
 import { Controls } from './lens/controls.js';
 import { HandTracker, type HandFrame } from './input/hands.js';
-import { TOUCH_VOCAB, HAND_VOCAB, type HandPoseId } from './input/vocab.js';
+import { TOUCH_VOCAB, HAND_VOCAB, MOUSE_VOCAB, type HandPoseId } from './input/vocab.js';
 import { buildPrompt, parseReply, applySuggestion, describe, type Suggestion, type ParseResult } from './finder/finder.js';
 import { CSS } from './ui/style.js';
 
@@ -653,12 +653,19 @@ export class App {
     const g = $('#gesture');
     const touch = TOUCH_VOCAB.find(t => t.id === id);
     const hand = HAND_VOCAB.find(h => h.id === id || `mouse:${h.id}` === id);
-    const name = touch?.name ?? hand?.name ?? (id === 'gyro' ? 'Gyroscope' : id);
+    const name = touch?.name ?? hand?.name ?? MOUSE_VOCAB[id] ?? (id === 'gyro' ? 'Gyroscope' : id);
     // A mouse-equivalent caption names the INPUT, not the pose it stands in for.
     // Three of the four read "Open palm (mouse equivalent)" and so never said
     // what a mouse user actually does; the vocabulary already knows.
-    const label = id.startsWith('mouse')
-      ? `${hand ? hand.mouse.split(', or ')[0] : name} — the ${name} equivalent`
+    //
+    // Only a pose STOOD IN FOR by the mouse gets the equivalence clause. The
+    // desk's own inputs — a drag, a click, a scroll — are not equivalents of
+    // anything, and appending the clause to them produced the tautology
+    // "mouse-alt-drag — the mouse-alt-drag equivalent" on artifacts 08, 09
+    // and 17.
+    const standIn = id.startsWith('mouse:') ? hand : undefined;
+    const label = standIn
+      ? `${standIn.mouse.split(', or ')[0]} — the ${standIn.name} equivalent`
       : name;
     g.innerHTML = `<span class="n">${esc(label)}</span> <span class="o">— ${esc(detail)}</span>`;
     g.classList.add('show');

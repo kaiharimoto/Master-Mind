@@ -173,8 +173,9 @@ export default [
   // capture rather than a record with a false flag inside it.
   requires: { positionsIdenticalAcrossSurfaces: true, positionEditPropagated: true, onlyTheDraggedNodeMoved: true,
               everyOtherPositionUnchanged: true, noNodeDropped: true, editPropagated: true,
-              concurrentConflictKeptBoth: true, bothSurfacesAgreeOnNode: true, twoDistinctSockets: true },
-  demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows, same frozen camera', minW: 1920, minH: 1080,
+              concurrentConflictKeptBoth: true, bothSurfacesAgreeOnNode: true, twoDistinctSockets: true,
+              bigMapShownOnBothSurfaces: true, bigMapLedgersIdentical: true },
+  demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows at the same frozen camera, and the 150-node map on those same two sockets under one camera', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — after',
   async run(H) { return H.twin(this, 'after'); },
 },

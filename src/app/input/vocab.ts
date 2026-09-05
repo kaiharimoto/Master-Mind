@@ -18,6 +18,20 @@ export const TOUCH_VOCAB: TouchGesture[] = [
   { id: 'pinch',      name: 'Pinch / spread',   how: 'Two fingers, pinch or spread',       operation: 'Zoom the view in or out', span: 'navigation' },
 ];
 
+/**
+ * The desk inputs the controls fire directly, named the way a person would say
+ * them. Without this table a caption fell back to the raw event id and read
+ * "mouse-alt-drag — the mouse-alt-drag equivalent": a tautology that told a
+ * viewer neither what was pressed nor what it stood in for.
+ */
+export const MOUSE_VOCAB: Record<string, string> = {
+  'mouse-drag': 'Drag',
+  'mouse-alt-drag': 'Alt-drag',
+  'mouse-click': 'Click',
+  'mouse-scroll-up': 'Scroll up',
+  'mouse-scroll-down': 'Scroll down',
+};
+
 export type HandPoseId = 'fist' | 'spread' | 'gather' | 'two' | 'none';
 
 export interface HandPose {

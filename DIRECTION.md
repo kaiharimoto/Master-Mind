@@ -415,3 +415,67 @@ not a choice, and the selected state is additionally carried by its heavy ring.
 states are the same five, in the same order, still dual-coded with ring
 geometry. What changed is the numbers the lightness channel uses, so that the
 channel does the job D-006 gave it.
+
+### Amendment, cycle 5 — the rungs were lowered to buy chroma back
+
+The table above is what cycle 4 decided. In cycle 5 the whole ladder was shifted
+down by 0.04–0.10 so the top rungs could keep more of their hue: at 0.80 the
+lightest rung had almost no chroma left to spend, which is the cost D-015 names
+in the paragraph above, and the critics were reading *selected* as white. The
+rungs in force are:
+
+| | plain | connected | unplaced | search hit | selected |
+|---|---:|---:|---:|---:|---:|
+| rung, cycle 5 onward | 0.26 | 0.37 | 0.48 | 0.59 | 0.70 |
+| measured on 07 (core centre, cycle 7) | 0.288 | 0.425 | 0.562 | 0.676 | 0.801 |
+
+Every step is at least 0.114 and the widest scatter *within* a rung is 0.028, so
+the property D-015 was made to guarantee is unchanged; only the numbers moved.
+From cycle 7 these are not restated from the source — artifact 07's driver reads
+them off the frame it just wrote, at each node's own core centre, and the
+capture fails if the ladder stops climbing or a step stops clearing the
+within-rung scatter.
+
+**This amendment is a correction of the record, not a new decision.** The change
+happened in cycle 5's code and this table was not updated with it, so for two
+cycles DIRECTION.md stated rungs the app did not use. Recorded as F-023.
+
+---
+
+## D-016 · Depth may darken a node only inside its own rung’s band  · cycle 7 · SETTLED
+
+*Decided in cycle 7. First visible in cycle 7's artifacts 02, 04, 07, 12.*
+
+**Problem.** D-014 gave distance the luminance channel and reserved chroma for
+recency. It did not say how much luminance distance could spend, and the answer
+was "all of it": one floor of 0.55 applied to every state. The two things then
+had no arbitration between them. Measured on cycle 6's whole-map framing, a
+*connected* teal came out at 0.223 and a *plain* violet at 0.146 — a spread of
+0.077, where the ladder in D-013 is built on steps of 0.11. A near plain node
+and a far connected node were within a hair of each other, and at a slightly
+greater distance the pair would have crossed. The state channel was being read
+off a value that distance had already spent.
+
+**Decision.** Distance attenuates a node's luminance by at most **0.55 of the
+gap down to the rung below its own state** — never toward black, and never past
+its own band:
+
+| | plain | connected | unplaced | search hit | selected |
+|---|---:|---:|---:|---:|---:|
+| rung (D-015, as amended in cycle 5) | 0.26 | 0.37 | 0.48 | 0.59 | 0.70 |
+| floor | 0.172 | 0.309 | 0.419 | 0.529 | 0.639 |
+| fade ratio | 0.66 | 0.84 | 0.87 | 0.90 | 0.91 |
+
+The bands are **disjoint**. Whatever two nodes' distances are, a connected node
+is lighter than every plain node, an unplaced node lighter than every connected
+one, and so on up the ladder. The worst-case separation between adjacent states
+falls from "they can cross" to 0.0495.
+
+**What it costs.** Depth reads less strongly on the bright states — *selected*
+can only darken by 9 % across the whole depth range, against 34 % for *plain*.
+Distance is still carried by perspective and by marker size, which are
+untouched; what it no longer does is borrow from the state ladder.
+
+**Not a reopening of D-014.** Distance still attenuates luminance and only
+luminance; it still does not touch alpha; chroma is still reserved for recency.
+What is added is the bound.

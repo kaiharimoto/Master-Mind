@@ -202,8 +202,8 @@ export default [
   id: '07', file: '07_five_node_states.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { ok: true },
-  demonstrates: 'the five node states side by side with the legend', minW: 1920, minH: 1080,
+  requires: { ok: true, ladderMonotonic: true, ladderStepsClearScatter: true },
+  demonstrates: 'the five node states side by side with the legend, with the luminance ladder measured off the shipped frame', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Five node states staged',
   async run(H) {
     // The small map is used because all five states can coexist in one frame
@@ -233,7 +233,42 @@ export default [
       void st; return out;
     });
     const seen = new Set(Object.values(states));
+    // MEASURE THE LADDER OFF THE FRAME. The rungs are a decision (D-015) and
+    // their bounding by depth is another (D-016); until cycle 7 the numbers
+    // proving both lived in report.md prose, re-derived by hand whenever a
+    // critic asked. They are read here from the pixels this artifact ships,
+    // at each node's own core centre, so the claim below travels with the file.
+    const centres = await page.evaluate(() => {
+      const sc = window.mm.scene, d = window.mm.store.doc;
+      return sc.screenPositions().map(p => ({ id: p.id, text: d.nodes[p.id].text,
+                                              x: Math.round(p.x), y: Math.round(p.y) }));
+    });
+    const lum = await H.samplePixels(H.out(this.file), centres);
+    const byState = {};
+    for (const c of centres) {
+      const st = states[c.text];
+      if (!st || lum[c.id] == null) continue;
+      (byState[st] ??= []).push(lum[c.id]);
+    }
+    const ORDER = ['plain', 'connected', 'unplaced', 'searchHit', 'selected'];
+    const mean = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+    const rung = {}, spread = {};
+    for (const st of ORDER) if (byState[st]) {
+      rung[st] = Number(mean(byState[st]).toFixed(4));
+      spread[st] = Number((Math.max(...byState[st]) - Math.min(...byState[st])).toFixed(4));
+    }
+    const present = ORDER.filter(st => rung[st] != null);
+    const steps = present.slice(1).map((st, i) => Number((rung[st] - rung[present[i]]).toFixed(4)));
     return { statesInFrame: [...seen].sort(), byNode: states,
+             measuredRungs: rung, withinRungSpread: spread, rungSteps: steps,
+             // The ladder must climb, and every step must clear the within-rung
+             // scatter by a margin — otherwise two nodes in the same state are
+             // as far apart as two nodes in different ones.
+             ladderMonotonic: steps.every(v => v > 0),
+             minRungStep: steps.length ? Math.min(...steps) : 0,
+             maxWithinRungSpread: Math.max(0, ...present.map(st => spread[st])),
+             ladderStepsClearScatter: steps.length > 0 &&
+               Math.min(...steps) > Math.max(0, ...present.map(st => spread[st])),
              ok: ['connected', 'plain', 'searchHit', 'selected', 'unplaced'].every(s => seen.has(s)) };
   },
 },
