@@ -554,6 +554,11 @@ export class App {
     return !!document.querySelector('#finder, #states, .overlay');
   }
 
+  /** Anything that would draw over a chip anchored top-right. */
+  private rightPanelOpen() {
+    return !!document.querySelector('#editor, .overlay');
+  }
+
   private reflowSessionChips() {
     const hide = this.panelOpen();
     for (const id of ['origin', 'activity']) {
@@ -594,7 +599,10 @@ export class App {
       document.body.appendChild(chip);
     }
     const n = this.scene.suppressed;
-    chip.className = n > 0 && !this.panelOpen() ? 'show' : '';
+    // The badge exists to declare what the frame is not showing, so it must not
+    // itself be the thing that is hidden: it stands down when the editor would
+    // draw over it rather than being clipped to "1 label hid".
+    chip.className = n > 0 && !this.panelOpen() && !this.rightPanelOpen() ? 'show' : '';
     chip.textContent = n > 0 ? `${n} label${n === 1 ? '' : 's'} hidden at this zoom — move closer to read them` : '';
   }
 

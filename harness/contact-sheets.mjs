@@ -15,7 +15,16 @@ const sh = (args) => new Promise((res, rej) => {
   p.on('close', c => c === 0 ? res() : rej(new Error(e.slice(-700))));
 });
 
-export async function sheet(video, out, { cols = 4, rows = 5 } = {}) {
+/**
+ * A contact sheet a reviewer can actually read.
+ *
+ * At 4x5 each tile was 486 px wide — a quarter of the frame — and the top-bar
+ * holding badge was unreadable in every tile, so a count change had to be
+ * inferred from the cluster rather than read from the counter that states it.
+ * 2x10 at double tile width keeps the same twenty samples and makes the chrome
+ * legible.
+ */
+export async function sheet(video, out, { cols = 2, rows = 10 } = {}) {
   const n = cols * rows;
   const dur = await new Promise(res => {
     let o = '';
@@ -32,8 +41,8 @@ export async function sheet(video, out, { cols = 4, rows = 5 } = {}) {
   const times = Array.from({ length: n }, (_, i) => (i + 0.5) * (dur / n));
   await Promise.all(times.map((t, i) => sh(['-y', '-ss', t.toFixed(3), '-i', video,
     '-frames:v', '1', '-vf',
-    `scale=480:270,drawtext=fontfile=${font}:text='${t.toFixed(1)}s':x=8:y=8:` +
-    `fontsize=22:fontcolor=0xEFE6D8:box=1:boxcolor=0x120E0B@0.85:boxborderw=6`,
+    `scale=960:540,drawtext=fontfile=${font}:text='${t.toFixed(1)}s':x=14:y=14:` +
+    `fontsize=34:fontcolor=0xEFE6D8:box=1:boxcolor=0x120E0B@0.85:boxborderw=9`,
     join(tmp, `f${String(i).padStart(3, '0')}.png`)])));
   await sh(['-y', '-framerate', '1', '-i', join(tmp, 'f%03d.png'),
     '-vf', `tile=${cols}x${rows}:margin=6:padding=4:color=0x120E0B`,

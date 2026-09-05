@@ -213,12 +213,20 @@ async function runDriver(d) {
       const pw0 = await positions(w.page), pa0 = await positions(a.page);
       const bw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w0.png'));
       const ba = await shot(a.page, a.cdp, resolve(TMP, 'twin-a0.png'));
+      // The figures for the map that is ON SCREEN, per half, so "node-for-node
+      // identical, no node dropped" is a number a reader can check rather than
+      // eleven labels to count by eye.
+      const shaOf = (p) => createHash('sha256').update(JSON.stringify(p)).digest('hex').slice(0, 10);
+      const ledger = (p) => `${driver.map} · ${Object.keys(p).length} nodes · pos sha ${shaOf(p)}`;
+      const agree = shaOf(pw0) === shaOf(pa0);
       await compose([bw, ba], resolve(OUTDIR, '11_sync_twin_before.png'), { mode: 'h', width: 1920, height: 1080,
         labels: ['Windows — canvas', 'Android — canvas'],
         // Read from each running process, not typed. If the Wine binary did not
         // come up, this line says chromium and the frame does not over-claim.
         sublabels: [provLine(prov.w, winSource === 'windows-binary-under-wine' ? 'wine · the built binary' : 'FALLBACK — NOT the built binary'),
-                    provLine(prov.a, 'android device profile · touch')] });
+                    provLine(prov.a, 'android device profile · touch')],
+        sublabels2: [`${ledger(pw0)} · ${agree ? 'same ledger both sockets' : 'LEDGERS DIFFER'}`,
+                     `${ledger(pa0)} · ${agree ? 'same ledger both sockets' : 'LEDGERS DIFFER'}`] });
 
       // The edit is made on Android, through the ordinary editor.
       const id = await NODE_ID(a.page, 'Demo: search fly-to');
@@ -280,8 +288,8 @@ async function runDriver(d) {
         const da = createHash('sha256').update(JSON.stringify(ba)).digest('hex').slice(0, 10);
         bigTwin = { nodes: { windows: Object.keys(bw).length, android: Object.keys(ba).length },
                     sha: { windows: dw, android: da }, identical: dw === da };
-        bigCheck = `map-fermentation ${Object.keys(bw).length} nodes · pos sha ${dw}` +
-                   (dw === da ? ' — same both sockets' : ' MISMATCH');
+        bigCheck = `map-fermentation ${Object.keys(bw).length}/${Object.keys(ba).length} nodes` +
+                   (dw === da ? `, pos sha ${dw} identical on both sockets` : `, LEDGERS DIFFER ${dw} vs ${da}`);
         for (const p of [w, a]) {
           await p.page.evaluate(() => window.mm.openMap('map-talk'));
           await p.page.waitForFunction(() => window.mm.store.doc.id === 'map-talk', null, { timeout: 20000 });
@@ -301,6 +309,7 @@ async function runDriver(d) {
       const aw = await shot(w.page, w.cdp, resolve(TMP, 'twin-w1.png'));
       const aa = await shot(a.page, a.cdp, resolve(TMP, 'twin-a1.png'));
       const fmt = (v) => `${v[0].toFixed(1)}, ${v[1].toFixed(1)}, ${v[2].toFixed(1)}`;
+      const sha12 = (p) => createHash('sha256').update(JSON.stringify(p)).digest('hex').slice(0, 10);
       // EVERY edit in the beat is named. The take also recolours and retexts a
       // second node on Android while Windows relabels that same node — that is
       // what exercises property-level last-writer-wins — and cycle 3's caption
@@ -310,12 +319,15 @@ async function runDriver(d) {
                     `Android retexted+recoloured “Demo: search fly-to” while Windows relabelled it — both kept`;
       await compose([aw, aa], resolve(OUTDIR, '12_sync_twin_after.png'), { mode: 'h', width: 1920, height: 1080,
         labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'],
-        sublabels: [moved, moved],
+        sublabels: [
+          `${moved} · ${driver.map} · ${Object.keys(pw1).length} nodes · pos sha ${sha12(pw1)}`,
+          `${moved} · ${driver.map} · ${Object.keys(pa1).length} nodes · pos sha ${sha12(pa1)}`,
+        ],
         sublabels2: [
           `${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · the built binary' : 'FALLBACK — not the built binary'}` +
-          ` · socket #${provAfter.w.socket} · CAMERA FROZEN FROM 11 · ${bigCheck}`,
+          ` · socket #${provAfter.w.socket} · CAMERA FROZEN FROM 11 · also verified this run, not shown on screen: ${bigCheck}`,
           `${provAfter.a.runtime} · android device profile · touch · socket #${provAfter.a.socket}` +
-          ` · CAMERA FROZEN FROM 11 · ${bigCheck}`,
+          ` · CAMERA FROZEN FROM 11 · also verified this run, not shown on screen: ${bigCheck}`,
         ] });
 
       const pw1 = await positions(w.page), pa1 = await positions(a.page);

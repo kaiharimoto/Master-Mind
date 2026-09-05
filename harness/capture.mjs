@@ -120,6 +120,30 @@ export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame 
 }
 
 /** Compose panels with ffmpeg. `mode` is 'h' (side by side) or 'v' (stacked). */
+/**
+ * Break a caption into lines that FIT the panel, at ' · ' boundaries.
+ *
+ * A caption that does not fit used to be shrunk until it hit a floor and then
+ * simply ran off the edge, taking whatever clause was at the end with it — in
+ * artifact 12 that was the verdict on whether both sockets agreed. A caption
+ * now takes as many lines as it needs, and the harness asserts that none was
+ * dropped.
+ */
+export function wrapCaption(text, cellW, size = 13, maxLines = 4) {
+  const perLine = Math.max(10, Math.floor((cellW - 34) / (size * 0.55)));
+  const parts = String(text).split(' · ');
+  const lines = [];
+  let cur = '';
+  for (const part of parts) {
+    const next = cur ? `${cur} · ${part}` : part;
+    if (next.length <= perLine || !cur) { cur = next; continue; }
+    lines.push(cur); cur = part;
+  }
+  if (cur) lines.push(cur);
+  return { lines: lines.slice(0, maxLines), dropped: Math.max(0, lines.length - maxLines),
+           overlong: lines.filter(l => l.length > perLine).length };
+}
+
 export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, sublabels2 = null, width = 1920, height = 1080 } = {}) {
   const n = inputs.length;
   const cellW = mode === 'h' ? Math.floor(width / n) : width;
@@ -128,7 +152,16 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
   for (const i of inputs) args.push('-i', i);
   // Labels live in a strip ABOVE each panel so they never cover the interface
   // the panel is meant to show.
-  const strip = labels ? (sublabels2 ? 96 : sublabels ? 74 : 46) : 0;
+  // How many caption lines the tallest panel needs, so the strip is sized to
+  // hold every clause rather than the clauses being sized to fit the strip.
+  const capLines = [];
+  for (let i = 0; i < n; i++) {
+    const a = sublabels && sublabels[i] ? wrapCaption(sublabels[i], cellW).lines : [];
+    const b = sublabels2 && sublabels2[i] ? wrapCaption(sublabels2[i], cellW).lines : [];
+    capLines.push([...a, ...b]);
+  }
+  const maxCap = Math.max(0, ...capLines.map(l => l.length));
+  const strip = labels ? 34 + maxCap * 21 + (maxCap ? 6 : 12) : 0;
   const parts = [];
   for (let i = 0; i < n; i++) {
     let f = `[${i}:v]scale=${cellW}:${cellH - strip}:force_original_aspect_ratio=decrease,` +
@@ -150,17 +183,25 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
     // single line until it no longer fit — and that clause is what licenses a
     // reader to treat identical pixels between 11 and 12 as identical world
     // positions. A caption that cannot fit is split, never truncated.
-    const line = (txt, y, min) => {
-      const size = Math.max(min, Math.min(17, Math.floor((cellW - 34) / (String(txt).length * 0.55))));
-      return `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:` +
-             `text='${esc(txt)}':x=20:y=${y}:fontsize=${size}:fontcolor=0xB9AA9B`;
-    };
-    if (sublabels && sublabels[i]) f += line(sublabels[i], 42, 12);
-    if (sublabels2 && sublabels2[i]) f += line(sublabels2[i], 66, 12);
+    capLines[i].forEach((txt, k) => {
+      f += `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:` +
+           `text='${esc(txt)}':x=20:y=${38 + k * 21}:fontsize=13:fontcolor=0xB9AA9B`;
+    });
     parts.push(`${f}[v${i}]`);
   }
   const stack = mode === 'h' ? `hstack=inputs=${n}` : `vstack=inputs=${n}`;
   const chain = parts.join(';') + ';' + inputs.map((_, i) => `[v${i}]`).join('') + stack + '[out]';
+  // No clause may be silently lost. A caption that cannot be laid out is a
+  // failed compose, not a shorter caption.
+  for (let i = 0; i < n; i++) {
+    for (const src of [sublabels && sublabels[i], sublabels2 && sublabels2[i]]) {
+      if (!src) continue;
+      const w = wrapCaption(src, cellW);
+      if (w.dropped || w.overlong)
+        throw new Error(`compose: caption for panel ${i} does not fit ` +
+                        `(${w.dropped} line(s) dropped, ${w.overlong} overlong): ${String(src).slice(0, 90)}…`);
+    }
+  }
   args.push('-filter_complex', chain, '-map', '[out]', '-frames:v', '1', out);
   await new Promise((res, rej) => {
     let err = '';

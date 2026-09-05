@@ -314,6 +314,11 @@ export class Scene {
       [-1.45, 0], [1.45, 0],
       [-1.30, -1.30], [1.30, -1.30], [-1.30, 1.30], [1.30, 1.30],
       [0, -3.80], [0, 3.80],
+      // Reaching further is allowed rather than giving up — still adjacent
+      // enough to read as this node's label, and the distance term above makes
+      // a far anchor pay for itself.
+      [-2.30, -2.30], [2.30, -2.30], [-2.30, 2.30], [2.30, 2.30],
+      [0, -5.10], [0, 5.10],
     ];
     const boxes: Box[] = [];
     const shape: { w: number; h: number; emPx: number; bx0: number; by0: number }[] = [];
@@ -423,8 +428,8 @@ export class Scene {
       // name to solve crowding somewhere else. Multi-line runs are never
       // shortened (there is no single tail to fade).
       const widths: { w: number; vis: number }[] = [{ w: sh.w, vis: 0 }];
-      if (glyphs.length >= 8) {
-        for (const keep of [0.72, 0.5]) {
+      if (glyphs.length >= 6) {
+        for (const keep of [0.72, 0.5, 0.34]) {
           const k = Math.max(5, Math.floor(glyphs.length * keep));
           if (k >= glyphs.length) continue;
           widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * sh.emPx, 6), vis: k });
@@ -439,7 +444,13 @@ export class Scene {
         for (const [cx, cy] of CAND) {
           const dx = cx * sh.emPx, dy = cy * sh.emPx;
           const x0 = sh.bx0 + dx, y0 = sh.by0 + dy;
-          const frac = coverage(x0, y0, x0 + cand.w, y0 + sh.h, area);
+          // NODE DISCS ARE OCCUPANCY, not a preference. Text drawn over a core
+          // erases the quietest state in the frame — a plain node measured 0.098
+          // with bone glyphs at 0.87 sitting across it — so a marker counts
+          // against a placement exactly as heavily as another label does, and
+          // feeds the same tier decision.
+          const dc = discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area);
+          const frac = Math.min(1, coverage(x0, y0, x0 + cand.w, y0 + sh.h, area) + dc);
           // Text-on-text decides the tier; text-on-marker only breaks ties; and
           // a label that wanders pays for the distance. Inside a tight cluster
           // an unpenalised anchor could push a name out to open ground where it
@@ -451,9 +462,7 @@ export class Scene {
           // label that could only be placed 20 % buried would win over the same
           // label shortened and completely clear, and then be dimmed for being
           // buried — losing both the words and the legibility.
-          const score = 6 * frac + shortPenalty
-                             + 0.34 * discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area)
-                             + 0.22 * away;
+          const score = 6 * frac + shortPenalty + 0.22 * away;
           // The unshifted, full-length anchor is preferred: a candidate only
           // wins if it is meaningfully clearer, so labels do not jitter.
           const home = cx === 0 && cy === 0 && !cand.vis;

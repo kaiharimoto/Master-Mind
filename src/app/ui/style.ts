@@ -31,6 +31,14 @@ body.ar #capture,body.ar [data-t=open-finder],body.ar [data-t=open-maps],
 body.ar [data-t=open-states]{display:none}
 body.ar #top{height:40px}
 body.ar #search{width:300px}
+/* Between a desk and a phone: keep every control, give up spacing first, so a
+   half-width composite panel never cuts a button mid-word. */
+@media (max-width:1460px){
+  #top{gap:5px;padding:0 8px}
+  #top button{padding:6px 8px}
+  #search{width:190px}
+  #capture{width:150px}
+}
 @media (max-width:1200px){
   #capture,[data-t=open-finder],[data-t=open-maps],[data-t=open-states]{display:none}
   #search{width:150px}

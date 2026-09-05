@@ -64,12 +64,17 @@ function oklab2rgb(L: number, a: number, bb: number): [number, number, number] {
  * and left the top two rungs 0.014 apart — less than the residual variance
  * between two nodes in the *same* state.
  *
- * The rungs are now absolute and spaced across the band that is actually
- * available. Every step is at least 0.11, and the per-hue variance within a
- * rung is zero by construction.
+ * The rungs are now absolute and evenly spaced across the band that is actually
+ * available: 0.11 apart, with zero per-hue variance within a rung.
+ *
+ * The top was lowered from 0.80 to 0.70 in cycle 5. A hue cannot be both very
+ * light and saturated, and at 0.80 the top rungs shed most of their colour —
+ * coral rendered at saturation 0.17 against its own 0.71. At 0.70 the worst hue
+ * in the palette keeps about half its plain-rung chroma, which is the floor the
+ * Art Director set, and every step is still more than twice the 0.05 minimum.
  */
 export const STATE_LUM: Record<NodeState, number> = {
-  plain: 0.30, connected: 0.44, unplaced: 0.57, searchHit: 0.69, selected: 0.80,
+  plain: 0.26, connected: 0.37, unplaced: 0.48, searchHit: 0.59, selected: 0.70,
 };
 
 /**
@@ -446,7 +451,11 @@ void main() {
   float dash = smoothstep(0.0, 0.10, f) * (1.0 - smoothstep(0.42, 0.52, f));
   float ring = (1.0 - smoothstep(0.006 - aa, 0.006 + aa, abs(r - 0.5))) * dash;
   if (ring < 0.004) discard;
-  gl_FragColor = vec4(vec3(0.62, 0.58, 0.53), ring * 0.60 * vFade);
+  // Below the quietest node state. The boundary encodes real state and belongs
+  // in the world, but it was measuring 0.115 against a plain node core at 0.098
+  // — the largest and brightest contour in four artifacts, out-reading the
+  // nodes it contains.
+  gl_FragColor = vec4(vec3(0.34, 0.32, 0.29), ring * 0.55 * vFade);
 }`;
 
 export class HoldingShell {
