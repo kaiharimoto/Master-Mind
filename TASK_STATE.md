@@ -11,9 +11,12 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 |---|---|
 | Phase | review |
 | Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
-| Review cycle | 2 captured and frozen; critics running |
-| Rubric score | **85 / 100** at cycle 1 — no category below its minimum, both hard gates met |
-| Artifacts captured | **20 of 20, all as defined** |
+| Review cycle | **7 captured and frozen**; critics running against `evidence/cycles/cycle-7/` |
+| Rubric score | **88.0 / 100** at cycle 6 — no category below its minimum, both hard gates met |
+| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 (cycles 1–6) |
+| Artifacts captured | **20 of 20, all as defined**, in every frozen cycle |
+| Positions | **identical for seven consecutive cycles**, compared as model values |
+| Exit condition | total ≥ 90, both hard gates, two consecutive regression-free cycles — or the 15-cycle cap with a final report listing every unmet gate |
 | Cold start | **passed** — 161 positions verified against the committed fixtures as model values |
 
 ## Completed
@@ -41,61 +44,80 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 ## Last successful commands
 
 ```
-node harness/cycle.mjs 1                     # 20/20 captured as defined
-node harness/diff-evidence.mjs evidence evidence/history/cycle-0
-    -> 15 unchanged, 5 changed (03,07,11,12,16 — all deliberately edited)
-    -> positions IDENTICAL
+node harness/cycle.mjs 7                     # 20/20 captured as defined
+    -> diff vs frozen cycle-6: 6 unchanged, 13 changed, 1 uncomparable
+    -> positions IDENTICAL (seventh consecutive cycle)
+node harness/run-capture.mjs --only 06       # recaptured after the reframing
+node harness/gen-recipes.mjs                 # 20 recipes regenerated from the drivers
 node harness/test-model.mjs                  # 11/11 invariants pass
 node harness/validate-poses.mjs              # 99.0% detection, 100% pose accuracy
-node src/build-windows.mjs                   # Master Mind.exe, 188.8 MB
-node src/build-android.mjs                   # app-debug.apk, 22.8 MB
+bash src/bootstrap.sh                        # cold start, 9/9, 161 positions verified
 ```
 
 ## Worst problems
 
-1. **Label collision in dense districts.** At whole-brain scale the seeded map's
-   dense cores overlap their labels. Mitigated by one-line labels, above/below
-   stagger and a 2.45-unit minimum node separation; not eliminated.
-2. **Interactive frame rate is ~12 fps** at 1920×1080 (F-002) and 8.5 fps inside
+1. **Two faults were found in the regression instrument itself this cycle**
+   (F-026, F-027). Every "regression-free" verdict before cycle 7 was made on a
+   diff that compared against the working directory rather than the frozen set
+   the critics read, and on a video comparison that saw only the first four
+   seconds of each take. Both are fixed; the earlier verdicts stand as recorded
+   but were made on a weaker instrument, and that is stated in `report.md`.
+2. **Label collision in dense districts.** Bright-tier labels are disjoint *by
+   construction* and now audited against the drawn glyphs (`labelDrawAudit`,
+   worst overhang 0.00 px on artifacts 02, 04 and 10). What remains is that some
+   labels are shortened or faded at whole-map framing; the frame declares how
+   many.
+3. **Interactive frame rate is ~12 fps** at 1920×1080 (F-002) and 8.5 fps inside
    the Wine-hosted Windows binary (F-007). Video is therefore rendered
-   frame-accurate on the app's own clock (F-010).
-3. **Artifact 17 was capturing an empty frame** for much of the take because a
-   held pose drove an unbounded zoom. Fixed by rate-limiting continuous hand
-   operations and clamping distance to a band around the framed view — needs a
-   recapture to confirm.
+   frame-accurate on the app's own clock (F-010, D-011).
+4. **Depth reads weakly on the bright states.** D-016 bounds distance to each
+   state's own rung band, which is what makes the ladder survive depth; the cost
+   is that *selected* can only darken 9 % across the whole depth range.
 
 ## Known failures
 
-*None outstanding. Every failure found so far has been fixed and recaptured:
-fly-to and double-tap running on the wall clock instead of the app clock; a
-stationary press being treated as a drag; the long-press timer never cancelling
-during an orbit; the packaged Electron path bug; the DevTools sensor override
-not delivering orientation (F-014).*
+*None outstanding.* Every capture failure is recorded in `report.md` under
+**Capture failures**, with what it cost and how it was resolved; six have
+occurred, in cycles 5, 6 and 7, and none has ever cost an artifact in a frozen,
+reviewed set. No capture has ever had its definition narrowed to make it pass.
 
-## Cycle 1 result
+## Cycle 6 result — the last scored cycle
 
 | Category | Score | Weight | Minimum |
 |---|---:|---:|---:|
-| 01 Core workflow | 21 | 25 | 20 |
-| 02 Landmarks live | 20 | 25 | 20 |
-| 03 One model and sacred positions (hard gate) | 18 | 20 | 17 |
-| 04 Evidence and report integrity (hard gate) | 13.5 | 15 | 13.5 |
-| 05 Quality compliance | 8 | 10 | 8 |
+| 01 Core workflow | 21.5 | 25 | 20 |
+| 02 Landmarks live | 22.5 | 25 | 20 |
+| 03 One model and sacred positions (hard gate) | 17.5 | 20 | 17 |
+| 04 Evidence and report integrity (hard gate) | 13.5 | 15 | 13 |
+| 05 Quality compliance | 8.5 | 10 | 8 |
 | 06 Finder round-trip | 4.5 | 5 | 4 |
-| **Total** | **85** | **100** | |
+| **Total** | **88.0** | **100** | |
 
-Regression-free, no position regression. Nineteen findings across the three
-critics; every one is recorded in `report.md` with what was done. All are fixed
-in cycle 2 except one that was a recapture rather than a code change.
+Regression-free, no position regression, zero declared-claim failures.
+**Cycle 6's verdicts were never written to disk and were lost with the
+context**; from cycle 7 each critic's report is written to
+`evidence/critics/<role>-cycle-N.md` as it is received, before any response is
+written to it (§09).
 
-The Art Director ruled the delegated organic-versus-holographic question:
-**organic-bioluminescent**, recorded in `DIRECTION.md` D-004 and not reopened.
+## What cycle 7 changed
+
+Answering cycle 6's findings: shortened labels cut at word boundaries and carry
+an ellipsis; artifact 14 gained a magnified detail row and lost its empty 43 %;
+artifact 12 shows the 150-node map on both sockets; contact-sheet timestamps
+moved into a gutter; D-016 bounds depth inside each state's rung band; the
+round-trip rejects a placement; artifact 18 spends its time on the flights and
+steps to a second hit; a node's age is inspectable in the editor.
+
+Eight findings came out of the work itself — F-020 through F-027 — including a
+false machine-checked claim of the F-018 class (F-021), a pan calibrated by a
+constant twice the true scale (F-024), a label arbiter reasoning about a
+different layout from the one drawn (F-025), and the two regression-instrument
+faults above.
 
 ## NEXT ACTION
 
-Read the three cycle-2 critic reports, record scores and findings in
-`report.md`, and open cycle 3 against whichever category is furthest from its
-weight. The gap to the 90/100 exit threshold is 5 points, and the cycle-1
-findings driving it — label collision at whole-brain zoom, AR shown only as a
-still, the missing cross-surface position edit, the missing placement
-acceptance — are all addressed in the cycle-2 set.
+Read the three cycle-7 critic verdicts as they arrive, **write each one to
+`evidence/critics/<role>-cycle-7.md` verbatim before responding to it**, record
+scores and findings in `report.md`, and open cycle 8 against whichever category
+is furthest from its weight. Cycle 6 stood at 88.0; the exit needs +2 and two
+consecutive regression-free cycles.
