@@ -310,6 +310,12 @@ async function runDriver(d) {
       const aa = await shot(a.page, a.cdp, resolve(TMP, 'twin-a1.png'));
       const fmt = (v) => `${v[0].toFixed(1)}, ${v[1].toFixed(1)}, ${v[2].toFixed(1)}`;
       const sha12 = (p) => createHash('sha256').update(JSON.stringify(p)).digest('hex').slice(0, 10);
+      // Read BEFORE the composite that prints them. They were being read after
+      // it, so the caption referenced a binding that did not exist yet and the
+      // whole twin sequence threw — caught by the declared-claim gate on 12,
+      // which recorded every one of its claims as unmet rather than passing
+      // them through as undefined.
+      const pw1 = await positions(w.page), pa1 = await positions(a.page);
       // EVERY edit in the beat is named. The take also recolours and retexts a
       // second node on Android while Windows relabels that same node — that is
       // what exercises property-level last-writer-wins — and cycle 3's caption
@@ -330,7 +336,7 @@ async function runDriver(d) {
           ` · CAMERA FROZEN FROM 11 · also verified this run, not shown on screen: ${bigCheck}`,
         ] });
 
-      const pw1 = await positions(w.page), pa1 = await positions(a.page);
+
       const node = await w.page.evaluate(i => window.mm.store.doc.nodes[i], id);
       const nodeA = await a.page.evaluate(i => window.mm.store.doc.nodes[i], id);
       const same = (x, y) => JSON.stringify(x) === JSON.stringify(y);

@@ -1,0 +1,297 @@
+{
+  "cycle": 3,
+  "previousCycle": 2,
+  "previousCycleSource": "derived from the snapshot directory being diffed",
+  "capturedNow": 20,
+  "capturedPrev": 20,
+  "capturedPrevSource": "artifact files actually present in the previous snapshot",
+  "previousManifestSelfReport": {
+    "cycle": 2,
+    "captured": 20
+  },
+  "headerDisagreement": null,
+  "rowsVsCapturedPrev": "ok",
+  "rows": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.989408,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.864588,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.93308,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.859232,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.633359,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.973556,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.919515,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.906731,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.782959,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.977326,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.817782,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.783131,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.821839,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.886868,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 0.893169,
+      "seconds": {
+        "cur": 34,
+        "prev": 34
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1490391,
+        "prev": 1427445
+      },
+      "bitrateDelta": 0.044,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.9,
+      "ssim": 0.788807,
+      "seconds": {
+        "cur": 38,
+        "prev": 38
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 6898578,
+        "prev": 6524012
+      },
+      "bitrateDelta": 0.057,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.900224,
+      "seconds": {
+        "cur": 13,
+        "prev": 13
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1743204,
+        "prev": 1740384
+      },
+      "bitrateDelta": 0.002,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssim": 0.87523,
+      "seconds": {
+        "cur": 18,
+        "prev": 18
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 293409,
+        "prev": 284492
+      },
+      "bitrateDelta": 0.031,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "status": "captured",
+      "threshold": 0.95,
+      "ssim": 0.838927,
+      "seconds": {
+        "cur": 30,
+        "prev": 30
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 582470,
+        "prev": 586338
+      },
+      "bitrateDelta": -0.007,
+      "verdict": "changed",
+      "whatChanged": "no recipe fingerprint in the previous set — first cycle with recipe tracking"
+    }
+  ],
+  "positions": {
+    "compared": true,
+    "moved": [],
+    "added": [],
+    "removed": [],
+    "identical": true
+  },
+  "summary": {
+    "unchanged": 1,
+    "changed": 19,
+    "new": 0,
+    "missing": 0,
+    "changedIds": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20"
+    ],
+    "missingIds": [],
+    "substantiveIds": []
+  }
+}

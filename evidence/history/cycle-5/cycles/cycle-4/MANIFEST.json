@@ -1,0 +1,1427 @@
+{
+  "cycle": 4,
+  "seed": {
+    "epoch": 1787227200000,
+    "rng": 1296913221,
+    "fps": 30
+  },
+  "startedAt": "2026-09-04T19:46:47.167Z",
+  "lastRunAt": "2026-09-04T23:10:47.315Z",
+  "lastRunCaptured": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
+  ],
+  "artifacts": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "title": "Maps home",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 2.1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 142250,
+        "sha256": "5f7cb35d386329ca217284e463139c44228b0d678f54698376979814f5bec8f6"
+      },
+      "claims": {
+        "ok": true,
+        "claims": []
+      },
+      "result": {
+        "maps": {
+          "map-talk": 11,
+          "map-fermentation": 150
+        },
+        "note": "create/rename/delete driven through the real buttons; three states composited"
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "maps home: create, rename and delete a map, both seeded maps listed with node counts",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "98f7cded25ce50cc"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:10:49.317Z"
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "title": "Canvas at scale",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 359960,
+        "sha256": "c1fdbdaf90ca09903c0cd486b8bf0ab3a99f331c724583e614648cf01be3165f"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "nodes",
+            "expected": "(predicate)",
+            "actual": 150,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "canvas",
+        "surface": "windows",
+        "sync": "live",
+        "camera": {
+          "yaw": 0.42,
+          "pitch": 0.2,
+          "dist": 120.110861,
+          "target": [
+            4.227,
+            -4.996,
+            0.6945
+          ]
+        },
+        "cameraPinned": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "canvas lens at whole-map framing on Windows, 150 nodes with seed provenance",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "e78dba1ab8559b1b"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:10:50.587Z"
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "title": "Hero — AR projection, cold start",
+      "kind": "png",
+      "minimum": "2560x1440",
+      "seconds": 2.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 2560,
+        "height": 1440,
+        "bytes": 1033903,
+        "sha256": "c9b13f50ef3a139fd1c3e0ded71b528d1cbdbc60f6a7cb99d3e7c5b8009f2e96"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "gyroDroveTheView",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "positionsUnchangedBetweenPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "headingChanged",
+            "expected": "(predicate)",
+            "actual": 62,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "ar",
+        "surface": "android",
+        "sync": "live",
+        "panels": [
+          {
+            "sent": {
+              "alpha": 34,
+              "beta": 62,
+              "gamma": 6
+            },
+            "received": {
+              "alpha": 34,
+              "beta": 62,
+              "gamma": 6
+            },
+            "pose": {
+              "yaw": 0.007,
+              "pitch": -0.269
+            },
+            "anchor": {
+              "x": 314,
+              "y": 501
+            }
+          },
+          {
+            "sent": {
+              "alpha": 96,
+              "beta": 58,
+              "gamma": -4
+            },
+            "received": {
+              "alpha": 96,
+              "beta": 58,
+              "gamma": -4
+            },
+            "pose": {
+              "yaw": -1.076,
+              "pitch": -0.339
+            },
+            "anchor": {
+              "x": 431,
+              "y": 322
+            }
+          }
+        ],
+        "poseBefore": {
+          "yaw": 0.6,
+          "pitch": 0.22
+        },
+        "gyroDroveTheView": true,
+        "headingChanged": 62,
+        "anchorMovedOnScreen": 117,
+        "positionsUnchangedBetweenPanels": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations",
+        "surface": "android",
+        "lens": null,
+        "fnSha": "f0c6f01da86a243f"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:10:53.014Z"
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "title": "Mind expansion overview",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 406312,
+        "sha256": "077abc63ab194ca55431fca3b53b87137b0fd266fd2c685a36c6f2d3788cc063"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "nodes",
+            "expected": "(predicate)",
+            "actual": 150,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "expansion",
+        "surface": "windows",
+        "sync": "live",
+        "camera": {
+          "yaw": 0.3,
+          "pitch": 0.16,
+          "dist": 128.755009,
+          "target": [
+            4.227,
+            -4.996,
+            0.6945
+          ]
+        },
+        "cameraPinned": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "mind-expansion lens, the whole map and the holding cluster on screen at once",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "45fc3b745339efe7"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:10:54.443Z"
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "title": "Hand tracking live",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 11.8,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 1051916,
+        "sha256": "c607246f06589e36761852046ce5032562bbce00e02da64d9301a446af285f4d"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "operationTookEffect",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "declaredSynthetic",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "pose": "spread",
+        "landmarks": 21,
+        "tipsOut": 4,
+        "fan": 1.023,
+        "confidence": 0.951,
+        "distBefore": 144.21,
+        "distAfter": 125.87,
+        "operationTookEffect": true,
+        "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
+        "declaredSynthetic": true
+      },
+      "pageErrors": [
+        "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+      ],
+      "recipe": {
+        "demonstrates": "Windows hand tracking: an open-palm spread shown before and after in one framing",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "8b9786b8aed24e1a"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:06.153Z"
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "title": "Holding cluster",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 152447,
+        "sha256": "f974b175ffd8e428b863bf7a040ef0de4a440d1b3c075ead1750251f50ec508a"
+      },
+      "claims": {
+        "ok": true,
+        "claims": []
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "canvas",
+        "surface": "windows",
+        "sync": "live",
+        "holdingOrigin": [
+          -5,
+          -40,
+          22
+        ],
+        "holdingRadius": 6.6
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the holding cluster: unplaced nodes in the dashed ring with the holding count",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "69b4cd3e927706af"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:07.579Z"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "title": "Five node states staged",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 0.9,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 169611,
+        "sha256": "b9200faaf6ca01de801a438aa6b63a21200b154013b4a1c26d75bb636f3ed8d7"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "ok",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "statesInFrame": [
+          "connected",
+          "plain",
+          "searchHit",
+          "selected",
+          "unplaced"
+        ],
+        "byNode": {
+          "Opening: where did you park?": "plain",
+          "Method of loci": "searchHit",
+          "Lists flatten meaning": "connected",
+          "Positions are the memory": "selected",
+          "Demo: search fly-to": "connected",
+          "Slide budget: 12": "plain",
+          "Closing: build your own": "plain",
+          "Steal the parking-lot bit": "unplaced",
+          "Ask about the demo laptop": "unplaced",
+          "Cut the history section?": "unplaced",
+          "Timebox to 18 minutes": "unplaced"
+        },
+        "ok": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the five node states side by side with the legend",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "4789c920082222d8"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:08.515Z"
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "title": "Placement end-state",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.7,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 184577,
+        "sha256": "27ee2be80e86ba1fe25c01dbcead15a57b501ed03f8535a647536250afe55f5d"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "placed",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "stableAfterDrop",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "node": "Steal the parking-lot bit",
+        "beforeCount": 4,
+        "afterCount": 3,
+        "placed": true,
+        "beforePos": [
+          2.056,
+          -10.26,
+          3.869
+        ],
+        "afterPos": [
+          1.9986645724823138,
+          4.587178802023548,
+          2.022677780267024
+        ],
+        "stableAfterDrop": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "placement before/after: one node leaves holding for a permanent position",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "9bc0947274688e11"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:09.953Z"
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "title": "Connect and edit",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.9,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 223371,
+        "sha256": "22c4d309e9030b31b627aa0805935cb70a5c2c05f756f9f97a3612f663b14764"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "connectedByThisCapture",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "linkedBefore",
+            "expected": false,
+            "actual": false,
+            "pass": true
+          },
+          {
+            "claim": "linkedAfter",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "between": [
+          "Koji-cured egg yolk",
+          "Shio koji"
+        ],
+        "linkedBefore": false,
+        "linkedAfter": true,
+        "connectedByThisCapture": true,
+        "nodeCount": 150,
+        "editorOpen": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "connect and edit before/after: a new filament created between two named nodes",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "6e709a235d8786a7"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:12.071Z"
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "title": "Search fly-to end-state",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 4.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 203687,
+        "sha256": "f20de7d6b5d392f41282fec55bc49bd8dbf42494e2112a484567732b4f1839b1"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "positionUnchanged",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "query": "grape leaf",
+        "node": "Grape leaf tannin trick",
+        "hits": 1,
+        "homeBefore": [
+          -19.385,
+          -11.154,
+          15.811
+        ],
+        "homeAfter": [
+          -19.385,
+          -11.154,
+          15.811
+        ],
+        "positionUnchanged": true,
+        "cameraTarget": [
+          -19.39,
+          -11.15,
+          15.81
+        ],
+        "endDistance": 12,
+        "centred": {
+          "dx": 0,
+          "dy": 0
+        }
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "search fly-to end-state: the hit centred and wearing the search-hit signature",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "46386ffedf70b395"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:16.375Z"
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "title": "Twin composite — before",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 9.5,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 187074,
+        "sha256": "b78698e9e8f5e9416670e1e23645584df63e2fa53e6f5d49065904f5a7aefeaf"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "positionsIdenticalAcrossSurfaces",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "windowsSurface": "windows-binary-under-wine",
+        "windowsUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) MasterMind/1.0.0 Chrome/130.0.6723.191 Electron/33.4.11 Safari/537.36",
+        "positionsIdenticalAcrossSurfaces": true,
+        "nodeCount": {
+          "windows": 11,
+          "android": 11
+        }
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "twin composite BEFORE: Windows and Android on one map, identical frozen camera",
+        "surface": "twin",
+        "lens": null,
+        "fnSha": "861f6cca2f545723"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:24.862Z"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "title": "Twin composite — after",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 0.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 212761,
+        "sha256": "fb1572d8c1efc673a857736822394989d96c0149cc862119e81da662e7d48fb4"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "positionsIdenticalAcrossSurfaces",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "positionEditPropagated",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "onlyTheDraggedNodeMoved",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyOtherPositionUnchanged",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "noNodeDropped",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "editPropagated",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "concurrentConflictKeptBoth",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "bothSurfacesAgreeOnNode",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "twoDistinctSockets",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "positionsIdenticalAcrossSurfaces": true,
+        "movedNode": "s480af97d09",
+        "movedFrom": [
+          -6.1,
+          -4.3,
+          -3.1
+        ],
+        "movedTo": [
+          6.558412201890814,
+          -0.3650990043456783,
+          -8.251318211012865
+        ],
+        "positionEditPropagated": true,
+        "onlyTheDraggedNodeMoved": true,
+        "everyOtherPositionUnchanged": true,
+        "noNodeDropped": true,
+        "editPropagated": true,
+        "concurrentConflictKeptBoth": true,
+        "bothSurfacesAgreeOnNode": true,
+        "nodeCount": {
+          "windows": 11,
+          "android": 11
+        },
+        "windowsSurface": "windows-binary-under-wine",
+        "windowsUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) MasterMind/1.0.0 Chrome/130.0.6723.191 Electron/33.4.11 Safari/537.36",
+        "provenance": {
+          "windows": {
+            "runtime": "electron 33.4.11",
+            "isElectron": true,
+            "platform": "Win32",
+            "surface": "windows",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 1,
+            "serverPid": 27297,
+            "actor": "windows-twin",
+            "status": "live"
+          },
+          "android": {
+            "runtime": "chromium 141.0.7390.37",
+            "isElectron": false,
+            "platform": "Linux x86_64",
+            "surface": "android",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 2,
+            "serverPid": 27297,
+            "actor": "android-twin",
+            "status": "live"
+          }
+        },
+        "twoDistinctSockets": true,
+        "cameraFrozen": {
+          "yaw": 0.34,
+          "pitch": 0.16,
+          "dist": 30.15033466227894,
+          "target": [
+            -0.15000000000000036,
+            -3.3499999999999996,
+            1.7499999999999998
+          ]
+        },
+        "everyNodeInFrame": true,
+        "movedNodeCoords": {
+          "id": "s480af97d09",
+          "before": [
+            -6.1,
+            -4.3,
+            -3.1
+          ],
+          "after": [
+            6.558412201890814,
+            -0.3650990043456783,
+            -8.251318211012865
+          ]
+        }
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "twin composite AFTER: an Android drag and edit arriving on Windows, same frozen camera",
+        "surface": "twin",
+        "lens": null,
+        "fnSha": "936d2e118cf8cc23"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:25.903Z"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "title": "Finder prompt export",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 265243,
+        "sha256": "a8005a282781f8ed227f69b19a939d902c389e213e6037cc56d58ce61f475a5b"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "hasPositions",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "hasInstructions",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "mentionsUnplaced",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "promptChars": 2698,
+        "hasPositions": true,
+        "hasInstructions": true,
+        "mentionsUnplaced": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder prompt export, preamble and position records together",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "51e64503fb0a6434"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:27.123Z"
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "title": "Finder review",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 171178,
+        "sha256": "90d0fa0b0c555030b1e435ebd999fb5688bee13eac3f9227937216f35a16fa82"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "allThreeKinds",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "rejectionLeftNoTrace",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "rejectedIsGone",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "stagedKinds": [
+          "connection",
+          "connection",
+          "grouping",
+          "placement",
+          "placement"
+        ],
+        "kindsAfterReject": [
+          "connection",
+          "grouping",
+          "placement",
+          "placement"
+        ],
+        "allThreeKinds": true,
+        "rejectedId": "s1",
+        "rejectionLeftNoTrace": true,
+        "rejectedIsGone": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "f6f720db89dbd4c7"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:28.199Z"
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "title": "Settings and gesture reference",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 2.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 120057,
+        "sha256": "8d94d84dd4686ad4253f3c2260c7fe691a49e411a8f0a21ac02efd845aed46af"
+      },
+      "claims": {
+        "ok": true,
+        "claims": []
+      },
+      "result": {
+        "pose": "spread",
+        "status": "tracking",
+        "sync": "live",
+        "account": "kai@master-mind.local",
+        "touch": 6,
+        "hand": 4
+      },
+      "pageErrors": [
+        "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+      ],
+      "recipe": {
+        "demonstrates": "settings and the gesture reference for touch and hand vocabularies",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "ececd27929f61ca1"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:11:30.443Z"
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "title": "Touch gesture vocabulary",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 30s",
+      "seconds": 83.2,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 1468539,
+        "sha256": "04d021d0731f340f3a790eb78db15e1b5819731533a0cec2625ab839006b80bf",
+        "seconds": 34,
+        "fps": 30,
+        "frames": 1020
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "tapSelected",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "doubleTapConnected",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "dragPlacedIt",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "lens": "ar",
+        "gesturesFired": [
+          "tap",
+          "doubletap",
+          "longpress",
+          "dragnode",
+          "dragempty",
+          "pinch",
+          "gyro"
+        ],
+        "count": 7,
+        "quickAddedNode": "nmt1gy0bw1mte8",
+        "tapSelected": true,
+        "doubleTapConnected": true,
+        "dragPlacedIt": true,
+        "gyroEnd": {
+          "alpha": 66,
+          "beta": 68,
+          "gamma": 0
+        },
+        "poseEnd": {
+          "yaw": -0.552,
+          "pitch": -0.164
+        },
+        "holding": 4
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "Android touch vocabulary in motion inside the AR lens, with an orientation-only beat",
+        "surface": "android",
+        "lens": null,
+        "fnSha": "cd01c1b5a2319bda"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:12:52.039Z"
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "title": "Hand gesture vocabulary",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 24s",
+      "seconds": 300.8,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 7467758,
+        "sha256": "86e588172f63cf14d77215b8d18f13ea13e435e0aa6f8f47d6dff3de1a350355",
+        "seconds": 38,
+        "fps": 30,
+        "frames": 1140
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "clusterMoved",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "clusterInternalArrangementPreserved",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "count",
+            "expected": "(predicate)",
+            "actual": 4,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "posesRecognised": [
+          "spread",
+          "two",
+          "fist",
+          "gather"
+        ],
+        "count": 4,
+        "samples": 1238,
+        "clusterGrabbed": "Koji",
+        "clusterMembers": 16,
+        "clusterCentroidBefore": [
+          27.195,
+          -1.858,
+          -10.687
+        ],
+        "clusterCentroidAfter": [
+          13.467,
+          -10.594,
+          -4.965
+        ],
+        "clusterCentroidTravelled": 17.2489,
+        "clusterMaxMemberDrift": 0,
+        "clusterMoved": true,
+        "clusterInternalArrangementPreserved": true,
+        "mouseOnlyTail": true
+      },
+      "pageErrors": [
+        "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+      ],
+      "recipe": {
+        "demonstrates": "Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "67d5583527e606d2"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:17:52.115Z"
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "title": "Search fly-to in motion",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 10s",
+      "seconds": 47.8,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 1818216,
+        "sha256": "c051d06d02207868039d511c381caa4acbf85e87bd9f57cb5758924d8590e0fd",
+        "seconds": 11,
+        "fps": 30,
+        "frames": 330
+      },
+      "claims": {
+        "ok": true,
+        "claims": []
+      },
+      "result": {
+        "query": "grape leaf",
+        "endDistance": 12,
+        "centred": {
+          "dx": 0,
+          "dy": 0
+        },
+        "hits": 1
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "search fly-to in motion, from whole-map framing to the hit",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "f4c96238bbcdea68"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:18:41.619Z"
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "title": "Capture-place arc",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 15s",
+      "seconds": 45.5,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 288640,
+        "sha256": "d250c78aafe594b6b012197a2f7c1dd43adc74e52ee60965e49ba1993154d0dd",
+        "seconds": 18,
+        "fps": 30,
+        "frames": 540
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "created",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "placed",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "stayedPut",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "text": "Rehearse the fly-to twice",
+        "created": true,
+        "placed": true,
+        "pos": [
+          6.997738776460085,
+          0.07783522757014744,
+          -1.3268729347143378
+        ],
+        "stayedPut": true,
+        "holding": 4
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the capture-place arc in motion: compose, holding, drag out, stays put",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "47efb38d7233c683"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:19:26.431Z"
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "title": "Finder round-trip",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 20s",
+      "seconds": 73.7,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 576357,
+        "sha256": "7bb13bfe52bde9f51210f5a4da9916cc4a1bf84da946e8c3cfee805f251a5e94",
+        "seconds": 30,
+        "fps": 30,
+        "frames": 900
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "rejectionLeftNoTrace",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "allThreeKindsAccepted",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "placementAccepted": {
+          "node": "sec77dd4720",
+          "from": [
+            2.056,
+            -10.26,
+            3.869
+          ],
+          "to": [
+            -6.2,
+            2.4,
+            1.1
+          ],
+          "landedWhereSuggested": true,
+          "wasUnplaced": true,
+          "nowPlaced": true,
+          "holding": [
+            4,
+            3
+          ]
+        },
+        "replyPath": "authored by the agent's own session acting as the chat (declared in report.md); a malformed reply and an adversarially messy reply pass through the same parser in the same take",
+        "malformed": {
+          "ok": false,
+          "error": "No JSON found in that reply. Nothing was changed.",
+          "staged": 0,
+          "links": 6
+        },
+        "messy": {
+          "ok": true,
+          "staged": 5,
+          "dropped": 6,
+          "kinds": [
+            "connection",
+            "connection",
+            "grouping",
+            "placement",
+            "placement"
+          ]
+        },
+        "accepted": {
+          "kind": "connection",
+          "id": "s1"
+        },
+        "rejected": {
+          "kind": "connection",
+          "id": "s2"
+        },
+        "groupingAccepted": {
+          "name": "Framing",
+          "nodes": 2,
+          "labelsBefore": [
+            "arc",
+            "ground"
+          ],
+          "labelsAfter": [
+            "Framing",
+            "Framing"
+          ],
+          "applied": true
+        },
+        "allThreeKindsAccepted": true,
+        "rejectionLeftNoTrace": true,
+        "linksBefore": 6,
+        "linksAfter": 7
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder round-trip in motion, including a malformed reply and an accepted placement",
+        "surface": "windows",
+        "lens": null,
+        "fnSha": "03ffcf35f1749546"
+      },
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-04T23:20:39.918Z"
+    }
+  ],
+  "finishedAt": "2026-09-04T23:20:42.837Z",
+  "lateFaults": [],
+  "build": {
+    "bundle": "src/dist/app.js",
+    "bytes": 768156,
+    "sha256": "1ec87b97017f820cfeb52dbf5cef3a0becb98a494644018ca3f5165af679b133"
+  },
+  "captured": 20,
+  "total": 20
+}

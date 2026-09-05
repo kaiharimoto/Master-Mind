@@ -655,6 +655,64 @@ are fixed below.
 | J21 | Art Director · a02 | Recency chroma is present but does not read at a glance: within a hue family the 10th–90th percentile saturation spread is only 0.37–0.52 | **Fixed by widening the span at the settled end**, which there is now room for: depth no longer competes for saturation (D-014) and the OKLab ladder preserves far more chroma. The channel is unchanged; the span moved from 0.20 to 0.30 of a hue's own chroma. |
 
 
+## Cycle 5 — the critics' findings and what was done
+
+**Total 85.5/100 · every category above its minimum · REGRESSION-FREE · no
+position regression.** 86.75 → 85.5. The cycle is regression-free — the Auditor
+declared it so, and all three critics agreed there is no position regression —
+but the total fell, because two of my own cycle-4 responses cost more than they
+bought.
+
+| Critic | Category | C4 | C5 | Weight | Minimum | |
+|---|---|---:|---:|---:|---:|---|
+| The Audience | 01 Core workflow | 21.5 | 21 | 25 | 20 | −0.5 |
+| The Audience | 02 Landmarks live | 22 | 22 | 25 | 20 | — |
+| The Auditor | 03 One model and sacred positions | 17.5 | 17 | 20 | 17 | −0.5 · **hard gate met** |
+| The Auditor | 04 Evidence and report integrity | 13 | 13 | 15 | 13 | — · **hard gate met** |
+| The Art Director | 05 Quality compliance | 8.5 | 8 | 10 | 8 | −0.5 |
+| The Art Director | 06 Finder round-trip | 4.25 | 4.5 | 5 | 4 | +0.25 |
+| | **Total** | 86.75 | **85.5** | 100 | | |
+
+Nineteen findings: none blocking, six major, thirteen minor.
+
+**Two self-inflicted costs, named as such.** The Audience: *"this is the
+regression I have to call — the two frames whose whole job is legibility got
+harder to read this cycle."* The density-scaled truncation I added to answer
+cycle 4's collision findings clipped **every** label rather than only the ones
+that collided. And the Art Director found the deconflictor *"treats labels as
+obstacles and nodes as empty space"* — text was being drawn straight over node
+cores, erasing the quietest state in the frame.
+
+### The six major findings
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| K1 | Audience · a09 | The editor is *offered* everywhere and never seen *working*: no frame in the set shows a node's text, colour or label actually changing. *"A quarter of what artifact 09 promises rests on a screenshot of buttons."* | **Fixed.** 09's after panel now differs from its before panel in the node's core hue (coral → teal, with the swatch outline moved), in the text the canvas renders (`Koji-cured egg yolk` → `Koji-cured egg yolk · aged 60d`), and in the new filament — with the coordinate readout identical in both, so the edit is visibly not a move. The artifact **requires** `editorWroteToTheModel`. |
+| K2 | Audience · a03 | Most labels in the hero are truncated where cycle 4 rendered them whole, and 04 does it while leaving nearly half its frame width empty. *"A hero frame whose selling point is 'node text legible' should not be the frame where the fewest complete thoughts can be read."* | **Fixed, taking the correction literally.** Every label is built at full length; **how much of it is drawn is a placement decision made per frame**. A label renders whole wherever its box is unclaimed, and shortening is reserved for labels the arbiter could not place at any of its twenty-three anchors — with a fade over the last two glyphs so a shortened name reads as continuing. Coverage dominates the anchor score six to one, so a shortened *clear* placement always beats a full one that could only be placed buried. The framing half is **declined on measurement** — see the rebuttals. |
+| K3 | Auditor · a12 | The provenance line describes a 150-node map that is **not on screen** while the frame plainly shows the 11-node map | **Fixed as prescribed.** Each half prints the **shown** map's own figures — `map-talk · 11 nodes · pos sha …` — and the big-map check moved to its own line, labelled `also verified this run, not shown on screen: map-fermentation 150/150 nodes, pos sha … identical on both sockets`. |
+| K4 | Auditor · a12 | Both caption lines run off the right edge, taking with them the sentence stating what the property-level merge preserved and the verdict that both sockets agree | **Fixed at the mechanism, not the wording.** Captions wrap to as many lines as they need at `·` boundaries, the strip is sized to hold them, and **`compose` throws** if any clause would be dropped or overflow. A caption that will not fit is now a failed capture. |
+| K5 | Art Director · a07 | Label glyphs are drawn on top of node cores — text at 0.87 sitting across a plain core at 0.098. *"The deconflictor treats labels as obstacles and nodes as empty space."* | **Fixed as prescribed.** A node's projected disc counts against a placement **exactly as heavily as another label**, and feeds the same tier decision rather than acting as a tie-break. With six further anchors and a shorter last-resort width, suppressed labels at whole-map framing fell from **36 to 20** while bright-on-bright overlaps stayed at **zero**. |
+| K6 | Art Director · a02 | The app declares 51 labels hidden at whole-brain framing and gives a losing label no fallback between full size and nothing | **Fixed by giving it three fallbacks.** A label that cannot be placed whole is tried at 72 %, then 50 %, then 34 % of its glyphs before it is faded at all. Suppressed count at the same framing: **20**, down from 51. |
+
+### The thirteen minor findings
+
+| # | Critic | Finding | Response |
+|---|---|---|---|
+| K7 | Audience · a19 | The holding chip falls to 4 while the node is still inside the dashed boundary and under the cursor — *"the count reports intent instead of outcome"* | **Fixed at the source.** Placement commits on pointer-**up**. A node in flight is still held: its position tracks the drag, its state does not. Verified across the take — the chip holds at 5 with `UNPLACED, IN HOLDING` at 8.6 s, 10.2 s and 11.6 s, and falls to 4 at 13.0 s when the drag is released. |
+| K8 | Audience · a10 | The search-hit ticks are the faintest marks in the composition; the hit is told from a selected node mainly by being brighter, *"which is also what a selected node is"* | **Fixed.** The signature is a full crosshair spanning to 3.3× the core radius at nearly double the weight, so the state is identifiable by **shape** at reading distance. |
+| K9 | Audience · a06 | Several holding labels sit far enough from any dot that the pairing is guesswork | **Fixed.** The anchor score carries a distance term, so a far anchor must be meaningfully clearer to win. *"A label that names the wrong thought costs more than one that cannot be read"* — that is the rule now. |
+| K10 | Audience · a17 | Three of the four mouse-equivalent chips are named by the **pose** rather than by the input, so the frames never say what a mouse user actually does | **Fixed.** The caption names the input: `Scroll up — the Open palm equivalent`. The vocabulary already knew; the caption was not asking it. |
+| K11 | Audience · a03 | The panel titles read as a projection demonstration while the footer says there is no camera pass-through — *"the claim and the evidence read against each other"* | **Fixed as prescribed.** The titles say what the frame proves — `Gyroscopic vantage — device held at heading 34°` / `Turned to heading 96° — every node position unchanged` — and the falsifiable measurement is promoted: *the anchor node travelled 117 px across the frame while its stored position did not change.* |
+| K12 | Auditor · a11 | The frame carries no node count and no position hash, so *"node-for-node identical"* can only be judged by counting labels by eye | **Fixed.** Both halves print `map-talk · 11 nodes · pos sha <x> · same ledger both sockets`. |
+| K13 | Auditor · a04 | Labels are ellipsised, so many more are drawn but a large share can no longer be identified | **Fixed** — the same change as K2. |
+| K14 | Auditor · a12 | The hidden-label badge is itself partly covered by the editor panel, reading `1 label hid` | **Fixed.** The badge exists to declare what the frame is not showing, so it stands down rather than being the thing hidden. |
+| K15 | Auditor · a14 | The half-width panel keeps the full-width toolbar, so the rightmost control is cut to `Setti` | **Fixed.** The toolbar gives up spacing before it gives up a control, between desk width and phone width. |
+| K16 | Art Director · a07 | The top two rungs shed nearly all chroma — coral at *selected* renders saturation 0.17 against its own 0.71 | **Fixed to the floor the Art Director set.** The ladder's top came down from 0.80 to 0.70, where the worst hue in the palette keeps about half its plain-rung chroma. Coral at *selected* now measures **0.34**. The rungs are evenly spaced 0.11 apart — still more than twice the 0.05 minimum. |
+| K17 | Art Director · a06 | The dashed holding boundary measures 0.115, **brighter than a plain node core at 0.098** — the most dominant contour in four artifacts | **Fixed.** The boundary is pinned below the quietest node state. It encodes real state and belongs in the world, but not louder than the nodes it contains. |
+| K18 | Art Director · a14 | The still that carries the finder category shows only staging and rejection; no pane shows a suggestion taking effect | **Fixed as prescribed.** 14 is a triptych — staged, **accepted** (`links 6 → 7`, the applied pair named), rejected (queue advanced, links unchanged) — and requires `acceptanceLanded`. |
+| K19 | Art Director · a20 | Each contact-sheet tile is 486 px, so the holding badge is unreadable in every tile and the decrement has to be inferred | **Fixed as prescribed.** Sheets are 2×10 at 960 px tiles. The badge, the toasts and the prompt text are all readable. |
+
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
@@ -706,6 +764,27 @@ promises. The observation was right and the finding was worth every point it
 cost: a false flag was sitting inside a record marked `captured`. But the fault
 was in the check, not in the behaviour, and the record says so rather than
 claiming a fix to something that was never broken.
+
+**Cycle 5: one correction declined on measurement.**
+
+*K2 — the Audience asked for artifact 04 and the AR hero to be framed so the
+node cloud fills the usable width, estimating it would buy about 1.5× the
+on-screen text size.* The truncation half of that finding was accepted and fixed.
+The framing half was tried and reverted.
+
+I measured sixteen camera angles on the 150-node map. The best available width
+fill is **47 % against the current angle's 42 %** — about 12 % more linear text
+size, not 1.5× — and the frame it produces is worse in every other respect: the
+map body climbs to the top, the holding cluster falls into the bottom-left
+corner with a dead band between them, and 47 labels are suppressed against 43.
+The remaining margin is the map's own aspect — a tall node cloud with the
+holding cluster well below it — against a 16:9 frame, and the holding cluster's
+position is in a frozen seed that §09 forbids regenerating.
+
+Against that 12 %, re-pinning 04 would break the cycle-over-cycle pixel diff the
+Auditor asked for in cycle 4 and used in cycle 5 to certify no position
+regression. That is a bad trade, so it was not taken. The measurement is
+recorded in the driver beside the pin, not just here.
 
 **No critic score has been altered by the builder.**
 
