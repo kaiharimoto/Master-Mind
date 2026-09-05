@@ -766,7 +766,7 @@ only copy of a score he is not allowed to alter (§09).
 
 ## Cycle 7 — findings from the work itself
 
-Ten findings came out of cycle 7's own work rather than from a critic. Two are
+Eleven findings came out of cycle 7's own work rather than from a critic. Two are
 recorded because a capture **failed** on them, which §09 makes a finding rather
 than something to route around; two more — F-026 and F-027 — are faults in the
 cross-cycle regression instrument itself, which means every "regression-free"
@@ -824,6 +824,24 @@ rectangle reserved for it, and two labels the arbiter had certified as disjoint
 landed on top of each other — *"Barley miso, 18 months"* overprinted by
 *"Amazake"* in artifact 10. Same class as F-015, in the one case F-015 did not
 cover.
+
+**F-030 — a frozen set was written to, and nothing was guarding it.** Cycle 8's
+first run archived the working evidence directory **into
+`evidence/cycles/cycle-7`** — the set three critics had already reviewed. The
+archive step writes to `prevDir`, and the F-026 fix had just made `prevDir` the
+frozen directory rather than `history/`; one fix to the regression instrument
+created a hole in the thing it protects. The run stopped only because copying
+`evidence/cycles/` into a subdirectory of itself is structurally impossible, not
+because anything checked. Nothing was lost — all twenty cycle-7 artifacts still
+hash to what their own manifest records — but that is luck, not a property.
+
+Two changes. The archive writes to `history/` again, and both the archive and
+the freeze exclude `cycles/` and `critics/`. And **before any diff, every
+artifact in the set being compared against must still hash to its recorded
+value**, or the cycle stops and names the mismatch. Verified on both frozen
+sets: cycle 6 and cycle 7, twenty artifacts each, zero mismatches. §04 makes the
+frozen set the thing the critics read; until now nothing made it immutable in
+fact rather than by convention.
 
 **F-029 — the ladder's yardstick was mis-named.** Everything about the state
 ladder called its measure *relative luminance*, and the function was Rec.601
