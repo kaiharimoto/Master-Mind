@@ -120,7 +120,7 @@ export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame 
 }
 
 /** Compose panels with ffmpeg. `mode` is 'h' (side by side) or 'v' (stacked). */
-export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, width = 1920, height = 1080 } = {}) {
+export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, sublabels2 = null, width = 1920, height = 1080 } = {}) {
   const n = inputs.length;
   const cellW = mode === 'h' ? Math.floor(width / n) : width;
   const cellH = mode === 'h' ? height : Math.floor(height / n);
@@ -128,7 +128,7 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
   for (const i of inputs) args.push('-i', i);
   // Labels live in a strip ABOVE each panel so they never cover the interface
   // the panel is meant to show.
-  const strip = labels ? (sublabels ? 74 : 46) : 0;
+  const strip = labels ? (sublabels2 ? 96 : sublabels ? 74 : 46) : 0;
   const parts = [];
   for (let i = 0; i < n; i++) {
     let f = `[${i}:v]scale=${cellW}:${cellH - strip}:force_original_aspect_ratio=decrease,` +
@@ -145,12 +145,18 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
     // The size is solved so the whole line fits the panel it belongs to. A
     // provenance line that runs off the edge is worse than none: it reads as
     // the frame hiding the part that did not fit.
-    if (sublabels && sublabels[i]) {
-      const chars = String(sublabels[i]).length;
-      const size = Math.max(11, Math.min(17, Math.floor((cellW - 34) / (chars * 0.55))));
-      f += `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:` +
-           `text='${esc(sublabels[i])}':x=20:y=${42 + (17 - size)}:fontsize=${size}:fontcolor=0xB9AA9B`;
-    }
+    // Two provenance lines rather than one over-long one. Cycle 4 pushed the
+    // 'camera frozen from 11' clause off the edge of artifact 12 by shrinking a
+    // single line until it no longer fit — and that clause is what licenses a
+    // reader to treat identical pixels between 11 and 12 as identical world
+    // positions. A caption that cannot fit is split, never truncated.
+    const line = (txt, y, min) => {
+      const size = Math.max(min, Math.min(17, Math.floor((cellW - 34) / (String(txt).length * 0.55))));
+      return `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:` +
+             `text='${esc(txt)}':x=20:y=${y}:fontsize=${size}:fontcolor=0xB9AA9B`;
+    };
+    if (sublabels && sublabels[i]) f += line(sublabels[i], 42, 12);
+    if (sublabels2 && sublabels2[i]) f += line(sublabels2[i], 66, 12);
     parts.push(`${f}[v${i}]`);
   }
   const stack = mode === 'h' ? `hstack=inputs=${n}` : `vstack=inputs=${n}`;

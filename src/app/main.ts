@@ -211,12 +211,54 @@ export class App {
     document.body.classList.toggle('ar', k === 'ar');
     this.controls.gyroDriven = k === 'ar';
     if (k === 'ar') this.controls.resetGyroBase();
+    // The surface tag says what this process actually is, read from the runtime,
+    // and — in AR — what is real and what is absent. The twin composite already
+    // carries that disclosure; the two artifacts most likely to be shown on
+    // their own (the AR hero and the touch vocabulary) carried only a bare chip.
+    const p = this.provenance();
+    const engine = p.isElectron ? `${p.runtime} · ${p.platform}`
+      : this.surface === 'android' ? `${p.runtime} · android device profile`
+      : `${p.runtime} · ${p.platform}`;
     $('#lenstag').innerHTML =
       `<b>${this.surface === 'windows' ? 'Windows' : 'Android'}</b> · <b>${k === 'expansion' ? 'mind expansion' : k}</b>` +
-      (k === 'ar' ? ' · gyro-oriented' : '');
+      ` <span class="prov">${esc(engine)}</span>` +
+      (k === 'ar'
+        ? ` <span class="prov">real orientation + touch events · <b class="absent">no camera pass-through</b></span>`
+        : '');
     if (k === 'expansion') this.frameAll();
     this.renderGyro();
     this.scene.markDirty();
+  }
+
+  /**
+   * The AR reticle: what the device is pointed AT.
+   *
+   * A handheld surface has a direction, and the thing at the centre of the view
+   * is the thing you are asking about — an affordance a desk lens has no use
+   * for and the one thing that makes a still read as AR rather than as a second
+   * canvas. It names the node nearest the view centre and how far away it is.
+   */
+  private renderReticle() {
+    let r = document.getElementById('reticle');
+    if (this.lens !== 'ar') { r?.remove(); return; }
+    if (!r) {
+      r = el('div', { id: 'reticle', 'data-t': 'ar-reticle' });
+      r.innerHTML = '<div class="x"></div><div class="n" data-t="reticle-node"></div>';
+      document.body.appendChild(r);
+    }
+    const el0 = this.scene.renderer.domElement;
+    const cx = el0.width / 2, cy = el0.height / 2;
+    let best: { id: string; d: number } | null = null;
+    for (const s of this.scene.screenPositions()) {
+      const d = Math.hypot(s.x - cx, s.y - cy);
+      if (!best || d < best.d) best = { id: s.id, d };
+    }
+    const n = best ? this.store.doc.nodes[best.id] : null;
+    const label = $('[data-t=reticle-node]', r);
+    r.classList.toggle('on', !!n && best!.d < el0.width * 0.22);
+    label.textContent = n && best!.d < el0.width * 0.22
+      ? `${n.text}${n.placed ? '' : ' · in holding'}`
+      : 'pointing at open space';
   }
 
   /** Live orientation readout: what the AR lens is actually being pointed at. */
@@ -466,6 +508,11 @@ export class App {
     this.tickUi(t);
     this.scene.clock = this.frozenClock ?? t / 1000;
     this.scene.render();
+    // These read the frame that was just drawn — where the device is pointed,
+    // and how many names the arbiter could not place — so they belong here
+    // rather than on the chrome refresh, which does not run every frame.
+    this.renderReticle();
+    this.renderHidden();
   }
 
   /** Render at a given virtual time. The capture harness steps this at 1/30 s. */
@@ -534,6 +581,22 @@ export class App {
    * two surfaces of one map it is also what distinguishes a propagated change
    * from the same edit made twice.
    */
+  /**
+   * What the overview is not showing. The label arbiter drops a name it cannot
+   * place clear of another; saying how many, and that zooming recovers them,
+   * turns a silent omission into a stated one.
+   */
+  private renderHidden() {
+    let chip = document.getElementById('hidden');
+    if (!chip) {
+      chip = el('div', { id: 'hidden', 'data-t': 'labels-hidden' });
+      document.body.appendChild(chip);
+    }
+    const n = this.scene.suppressed;
+    chip.className = n > 0 && !this.panelOpen() ? 'show' : '';
+    chip.textContent = n > 0 ? `${n} label${n === 1 ? '' : 's'} hidden at this zoom — move closer to read them` : '';
+  }
+
   private renderActivity() {
     let chip = document.getElementById('activity');
     if (!chip) {
@@ -806,7 +869,14 @@ export class App {
       <div class="row"><button data-t="finder-parse">Parse reply</button></div>
       <div class="tail">
       ${this.lastParse && !this.lastParse.ok ? `<div class="err" data-t="finder-error">${esc(this.lastParse.error ?? 'parse failed')}</div>` : ''}
-      ${this.lastParse?.dropped.length ? `<div class="note" data-t="finder-dropped">${this.lastParse.dropped.length} entr${this.lastParse.dropped.length === 1 ? 'y' : 'ies'} rejected: ${esc(this.lastParse.dropped.slice(0, 3).map(d => `${d.what} — ${d.why}`).join(' · '))}</div>` : ''}
+      ${this.lastParse?.dropped.length ? `<div class="note" data-t="finder-dropped">${this.lastParse.dropped.length} entr${this.lastParse.dropped.length === 1 ? 'y' : 'ies'} rejected: ${esc(
+        // A rejection that PROTECTED A POSITION is the most important one to
+        // surface: it is the map's central invariant being enforced, and it was
+        // being pushed off the end of a three-item list by ordinary parse
+        // rejections.
+        [...this.lastParse.dropped]
+          .sort((a, b) => (/placed/.test(b.why) ? 1 : 0) - (/placed/.test(a.why) ? 1 : 0))
+          .slice(0, 4).map(d => `${d.what} — ${d.why}`).join(' · '))}${this.lastParse.dropped.length > 4 ? ` · +${this.lastParse.dropped.length - 4} more` : ''}</div>` : ''}
       ${this.suggestions.length ? `
         <div class="note" data-t="finder-progress">Suggestion ${this.sugIndex + 1} of ${this.suggestions.length} · nothing is applied until you accept</div>
         ${cur ? `<div class="sug" data-t="finder-current">

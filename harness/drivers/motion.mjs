@@ -185,7 +185,9 @@ export default [
   demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
   async run(H) {
-    const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk' });
+    // Captured at the panel's own size so the composite needs no downscaling.
+    const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion', map: 'map-talk',
+                                        width: 960, height: 1080 });
     await FRAME_ALL(page, 1.12);
     await page.click('[data-t=open-finder]');
     await page.evaluate(() => window.mm.clearOfPanels());
@@ -195,13 +197,33 @@ export default [
     await page.waitForSelector('[data-t=finder-current]');
     const staged = await page.evaluate(() => window.mm.suggestions.map(s => s.kind));
     const before = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
-    // Reject the first, so the frame shows an instance that left no trace.
+    // TWO PANELS AT THE REJECTION BOUNDARY. A single still could not carry this:
+    // cycle 4's frame showed the toast 'Rejected — no trace left on the map'
+    // over a panel reading 'Suggestion 1 of 4' with an untouched card, which is
+    // two moments in one frame and therefore proves neither. The left panel is
+    // the staged card; the right is the same map one click later.
     const rejected = await page.evaluate(() => window.mm.suggestions[0] && window.mm.suggestions[0].id);
+    const named = await page.evaluate(() => {
+      const s = window.mm.suggestions[0], d = window.mm.store.doc;
+      return s && s.kind === 'connection'
+        ? { a: d.nodes[s.a].text, b: d.nodes[s.b].text, kind: s.kind }
+        : { kind: s ? s.kind : null };
+    });
+    await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
+    await sleepFrames(page, 0, 3);
+    const pre = await H.tmpShot(page, cdp, '14a');
     await page.click('[data-t=finder-reject]');
     await page.waitForTimeout(60);
     const after = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
     await sleepFrames(page, 0, 3);
-    await H.shot(page, cdp, H.out(this.file));
+    const post = await H.tmpShot(page, cdp, '14b');
+    const pair = named.a
+      ? `“${named.a}” ↔ “${named.b}”`
+      : `the staged ${named.kind ?? 'suggestion'}`;
+    await H.compose([pre, post], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
+      labels: ['Staged — nothing applied yet', 'Rejected — one click later'],
+      sublabels: [`${pair} · ${staged.length} staged: ${staged.join(' · ')}`,
+                  `${before === after ? 'links unchanged' : 'LINKS CHANGED'} · queue advanced · no filament between that pair`] });
     const remaining = await page.evaluate(() => window.mm.suggestions.map(s => s.kind));
     return { stagedKinds: staged, kindsAfterReject: remaining,
              allThreeKinds: ['connection', 'grouping', 'placement'].every(k => staged.includes(k)),

@@ -151,7 +151,7 @@ async function runDriver(d) {
       // The Windows side comes from the REAL win32-x64 binary running under
       // Wine when it is available, so the propagation proof crosses an actual
       // platform boundary rather than two tabs of the same browser.
-      let w, winSource = 'chromium', winTarget = null, winUA = null;
+      let w, winSource = 'chromium', winTarget = null, winUA = null, bigTwin = null;
       const wt = await windowsTarget({ timeoutMs: 200000 });
       if (wt.available) {
         try {
@@ -265,6 +265,34 @@ async function runDriver(d) {
       // reader can check by eye that only the dragged node moved.
       for (const p of [w, a]) await freeze(p);
       await allVisible(w, 'after/windows'); await allVisible(a, 'after/android');
+      // The pair is framed on the small map because that is where a reader can
+      // COUNT the nodes and read the coordinates. The 150-node map is checked
+      // across the same two sockets in the same take and reported as a ledger
+      // digest, so the one-model claim is not left resting on eleven nodes.
+      let bigCheck = 'map-fermentation not checked';
+      try {
+        for (const p of [w, a]) {
+          await p.page.evaluate(() => window.mm.openMap('map-fermentation'));
+          await p.page.waitForFunction(() => window.mm.store.doc.id === 'map-fermentation', null, { timeout: 20000 });
+        }
+        const bw = await positions(w.page), ba = await positions(a.page);
+        const dw = createHash('sha256').update(JSON.stringify(bw)).digest('hex').slice(0, 10);
+        const da = createHash('sha256').update(JSON.stringify(ba)).digest('hex').slice(0, 10);
+        bigTwin = { nodes: { windows: Object.keys(bw).length, android: Object.keys(ba).length },
+                    sha: { windows: dw, android: da }, identical: dw === da };
+        bigCheck = `map-fermentation ${Object.keys(bw).length} nodes · pos sha ${dw}` +
+                   (dw === da ? ' — same both sockets' : ' MISMATCH');
+        for (const p of [w, a]) {
+          await p.page.evaluate(() => window.mm.openMap('map-talk'));
+          await p.page.waitForFunction(() => window.mm.store.doc.id === 'map-talk', null, { timeout: 20000 });
+          await POSE(p.page, frozen);
+          await p.page.evaluate(i => window.mm.select(i), moveId);
+          await POSE(p.page, frozen);
+        }
+      } catch (e) { bigCheck = `map-fermentation check failed: ${String(e.message).slice(0, 60)}`; }
+      // Read AFTER the map round-trip: opening a map reconnects the socket, so
+      // the number printed on the frame has to be the one the frame was taken
+      // on, not the one the surface started with.
       const provAfter = {
         w: await w.page.evaluate(() => window.mm.provenance()),
         a: await a.page.evaluate(() => window.mm.provenance()),
@@ -282,8 +310,13 @@ async function runDriver(d) {
                     `Android retexted+recoloured “Demo: search fly-to” while Windows relabelled it — both kept`;
       await compose([aw, aa], resolve(OUTDIR, '12_sync_twin_after.png'), { mode: 'h', width: 1920, height: 1080,
         labels: ['Windows — the moved node arrived here', 'Android — where it was dragged'],
-        sublabels: [`${moved} · socket #${provAfter.w.socket} · ${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · built binary' : 'FALLBACK — not the built binary'} · camera frozen from 11`,
-                    `${moved} · socket #${provAfter.a.socket} · ${provAfter.a.runtime} · android profile · camera frozen from 11`] });
+        sublabels: [moved, moved],
+        sublabels2: [
+          `${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · the built binary' : 'FALLBACK — not the built binary'}` +
+          ` · socket #${provAfter.w.socket} · CAMERA FROZEN FROM 11 · ${bigCheck}`,
+          `${provAfter.a.runtime} · android device profile · touch · socket #${provAfter.a.socket}` +
+          ` · CAMERA FROZEN FROM 11 · ${bigCheck}`,
+        ] });
 
       const pw1 = await positions(w.page), pa1 = await positions(a.page);
       const node = await w.page.evaluate(i => window.mm.store.doc.nodes[i], id);
@@ -323,6 +356,7 @@ async function runDriver(d) {
       after.cameraFrozen = frozen;
       after.everyNodeInFrame = true; // asserted above; the capture throws otherwise
       after.movedNodeCoords = { id: moveId, before: posBefore, after: posAfter };
+      after.bigMapCrossSurface = bigTwin;
       twinCache = { before, after };
       if (winTarget && winTarget.close) winTarget.close();
       return before;

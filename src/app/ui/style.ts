@@ -129,9 +129,27 @@ tr.map:hover{background:var(--panel)}
 #activity.show{display:block}
 #activity.remote{border-color:#3A2F26;color:var(--ink-dim)}
 #activity b{color:var(--ink)}
+/* AR reticle: a handheld surface points at something. */
+#reticle{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:23;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+#reticle .x{width:26px;height:26px;border:1px solid #6E6157;border-radius:50%;position:relative}
+#reticle.on .x{border-color:#C9A227}
+#reticle .x::before,#reticle .x::after{content:"";position:absolute;background:#6E6157}
+#reticle .x::before{left:50%;top:-7px;width:1px;height:7px}
+#reticle .x::after{left:50%;bottom:-7px;width:1px;height:7px}
+#reticle.on .x::before,#reticle.on .x::after{background:#C9A227}
+#reticle .n{font-size:11px;letter-spacing:.3px;color:var(--ink-faint);background:var(--panel);
+  border:1px solid var(--line);padding:4px 9px;white-space:nowrap}
+#reticle.on .n{color:var(--ink)}
+#hidden{position:fixed;right:12px;top:56px;z-index:24;background:var(--panel);border:1px solid var(--line);
+  padding:6px 10px;font-size:11px;letter-spacing:.3px;color:var(--ink-faint);display:none}
+#hidden.show{display:block}
 #lenstag{position:fixed;left:12px;bottom:12px;z-index:24;background:var(--panel);
   border:1px solid var(--line);padding:6px 10px;font-size:11px;letter-spacing:.5px;color:var(--ink-dim)}
 #lenstag b{color:var(--ink);text-transform:uppercase;letter-spacing:.8px}
+#lenstag .prov{display:block;margin-top:3px;color:var(--ink-faint);text-transform:none;letter-spacing:.2px;font-size:10px}
+#lenstag .prov b{color:var(--ink-dim);text-transform:none;letter-spacing:.2px;font-size:10px}
+#lenstag .absent{color:#C08A5A}
 
 #tools{position:fixed;left:252px;bottom:12px;z-index:26;display:none;gap:6px}
 #tools.show{display:flex}

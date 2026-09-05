@@ -6,7 +6,7 @@ import {
   nodeList, linkList, recencyOf, resolveStates,
 } from '../core/model.js';
 import {
-  NodeLayer, FilamentLayer, HoldingShell, GROUND, TEXT_COLOR, nodeHue,
+  NodeLayer, FilamentLayer, HoldingShell, GROUND, TEXT_COLOR, hue, stateColour,
   type NodeInstance, type LinkInstance,
 } from './world.js';
 import { TextLayer, type FontMeta, type TextRun } from './text.js';
@@ -25,9 +25,9 @@ export const LENS_PROFILE: Record<LensKind, LensProfile> = {
   // Everyday editing: comfortable reading, moderate depth.
   canvas:    { nodeMinPx: 15, nodeMaxPx: 84,  textMinPx: 12.5, textMaxPx: 24, textPerLine: 22, textLines: 2, fadeStart: 46, fadeEnd: 250, fov: 52 },
   // Whole-brain: everything on screen at once and still legible at 100+ nodes.
-  expansion: { nodeMinPx: 15, nodeMaxPx: 90,  textMinPx: 13.0, textMaxPx: 22, textPerLine: 26, textLines: 1, fadeStart: 90, fadeEnd: 420, fov: 46 },
+  expansion: { nodeMinPx: 15, nodeMaxPx: 90,  textMinPx: 13.0, textMaxPx: 22, textPerLine: 15, textLines: 1, fadeStart: 90, fadeEnd: 420, fov: 46 },
   // AR: a view-first lens; text a little larger for a handheld surface.
-  ar:        { nodeMinPx: 16, nodeMaxPx: 96,  textMinPx: 13.0, textMaxPx: 21, textPerLine: 24, textLines: 1, fadeStart: 34, fadeEnd: 190, fov: 62 },
+  ar:        { nodeMinPx: 16, nodeMaxPx: 96,  textMinPx: 13.0, textMaxPx: 21, textPerLine: 16, textLines: 1, fadeStart: 34, fadeEnd: 190, fov: 62 },
 };
 
 /** Node size varies with connection degree — a real signal, not decoration. */
@@ -165,10 +165,16 @@ export class Scene {
       // off the frame. The settled end of each hue's range is solved so that
       // settled -> recent is the same chroma DISTANCE for every hue.
       // The CHANNEL is unchanged; only how its span is computed.
-      // The node is drawn at the shared reference lightness so the state ladder
-      // is monotonic across hues (D-013); the authored hue is what the editor
+      // The node is drawn at its state's exact lightness so the ladder is
+      // monotonic across hues (D-013); the authored hue is what the editor
       // swatches and the district colour still mean.
-      const col = nodeHue(n.color), s0 = settledSat(col);
+      //
+      // The recency span is measured from the AUTHORED hue, not from the
+      // state-mapped one. Measuring it from the darker colour shrank the span
+      // as a node got dimmer, which cost saturation the recency channel is
+      // supposed to own — the Audience measured a plain amber falling from 0.66
+      // to 0.35 saturation across the change that introduced it.
+      const col = stateColour(n.color, st), s0 = settledSat(hue(n.color));
       const sat = s0 + (1 - s0) * recencyOf(doc, n);
       inst.push({ pos: p, color: col, state: st, size, sat });
       this.runMeta.push({ id: n.id, priority: PRIORITY[st], baseAlpha: st === 'plain' ? 0.86 : 1.0 });
@@ -191,7 +197,13 @@ export class Scene {
     }
     this.nodes.build(inst);
     const p = LENS_PROFILE[this.lens];
-    this.text.build(runs, p.textPerLine, p.textLines);
+    // Truncation is a density measure, not a lens constant. A short line keeps a
+    // 150-node overview readable by leaving room between labels; on an 11-node
+    // map it would clip names for nothing. It scales with how many nodes are
+    // actually competing for the frame.
+    const perLine = Math.round(Math.max(p.textPerLine,
+      Math.min(28, 28 - (Object.keys(doc.nodes).length - 24) * 0.09)));
+    this.text.build(runs, perLine, p.textLines);
     if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
     if (this.runShifts.length !== this.runMeta.length * 2) this.runShifts = new Float32Array(this.runMeta.length * 2);
 
@@ -204,7 +216,8 @@ export class Scene {
       links.push({ a, b, live });
     }
     this.filaments.build(links);
-    this.holding.set(new THREE.Vector3(...doc.holding.origin), doc.holding.radius);
+    this.holdingMembers = ns.filter(n => !n.placed).map(n => n.pos.slice() as [number, number, number]);
+    this.fitHoldingShell();
     this.screenCache = [];
     this.dirty = false;
   }
@@ -222,10 +235,44 @@ export class Scene {
     this.camera.updateMatrixWorld();
   }
 
+  private holdingMembers: [number, number, number][] = [];
+
+  /**
+   * Size the holding boundary so it CONTAINS the nodes the holding count counts.
+   *
+   * The declared radius is a model constant, but the boundary is drawn as a
+   * screen-space circle while its members sit in 3D — so a member nearer the
+   * camera projected outside the very ring it was being counted into. The
+   * radius is solved in screen space from the members' own projections and
+   * converted back, every frame, because it depends on the camera.
+   */
+  private fitHoldingShell() {
+    const doc = this.doc;
+    if (!doc) return;
+    const o = new THREE.Vector3(...doc.holding.origin);
+    const c = this.project([o.x, o.y, o.z]);
+    let need = doc.holding.radius;
+    if (c) {
+      const pxPerWorld = this.renderer.domElement.height *
+        this.camera.projectionMatrix.elements[5] * 0.5 / c.z;
+      let maxPx = doc.holding.radius * pxPerWorld;
+      for (const p of this.holdingMembers) {
+        const s = this.project(p);
+        if (!s) continue;
+        const d = Math.hypot(s.x - c.x, s.y - c.y);
+        if (d > maxPx) maxPx = d;
+      }
+      // Plus a node's own width, so a member sits inside the line, not on it.
+      need = (maxPx + LENS_PROFILE[this.lens].nodeMinPx * 1.6) / pxPerWorld;
+    }
+    this.holding.set(o, need);
+  }
+
   render() {
     if (this.dirty) this.rebuild();
     this.nodes.setTime(this.clock);
     this.applyPose();
+    this.fitHoldingShell();
     this.deconflictLabels();
     this.renderer.render(this.scene, this.camera);
     this.screenCache = [];
@@ -293,12 +340,21 @@ export class Scene {
     }
     boxes.sort((a, b) => a.pri - b.pri || a.z - b.z);
 
+
     // The bright tier is DISJOINT: a label is drawn at full weight only when its
     // clearest placement overlaps nothing already accepted, so two labels at
     // full weight can never sit on each other. Everything else ramps to zero by
     // DIM_MAX. Fewer labels are bright at whole-map framing than a softer rule
     // would give, which is the honest cost of the invariant.
-    const BRIGHT_MAX = 0, DIM_MAX = 0.30;
+    // ONE text layer. A gentle ramp left a second tier at roughly half
+    // brightness still running under the primaries, so the whole-brain view read
+    // as two competing layers — one legible, one a mid-grey smear. The ramp is
+    // now short enough to be effectively binary while still being continuous,
+    // so nothing pops as the camera turns, and a label that cannot find a clear
+    // anchor is gone rather than half-said. What that costs is reported in the
+    // frame: see suppressed().
+    const BRIGHT_MAX = 0, DIM_MAX = 0.16;
+    const panels: Box[] = [];
     const taken: Box[] = [];
     // Node markers are occluders too: text landing on a disc is as unreadable as
     // text landing on other text. They are scored as a PREFERENCE rather than as
@@ -306,6 +362,19 @@ export class Scene {
     // does not get demoted merely for grazing a dot, which would silence a lot
     // of names in the dense districts for no legibility gain.
     const discs = scr.map(q => ({ id: q.id, x0: q.x - q.r, x1: q.x + q.r, y0: q.y - q.r, y1: q.y + q.r }));
+    // An open panel is an occluder, not a hole in the world: a label running
+    // under the editor was being cut mid-word rather than re-anchored or faded.
+    // Panels are seeded into the reserved set before any label is placed, so
+    // they win against everything.
+    const dpr = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top']) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e) continue;
+      const r = e.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) continue;
+      panels.push({ i: -1, x0: r.left * dpr, y0: r.top * dpr,
+                    x1: r.right * dpr, y1: r.bottom * dpr, pri: -1, z: -1 });
+    }
     const discCover = (ownId: NodeId, x0: number, y0: number, x1: number, y1: number, area: number) => {
       let c = 0;
       for (const d of discs) {
@@ -331,6 +400,18 @@ export class Scene {
       }
       return Math.min(covered / area, 1);
     };
+    // The frame edge is an occluder too. A label whose best anchor still crosses
+    // it was being CUT MID-WORD — 'erance curve', 'tobacillus plantarum' — which
+    // reads as a rendering fault rather than as a label that did not fit. Off-
+    // frame margins are reserved so such a label re-anchors inward or fades,
+    // the same treatment a buried one gets.
+    const VW = this.renderer.domElement.width, VH = this.renderer.domElement.height;
+    const OFF = 4000;
+    panels.push({ i: -1, x0: -OFF, y0: -OFF, x1: 0, y1: VH + OFF, pri: -1, z: -1 });
+    panels.push({ i: -1, x0: VW, y0: -OFF, x1: VW + OFF, y1: VH + OFF, pri: -1, z: -1 });
+    panels.push({ i: -1, x0: -OFF, y0: -OFF, x1: VW + OFF, y1: 0, pri: -1, z: -1 });
+    panels.push({ i: -1, x0: -OFF, y0: VH, x1: VW + OFF, y1: VH + OFF, pri: -1, z: -1 });
+    taken.push(...panels);
     for (const b of boxes) {
       const sh = shape[b.i];
       const area = Math.max(sh.w * sh.h, 1);
@@ -375,7 +456,22 @@ export class Scene {
     }
     this.text.setRunAlphas(this.runAlphas);
     this.text.setRunShifts(this.runShifts);
+    // Counted only for nodes actually ON SCREEN. A node behind the camera has no
+    // label to hide, and counting it would overstate what the view is omitting.
+    this.suppressed = 0;
+    for (let i = 0; i < this.runAlphas.length; i++) {
+      if (this.runAlphas[i] > 0.02) continue;
+      const q = byId.get(this.runMeta[i].id);
+      if (q && q.x >= 0 && q.y >= 0 && q.x <= VW && q.y <= VH) this.suppressed++;
+    }
   }
+
+  /**
+   * How many labels the arbiter could not place at this framing. Reported so a
+   * viewer is told what the overview is not showing, rather than left to assume
+   * the map has anonymous nodes.
+   */
+  suppressed = 0;
 
   /**
    * One world point in screen pixels. The holding boundary is drawn from the

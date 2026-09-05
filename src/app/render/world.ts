@@ -28,43 +28,99 @@ export function hue(key: ColorKey | string): THREE.Color {
   return c;
 }
 
-const lumOf = (c: THREE.Color) => 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+const relLum = (r: number, g: number, b: number) => 0.299 * r + 0.587 * g + 0.114 * b;
 
-/**
- * The reference lightness every node hue is rendered at before its state
- * multiplier — the least luminous hue in the palette, so no hue has to be
- * brightened past what it can carry.
- */
-export const REF_LUM = Math.min(...Object.values(PALETTE).map(h => lumOf(new THREE.Color(h))));
+const s2l = (c: number) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+const l2s = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
 
-const NODE_CACHE = new Map<string, THREE.Color>();
-/**
- * A node's hue at the shared reference lightness.
- *
- * The state ladder (STATE_INTENSITY, D-006) was applied as a raw multiplier on
- * the authored hue, and the authored hues are not lightness-matched: bone is
- * about 1.6x as luminous as magenta before any state is applied. So an UNPLACED
- * bone node rendered brighter than a SELECTED coral one and clipped to white,
- * and the declared ladder was monotonic only inside a single hue family — the
- * states were being carried by ring geometry alone.
- *
- * Equalising lightness first makes the ladder monotonic for every hue: plain
- * 0.50 through selected 1.00 of the same base, whatever the colour. Hue and
- * chroma are untouched; PALETTE is unchanged and the UI swatches still show the
- * authored colours. Only the lightness a node is DRAWN at is set by its state,
- * which is what D-006 says the channel is for.
- */
-export function nodeHue(key: ColorKey | string): THREE.Color {
-  const hex = (PALETTE as Record<string, string>)[key] ?? key;
-  let c = NODE_CACHE.get(hex);
-  if (!c) {
-    const base = new THREE.Color(hex);
-    const k = REF_LUM / Math.max(lumOf(base), 1e-4);
-    c = new THREE.Color(base.r * k, base.g * k, base.b * k);
-    NODE_CACHE.set(hex, c);
-  }
-  return c;
+/** sRGB to OKLab. Lightness and chroma separate cleanly here; in raw RGB they do not. */
+function rgb2oklab(r: number, g: number, b: number): [number, number, number] {
+  const R = s2l(r), G = s2l(g), B = s2l(b);
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+          1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+          0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s];
 }
+function oklab2rgb(L: number, a: number, bb: number): [number, number, number] {
+  const l = (L + 0.3963377774 * a + 0.2158037573 * bb) ** 3;
+  const m = (L - 0.1055613458 * a - 0.0638541728 * bb) ** 3;
+  const s = (L - 0.0894841775 * a - 1.2914855480 * bb) ** 3;
+  return [l2s(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+          l2s(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+          l2s(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s)];
+}
+
+/**
+ * The rendered lightness of each state, as RELATIVE LUMINANCE — the quantity a
+ * critic measures off the frame, not a multiplier on an authored colour.
+ *
+ * D-006 declared the ladder as five multipliers (0.50 … 1.00) applied to the
+ * hue. The hues are not lightness-matched, so that ladder was monotonic only
+ * inside a hue family: an unplaced bone node clipped to white and outshone the
+ * selection. Normalising every hue to one reference fixed the ordering but had
+ * to pick the dimmest hue's level, which cost the world a third of its light
+ * and left the top two rungs 0.014 apart — less than the residual variance
+ * between two nodes in the *same* state.
+ *
+ * The rungs are now absolute and spaced across the band that is actually
+ * available. Every step is at least 0.11, and the per-hue variance within a
+ * rung is zero by construction.
+ */
+export const STATE_LUM: Record<NodeState, number> = {
+  plain: 0.30, connected: 0.44, unplaced: 0.57, searchHit: 0.69, selected: 0.80,
+};
+
+/**
+ * A hue at an exact relative luminance, carrying as much of its own chroma as
+ * the sRGB gamut allows there.
+ *
+ * Hue angle is fixed (OKLab a and b are scaled together, never rotated), the
+ * lightness lands on the rung exactly, and chroma is maximised rather than
+ * merely surviving — a plain amber keeps saturation 1.00 where the previous,
+ * RGB-space normalisation left it at 0.35.
+ */
+const STATE_CACHE = new Map<string, THREE.Color>();
+export function stateColour(key: ColorKey | string, state: NodeState): THREE.Color {
+  const ck = `${key}|${state}`;
+  let out = STATE_CACHE.get(ck);
+  if (!out) {
+    const base = hue(key);
+    const target = STATE_LUM[state];
+    const [, a0, b0] = rgb2oklab(base.r, base.g, base.b);
+    // For a given chroma scale, the OKLab lightness that hits the target.
+    const solveL = (t: number) => {
+      let lo = 0, hi = 1.4;
+      for (let i = 0; i < 28; i++) {
+        const L = (lo + hi) / 2;
+        const v = oklab2rgb(L, a0 * t, b0 * t);
+        const c = v.map(x => Math.min(1, Math.max(0, x))) as [number, number, number];
+        if (relLum(c[0], c[1], c[2]) < target) lo = L; else hi = L;
+      }
+      return (lo + hi) / 2;
+    };
+    // The most chroma that still lands in gamut ON the rung.
+    let lo = 0, hi = 1, best: [number, number, number] | null = null;
+    for (let i = 0; i < 22; i++) {
+      const t = (lo + hi) / 2;
+      const v = oklab2rgb(solveL(t), a0 * t, b0 * t);
+      const fits = v.every(x => x >= -0.002 && x <= 1.002) &&
+                   Math.abs(relLum(Math.min(1, Math.max(0, v[0])), Math.min(1, Math.max(0, v[1])),
+                                   Math.min(1, Math.max(0, v[2]))) - target) < 0.004;
+      if (fits) { best = v.map(x => Math.min(1, Math.max(0, x))) as [number, number, number]; lo = t; }
+      else hi = t;
+    }
+    if (!best) {
+      const v = oklab2rgb(solveL(0), 0, 0);
+      best = v.map(x => Math.min(1, Math.max(0, x))) as [number, number, number];
+    }
+    out = new THREE.Color(best[0], best[1], best[2]);
+    STATE_CACHE.set(ck, out);
+  }
+  return out;
+}
+
 
 const NODE_VERT = /* glsl */`
 precision highp float;
@@ -126,11 +182,12 @@ void main() {
   float aa = max(fwidth(r) * 1.1, 0.004);
   int st = int(vState + 0.5);
 
-  float intensity =
-      st == 4 ? uI4 : st == 3 ? uI3 : st == 2 ? uI2 : st == 1 ? uI1 : uI0;
-  // The single motion in the world: unplaced nodes pulse in LIGHT, never in
+  // The state's lightness is baked into the colour on the way in, so that the
+  // ladder can be exact for every hue (see stateColour). What is left here is
+  // the one motion in the world: unplaced nodes pulse in LIGHT, never in
   // position. §01/Atmosphere grants exactly this one exception.
-  if (st == 2) intensity *= mix(0.955, 1.093, 0.5 + 0.5 * sin(uTime * (TAU / 3.2)));
+  float intensity = 1.0;
+  if (st == 2) intensity = mix(0.955, 1.093, 0.5 + 0.5 * sin(uTime * (TAU / 3.2)));
 
   // Core: a tight self-luminous disc with a hotter centre and no halo outside it.
   float core = 1.0 - smoothstep(CORE - aa, CORE + aa, r);
@@ -143,15 +200,25 @@ void main() {
   // level, and a linear falloff put the boost in the innermost pixel or two
   // only, so the discs read as flat rather than as small light sources. The
   // boost is identical for every state, so the ladder's ordering is untouched.
-  float hot  = 1.0 + 0.62 * pow(1.0 - clamp(r / CORE, 0.0, 1.0), 0.40);
+  // A small hot centre. It was raised while the ladder sat at the dimmest hue's
+  // level and had to make up the difference; with the ladder now drawn at its
+  // own reference lightness, the same boost blew every state out to white.
+  float hot  = 1.0 + 0.16 * pow(1.0 - clamp(r / CORE, 0.0, 1.0), 0.40);
 
+  // A state's RING is its signature and is drawn at a fixed signature lightness,
+  // independent of which rung the core sits on. Drawing the ring at the core's
+  // own rung made the connected ring — the lowest lit state — read as a dark
+  // halo rather than as a ring, so the core's rung alone now carries the ladder
+  // and the geometry alone carries the signature.
+  float coreLum = max(dot(vColor, vec3(0.299, 0.587, 0.114)), 1e-4);
+  vec3  sig = clamp(vColor * (0.78 / coreLum), 0.0, 1.0);
   float ring = 0.0;
-  vec3  ringCol = vColor;
+  vec3  ringCol = sig;
   float u = atan(vQuad.y, vQuad.x) / TAU + 0.5;
 
   if (st == 4) {                                   // selected: solid heavy ring
     ring = band(r, CORE * 1.35, 0.052, aa);
-    ringCol = mix(vColor, vec3(1.0), 0.30);
+    ringCol = mix(sig, vec3(1.0), 0.30);
   } else if (st == 1) {                            // connected: one thin ring
     ring = band(r, CORE * 1.50, 0.019, aa);
   } else if (st == 2) {                            // unplaced: dashed ring
@@ -168,7 +235,7 @@ void main() {
     ring = radial * (1.0 - smoothstep(0.018, 0.036, d));
     // Tinted from the node's own hue, lifted toward bone. Pure white squares
     // read as a transform gizmo's drag handles rather than as a state.
-    ringCol = mix(vColor, vec3(0.955, 0.918, 0.862), 0.42);
+    ringCol = mix(sig, vec3(0.955, 0.918, 0.862), 0.42);
   }
 
   float a = max(core, ring);
@@ -394,8 +461,16 @@ export class HoldingShell {
     this.mesh.renderOrder = 5;
   }
   get material() { return this.mesh.material as THREE.ShaderMaterial; }
+  /**
+   * `radius` is the WORLD radius the drawn circle should have.
+   *
+   * The quad's half-extent is uRadius and the ring is drawn at half the quad,
+   * so the uniform is twice the radius. It was being fed the radius directly,
+   * which drew the boundary at half the size the model declares — which is why
+   * members of the holding cluster sat outside the very ring that counted them.
+   */
   set(centre: THREE.Vector3, radius: number) {
     this.material.uniforms.uCentre.value.copy(centre);
-    this.material.uniforms.uRadius.value = radius;
+    this.material.uniforms.uRadius.value = radius * 2;
   }
 }

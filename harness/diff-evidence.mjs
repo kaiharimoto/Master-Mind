@@ -62,6 +62,38 @@ async function ssimVideos(a, b) {
   return m ? Number(m[1]) : null;
 }
 
+/**
+ * What the LIT SUBJECT of a frame measures, independent of SSIM.
+ *
+ * SSIM called six artifacts 'unchanged' in a cycle where the node-state
+ * luminance ladder was rebuilt underneath them — the unplaced core fell from a
+ * clipping 0.997 to 0.461, which is the entire subject of artifact 06. A
+ * structural-similarity score is blind to that because the structure did not
+ * move. Masking to pixels above the ground and reporting their peak and mean
+ * luminance, and how many there are, is not blind to it.
+ */
+async function subject(file) {
+  const png = /\.mp4$/.test(file)
+    ? file.replace(/([^/]+)\.mp4$/, 'sheets/$1_sheet.png')
+    : file;
+  if (!existsSync(png)) return null;
+  const r = await new Promise((res) => {
+    const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+      { stdio: ['ignore', 'pipe', 'ignore'] });
+    const bufs = [];
+    p.stdout.on('data', d => bufs.push(d));
+    p.on('close', () => res(Buffer.concat(bufs)));
+  });
+  if (!r.length) return null;
+  let count = 0, sum = 0, peak = 0;
+  for (let i = 0; i + 2 < r.length; i += 3) {
+    const L = (0.299 * r[i] + 0.587 * r[i + 1] + 0.114 * r[i + 2]) / 255;
+    if (L <= 0.15) continue;            // ground and near-ground
+    count++; sum += L; if (L > peak) peak = L;
+  }
+  return { litPixels: count, meanLum: count ? +(sum / count).toFixed(4) : 0, peakLum: +peak.toFixed(4) };
+}
+
 async function probe(f) {
   const r = await run('ffprobe', ['-v', 'error', '-select_streams', 'v:0',
     '-show_entries', 'stream=width,height,r_frame_rate', '-show_entries', 'format=duration',
@@ -91,6 +123,23 @@ export async function diffEvidence(curDir, prevDir) {
     }
     row.verdict = row.ssim === null ? 'uncomparable'
       : row.ssim >= row.threshold ? 'unchanged' : 'changed';
+    // The subject test, beside SSIM rather than instead of it.
+    const [sa, sb] = [await subject(A), await subject(B)];
+    if (sa && sb) {
+      const rel = (x, y) => (y === 0 ? (x === 0 ? 0 : 1) : Math.abs(x - y) / Math.abs(y));
+      row.subject = { cur: sa, prev: sb,
+                      peakDelta: +rel(sa.peakLum, sb.peakLum).toFixed(3),
+                      meanDelta: +rel(sa.meanLum, sb.meanLum).toFixed(3),
+                      litDelta: +rel(sa.litPixels, sb.litPixels).toFixed(3) };
+      if (row.subject.peakDelta > 0.10 || row.subject.meanDelta > 0.10 || row.subject.litDelta > 0.10) {
+        row.subjectChanged = true;
+        if (row.verdict === 'unchanged') {
+          row.verdict = 'changed';
+          row.why = `subject luminance moved: peak ${sb.peakLum} -> ${sa.peakLum}, ` +
+                    `mean ${sb.meanLum} -> ${sa.meanLum}, lit pixels ${sb.litPixels} -> ${sa.litPixels}`;
+        }
+      }
+    }
     // A similarity number cannot distinguish a re-framing from a bug fix from a
     // change to what the artifact demonstrates. The recipe fingerprint can, so
     // substantive change is named rather than left to a reviewer to notice.
@@ -103,7 +152,17 @@ export async function diffEvidence(curDir, prevDir) {
       if (pr.lens !== cr.lens) notes.push(`lens: ${pr.lens ?? '—'} -> ${cr.lens ?? '—'}`);
       if (pr.fnSha !== cr.fnSha) notes.push(`capture script changed (${pr.fnSha} -> ${cr.fnSha})`);
       if (notes.length) notes.push(`demonstrates now: "${cr.demonstrates ?? '—'}"`);
-      if (notes.length) { row.whatChanged = notes.join('; '); row.substantive = notes.length > 1 || pr.demonstrates !== cr.demonstrates || pr.lens !== cr.lens || pr.surface !== cr.surface; }
+      if (notes.length) {
+        row.whatChanged = notes.join('; ');
+        // A recipe edit is only SUBSTANTIVE if the output actually moved. Cycle
+        // 4 marked artifact 20 substantive on a reworded description while its
+        // frames were the same at every timestamp.
+        const outputMoved = row.verdict === 'changed' || row.subjectChanged === true;
+        row.substantive = outputMoved &&
+          (notes.length > 1 || pr.demonstrates !== cr.demonstrates ||
+           pr.lens !== cr.lens || pr.surface !== cr.surface);
+        if (!outputMoved) row.why = 'recipe reworded, output unchanged';
+      }
     } else if (cr && prevManifest) {
       // No baseline fingerprint to compare against. Rather than degrade to one
       // uninformative string for every row — which is what cycle 3's diff did,
