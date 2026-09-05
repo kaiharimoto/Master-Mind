@@ -6,9 +6,28 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-05T05:28:48.962Z",
+  "lastRunAt": "2026-09-05T03:40:08.444Z",
   "lastRunCaptured": [
-    "03"
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
   ],
   "artifacts": [
     {
@@ -47,7 +66,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T03:40:10.759Z"
     },
     {
@@ -56,15 +75,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 1.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 468586,
-        "sha256": "0be8eef01db57c20d756a3e8d9b2fc96053b0cd938264075023c34e7b0e529c1"
+        "bytes": 349310,
+        "sha256": "227d9c7d6b47cba2a7589b6033f9c424e0285a05b26d22b1ec33f099b7651a64"
       },
       "claims": {
         "ok": true,
@@ -86,12 +105,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "everyLabelInsideTheFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -103,12 +116,6 @@
         "lens": "canvas",
         "surface": "windows",
         "sync": "live",
-        "onFrame": {
-          "holdingBadge": 8,
-          "labelsHidden": 0,
-          "unlabelledListed": 0,
-          "mapName": "Fermentation notebook"
-        },
         "camera": {
           "yaw": 0.42,
           "pitch": 0.2,
@@ -120,13 +127,10 @@
           ]
         },
         "cameraPinned": true,
-        "labelsAudited": 150,
+        "labelsAudited": 117,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Acetobacter aceti",
-        "labelWorstOffFramePx": 0,
-        "labelWorstOffFrameOn": null,
-        "labelArbiterAgreesWithDraw": true,
-        "everyLabelInsideTheFrame": true
+        "labelWorstOverhangOn": "Coffee cherry cascara ferment?",
+        "labelArbiterAgreesWithDraw": true
       },
       "pageErrors": [],
       "recipe": {
@@ -137,8 +141,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:26:27.633Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:12.108Z"
     },
     {
       "id": "03",
@@ -146,15 +150,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3,
+      "seconds": 2.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 1391176,
-        "sha256": "ad872a2e1d3f9ff1b0add239890568ae22218349ce7a3809cf1fd46f9c5a744a"
+        "bytes": 1039032,
+        "sha256": "280f0cfec777036c61bec203126a22e0d0a9638fb99d22f81cd37995bc539553"
       },
       "claims": {
         "ok": true,
@@ -187,12 +191,6 @@
         "lens": "ar",
         "surface": "android",
         "sync": "live",
-        "onFrame": {
-          "holdingBadge": 8,
-          "labelsHidden": 0,
-          "unlabelledListed": 0,
-          "mapName": "Fermentation notebook"
-        },
         "panels": [
           {
             "sent": {
@@ -210,8 +208,8 @@
               "pitch": -0.269
             },
             "anchor": {
-              "x": 253,
-              "y": 460
+              "x": 314,
+              "y": 501
             }
           },
           {
@@ -230,8 +228,8 @@
               "pitch": -0.339
             },
             "anchor": {
-              "x": 378,
-              "y": 220
+              "x": 431,
+              "y": 322
             }
           }
         ],
@@ -241,11 +239,7 @@
         },
         "gyroDroveTheView": true,
         "headingChanged": 62,
-        "anchorMovedOnScreen": 271,
-        "anchorMovedOnScreenXY": [
-          125,
-          -240
-        ],
+        "anchorMovedOnScreen": 117,
         "positionsUnchangedBetweenPanels": true
       },
       "pageErrors": [],
@@ -253,12 +247,12 @@
         "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations",
         "surface": "android",
         "lens": null,
-        "fnSha": "1e2d90017445b65c"
+        "fnSha": "cc6453acaa698523"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-05T05:28:51.784Z"
+      "fileMtime": "2026-09-05T03:40:14.736Z"
     },
     {
       "id": "04",
@@ -266,15 +260,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.5,
+      "seconds": 1.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 510932,
-        "sha256": "7f506867915dc9f57563e7a9b93dbaaee78f475d4ee26a2eb6eef180ce7e3e98"
+        "bytes": 389272,
+        "sha256": "b7a0f7b7ca86adcf3413def35655ba5859fc0b42100e224908d54492ce221449"
       },
       "claims": {
         "ok": true,
@@ -298,12 +292,6 @@
             "pass": true
           },
           {
-            "claim": "everyLabelInsideTheFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
             "claim": "recencyChannelExercised",
             "expected": true,
             "actual": true,
@@ -319,12 +307,6 @@
         "lens": "expansion",
         "surface": "windows",
         "sync": "live",
-        "onFrame": {
-          "holdingBadge": 8,
-          "labelsHidden": 0,
-          "unlabelledListed": 0,
-          "mapName": "Fermentation notebook"
-        },
         "camera": {
           "yaw": 0.3,
           "pitch": 0.16,
@@ -336,13 +318,10 @@
           ]
         },
         "cameraPinned": true,
-        "labelsAudited": 150,
+        "labelsAudited": 120,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Heterofermentative",
-        "labelWorstOffFramePx": 0,
-        "labelWorstOffFrameOn": null,
+        "labelWorstOverhangOn": "Recalibrate the pH meter",
         "labelArbiterAgreesWithDraw": true,
-        "everyLabelInsideTheFrame": true,
         "recencyByDistrict": {
           "violet": {
             "n": 18,
@@ -352,7 +331,7 @@
             ],
             "chroma": [
               0.055,
-              0.521
+              0.457
             ]
           },
           "lime": {
@@ -363,7 +342,7 @@
             ],
             "chroma": [
               0.045,
-              0.52
+              0.456
             ]
           },
           "amber": {
@@ -374,7 +353,7 @@
             ],
             "chroma": [
               0.047,
-              0.517
+              0.453
             ]
           },
           "coral": {
@@ -385,7 +364,7 @@
             ],
             "chroma": [
               0.059,
-              0.52
+              0.457
             ]
           },
           "azure": {
@@ -396,7 +375,7 @@
             ],
             "chroma": [
               0.048,
-              0.519
+              0.456
             ]
           },
           "bone": {
@@ -407,7 +386,7 @@
             ],
             "chroma": [
               0.054,
-              0.52
+              0.456
             ]
           },
           "magenta": {
@@ -418,7 +397,7 @@
             ],
             "chroma": [
               0.05,
-              0.404
+              0.354
             ]
           },
           "teal": {
@@ -428,14 +407,14 @@
               0.82
             ],
             "chroma": [
-              0.104,
-              0.518
+              0.099,
+              0.455
             ]
           }
         },
         "recencyChromaSpan": [
           0.045,
-          0.521
+          0.457
         ],
         "recencyChannelExercised": true
       },
@@ -448,8 +427,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:26:29.149Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:16.412Z"
     },
     {
       "id": "05",
@@ -507,7 +486,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T03:40:29.312Z"
     },
     {
@@ -516,44 +495,19 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.9,
+      "seconds": 1.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 225361,
-        "sha256": "ee6d267b937a82eaee49f519ae95ba765731e0b13abfaa3d67c3f6189ab2a44a"
+        "bytes": 178946,
+        "sha256": "925c2eaefd7895679946c480f9925272d80064d495d20b5dcb35830e0a023220"
       },
       "claims": {
         "ok": true,
-        "claims": [
-          {
-            "claim": "holdingRingFillsFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
-            "claim": "everyHeldNodeInFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
-            "claim": "countMatchesMarkers",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
-            "claim": "everyHeldLabelAttributable",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          }
-        ]
+        "claims": []
       },
       "result": {
         "map": "map-fermentation",
@@ -563,102 +517,24 @@
         "lens": "canvas",
         "surface": "windows",
         "sync": "live",
-        "onFrame": {
-          "holdingBadge": 8,
-          "labelsHidden": 0,
-          "unlabelledListed": 0,
-          "mapName": "Fermentation notebook"
-        },
         "holdingOrigin": [
           -5,
           -40,
           22
         ],
-        "holdingRadius": 6.6,
-        "cameraDistance": 16.933,
-        "ringHeightFraction": 0.8,
-        "heldNodes": {
-          "held": 8,
-          "onScreen": 8,
-          "inFrame": 8,
-          "badge": "8"
-        },
-        "heldLabelAttribution": [
-          {
-            "text": "Ask M about her crock",
-            "own": 38.4,
-            "nearestIsOwn": true,
-            "hasLeader": false,
-            "margin": 110.5
-          },
-          {
-            "text": "Nixtamal plus koji",
-            "own": 38.7,
-            "nearestIsOwn": false,
-            "hasLeader": true,
-            "margin": 11.1
-          },
-          {
-            "text": "Sour cherry kvass",
-            "own": 39,
-            "nearestIsOwn": true,
-            "hasLeader": false,
-            "margin": 109
-          },
-          {
-            "text": "Coffee cherry cascara ferment?",
-            "own": 33.8,
-            "nearestIsOwn": true,
-            "hasLeader": false,
-            "margin": 12.7
-          },
-          {
-            "text": "Recalibrate the pH meter",
-            "own": 34,
-            "nearestIsOwn": false,
-            "hasLeader": true,
-            "margin": 4.4
-          },
-          {
-            "text": "Read the succession paper",
-            "own": 30.6,
-            "nearestIsOwn": true,
-            "hasLeader": false,
-            "margin": 65.8
-          },
-          {
-            "text": "Black garlic: 60C for 40 days",
-            "own": 132.3,
-            "nearestIsOwn": false,
-            "hasLeader": true,
-            "margin": 53.5
-          },
-          {
-            "text": "Preserved lemon, batch 3",
-            "own": 87.8,
-            "nearestIsOwn": false,
-            "hasLeader": true,
-            "margin": 51.8
-          }
-        ],
-        "heldLabelsNearestOwnNode": 4,
-        "heldLabelsWithLeader": 4,
-        "everyHeldLabelAttributable": true,
-        "holdingRingFillsFrame": true,
-        "everyHeldNodeInFrame": true,
-        "countMatchesMarkers": true
+        "holdingRadius": 6.6
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them",
+        "demonstrates": "the holding cluster: unplaced nodes in the dashed ring with the holding count",
         "surface": "windows",
         "lens": null,
-        "fnSha": "ad16b81e68f4ef1c"
+        "fnSha": "69b4cd3e927706af"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:26:32.057Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:30.904Z"
     },
     {
       "id": "07",
@@ -666,15 +542,15 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.3,
+      "seconds": 1.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 178065,
-        "sha256": "aa9e91bd9efc3b468d882f9a6945db6d7b451f977ae06e50254740e844986f12"
+        "bytes": 179410,
+        "sha256": "04b6860ec7d9b8ab325505299674f1f0a46bcba6b97b00726749a9db637400e9"
       },
       "claims": {
         "ok": true,
@@ -721,28 +597,28 @@
           "Timebox to 18 minutes": "unplaced"
         },
         "measuredRungs": {
-          "plain": 0.2975,
-          "connected": 0.4247,
-          "unplaced": 0.5628,
-          "searchHit": 0.6769,
-          "selected": 0.8025
+          "plain": 0.291,
+          "connected": 0.4252,
+          "unplaced": 0.5627,
+          "searchHit": 0.6768,
+          "selected": 0.8021
         },
         "withinRungSpread": {
-          "plain": 0.002,
-          "connected": 0.0005,
-          "unplaced": 0.0005,
+          "plain": 0.0187,
+          "connected": 0.0002,
+          "unplaced": 0.0013,
           "searchHit": 0,
           "selected": 0
         },
         "rungSteps": [
-          0.1272,
-          0.1381,
+          0.1342,
+          0.1375,
           0.1141,
-          0.1256
+          0.1253
         ],
         "ladderMonotonic": true,
         "minRungStep": 0.1141,
-        "maxWithinRungSpread": 0.002,
+        "maxWithinRungSpread": 0.0187,
         "ladderStepsClearScatter": true,
         "ok": true
       },
@@ -755,8 +631,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:47:30.765Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:31.940Z"
     },
     {
       "id": "08",
@@ -824,7 +700,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T03:40:33.691Z"
     },
     {
@@ -905,7 +781,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T03:40:36.175Z"
     },
     {
@@ -914,15 +790,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 5.5,
+      "seconds": 5.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 349819,
-        "sha256": "4a408d8d5f40492f1038bbe19c1542126add73531e89e8e1208b5543f482638d"
+        "bytes": 217849,
+        "sha256": "fdfcb1dcc274bceac14a2d1dbe28d4ea427d907c5085d92e606460ca7ba97cf0"
       },
       "claims": {
         "ok": true,
@@ -956,12 +832,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "everyLabelInsideTheFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -969,13 +839,10 @@
         "query": "koji",
         "node": "Koji-kin sourcing",
         "hits": 19,
-        "labelsAudited": 38,
+        "labelsAudited": 40,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Bulk to 50% rise",
-        "labelWorstOffFramePx": 0,
-        "labelWorstOffFrameOn": null,
+        "labelWorstOverhangOn": "Ask M about her crock",
         "labelArbiterAgreesWithDraw": true,
-        "everyLabelInsideTheFrame": true,
         "flownHitCentred": true,
         "hitsInFrame": 13,
         "severalHitsShown": true,
@@ -1007,12 +874,12 @@
         "demonstrates": "search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it",
         "surface": "windows",
         "lens": null,
-        "fnSha": "081211a9ab14a06e"
+        "fnSha": "f0f9bd4216282901"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:26:37.581Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:41.576Z"
     },
     {
       "id": "11",
@@ -1020,15 +887,15 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 11.2,
+      "seconds": 10.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 164580,
-        "sha256": "4e665ffc75cb68e0239607c1b8565e8629315b426e149288cc7c13c75b2d1063"
+        "bytes": 195706,
+        "sha256": "c6a6a13ca15de6e2b898c542973f0247905116169e05ea16b956ca5202cdb4a2"
       },
       "claims": {
         "ok": true,
@@ -1059,8 +926,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:51:45.142Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:49.476Z"
     },
     {
       "id": "12",
@@ -1075,8 +942,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 634984,
-        "sha256": "20b5328792b772a24e853029a1476e4ffde8550d27f4fd67e3f191d7d4af2dee"
+        "bytes": 661798,
+        "sha256": "289a64a79ab032bb5b726b95ab2864a7e51069840b282c7262877be2b443da58"
       },
       "claims": {
         "ok": true,
@@ -1146,12 +1013,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "everyNodeUnoccludedByChrome",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -1164,9 +1025,9 @@
           -3.1
         ],
         "movedTo": [
-          6.224564346905375,
-          2.1243814001730583,
-          -8.559369780986067
+          3.212312035458714,
+          -0.2401182946903213,
+          -7.089073212336796
         ],
         "positionEditPropagated": true,
         "onlyTheDraggedNodeMoved": true,
@@ -1189,7 +1050,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 25144,
+            "serverPid": 25296,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -1200,7 +1061,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 25144,
+            "serverPid": 25296,
             "actor": "android-twin",
             "status": "live"
           }
@@ -1209,7 +1070,7 @@
         "cameraFrozen": {
           "yaw": 0.34,
           "pitch": 0.16,
-          "dist": 53.41637354938651,
+          "dist": 31.318370396952474,
           "target": [
             -0.15000000000000036,
             -3.3499999999999996,
@@ -1225,16 +1086,11 @@
             -3.1
           ],
           "after": [
-            6.224564346905375,
-            2.1243814001730583,
-            -8.559369780986067
+            3.212312035458714,
+            -0.2401182946903213,
+            -7.089073212336796
           ]
         },
-        "nodesUnderChrome": {
-          "windows": [],
-          "android": []
-        },
-        "everyNodeUnoccludedByChrome": true,
         "bigMapCrossSurface": {
           "nodes": {
             "windows": 150,
@@ -1270,8 +1126,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:51:47.993Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:52.273Z"
     },
     {
       "id": "13",
@@ -1279,15 +1135,15 @@
       "title": "Finder prompt export",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.3,
+      "seconds": 1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 254732,
-        "sha256": "c5e418475cc3fc8058e2326d121ba7a268ae2ad8a26194ef103e9f371c92b935"
+        "bytes": 266970,
+        "sha256": "aaa797db4005c35e8fd4521ec6186737a9ee98577a199bc703c6f1fbaa7b227f"
       },
       "claims": {
         "ok": true,
@@ -1309,20 +1165,12 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "noLabelUnderThePanel",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
       "result": {
         "promptChars": 2698,
         "hasPositions": true,
-        "labelsUnderThePanel": [],
-        "noLabelUnderThePanel": true,
         "hasInstructions": true,
         "mentionsUnplaced": true
       },
@@ -1331,12 +1179,12 @@
         "demonstrates": "the finder prompt export, preamble and position records together",
         "surface": "windows",
         "lens": null,
-        "fnSha": "904c8c79130e761a"
+        "fnSha": "51e64503fb0a6434"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:20:26.001Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:53.572Z"
     },
     {
       "id": "14",
@@ -1344,15 +1192,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.6,
+      "seconds": 2.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 370373,
-        "sha256": "18c6e3f1c88798af2cefcab2bfda1f12f13a413670ec83d8706bb31cdbefb0ef"
+        "bytes": 295206,
+        "sha256": "b4b2ba35854e2bfc223850611a205734966124ba83cf7a43401e626422cf0ad3"
       },
       "claims": {
         "ok": true,
@@ -1398,12 +1246,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "detailRowInsideFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -1425,51 +1267,29 @@
         "allThreeKinds": true,
         "detailCrops": [
           {
-            "x": 14,
-            "y": 442,
-            "w": 460,
-            "h": 366
+            "x": 450,
+            "y": 50,
+            "w": 624,
+            "h": 392
           },
           {
             "x": 450,
             "y": 50,
-            "w": 642,
-            "h": 510
+            "w": 624,
+            "h": 392
           },
           {
-            "x": 450,
-            "y": 50,
-            "w": 642,
-            "h": 510
-          },
-          {
-            "x": 546,
-            "y": 86,
-            "w": 702,
-            "h": 558
+            "x": 474,
+            "y": 88,
+            "w": 806,
+            "h": 508
           }
         ],
         "detailMagnifications": [
-          2.09,
-          1.5,
-          1.5,
-          1.37
+          1.03,
+          1.03,
+          0.79
         ],
-        "detailMagnificationsOfAppPixels": [
-          1.04,
-          0.75,
-          0.75,
-          0.68
-        ],
-        "detailStripPx": 82,
-        "detailPanelHeights": [
-          382,
-          381,
-          381,
-          382
-        ],
-        "detailRowBottomPx": 1080,
-        "detailRowInsideFrame": true,
         "detailNodesFound": 4,
         "acceptedId": "s1",
         "acceptedNodes": [
@@ -1483,7 +1303,7 @@
         ],
         "rejectedPairUnjoined": true,
         "detailIsMagnified": true,
-        "detailMagnificationFloor": 1.37,
+        "detailMagnificationFloor": 0.79,
         "cameraFrozenAcrossPanels": true,
         "rejectedId": "s2",
         "rejectionLeftNoTrace": true,
@@ -1494,12 +1314,12 @@
         "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch",
         "surface": "windows",
         "lens": null,
-        "fnSha": "5bbeba039b3db20a"
+        "fnSha": "5b51c1c6176689d9"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:23:28.873Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:40:56.004Z"
     },
     {
       "id": "15",
@@ -1540,7 +1360,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T03:40:58.568Z"
     },
     {
@@ -1621,7 +1441,7 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
+      "capturedInThisRun": true,
       "fileMtime": "2026-09-05T03:42:28.795Z"
     },
     {
@@ -1630,15 +1450,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 335.1,
+      "seconds": 341,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 6482250,
-        "sha256": "58314dffcd0f7b80ef71bcbb189f1cff3228d08fd0767944d341f75f8fd1acbf",
+        "bytes": 6897637,
+        "sha256": "5353ee64bf0096c178123cc333bf50d12eff069f33bb04ec09367440e738d872",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -1674,7 +1494,7 @@
           "gather"
         ],
         "count": 4,
-        "samples": 1331,
+        "samples": 1346,
         "clusterGrabbed": "Koji",
         "clusterMembers": 16,
         "clusterCentroidBefore": [
@@ -1704,8 +1524,8 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T04:32:20.608Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:48:09.064Z"
     },
     {
       "id": "18",
@@ -1713,15 +1533,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 76.6,
+      "seconds": 62.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 5048435,
-        "sha256": "8ff6606ee9ba7480a730d2b8eb369419c3e2e1da2f4a4f3e816060279b47250f",
+        "bytes": 3231161,
+        "sha256": "d468d672a0c2f184dd92ed3eee18308998a3c93808a842b0aa303c83e9c80278",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -1743,12 +1563,6 @@
           },
           {
             "claim": "endsOnTheHit",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
-            "claim": "everyLabelInsideTheFrameThroughout",
             "expected": true,
             "actual": true,
             "pass": true
@@ -1775,32 +1589,6 @@
             "text": "Koji-accelerated garum"
           }
         ],
-        "labelAuditsAcrossTake": 26,
-        "labelWorstAuditFrame": {
-          "f": 0,
-          "checked": 138,
-          "gap": 0,
-          "off": 0,
-          "gapOn": {
-            "text": "Brettanomyces",
-            "res": [
-              885,
-              212,
-              989,
-              227
-            ],
-            "drawn": [
-              841,
-              223,
-              946,
-              239
-            ]
-          },
-          "offOn": null
-        },
-        "labelWorstOverhangAcrossTake": 0,
-        "labelWorstOffFrameAcrossTake": 0,
-        "everyLabelInsideTheFrameThroughout": true,
         "steppedToASecondHit": true,
         "severalHitsMatched": true,
         "endsOnTheHit": true
@@ -1810,31 +1598,31 @@
         "demonstrates": "search fly-to in motion: whole-map framing to one hit of several, then on to the next",
         "surface": "windows",
         "lens": null,
-        "fnSha": "a60024ab92924687"
+        "fnSha": "de9c3f5fd1bb2ad6"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:18:34.852Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:49:13.792Z"
     },
     {
       "id": "19",
       "file": "19_capture_place_arc.mp4",
-      "title": "Capture, place, connect, refind",
+      "title": "Capture-place arc",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 133.5,
+      "seconds": 47.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 3032178,
-        "sha256": "4b0a1082762a8dee9ab60803d24e56dbbf8c9f50644b5249a5887c6de71dfc82",
-        "seconds": 23,
+        "bytes": 384498,
+        "sha256": "61985018dad1b510fa52e746b8bc4126471b1b3ae1b223ef18c8e6fa17cbb270",
+        "seconds": 18,
         "fps": 30,
-        "frames": 690
+        "frames": 540
       },
       "claims": {
         "ok": true,
@@ -1856,24 +1644,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "connectedAfterPlacing",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
-            "claim": "refoundBySearch",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
-            "claim": "positionSurvivedTheWholeLoop",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -1882,55 +1652,24 @@
         "created": true,
         "placed": true,
         "pos": [
-          21.90675821839119,
-          -14.641830931020277,
-          13.692161279398377
+          7.354568612561264,
+          0.4563576046908786,
+          -1.4769724111703333
         ],
         "stayedPut": true,
-        "connectedTo": "Vinegar from failed wine",
-        "linksAcrossConnect": [
-          208,
-          209
-        ],
-        "connectedAfterPlacing": true,
-        "searchHits": 1,
-        "flewToTheNewNode": true,
-        "centredOnRefind": {
-          "dx": 0,
-          "dy": 0
-        },
-        "refoundBySearch": true,
-        "positionThroughTheLoop": {
-          "atDrop": [
-            21.90675821839119,
-            -14.641830931020277,
-            13.692161279398377
-          ],
-          "afterConnect": [
-            21.90675821839119,
-            -14.641830931020277,
-            13.692161279398377
-          ],
-          "atEnd": [
-            21.90675821839119,
-            -14.641830931020277,
-            13.692161279398377
-          ]
-        },
-        "positionSurvivedTheWholeLoop": true,
-        "holding": 8
+        "holding": 4
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put",
+        "demonstrates": "the capture-place arc in motion: compose, holding, drag out, stays put",
         "surface": "windows",
         "lens": null,
-        "fnSha": "8f6ace6323401f42"
+        "fnSha": "47efb38d7233c683"
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:16:32.425Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:50:00.454Z"
     },
     {
       "id": "20",
@@ -1938,15 +1677,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 83.1,
+      "seconds": 76.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 634698,
-        "sha256": "3e25a3893495f5f7c5dd593c9aa968f7eacbf032401604236ba7080f5cf82f03",
+        "bytes": 614905,
+        "sha256": "d23e772c52cddf61369b7945e03335eb69b36e959ea6d6f570b9c1d2d45e306f",
         "seconds": 30,
         "fps": 30,
         "frames": 900
@@ -2079,18 +1818,18 @@
       },
       "capturedInCycle": 7,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-05T05:21:58.825Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-05T03:51:17.121Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-05T05:28:53.364Z",
+  "finishedAt": "2026-09-05T03:51:20.348Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 790282,
-    "sha256": "179d5297b5f61727aeef8adcc2fc440e4f5cdb31858d1d1aaea2ac09b2565288"
+    "bytes": 781895,
+    "sha256": "37318b6ba91be2c47d1c5258dd7b74cce3d363cf83b338f058d088dac27947a5"
   },
   "captured": 20,
   "total": 20

@@ -4,7 +4,7 @@
 // previous cycle, and write the three critic briefs.
 //
 //   node harness/cycle.mjs <cycleNumber> [--skip-capture]
-import { cpSync, mkdirSync, existsSync, readdirSync, rmSync, writeFileSync, readFileSync } from 'node:fs';
+import { cpSync, mkdirSync, existsSync, readdirSync, rmSync, writeFileSync, readFileSync, statSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
@@ -74,33 +74,66 @@ console.log('contact sheets written');
 //
 // Cycle 8's first run archived the working set into the frozen cycle-7
 // directory — the set three critics had already reviewed — and stopped only
-// because the copy was structurally impossible, not because anything was
-// guarding it. Nothing was lost that time. The guard exists so that the next
-// time is not a matter of luck: every artifact in the set being diffed against
-// must still hash to what its own manifest recorded, or the cycle stops.
-const verifyFrozen = (dir) => {
-  const mf = join(dir, 'MANIFEST.json');
-  if (!existsSync(mf)) return null;
-  const m = JSON.parse(readFileSync(mf, 'utf8'));
+// because the copy eventually became structurally impossible, not because
+// anything was guarding it. It got far enough first: 15 of cycle 7's frozen
+// files were overwritten with cycle 8's working copies, and I committed that
+// overwrite before noticing. The corruption surfaced two steps later, when the
+// cycle-8 Audience critic reported four artifacts as byte-identical to cycle 7
+// — they were identical because cycle 7's copies had been replaced by cycle
+// 8's. Restored with `git checkout f1d5805 -- evidence/cycles/cycle-7`.
+// The guard exists so the next time is caught by a check rather than by a
+// critic: every file in the set being diffed against must still hash to what
+// the ledger recorded, or the cycle stops.
+// THE LEDGER LIVES OUTSIDE THE SET IT DESCRIBES.
+//
+// The first version of this guard compared the frozen directory against the
+// MANIFEST.json *inside that directory* — so when the whole directory was
+// overwritten, manifest and artifacts were replaced together, the comparison
+// was self-consistent, and it reported the set intact. It was not: cycle 7's
+// frozen set had been replaced by the working set, and the check I trusted
+// could not have told me. A ledger written beside the directory rather than in
+// it is comparable to something the overwrite does not carry with it.
+const ledgerPath = (n) => resolve(EV, `cycles/cycle-${n}.sha256`);
+
+const writeLedger = (dir, n) => {
+  const lines = [];
+  const walk = (d, rel) => {
+    for (const f of readdirSync(d).sort()) {
+      const p = join(d, f), r = rel ? `${rel}/${f}` : f;
+      if (statSync(p).isDirectory()) walk(p, r);
+      else lines.push(`${createHash('sha256').update(readFileSync(p)).digest('hex')}  ${r}`);
+    }
+  };
+  walk(dir, '');
+  writeFileSync(ledgerPath(n), lines.join('\n') + '\n');
+  return lines.length;
+};
+
+const want_n = (n) => readFileSync(ledgerPath(n), 'utf8').trim().split('\n').filter(Boolean).length;
+
+const verifyFrozen = (dir, n) => {
+  const lp = ledgerPath(n);
+  if (!existsSync(lp)) return null;
+  const want = new Map(readFileSync(lp, 'utf8').trim().split('\n')
+    .filter(Boolean).map(l => { const i = l.indexOf('  '); return [l.slice(i + 2), l.slice(0, i)]; }));
   const bad = [];
-  for (const a of m.artifacts ?? []) {
-    const f = join(dir, a.file);
-    if (!a.check?.sha256) continue;
-    if (!existsSync(f)) { bad.push(`${a.id} missing`); continue; }
+  for (const [rel, sha] of want) {
+    const f = join(dir, rel);
+    if (!existsSync(f)) { bad.push(`${rel} MISSING`); continue; }
     const h = createHash('sha256').update(readFileSync(f)).digest('hex');
-    if (h !== a.check.sha256) bad.push(`${a.id} ${a.file} sha ${h.slice(0, 12)} != ${a.check.sha256.slice(0, 12)}`);
+    if (h !== sha) bad.push(`${rel} ${h.slice(0, 12)} != ${sha.slice(0, 12)}`);
   }
   return bad;
 };
 {
-  const bad = verifyFrozen(prevDir);
-  if (bad === null) console.log(`no frozen cycle-${cycle - 1} set to verify`);
+  const bad = prevDir === frozenPrev ? verifyFrozen(prevDir, cycle - 1) : null;
+  if (bad === null) console.log(`no ledger for cycle-${cycle - 1}; cannot verify the set being diffed against`);
   else if (bad.length) {
-    console.error(`FROZEN SET ALTERED — evidence/cycles/cycle-${cycle - 1} no longer matches its own manifest:`);
+    console.error(`FROZEN SET ALTERED — evidence/cycles/cycle-${cycle - 1} no longer matches its ledger:`);
     for (const b of bad) console.error('  ' + b);
     console.error('Refusing to diff against a set that has changed since it was reviewed.');
     process.exit(2);
-  } else console.log(`frozen cycle-${cycle - 1} set verified: every artifact matches its recorded hash`);
+  } else console.log(`frozen cycle-${cycle - 1} set verified against its external ledger: all ${want_n(cycle - 1)} files match`);
 }
 
 // 4. Diff against the previous cycle.
@@ -123,7 +156,8 @@ for (const f of readdirSync(EV)) {
   if (['history', 'coldstart', 'critic-briefs', 'cycles', 'critics'].includes(f)) continue;
   cpSync(join(EV, f), join(frozen, f), { recursive: true });
 }
-console.log(`froze the cycle-${cycle} set at evidence/cycles/cycle-${cycle}`);
+const ledgerCount = writeLedger(frozen, cycle);
+console.log(`froze the cycle-${cycle} set at evidence/cycles/cycle-${cycle} · ledger of ${ledgerCount} files at cycles/cycle-${cycle}.sha256`);
 
 // 6. Critic briefs, pointed at the frozen set.
 const briefs = buildBriefs(cycle, frozen, prevDir);

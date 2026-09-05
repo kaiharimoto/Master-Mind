@@ -848,17 +848,49 @@ first run archived the working evidence directory **into
 archive step writes to `prevDir`, and the F-026 fix had just made `prevDir` the
 frozen directory rather than `history/`; one fix to the regression instrument
 created a hole in the thing it protects. The run stopped only because copying
-`evidence/cycles/` into a subdirectory of itself is structurally impossible, not
-because anything checked. Nothing was lost — all twenty cycle-7 artifacts still
-hash to what their own manifest records — but that is luck, not a property.
+`evidence/cycles/` into a subdirectory of itself eventually became structurally
+impossible, not because anything checked.
 
-Two changes. The archive writes to `history/` again, and both the archive and
-the freeze exclude `cycles/` and `critics/`. And **before any diff, every
-artifact in the set being compared against must still hash to its recorded
-value**, or the cycle stops and names the mismatch. Verified on both frozen
-sets: cycle 6 and cycle 7, twenty artifacts each, zero mismatches. §04 makes the
-frozen set the thing the critics read; until now nothing made it immutable in
-fact rather than by convention.
+**The first version of this entry said "nothing was lost". That was wrong, and
+the way it was wrong is the finding.** The copy got far enough first: **15 of
+cycle 7's frozen files were overwritten with cycle 8's working copies** — 02,
+03, 04, 06, 07, 10, 11, 12, 13, 14, 17, 18, 19, 20 and the manifest. I then
+checked `git status`, saw a clean tree, and concluded nothing had changed. The
+tree was clean *because I had already committed the damage* in `11597f3`. And
+the guard I wrote in response compared the frozen directory against the
+`MANIFEST.json` **inside that directory** — so a whole-directory overwrite
+replaced the artifacts and their attestation together, the comparison was
+self-consistent, and it reported the set intact. It was structurally incapable
+of detecting the one failure it was written for, and it told me so in the cycle
+log: *"frozen cycle-7 set verified: every artifact matches its recorded hash."*
+
+It surfaced two steps later and from outside: the cycle-8 **Audience** critic
+reported artifacts 02, 04, 06 and 10 as byte-identical to cycle 7. They were
+identical because cycle 7's copies had become cycle 8's. Restored with
+`git checkout f1d5805 -- evidence/cycles/cycle-7` (15 files differed), and the
+stray `critics/` verdicts the same run had copied in were removed, leaving the
+set byte-identical to `f1d5805`. Every claim the corrupted baseline supported is
+withdrawn: the cycle-8 diff reported 13 of 20 changed against it and is re-run
+against the restored set at **18 of 20 changed, 7 substantive**, with 02, 04, 06
+and 10 restored to the changed list. The cycle-8 Audience verdict's regression
+section rested on the corrupted baseline and is treated as void; its findings
+about the cycle-8 files themselves stand.
+
+Three changes. The archive writes to `history/` again, and both the archive and
+the freeze exclude `cycles/` and `critics/`. **The ledger now lives outside the
+set it describes**: `evidence/cycles/cycle-<n>.sha256`, one `sha256  path` line
+per file, written at freeze time and compared before any diff — a
+whole-directory overwrite does not carry it along, which is exactly what the
+manifest-inside-the-directory version could not manage. And the ledgers for
+cycles 2–8 were back-filled only after each set was checked against the commit
+that introduced it; `evidence/cycles/README.md` records that provenance rather
+than presenting a back-filled hash as a freeze-time one.
+
+The general lesson is not about directories. **A verification that draws its
+expected value from the same artifact it is checking cannot fail**, and it will
+report success in the exact case it was built for. Twice here the check and the
+subject were the same object: `git status` against a tree whose damage I had
+committed, and a manifest against the directory containing it.
 
 **F-029 — the ladder's yardstick was mis-named.** Everything about the state
 ladder called its measure *relative luminance*, and the function was Rec.601

@@ -41,8 +41,8 @@
       "file": "02_canvas_large_map.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 1,
-      "verdict": "unchanged",
+      "ssim": 0.853358,
+      "verdict": "changed",
       "subject": {
         "cur": {
           "litPixels": 102790,
@@ -50,22 +50,23 @@
           "peakLum": 0.9063
         },
         "prev": {
-          "litPixels": 102790,
-          "meanLum": 0.3216,
+          "litPixels": 71366,
+          "meanLum": 0.3182,
           "peakLum": 0.9063
         },
         "peakDelta": 0,
-        "meanDelta": 0,
-        "litDelta": 0
-      }
+        "meanDelta": 0.011,
+        "litDelta": 0.44
+      },
+      "subjectChanged": true
     },
     {
       "id": "03",
       "file": "03_hero_ar_coldstart.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 1,
-      "verdict": "unchanged",
+      "ssim": 0.680816,
+      "verdict": "changed",
       "subject": {
         "cur": {
           "litPixels": 272762,
@@ -73,22 +74,25 @@
           "peakLum": 1
         },
         "prev": {
-          "litPixels": 272762,
-          "meanLum": 0.4288,
+          "litPixels": 200372,
+          "meanLum": 0.415,
           "peakLum": 1
         },
         "peakDelta": 0,
-        "meanDelta": 0,
-        "litDelta": 0
-      }
+        "meanDelta": 0.033,
+        "litDelta": 0.361
+      },
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (cc6453acaa698523 -> 1e2d90017445b65c); demonstrates now: \"AR lens hero on Android at cold first launch, one map at two device orientations\"",
+      "substantive": true
     },
     {
       "id": "04",
       "file": "04_mind_expansion.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 1,
-      "verdict": "unchanged",
+      "ssim": 0.818785,
+      "verdict": "changed",
       "subject": {
         "cur": {
           "litPixels": 117235,
@@ -96,14 +100,15 @@
           "peakLum": 0.9063
         },
         "prev": {
-          "litPixels": 117235,
-          "meanLum": 0.3621,
+          "litPixels": 84977,
+          "meanLum": 0.353,
           "peakLum": 0.9063
         },
         "peakDelta": 0,
-        "meanDelta": 0,
-        "litDelta": 0
-      }
+        "meanDelta": 0.026,
+        "litDelta": 0.38
+      },
+      "subjectChanged": true
     },
     {
       "id": "05",
@@ -134,8 +139,8 @@
       "file": "06_holding_cluster.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 1,
-      "verdict": "unchanged",
+      "ssim": 0.883296,
+      "verdict": "changed",
       "subject": {
         "cur": {
           "litPixels": 70159,
@@ -143,21 +148,24 @@
           "peakLum": 0.9063
         },
         "prev": {
-          "litPixels": 70159,
-          "meanLum": 0.4663,
+          "litPixels": 52849,
+          "meanLum": 0.4575,
           "peakLum": 0.9063
         },
         "peakDelta": 0,
-        "meanDelta": 0,
-        "litDelta": 0
-      }
+        "meanDelta": 0.019,
+        "litDelta": 0.328
+      },
+      "subjectChanged": true,
+      "whatChanged": "demonstrates: \"the holding cluster: unplaced nodes in the dashed ring with the holding count\" -> \"the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them\"; capture script changed (69b4cd3e927706af -> ad16b81e68f4ef1c); demonstrates now: \"the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them\"",
+      "substantive": true
     },
     {
       "id": "07",
       "file": "07_five_node_states.png",
       "status": "captured",
       "threshold": 0.985,
-      "ssim": 0.973779,
+      "ssim": 0.974194,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -166,13 +174,13 @@
           "peakLum": 0.9063
         },
         "prev": {
-          "litPixels": 70292,
-          "meanLum": 0.4514,
+          "litPixels": 70588,
+          "meanLum": 0.4604,
           "peakLum": 0.9063
         },
         "peakDelta": 0,
-        "meanDelta": 0.02,
-        "litDelta": 0.003
+        "meanDelta": 0,
+        "litDelta": 0.007
       }
     },
     {
@@ -227,8 +235,8 @@
       "file": "10_search_flyto_end.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 1,
-      "verdict": "unchanged",
+      "ssim": 0.891895,
+      "verdict": "changed",
       "subject": {
         "cur": {
           "litPixels": 122666,
@@ -236,21 +244,24 @@
           "peakLum": 0.9063
         },
         "prev": {
-          "litPixels": 122666,
-          "meanLum": 0.5346,
+          "litPixels": 80069,
+          "meanLum": 0.5383,
           "peakLum": 0.9063
         },
         "peakDelta": 0,
-        "meanDelta": 0,
-        "litDelta": 0
-      }
+        "meanDelta": 0.007,
+        "litDelta": 0.532
+      },
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (f0f9bd4216282901 -> 081211a9ab14a06e); demonstrates now: \"search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it\"",
+      "substantive": true
     },
     {
       "id": "11",
       "file": "11_sync_twin_before.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.955073,
+      "ssim": 0.899077,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -259,21 +270,22 @@
           "peakLum": 1
         },
         "prev": {
-          "litPixels": 57338,
-          "meanLum": 0.4827,
+          "litPixels": 72330,
+          "meanLum": 0.5139,
           "peakLum": 1
         },
         "peakDelta": 0,
-        "meanDelta": 0.017,
-        "litDelta": 0.004
-      }
+        "meanDelta": 0.045,
+        "litDelta": 0.204
+      },
+      "subjectChanged": true
     },
     {
       "id": "12",
       "file": "12_sync_twin_after.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.864092,
+      "ssim": 0.819937,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -282,13 +294,13 @@
           "peakLum": 1
         },
         "prev": {
-          "litPixels": 215896,
-          "meanLum": 0.4101,
+          "litPixels": 229739,
+          "meanLum": 0.4218,
           "peakLum": 1
         },
         "peakDelta": 0,
-        "meanDelta": 0.044,
-        "litDelta": 0.241
+        "meanDelta": 0.071,
+        "litDelta": 0.167
       },
       "subjectChanged": true
     },
@@ -297,7 +309,7 @@
       "file": "13_finder_prompt.png",
       "status": "captured",
       "threshold": 0.995,
-      "ssim": 0.991371,
+      "ssim": 0.973144,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -306,21 +318,23 @@
           "peakLum": 0.9063
         },
         "prev": {
-          "litPixels": 100335,
-          "meanLum": 0.4752,
+          "litPixels": 103654,
+          "meanLum": 0.4735,
           "peakLum": 0.9063
         },
         "peakDelta": 0,
-        "meanDelta": 0.009,
-        "litDelta": 0.053
-      }
+        "meanDelta": 0.013,
+        "litDelta": 0.019
+      },
+      "whatChanged": "capture script changed (51e64503fb0a6434 -> 904c8c79130e761a); demonstrates now: \"the finder prompt export, preamble and position records together\"",
+      "substantive": true
     },
     {
       "id": "14",
       "file": "14_finder_review.png",
       "status": "captured",
       "threshold": 0.995,
-      "ssim": 0.958273,
+      "ssim": 0.798609,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -329,14 +343,17 @@
           "peakLum": 1
         },
         "prev": {
-          "litPixels": 147149,
-          "meanLum": 0.4896,
-          "peakLum": 1
+          "litPixels": 116356,
+          "meanLum": 0.467,
+          "peakLum": 0.9713
         },
-        "peakDelta": 0,
-        "meanDelta": 0.014,
-        "litDelta": 0.002
-      }
+        "peakDelta": 0.03,
+        "meanDelta": 0.063,
+        "litDelta": 0.262
+      },
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (5b51c1c6176689d9 -> 5bbeba039b3db20a); demonstrates now: \"the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch\"",
+      "substantive": true
     },
     {
       "id": "15",
@@ -415,9 +432,9 @@
       },
       "bytes": {
         "cur": 11007460,
-        "prev": 6482250
+        "prev": 6897637
       },
-      "bitrateDelta": 0.698,
+      "bitrateDelta": 0.596,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -453,9 +470,9 @@
       },
       "bytes": {
         "cur": 5165843,
-        "prev": 5048435
+        "prev": 3231161
       },
-      "bitrateDelta": 0.023,
+      "bitrateDelta": 0.599,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -472,7 +489,9 @@
         "meanDelta": 0.045,
         "litDelta": 0.552
       },
-      "subjectChanged": true
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (de9c3f5fd1bb2ad6 -> a60024ab92924687); demonstrates now: \"search fly-to in motion: whole-map framing to one hit of several, then on to the next\"",
+      "substantive": true
     },
     {
       "id": "19",
@@ -483,7 +502,7 @@
       "ssim": 0.800818,
       "seconds": {
         "cur": 23,
-        "prev": 23
+        "prev": 18
       },
       "fps": {
         "cur": "30/1",
@@ -491,9 +510,9 @@
       },
       "bytes": {
         "cur": 3142820,
-        "prev": 3032178
+        "prev": 384498
       },
-      "bitrateDelta": 0.036,
+      "bitrateDelta": 7.174,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -510,7 +529,9 @@
         "meanDelta": 0.238,
         "litDelta": 0.956
       },
-      "subjectChanged": true
+      "subjectChanged": true,
+      "whatChanged": "demonstrates: \"the capture-place arc in motion: compose, holding, drag out, stays put\" -> \"the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put\"; capture script changed (47efb38d7233c683 -> 8f6ace6323401f42); demonstrates now: \"the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put\"",
+      "substantive": true
     },
     {
       "id": "20",
@@ -529,9 +550,9 @@
       },
       "bytes": {
         "cur": 632206,
-        "prev": 634698
+        "prev": 614905
       },
-      "bitrateDelta": -0.004,
+      "bitrateDelta": 0.028,
       "verdict": "changed",
       "subject": {
         "cur": {
@@ -558,17 +579,22 @@
     "identical": true
   },
   "summary": {
-    "unchanged": 7,
-    "changed": 13,
+    "unchanged": 2,
+    "changed": 18,
     "new": 0,
     "missing": 0,
     "uncomparable": 0,
     "total": 20,
     "changedIds": [
+      "02",
+      "03",
+      "04",
       "05",
+      "06",
       "07",
       "08",
       "09",
+      "10",
       "11",
       "12",
       "13",
@@ -581,6 +607,14 @@
     ],
     "missingIds": [],
     "uncomparableIds": [],
-    "substantiveIds": []
+    "substantiveIds": [
+      "03",
+      "06",
+      "10",
+      "13",
+      "14",
+      "18",
+      "19"
+    ]
   }
 }
