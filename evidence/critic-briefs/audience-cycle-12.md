@@ -79,7 +79,7 @@ and label it **improved**, **unchanged** or **regressed**.
 - **04** `04_mind_expansion.png` — Mind expansion: the entire 100+ node map on screen at once and legible
   - file: /home/user/Master-Mind/evidence/cycles/cycle-12/04_mind_expansion.png
 - **05** `05_hand_tracking.png` — Hand tracking live: a webcam frame with a detected hand and its recognised pose overlaid, alongside mind expansion showing that pose's operation taking effect, plus the toggle and live status
-  - file: NOT PRESENT
+  - file: /home/user/Master-Mind/evidence/cycles/cycle-12/05_hand_tracking.png
 - **06** `06_holding_cluster.png` — Holding cluster in the shared 3D space with unplaced nodes waiting and the waiting count glanceable
   - file: /home/user/Master-Mind/evidence/cycles/cycle-12/06_holding_cluster.png
 - **07** `07_five_node_states.png` — Five node states staged: unplaced, selected, connected-to-selection, search-hit and plain coexisting and individually distinguishable at a glance
@@ -97,7 +97,7 @@ and label it **improved**, **unchanged** or **regressed**.
 - **13** `13_finder_prompt.png` — Finder prompt export: the generated paste-ready prompt showing the map JSON including node positions, plus instructions
   - file: /home/user/Master-Mind/evidence/cycles/cycle-12/13_finder_prompt.png
 - **14** `14_finder_review.png` — Finder review: the review UI in mind expansion with a staged suggestion presented for accept or reject, and a rejected instance leaving no trace
-  - file: NOT PRESENT
+  - file: /home/user/Master-Mind/evidence/cycles/cycle-12/14_finder_review.png
 - **15** `15_settings_gestures.png` — Settings: hand-tracking toggle with live status, account sign-in, sync status, and the in-app reference listing every touch and hand gesture with its operation
   - file: /home/user/Master-Mind/evidence/cycles/cycle-12/15_settings_gestures.png
 - **16** `16_touch_vocabulary.mp4` — VIDEO. All Android touch gestures in sequence with on-screen labels, each a visibly different operation spanning capture, placement, connection, selection and navigation. Minimum 5 gestures, 1920x1080, 24fps, 30s

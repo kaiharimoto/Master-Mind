@@ -2,7 +2,7 @@
   "cycle": 12,
   "previousCycle": 11,
   "previousCycleSource": "derived from the snapshot directory being diffed",
-  "capturedNow": 15,
+  "capturedNow": 20,
   "capturedPrev": 20,
   "capturedPrevSource": "artifact files actually present in the previous snapshot",
   "previousManifestSelfReport": {
@@ -12,30 +12,36 @@
   "headerDisagreement": null,
   "rowsVsCapturedPrev": "ok",
   "notes": [
-    "03 03_hero_ar_coldstart.png: RECIPE CHANGED — capture script changed (e7fe41560af4b8c2 -> 579de90676ea0ddb); demonstrates: unchanged — not a like-for-like recapture",
+    "03 03_hero_ar_coldstart.png: RECIPE CHANGED — capture script changed (e7fe41560af4b8c2 -> 9fd1fb456beeaa7c); demonstrates: unchanged — not a like-for-like recapture",
+    "05 05_hand_tracking.png: RECIPE CHANGED — capture script changed (bfbd59fe83cedb03 -> 9a1f508a274dd29b); demonstrates: unchanged — not a like-for-like recapture",
     "07 07_five_node_states.png: RECIPE CHANGED — capture script changed (6e5e6422b8ed0a2a -> dd265abdc8c01ca5); demonstrates: unchanged — not a like-for-like recapture",
-    "17 17_hand_vocabulary.mp4: RECIPE CHANGED — capture script changed (269d3aff2a2dd9b9 -> ca8f3d1d991a92e1); demonstrates: unchanged — not a like-for-like recapture",
-    "20 20_finder_roundtrip.mp4: RECIPE CHANGED — capture script changed (dd8867f00542f2cc -> d330c0cced08a982); demonstrates: unchanged — not a like-for-like recapture",
+    "14 14_finder_review.png: RECIPE CHANGED — capture script changed (fef3cb770ce05bd0 -> 6eef1bb7a5f4aa9b); demonstrates: unchanged — not a like-for-like recapture",
+    "16 16_touch_vocabulary.mp4: RECIPE CHANGED — capture script changed (cd01c1b5a2319bda -> 6fd8acbcaabc26b4); demonstrates: unchanged — not a like-for-like recapture",
+    "17 17_hand_vocabulary.mp4: RECIPE CHANGED — capture script changed (269d3aff2a2dd9b9 -> d38003b65a7d9754); demonstrates: unchanged — not a like-for-like recapture",
+    "20 20_finder_roundtrip.mp4: RECIPE CHANGED — capture script changed (dd8867f00542f2cc -> 0f2a16b7aa58bb03); demonstrates: unchanged — not a like-for-like recapture",
     "02 02_canvas_large_map.png: output moved materially: ssim 0.928 is 0.062 below its 0.99 threshold — inspect",
     "04 04_mind_expansion.png: output moved materially: ssim 0.916 is 0.074 below its 0.99 threshold — inspect",
-    "12 12_sync_twin_after.png: output moved materially: ssim 0.821 is 0.169 below its 0.99 threshold — inspect",
+    "12 12_sync_twin_after.png: output moved materially: ssim 0.814 is 0.176 below its 0.99 threshold — inspect",
     "17 17_hand_vocabulary.mp4: CLAIM REMOVED — clusterMoved; added captionNeverOutrunsTheDetector, clusterArrangementPreservedByPose, clusterMovedByMouse, clusterMovedByPose, mapReturnedToItsStartingLayout, undoStackEmptiedOnCamera — a machine-checked assertion that used to hold is no longer being made",
     "02 02_canvas_large_map.png: claims added — everyChromeBadgeInsideTheFrame, noTwoChromePanelsOverlap",
     "03 03_hero_ar_coldstart.png: claims added — travelScaleDescribesTheDrawnPanel",
     "04 04_mind_expansion.png: claims added — everyChromeBadgeInsideTheFrame, noTwoChromePanelsOverlap",
+    "05 05_hand_tracking.png: claims added — chipPromisesNoLegibilityItCannotDeliver",
     "06 06_holding_cluster.png: claims added — everyChromeBadgeInsideTheFrame, noTwoChromePanelsOverlap",
     "07 07_five_node_states.png: claims added — everyChromeBadgeInsideTheFrame, noTwoChromePanelsOverlap",
     "11 11_sync_twin_before.png: claims added — eachPanelNamesItsRasteriser, panelRuntimesDiffer, twoDistinctSockets",
     "12 12_sync_twin_after.png: claims added — clusterDisplacementVisibleInPixels, printedShaMatchesRenderedState",
-    "20 20_finder_roundtrip.mp4: claims added — clipboardCarriesTheExportedPrompt",
+    "14 14_finder_review.png: claims added — detailHeadingsFitTheirColumns",
+    "16 16_touch_vocabulary.mp4: claims added — devicePortraitAsInTheHero, marginReferenceFitsItsColumn",
+    "20 20_finder_roundtrip.mp4: claims added — bigMapNothingAppliedWhileStaged, clipboardCarriesTheExportedPrompt, roundTripShownAt150Nodes",
     "08 08_placement_endstate.png: ssim 0.9430 is below its 0.985 threshold — inspect",
     "09 09_connect_edit.png: ssim 0.9615 is below its 0.985 threshold — inspect",
-    "10 10_search_flyto_end.png: ssim 0.9515 is below its 0.99 threshold — inspect",
+    "10 10_search_flyto_end.png: ssim 0.9514 is below its 0.99 threshold — inspect",
     "13 13_finder_prompt.png: ssim 0.9846 is below its 0.995 threshold — inspect",
     "15 15_settings_gestures.png: ssim 0.9811 is below its 0.995 threshold and the lit subject moved — inspect",
     "18 18_search_flyto.mp4: ssim 0.9243 is below its 0.94 threshold — inspect",
     "19 19_capture_place_arc.mp4: ssim 0.9100 is below its 0.93 threshold — inspect",
-    "01 01_maps_home.png: BYTE-IDENTICAL to the previous cycle (sha 2c8ae64ea1ff) — recaptured at 2026-09-06T07:29:41.124Z, so this is determinism, not a copy"
+    "01 01_maps_home.png: BYTE-IDENTICAL to the previous cycle (sha 2c8ae64ea1ff) — recaptured at 2026-09-06T09:17:22.091Z, so this is determinism, not a copy"
   ],
   "rows": [
     {
@@ -45,7 +51,7 @@
       "threshold": 0.995,
       "sha256": "2c8ae64ea1ff",
       "identicalBytes": true,
-      "capturedAt": "2026-09-06T07:29:41.124Z",
+      "capturedAt": "2026-09-06T09:17:22.091Z",
       "ssim": 1,
       "verdict": "unchanged",
       "subject": {
@@ -110,15 +116,15 @@
     {
       "id": "03",
       "file": "03_hero_ar_coldstart.png",
-      "status": "claim-not-met",
+      "status": "captured",
       "threshold": 0.99,
-      "sha256": "236b699a7dd4",
-      "ssim": 0.937742,
+      "sha256": "f6f8d2af0e91",
+      "ssim": 0.938512,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 147035,
-          "meanLum": 0.4633,
+          "litPixels": 146044,
+          "meanLum": 0.4625,
           "peakLum": 1
         },
         "prev": {
@@ -127,12 +133,12 @@
           "peakLum": 1
         },
         "peakDelta": 0,
-        "meanDelta": 0.004,
-        "litDelta": 0.024
+        "meanDelta": 0.002,
+        "litDelta": 0.017
       },
       "onFrameChanged": [
-        "labelsHidden 74 -> 52",
-        "labelsShortened 16 -> 11"
+        "labelsHidden 74 -> 54",
+        "labelsShortened 16 -> 10"
       ],
       "claims": {
         "added": [
@@ -144,7 +150,7 @@
       },
       "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
       "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (e7fe41560af4b8c2 -> 579de90676ea0ddb); demonstrates: unchanged",
+      "whatChanged": "capture script changed (e7fe41560af4b8c2 -> 9fd1fb456beeaa7c); demonstrates: unchanged",
       "recipeChanged": true,
       "substantive": true
     },
@@ -192,9 +198,39 @@
     {
       "id": "05",
       "file": "05_hand_tracking.png",
-      "status": "driver-error",
+      "status": "captured",
       "threshold": 0.94,
-      "verdict": "missing"
+      "sha256": "f5752224f245",
+      "ssim": 0.621915,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 257659,
+          "meanLum": 0.4109,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 266318,
+          "meanLum": 0.4218,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.026,
+        "litDelta": 0.033
+      },
+      "claims": {
+        "added": [
+          "chipPromisesNoLegibilityItCannotDeliver"
+        ],
+        "removed": [],
+        "before": 4,
+        "after": 5
+      },
+      "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (bfbd59fe83cedb03 -> 9a1f508a274dd29b); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
     },
     {
       "id": "06",
@@ -330,13 +366,13 @@
       "file": "10_search_flyto_end.png",
       "status": "captured",
       "threshold": 0.99,
-      "sha256": "5daf9361e971",
-      "ssim": 0.951502,
+      "sha256": "b083a45014ee",
+      "ssim": 0.951438,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 81343,
-          "meanLum": 0.5141,
+          "litPixels": 81328,
+          "meanLum": 0.514,
           "peakLum": 0.9063
         },
         "prev": {
@@ -392,15 +428,15 @@
     {
       "id": "12",
       "file": "12_sync_twin_after.png",
-      "status": "claim-not-met",
+      "status": "captured",
       "threshold": 0.99,
-      "sha256": "354edef61e6e",
-      "ssim": 0.821143,
+      "sha256": "78a86c5af595",
+      "ssim": 0.81393,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 225854,
-          "meanLum": 0.4692,
+          "litPixels": 228268,
+          "meanLum": 0.4691,
           "peakLum": 1
         },
         "prev": {
@@ -409,8 +445,8 @@
           "peakLum": 1
         },
         "peakDelta": 0,
-        "meanDelta": 0.003,
-        "litDelta": 0.029
+        "meanDelta": 0.002,
+        "litDelta": 0.018
       },
       "claims": {
         "added": [
@@ -423,7 +459,7 @@
       },
       "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
       "substantive": true,
-      "whatChanged": "output moved materially: ssim 0.821 is 0.169 below its 0.99 threshold — inspect"
+      "whatChanged": "output moved materially: ssim 0.814 is 0.176 below its 0.99 threshold — inspect"
     },
     {
       "id": "13",
@@ -454,9 +490,39 @@
     {
       "id": "14",
       "file": "14_finder_review.png",
-      "status": "driver-error",
+      "status": "captured",
       "threshold": 0.995,
-      "verdict": "missing"
+      "sha256": "fdd5a048d148",
+      "ssim": 0.966179,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 154270,
+          "meanLum": 0.4893,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 153837,
+          "meanLum": 0.5005,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.022,
+        "litDelta": 0.003
+      },
+      "claims": {
+        "added": [
+          "detailHeadingsFitTheirColumns"
+        ],
+        "removed": [],
+        "before": 8,
+        "after": 9
+      },
+      "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (fef3cb770ce05bd0 -> 6eef1bb7a5f4aa9b); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
     },
     {
       "id": "15",
@@ -491,8 +557,8 @@
       "status": "captured",
       "threshold": 0.93,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "sha256": "222e5863b1bd",
-      "ssim": 0.977647,
+      "sha256": "ad54d778547d",
+      "ssim": 0.819291,
       "seconds": {
         "cur": 34,
         "prev": 34
@@ -502,16 +568,16 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 1877454,
+        "cur": 1338644,
         "prev": 1830894
       },
-      "bitrateDelta": 0.025,
-      "verdict": "unchanged",
+      "bitrateDelta": -0.269,
+      "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 286991,
-          "meanLum": 0.4212,
-          "peakLum": 0.9909
+          "litPixels": 285161,
+          "meanLum": 0.3612,
+          "peakLum": 0.99
         },
         "prev": {
           "litPixels": 284167,
@@ -519,20 +585,33 @@
           "peakLum": 0.9914
         },
         "peakDelta": 0.001,
-        "meanDelta": 0.011,
-        "litDelta": 0.01
+        "meanDelta": 0.152,
+        "litDelta": 0.003
+      },
+      "subjectChanged": true,
+      "claims": {
+        "added": [
+          "devicePortraitAsInTheHero",
+          "marginReferenceFitsItsColumn"
+        ],
+        "removed": [],
+        "before": 3,
+        "after": 5
       },
       "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
-      "substantive": false
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (cd01c1b5a2319bda -> 6fd8acbcaabc26b4); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
     },
     {
       "id": "17",
       "file": "17_hand_vocabulary.mp4",
-      "status": "claim-not-met",
+      "status": "captured",
       "threshold": 0.9,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "sha256": "bbb0b3e34750",
-      "ssim": 0.831473,
+      "sha256": "6df3c94d72d3",
+      "ssim": 0.823034,
       "seconds": {
         "cur": 41,
         "prev": 41
@@ -542,25 +621,25 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 7194446,
+        "cur": 7428733,
         "prev": 6622457
       },
-      "bitrateDelta": 0.086,
+      "bitrateDelta": 0.122,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 769295,
-          "meanLum": 0.3669,
-          "peakLum": 0.9842
+          "litPixels": 782494,
+          "meanLum": 0.3676,
+          "peakLum": 0.9859
         },
         "prev": {
           "litPixels": 765359,
           "meanLum": 0.3677,
           "peakLum": 0.9911
         },
-        "peakDelta": 0.007,
-        "meanDelta": 0.002,
-        "litDelta": 0.005
+        "peakDelta": 0.005,
+        "meanDelta": 0,
+        "litDelta": 0.022
       },
       "claims": {
         "added": [
@@ -583,7 +662,7 @@
       "substantiveClaimChange": true,
       "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
       "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (269d3aff2a2dd9b9 -> ca8f3d1d991a92e1); demonstrates: unchanged",
+      "whatChanged": "capture script changed (269d3aff2a2dd9b9 -> d38003b65a7d9754); demonstrates: unchanged",
       "recipeChanged": true,
       "substantive": true
     },
@@ -593,8 +672,8 @@
       "status": "captured",
       "threshold": 0.94,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "sha256": "62712129b2c0",
-      "ssim": 0.924282,
+      "sha256": "42bb90e05108",
+      "ssim": 0.924284,
       "seconds": {
         "cur": 13,
         "prev": 13
@@ -604,23 +683,23 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 2940285,
+        "cur": 2942070,
         "prev": 2903148
       },
       "bitrateDelta": 0.013,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 523661,
-          "meanLum": 0.3814,
-          "peakLum": 0.9773
+          "litPixels": 523739,
+          "meanLum": 0.3813,
+          "peakLum": 0.9804
         },
         "prev": {
           "litPixels": 530736,
           "meanLum": 0.3856,
           "peakLum": 0.9904
         },
-        "peakDelta": 0.013,
+        "peakDelta": 0.01,
         "meanDelta": 0.011,
         "litDelta": 0.013
       },
@@ -633,8 +712,8 @@
       "status": "captured",
       "threshold": 0.93,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "sha256": "87da8770c78b",
-      "ssim": 0.909982,
+      "sha256": "b358ef09cbdf",
+      "ssim": 0.909976,
       "seconds": {
         "cur": 23,
         "prev": 23
@@ -644,24 +723,24 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 2096034,
+        "cur": 2095996,
         "prev": 2037766
       },
       "bitrateDelta": 0.029,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 481513,
-          "meanLum": 0.3719,
-          "peakLum": 0.9801
+          "litPixels": 481528,
+          "meanLum": 0.3718,
+          "peakLum": 0.9813
         },
         "prev": {
           "litPixels": 494159,
           "meanLum": 0.3743,
           "peakLum": 0.9709
         },
-        "peakDelta": 0.009,
-        "meanDelta": 0.006,
+        "peakDelta": 0.011,
+        "meanDelta": 0.007,
         "litDelta": 0.026
       },
       "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
@@ -673,10 +752,10 @@
       "status": "captured",
       "threshold": 0.95,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "sha256": "a9dc9167e4b9",
-      "ssim": 0.993244,
+      "sha256": "cd7c016d37ab",
+      "ssim": 0.925601,
       "seconds": {
-        "cur": 30,
+        "cur": 41,
         "prev": 30
       },
       "fps": {
@@ -684,40 +763,42 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 668971,
+        "cur": 1173736,
         "prev": 647178
       },
-      "bitrateDelta": 0.034,
-      "verdict": "unchanged",
+      "bitrateDelta": 0.814,
+      "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 433866,
-          "meanLum": 0.4229,
-          "peakLum": 0.9656
+          "litPixels": 486621,
+          "meanLum": 0.4028,
+          "peakLum": 0.9859
         },
         "prev": {
           "litPixels": 429953,
           "meanLum": 0.4219,
           "peakLum": 0.9656
         },
-        "peakDelta": 0,
-        "meanDelta": 0.002,
-        "litDelta": 0.009
+        "peakDelta": 0.021,
+        "meanDelta": 0.045,
+        "litDelta": 0.132
       },
+      "subjectChanged": true,
       "claims": {
         "added": [
-          "clipboardCarriesTheExportedPrompt"
+          "bigMapNothingAppliedWhileStaged",
+          "clipboardCarriesTheExportedPrompt",
+          "roundTripShownAt150Nodes"
         ],
         "removed": [],
         "before": 4,
-        "after": 5
+        "after": 7
       },
       "claimRulesUncomparable": "the previous set carries no claim-rule fingerprints",
       "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (dd8867f00542f2cc -> d330c0cced08a982); demonstrates: unchanged",
-      "recipeChanged": false,
-      "why": "recipe reworded, output unchanged",
-      "substantive": false
+      "whatChanged": "capture script changed (dd8867f00542f2cc -> 0f2a16b7aa58bb03); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
     }
   ],
   "positions": {
@@ -729,16 +810,17 @@
     "what": "the committed ledger after each capture wrote back — not a runtime drift measure; runtime stillness is evidenced by the idle windows in artifacts 16, 17, 19 and 20"
   },
   "summary": {
-    "unchanged": 3,
-    "changed": 15,
+    "unchanged": 1,
+    "changed": 19,
     "new": 0,
-    "missing": 2,
+    "missing": 0,
     "uncomparable": 0,
     "total": 20,
     "changedIds": [
       "02",
       "03",
       "04",
+      "05",
       "06",
       "07",
       "08",
@@ -747,28 +829,35 @@
       "11",
       "12",
       "13",
+      "14",
       "15",
+      "16",
       "17",
       "18",
-      "19"
+      "19",
+      "20"
     ],
-    "missingIds": [
-      "05",
-      "14"
-    ],
+    "missingIds": [],
     "uncomparableIds": [],
     "substantiveIds": [
       "02",
       "03",
       "04",
+      "05",
       "07",
       "11",
       "12",
-      "17"
+      "14",
+      "16",
+      "17",
+      "20"
     ],
     "recipeChangedIds": [
       "03",
+      "05",
       "07",
+      "14",
+      "16",
       "17",
       "20"
     ],
@@ -776,10 +865,13 @@
       "02",
       "03",
       "04",
+      "05",
       "06",
       "07",
       "11",
       "12",
+      "14",
+      "16",
       "17",
       "20"
     ],
@@ -790,6 +882,7 @@
       "02",
       "03",
       "04",
+      "05",
       "06",
       "07",
       "08",
@@ -798,10 +891,13 @@
       "11",
       "12",
       "13",
+      "14",
       "15",
+      "16",
       "17",
       "18",
-      "19"
+      "19",
+      "20"
     ]
   }
 }
