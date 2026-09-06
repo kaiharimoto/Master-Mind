@@ -6,11 +6,28 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T08:18:10.788Z",
+  "lastRunAt": "2026-09-06T08:20:05.859Z",
   "lastRunCaptured": [
+    "01",
+    "02",
+    "03",
+    "04",
     "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
     "11",
-    "12"
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
   ],
   "artifacts": [
     {
@@ -82,7 +99,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "e97c2524c7397c53",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "listedCountsMatchTheModel": "b5bea41b6c62",
           "mapsAfterDelete": "ee189345aa72",
@@ -91,8 +108,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:29:41.124Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:08.710Z"
     },
     {
       "id": "02",
@@ -100,7 +117,7 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.1,
+      "seconds": 1.9,
       "status": "captured",
       "error": null,
       "check": {
@@ -230,7 +247,7 @@
           ]
         },
         "cameraPinned": true,
-        "arbiterSeq": 6,
+        "arbiterSeq": 5,
         "labelsAudited": 69,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Mesophilic vs thermophilic",
@@ -323,12 +340,635 @@
           "invisible": 0,
           "worstContrast": 2.99,
           "invisibleIds": [],
-          "weakest": []
+          "weakest": [],
+          "rows": [
+            {
+              "id": "n0433ea1e7e",
+              "x": 1133,
+              "y": 592,
+              "r": 14.4,
+              "peak": 0.2802,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "n12900c3690",
+              "x": 1378,
+              "y": 322,
+              "r": 14.4,
+              "peak": 0.2754,
+              "ground": 0.0574,
+              "contrast": 3.03
+            },
+            {
+              "id": "n191b9e1952",
+              "x": 1327,
+              "y": 286,
+              "r": 14.4,
+              "peak": 0.4067,
+              "ground": 0.0574,
+              "contrast": 4.25
+            },
+            {
+              "id": "n1aba7a1979",
+              "x": 1106,
+              "y": 453,
+              "r": 14.4,
+              "peak": 0.3098,
+              "ground": 0.0574,
+              "contrast": 3.35
+            },
+            {
+              "id": "n1ada6cb3e2",
+              "x": 780,
+              "y": 895,
+              "r": 14.4,
+              "peak": 0.5847,
+              "ground": 0.0574,
+              "contrast": 5.91
+            },
+            {
+              "id": "n1ba5874893",
+              "x": 1133,
+              "y": 658,
+              "r": 14.4,
+              "peak": 0.2815,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
+              "id": "n1c35c6c62f",
+              "x": 883,
+              "y": 698,
+              "r": 14.4,
+              "peak": 0.2734,
+              "ground": 0.0574,
+              "contrast": 3.01
+            },
+            {
+              "id": "n1d49087545",
+              "x": 685,
+              "y": 582,
+              "r": 14.4,
+              "peak": 0.2745,
+              "ground": 0.0574,
+              "contrast": 3.02
+            },
+            {
+              "id": "n20cb5b490f",
+              "x": 723,
+              "y": 436,
+              "r": 14.4,
+              "peak": 0.272,
+              "ground": 0.0574,
+              "contrast": 3
+            },
+            {
+              "id": "n2570828592",
+              "x": 676,
+              "y": 262,
+              "r": 14.4,
+              "peak": 0.2765,
+              "ground": 0.0574,
+              "contrast": 3.04
+            },
+            {
+              "id": "n28348ea4f1",
+              "x": 1103,
+              "y": 189,
+              "r": 14.4,
+              "peak": 0.2753,
+              "ground": 0.0574,
+              "contrast": 3.03
+            },
+            {
+              "id": "n28b9263cd2",
+              "x": 1155,
+              "y": 622,
+              "r": 14.4,
+              "peak": 0.2809,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "n2a2ac6dd57",
+              "x": 747,
+              "y": 897,
+              "r": 14.4,
+              "peak": 0.5858,
+              "ground": 0.0574,
+              "contrast": 5.92
+            },
+            {
+              "id": "n2eac7c2b16",
+              "x": 1324,
+              "y": 352,
+              "r": 14.4,
+              "peak": 0.2762,
+              "ground": 0.0574,
+              "contrast": 3.04
+            },
+            {
+              "id": "n344b78a9bd",
+              "x": 842,
+              "y": 569,
+              "r": 14.4,
+              "peak": 0.2803,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "n354196ac48",
+              "x": 890,
+              "y": 677,
+              "r": 14.4,
+              "peak": 0.2728,
+              "ground": 0.0574,
+              "contrast": 3.01
+            },
+            {
+              "id": "n356aeca57a",
+              "x": 1058,
+              "y": 311,
+              "r": 14.4,
+              "peak": 0.5433,
+              "ground": 0.0574,
+              "contrast": 5.53
+            },
+            {
+              "id": "n36627f75c9",
+              "x": 641,
+              "y": 602,
+              "r": 14.4,
+              "peak": 0.2773,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "n380afc9e85",
+              "x": 800,
+              "y": 920,
+              "r": 14.4,
+              "peak": 0.6127,
+              "ground": 0.0574,
+              "contrast": 6.17
+            },
+            {
+              "id": "n383f10ab25",
+              "x": 1067,
+              "y": 426,
+              "r": 14.4,
+              "peak": 0.2755,
+              "ground": 0.0574,
+              "contrast": 3.03
+            },
+            {
+              "id": "n3a2b198a84",
+              "x": 690,
+              "y": 345,
+              "r": 14.4,
+              "peak": 0.2768,
+              "ground": 0.0574,
+              "contrast": 3.04
+            },
+            {
+              "id": "n3ad7401001",
+              "x": 1030,
+              "y": 247,
+              "r": 14.4,
+              "peak": 0.2817,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
+              "id": "n3e0d08c741",
+              "x": 1101,
+              "y": 375,
+              "r": 14.4,
+              "peak": 0.2774,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "n3eba301186",
+              "x": 1344,
+              "y": 353,
+              "r": 14.4,
+              "peak": 0.274,
+              "ground": 0.0574,
+              "contrast": 3.02
+            },
+            {
+              "id": "n4163afee7d",
+              "x": 880,
+              "y": 720,
+              "r": 14.4,
+              "peak": 0.3056,
+              "ground": 0.0574,
+              "contrast": 3.31
+            },
+            {
+              "id": "n48e5dd13da",
+              "x": 1035,
+              "y": 165,
+              "r": 14.4,
+              "peak": 0.2756,
+              "ground": 0.0574,
+              "contrast": 3.03
+            },
+            {
+              "id": "n49831ccd16",
+              "x": 660,
+              "y": 226,
+              "r": 14.4,
+              "peak": 0.277,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "n4fd66d29cd",
+              "x": 809,
+              "y": 893,
+              "r": 14.4,
+              "peak": 0.5819,
+              "ground": 0.0574,
+              "contrast": 5.88
+            },
+            {
+              "id": "n523c38191a",
+              "x": 686,
+              "y": 651,
+              "r": 14.4,
+              "peak": 0.2778,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "n5630d9df9f",
+              "x": 1214,
+              "y": 645,
+              "r": 14.4,
+              "peak": 0.2826,
+              "ground": 0.0574,
+              "contrast": 3.1
+            },
+            {
+              "id": "n5880a05cab",
+              "x": 1040,
+              "y": 426,
+              "r": 14.4,
+              "peak": 0.2773,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "n5b46c6f107",
+              "x": 801,
+              "y": 542,
+              "r": 14.4,
+              "peak": 0.2803,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "n5daeac7b96",
+              "x": 1065,
+              "y": 417,
+              "r": 14.4,
+              "peak": 0.2755,
+              "ground": 0.0574,
+              "contrast": 3.03
+            },
+            {
+              "id": "n60673e585a",
+              "x": 647,
+              "y": 320,
+              "r": 14.4,
+              "peak": 0.5873,
+              "ground": 0.0574,
+              "contrast": 5.93
+            },
+            {
+              "id": "n618ee08ab3",
+              "x": 1036,
+              "y": 416,
+              "r": 14.4,
+              "peak": 0.2773,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "n633fb7a959",
+              "x": 692,
+              "y": 562,
+              "r": 14.4,
+              "peak": 0.2742,
+              "ground": 0.0574,
+              "contrast": 3.02
+            },
+            {
+              "id": "n69344565b8",
+              "x": 757,
+              "y": 490,
+              "r": 14.4,
+              "peak": 0.2813,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "n703e3384c3",
+              "x": 1330,
+              "y": 280,
+              "r": 14.4,
+              "peak": 0.2762,
+              "ground": 0.0574,
+              "contrast": 3.04
+            },
+            {
+              "id": "n7091638a5d",
+              "x": 1314,
+              "y": 358,
+              "r": 14.4,
+              "peak": 0.2865,
+              "ground": 0.0574,
+              "contrast": 3.13
+            },
+            {
+              "id": "n70b3c5270b",
+              "x": 975,
+              "y": 159,
+              "r": 14.4,
+              "peak": 0.2742,
+              "ground": 0.0574,
+              "contrast": 3.02
+            },
+            {
+              "id": "n714166721d",
+              "x": 1104,
+              "y": 435,
+              "r": 14.4,
+              "peak": 0.2955,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "n7448bc2386",
+              "x": 806,
+              "y": 527,
+              "r": 14.4,
+              "peak": 0.2794,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "n75d8f580e5",
+              "x": 667,
+              "y": 405,
+              "r": 14.4,
+              "peak": 0.2732,
+              "ground": 0.0574,
+              "contrast": 3.01
+            },
+            {
+              "id": "n798586ed6b",
+              "x": 832,
+              "y": 909,
+              "r": 14.4,
+              "peak": 0.5665,
+              "ground": 0.0574,
+              "contrast": 5.74
+            },
+            {
+              "id": "n7deb3cc285",
+              "x": 689,
+              "y": 641,
+              "r": 14.4,
+              "peak": 0.2778,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "n7e876747ad",
+              "x": 1171,
+              "y": 670,
+              "r": 14.4,
+              "peak": 0.2793,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "n83224a5de3",
+              "x": 1154,
+              "y": 408,
+              "r": 14.4,
+              "peak": 0.2743,
+              "ground": 0.0574,
+              "contrast": 3.02
+            },
+            {
+              "id": "n85ef9080ea",
+              "x": 1301,
+              "y": 306,
+              "r": 14.4,
+              "peak": 0.2754,
+              "ground": 0.0574,
+              "contrast": 3.03
+            },
+            {
+              "id": "n9a939af75c",
+              "x": 730,
+              "y": 579,
+              "r": 14.4,
+              "peak": 0.2764,
+              "ground": 0.0574,
+              "contrast": 3.04
+            },
+            {
+              "id": "n9aee67caa2",
+              "x": 1217,
+              "y": 583,
+              "r": 14.4,
+              "peak": 0.28,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "na2358b2b07",
+              "x": 825,
+              "y": 933,
+              "r": 14.4,
+              "peak": 0.5772,
+              "ground": 0.0574,
+              "contrast": 5.84
+            },
+            {
+              "id": "na6b4e90f5b",
+              "x": 1100,
+              "y": 245,
+              "r": 14.4,
+              "peak": 0.2809,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "na9606fee1c",
+              "x": 1236,
+              "y": 614,
+              "r": 14.4,
+              "peak": 0.282,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
+              "id": "nba2805e3e1",
+              "x": 869,
+              "y": 537,
+              "r": 14.4,
+              "peak": 0.2802,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "ncaf843cf89",
+              "x": 1159,
+              "y": 584,
+              "r": 14.4,
+              "peak": 0.2793,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "nd682eed70b",
+              "x": 965,
+              "y": 208,
+              "r": 14.4,
+              "peak": 0.2708,
+              "ground": 0.0574,
+              "contrast": 2.99
+            },
+            {
+              "id": "nd960763431",
+              "x": 1153,
+              "y": 648,
+              "r": 14.4,
+              "peak": 0.2801,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "nd9ddb0ca5c",
+              "x": 1135,
+              "y": 265,
+              "r": 14.4,
+              "peak": 0.3021,
+              "ground": 0.0574,
+              "contrast": 3.28
+            },
+            {
+              "id": "ndae1a65514",
+              "x": 770,
+              "y": 656,
+              "r": 14.4,
+              "peak": 0.277,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "ndd346f34ee",
+              "x": 597,
+              "y": 285,
+              "r": 14.4,
+              "peak": 0.2776,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "nddfd2443e1",
+              "x": 1123,
+              "y": 311,
+              "r": 14.4,
+              "peak": 0.282,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
+              "id": "ndebe2ada83",
+              "x": 637,
+              "y": 301,
+              "r": 14.4,
+              "peak": 0.2745,
+              "ground": 0.0574,
+              "contrast": 3.02
+            },
+            {
+              "id": "ne85bc87b03",
+              "x": 916,
+              "y": 491,
+              "r": 14.4,
+              "peak": 0.2809,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "nee0ed92067",
+              "x": 1143,
+              "y": 262,
+              "r": 14.4,
+              "peak": 0.3021,
+              "ground": 0.0574,
+              "contrast": 3.28
+            },
+            {
+              "id": "nef369efdfc",
+              "x": 684,
+              "y": 427,
+              "r": 14.4,
+              "peak": 0.2718,
+              "ground": 0.0574,
+              "contrast": 3
+            },
+            {
+              "id": "nf2bb761959",
+              "x": 739,
+              "y": 926,
+              "r": 14.4,
+              "peak": 0.5665,
+              "ground": 0.0574,
+              "contrast": 5.74
+            },
+            {
+              "id": "nf3603a277e",
+              "x": 1005,
+              "y": 271,
+              "r": 14.4,
+              "peak": 0.2762,
+              "ground": 0.0574,
+              "contrast": 3.04
+            },
+            {
+              "id": "nf53f4946cf",
+              "x": 595,
+              "y": 296,
+              "r": 14.4,
+              "peak": 0.2776,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
+            {
+              "id": "nf96342762b",
+              "x": 724,
+              "y": 426,
+              "r": 14.4,
+              "peak": 0.2743,
+              "ground": 0.0574,
+              "contrast": 3.02
+            }
+          ]
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 6,
-        "arbiterSeqAtAudit": 6,
+        "arbiterSeqAtShot": 5,
+        "arbiterSeqAtAudit": 5,
         "auditDescribesTheShippedFrame": true
       },
       "pageErrors": [],
@@ -340,7 +980,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "73b7deb0e7bd2172",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -357,8 +997,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:29:42.879Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:10.323Z"
     },
     {
       "id": "03",
@@ -366,7 +1006,7 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3.2,
+      "seconds": 3.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -515,7 +1155,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "9fd1fb456beeaa7c",
-        "appSha": "f399ca71f9cb51a5",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "gyroDroveTheView": "b5bea41b6c62",
           "positionsUnchangedBetweenPanels": "b5bea41b6c62",
@@ -526,8 +1166,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:54:27.745Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:13.713Z"
     },
     {
       "id": "04",
@@ -535,7 +1175,7 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.4,
+      "seconds": 2.5,
       "status": "captured",
       "error": null,
       "check": {
@@ -784,7 +1424,738 @@
           "invisible": 0,
           "worstContrast": 3.15,
           "invisibleIds": [],
-          "weakest": []
+          "weakest": [],
+          "rows": [
+            {
+              "id": "n030f3bec38",
+              "x": 1068,
+              "y": 254,
+              "r": 14.4,
+              "peak": 0.2968,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "n0433ea1e7e",
+              "x": 1157,
+              "y": 585,
+              "r": 14.4,
+              "peak": 0.2962,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "n12900c3690",
+              "x": 1379,
+              "y": 309,
+              "r": 14.4,
+              "peak": 0.4562,
+              "ground": 0.0574,
+              "contrast": 4.71
+            },
+            {
+              "id": "n191b9e1952",
+              "x": 1324,
+              "y": 274,
+              "r": 14.4,
+              "peak": 0.8274,
+              "ground": 0.0574,
+              "contrast": 8.17
+            },
+            {
+              "id": "n1aba7a1979",
+              "x": 1114,
+              "y": 444,
+              "r": 14.4,
+              "peak": 0.8029,
+              "ground": 0.0574,
+              "contrast": 7.94
+            },
+            {
+              "id": "n1ada6cb3e2",
+              "x": 776,
+              "y": 934,
+              "r": 14.4,
+              "peak": 0.5741,
+              "ground": 0.0574,
+              "contrast": 5.81
+            },
+            {
+              "id": "n1ba5874893",
+              "x": 1156,
+              "y": 655,
+              "r": 14.4,
+              "peak": 0.2947,
+              "ground": 0.0574,
+              "contrast": 3.21
+            },
+            {
+              "id": "n1c35c6c62f",
+              "x": 871,
+              "y": 717,
+              "r": 14.4,
+              "peak": 0.2933,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "n1d49087545",
+              "x": 657,
+              "y": 593,
+              "r": 14.4,
+              "peak": 0.2927,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n20cb5b490f",
+              "x": 677,
+              "y": 437,
+              "r": 14.4,
+              "peak": 0.6148,
+              "ground": 0.0574,
+              "contrast": 6.19
+            },
+            {
+              "id": "n2570828592",
+              "x": 646,
+              "y": 242,
+              "r": 14.4,
+              "peak": 0.2925,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n28348ea4f1",
+              "x": 1094,
+              "y": 172,
+              "r": 14.4,
+              "peak": 0.4562,
+              "ground": 0.0574,
+              "contrast": 4.71
+            },
+            {
+              "id": "n28b9263cd2",
+              "x": 1188,
+              "y": 612,
+              "r": 14.4,
+              "peak": 0.295,
+              "ground": 0.0574,
+              "contrast": 3.21
+            },
+            {
+              "id": "n2a2ac6dd57",
+              "x": 745,
+              "y": 935,
+              "r": 14.4,
+              "peak": 0.6012,
+              "ground": 0.0574,
+              "contrast": 6.06
+            },
+            {
+              "id": "n2eac7c2b16",
+              "x": 1324,
+              "y": 341,
+              "r": 14.4,
+              "peak": 0.7679,
+              "ground": 0.0574,
+              "contrast": 7.62
+            },
+            {
+              "id": "n344b78a9bd",
+              "x": 848,
+              "y": 568,
+              "r": 14.4,
+              "peak": 0.2959,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "n354196ac48",
+              "x": 876,
+              "y": 695,
+              "r": 14.4,
+              "peak": 0.2908,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "n356aeca57a",
+              "x": 1077,
+              "y": 292,
+              "r": 14.4,
+              "peak": 0.2963,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "n36627f75c9",
+              "x": 605,
+              "y": 617,
+              "r": 14.4,
+              "peak": 0.2924,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n380afc9e85",
+              "x": 813,
+              "y": 953,
+              "r": 14.4,
+              "peak": 0.5665,
+              "ground": 0.0574,
+              "contrast": 5.74
+            },
+            {
+              "id": "n383f10ab25",
+              "x": 1069,
+              "y": 418,
+              "r": 14.4,
+              "peak": 0.7965,
+              "ground": 0.0574,
+              "contrast": 7.88
+            },
+            {
+              "id": "n3a2b198a84",
+              "x": 656,
+              "y": 334,
+              "r": 14.4,
+              "peak": 0.2924,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n3ad7401001",
+              "x": 1052,
+              "y": 225,
+              "r": 14.4,
+              "peak": 0.2963,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "n3eba301186",
+              "x": 1342,
+              "y": 342,
+              "r": 14.4,
+              "peak": 0.4687,
+              "ground": 0.0574,
+              "contrast": 4.83
+            },
+            {
+              "id": "n4163afee7d",
+              "x": 864,
+              "y": 743,
+              "r": 14.4,
+              "peak": 0.2907,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "n4233b3d94d",
+              "x": 1182,
+              "y": 205,
+              "r": 14.4,
+              "peak": 0.2968,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "n48e5dd13da",
+              "x": 1029,
+              "y": 145,
+              "r": 14.4,
+              "peak": 0.4562,
+              "ground": 0.0574,
+              "contrast": 4.71
+            },
+            {
+              "id": "n49831ccd16",
+              "x": 624,
+              "y": 204,
+              "r": 14.4,
+              "peak": 0.293,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n4aa49b7057",
+              "x": 1019,
+              "y": 150,
+              "r": 14.4,
+              "peak": 0.4562,
+              "ground": 0.0574,
+              "contrast": 4.71
+            },
+            {
+              "id": "n4fd66d29cd",
+              "x": 811,
+              "y": 928,
+              "r": 14.4,
+              "peak": 0.5819,
+              "ground": 0.0574,
+              "contrast": 5.88
+            },
+            {
+              "id": "n523c38191a",
+              "x": 662,
+              "y": 668,
+              "r": 14.4,
+              "peak": 0.293,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n5630d9df9f",
+              "x": 1249,
+              "y": 635,
+              "r": 14.4,
+              "peak": 0.2966,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "n5880a05cab",
+              "x": 1038,
+              "y": 419,
+              "r": 14.4,
+              "peak": 0.7968,
+              "ground": 0.0574,
+              "contrast": 7.89
+            },
+            {
+              "id": "n590fb78804",
+              "x": 697,
+              "y": 330,
+              "r": 14.4,
+              "peak": 0.8041,
+              "ground": 0.0574,
+              "contrast": 7.95
+            },
+            {
+              "id": "n5b46c6f107",
+              "x": 810,
+              "y": 538,
+              "r": 14.4,
+              "peak": 0.3275,
+              "ground": 0.0574,
+              "contrast": 3.52
+            },
+            {
+              "id": "n5daeac7b96",
+              "x": 1064,
+              "y": 409,
+              "r": 14.4,
+              "peak": 0.7965,
+              "ground": 0.0574,
+              "contrast": 7.88
+            },
+            {
+              "id": "n5f31be08e0",
+              "x": 796,
+              "y": 459,
+              "r": 14.4,
+              "peak": 0.2968,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "n60673e585a",
+              "x": 604,
+              "y": 307,
+              "r": 14.4,
+              "peak": 0.7055,
+              "ground": 0.0574,
+              "contrast": 7.04
+            },
+            {
+              "id": "n618ee08ab3",
+              "x": 1041,
+              "y": 406,
+              "r": 14.4,
+              "peak": 0.8032,
+              "ground": 0.0574,
+              "contrast": 7.95
+            },
+            {
+              "id": "n633fb7a959",
+              "x": 663,
+              "y": 571,
+              "r": 14.4,
+              "peak": 0.2924,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n69344565b8",
+              "x": 759,
+              "y": 484,
+              "r": 14.4,
+              "peak": 0.2958,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "n703e3384c3",
+              "x": 1330,
+              "y": 266,
+              "r": 14.4,
+              "peak": 0.291,
+              "ground": 0.0574,
+              "contrast": 3.18
+            },
+            {
+              "id": "n704f284dfe",
+              "x": 926,
+              "y": 672,
+              "r": 14.4,
+              "peak": 0.2901,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "n7091638a5d",
+              "x": 1316,
+              "y": 347,
+              "r": 14.4,
+              "peak": 0.4716,
+              "ground": 0.0574,
+              "contrast": 4.86
+            },
+            {
+              "id": "n70b3c5270b",
+              "x": 958,
+              "y": 138,
+              "r": 14.4,
+              "peak": 0.8523,
+              "ground": 0.0574,
+              "contrast": 8.4
+            },
+            {
+              "id": "n714166721d",
+              "x": 1108,
+              "y": 427,
+              "r": 14.4,
+              "peak": 0.8029,
+              "ground": 0.0574,
+              "contrast": 7.94
+            },
+            {
+              "id": "n7448bc2386",
+              "x": 806,
+              "y": 524,
+              "r": 14.4,
+              "peak": 0.3275,
+              "ground": 0.0574,
+              "contrast": 3.52
+            },
+            {
+              "id": "n75d8f580e5",
+              "x": 620,
+              "y": 402,
+              "r": 14.4,
+              "peak": 0.2914,
+              "ground": 0.0574,
+              "contrast": 3.18
+            },
+            {
+              "id": "n798586ed6b",
+              "x": 840,
+              "y": 943,
+              "r": 14.4,
+              "peak": 0.5858,
+              "ground": 0.0574,
+              "contrast": 5.92
+            },
+            {
+              "id": "n7d25b2da8a",
+              "x": 863,
+              "y": 714,
+              "r": 14.4,
+              "peak": 0.2933,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "n7db0e0869c",
+              "x": 1098,
+              "y": 234,
+              "r": 14.4,
+              "peak": 0.2971,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "n7deb3cc285",
+              "x": 653,
+              "y": 662,
+              "r": 14.4,
+              "peak": 0.293,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n7e876747ad",
+              "x": 1193,
+              "y": 668,
+              "r": 14.4,
+              "peak": 0.2922,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n8118cf8107",
+              "x": 1086,
+              "y": 374,
+              "r": 14.4,
+              "peak": 0.7999,
+              "ground": 0.0574,
+              "contrast": 7.91
+            },
+            {
+              "id": "n85ef9080ea",
+              "x": 1299,
+              "y": 293,
+              "r": 14.4,
+              "peak": 0.2893,
+              "ground": 0.0574,
+              "contrast": 3.16
+            },
+            {
+              "id": "n87dc4f86da",
+              "x": 718,
+              "y": 597,
+              "r": 14.4,
+              "peak": 0.2916,
+              "ground": 0.0574,
+              "contrast": 3.18
+            },
+            {
+              "id": "n8d055e5297",
+              "x": 739,
+              "y": 419,
+              "r": 14.4,
+              "peak": 0.4687,
+              "ground": 0.0574,
+              "contrast": 4.83
+            },
+            {
+              "id": "n99ff69458f",
+              "x": 1148,
+              "y": 364,
+              "r": 14.4,
+              "peak": 0.7934,
+              "ground": 0.0574,
+              "contrast": 7.85
+            },
+            {
+              "id": "n9a939af75c",
+              "x": 707,
+              "y": 588,
+              "r": 14.4,
+              "peak": 0.2916,
+              "ground": 0.0574,
+              "contrast": 3.18
+            },
+            {
+              "id": "n9aee67caa2",
+              "x": 1240,
+              "y": 575,
+              "r": 14.4,
+              "peak": 0.2938,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "n9b0b5d8a6d",
+              "x": 829,
+              "y": 441,
+              "r": 14.4,
+              "peak": 0.2921,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n9e05705d26",
+              "x": 723,
+              "y": 374,
+              "r": 14.4,
+              "peak": 0.2883,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "na2358b2b07",
+              "x": 837,
+              "y": 968,
+              "r": 14.4,
+              "peak": 0.5898,
+              "ground": 0.0574,
+              "contrast": 5.96
+            },
+            {
+              "id": "na9606fee1c",
+              "x": 1262,
+              "y": 606,
+              "r": 14.4,
+              "peak": 0.2961,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "naaabbd92cb",
+              "x": 909,
+              "y": 712,
+              "r": 14.4,
+              "peak": 0.291,
+              "ground": 0.0574,
+              "contrast": 3.18
+            },
+            {
+              "id": "nba2805e3e1",
+              "x": 882,
+              "y": 532,
+              "r": 14.4,
+              "peak": 0.2967,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "ncaf843cf89",
+              "x": 1177,
+              "y": 579,
+              "r": 14.4,
+              "peak": 0.2956,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "nd682eed70b",
+              "x": 942,
+              "y": 191,
+              "r": 14.4,
+              "peak": 0.4522,
+              "ground": 0.0574,
+              "contrast": 4.68
+            },
+            {
+              "id": "nd960763431",
+              "x": 1174,
+              "y": 646,
+              "r": 14.4,
+              "peak": 0.2941,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "nd9ddb0ca5c",
+              "x": 1167,
+              "y": 243,
+              "r": 14.4,
+              "peak": 0.2965,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "ndae1a65514",
+              "x": 751,
+              "y": 673,
+              "r": 14.4,
+              "peak": 0.2921,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "ndcecf485a0",
+              "x": 645,
+              "y": 387,
+              "r": 14.4,
+              "peak": 0.5646,
+              "ground": 0.0574,
+              "contrast": 5.72
+            },
+            {
+              "id": "ndd346f34ee",
+              "x": 560,
+              "y": 266,
+              "r": 14.4,
+              "peak": 0.2935,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "nde70483d7f",
+              "x": 677,
+              "y": 475,
+              "r": 14.4,
+              "peak": 0.2894,
+              "ground": 0.0574,
+              "contrast": 3.16
+            },
+            {
+              "id": "ndebe2ada83",
+              "x": 598,
+              "y": 285,
+              "r": 14.4,
+              "peak": 0.2938,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "ne85bc87b03",
+              "x": 928,
+              "y": 483,
+              "r": 14.4,
+              "peak": 0.2966,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "nef369efdfc",
+              "x": 637,
+              "y": 427,
+              "r": 14.4,
+              "peak": 0.2891,
+              "ground": 0.0574,
+              "contrast": 3.16
+            },
+            {
+              "id": "nf2bb761959",
+              "x": 742,
+              "y": 965,
+              "r": 14.4,
+              "peak": 0.6323,
+              "ground": 0.0574,
+              "contrast": 6.35
+            },
+            {
+              "id": "nf3603a277e",
+              "x": 990,
+              "y": 256,
+              "r": 14.4,
+              "peak": 0.5684,
+              "ground": 0.0574,
+              "contrast": 5.76
+            },
+            {
+              "id": "nf53f4946cf",
+              "x": 553,
+              "y": 279,
+              "r": 14.4,
+              "peak": 0.2935,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "nf96342762b",
+              "x": 685,
+              "y": 424,
+              "r": 14.4,
+              "peak": 0.4486,
+              "ground": 0.0574,
+              "contrast": 4.64
+            }
+          ]
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
@@ -896,7 +2267,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bac9916dd5a965ca",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -914,8 +2285,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:29:48.407Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:15.927Z"
     },
     {
       "id": "05",
@@ -923,15 +2294,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 23.3,
+      "seconds": 23,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 861178,
-        "sha256": "17983effdcd95db11b225ec737751ed45a66bbf31e74974a0d69e87352087c1d"
+        "bytes": 862202,
+        "sha256": "e71c14c3b3c03b52ac5ed36bf58682384dd9d310ccc5a553fd890bfbfcd56701"
       },
       "claims": {
         "ok": true,
@@ -986,8 +2357,8 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 0.994,
-        "confidence": 0.946,
+        "fan": 1.045,
+        "confidence": 0.951,
         "distBefore": 174.91,
         "distAfter": 126.9,
         "distAfterReadFromTheFrame": true,
@@ -1003,25 +2374,25 @@
         },
         "namesAfter": {
           "drawn": 55,
-          "compressed": 39,
+          "compressed": 38,
           "shortened": 5,
-          "inFull": 11,
+          "inFull": 12,
           "typePx": 17.5,
           "cloudSpanPx": 1187.5
         },
         "namesDrawnBefore": 58,
         "namesDrawnAfter": 55,
         "namesInFullBefore": 16,
-        "namesInFullAfter": 11,
+        "namesInFullAfter": 12,
         "viewDistanceRatio": 1.378,
-        "poseHeldFrames": 66,
+        "poseHeldFrames": 67,
         "typePxBefore": 17.5,
         "typePxAfter": 17.5,
         "cloudSpanBefore": 1097.8,
         "cloudSpanAfter": 1187.5,
         "cloudSpanRatio": 1.082,
         "hiddenChipBefore": "92 labels hidden · 8 shortened · 34 named by their first letters at this framing · listed at right",
-        "hiddenChipAfter": "95 labels hidden · 5 shortened · 39 named by their first letters at this framing · listed at right",
+        "hiddenChipAfter": "95 labels hidden · 5 shortened · 38 named by their first letters at this framing · listed at right",
         "chipPromisesNoLegibilityItCannotDeliver": true,
         "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
         "declaredSynthetic": true
@@ -1049,7 +2420,7 @@
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T08:18:33.796Z"
+      "fileMtime": "2026-09-06T08:20:39.099Z"
     },
     {
       "id": "06",
@@ -1057,7 +2428,7 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 4.5,
+      "seconds": 4.9,
       "status": "captured",
       "error": null,
       "check": {
@@ -1169,7 +2540,7 @@
         ]
       },
       "result": {
-        "arbiterSeq": 54,
+        "arbiterSeq": 55,
         "labelsAudited": 14,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Sour cherry kvass",
@@ -1218,12 +2589,140 @@
           "invisible": 0,
           "worstContrast": 2.67,
           "invisibleIds": [],
-          "weakest": []
+          "weakest": [],
+          "rows": [
+            {
+              "id": "n1ada6cb3e2",
+              "x": 705,
+              "y": 585,
+              "r": 22.1,
+              "peak": 0.6962,
+              "ground": 0.0574,
+              "contrast": 6.95
+            },
+            {
+              "id": "n2a2ac6dd57",
+              "x": 685,
+              "y": 531,
+              "r": 27.1,
+              "peak": 0.7474,
+              "ground": 0.0574,
+              "contrast": 7.43
+            },
+            {
+              "id": "n2c7b63a710",
+              "x": 729,
+              "y": 73,
+              "r": 14.4,
+              "peak": 0.3008,
+              "ground": 0.0574,
+              "contrast": 3.27
+            },
+            {
+              "id": "n380afc9e85",
+              "x": 1211,
+              "y": 464,
+              "r": 25.3,
+              "peak": 0.7079,
+              "ground": 0.0574,
+              "contrast": 7.06
+            },
+            {
+              "id": "n4163afee7d",
+              "x": 545,
+              "y": 164,
+              "r": 14.7,
+              "peak": 0.3008,
+              "ground": 0.0574,
+              "contrast": 3.27
+            },
+            {
+              "id": "n44116b5fc8",
+              "x": 551,
+              "y": 51,
+              "r": 14.4,
+              "peak": 0.3012,
+              "ground": 0.0815,
+              "contrast": 2.67
+            },
+            {
+              "id": "n4fd66d29cd",
+              "x": 876,
+              "y": 518,
+              "r": 20.6,
+              "peak": 0.6572,
+              "ground": 0.0574,
+              "contrast": 6.59
+            },
+            {
+              "id": "n690b2d0ef8",
+              "x": 682,
+              "y": 85,
+              "r": 15.8,
+              "peak": 0.3232,
+              "ground": 0.0574,
+              "contrast": 3.47
+            },
+            {
+              "id": "n798586ed6b",
+              "x": 1010,
+              "y": 552,
+              "r": 19.7,
+              "peak": 0.6847,
+              "ground": 0.0574,
+              "contrast": 6.84
+            },
+            {
+              "id": "n7d25b2da8a",
+              "x": 423,
+              "y": 177,
+              "r": 14.4,
+              "peak": 0.299,
+              "ground": 0.0574,
+              "contrast": 3.25
+            },
+            {
+              "id": "na2358b2b07",
+              "x": 1130,
+              "y": 600,
+              "r": 21.5,
+              "peak": 0.6923,
+              "ground": 0.0574,
+              "contrast": 6.91
+            },
+            {
+              "id": "nf219dae259",
+              "x": 1077,
+              "y": 551,
+              "r": 28,
+              "peak": 0.7435,
+              "ground": 0.0574,
+              "contrast": 7.39
+            },
+            {
+              "id": "nf2bb761959",
+              "x": 866,
+              "y": 614,
+              "r": 31.1,
+              "peak": 0.7628,
+              "ground": 0.0574,
+              "contrast": 7.57
+            },
+            {
+              "id": "nf3c5ca54f5",
+              "x": 554,
+              "y": 208,
+              "r": 14.4,
+              "peak": 0.2999,
+              "ground": 0.0574,
+              "contrast": 3.26
+            }
+          ]
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 54,
-        "arbiterSeqAtAudit": 54,
+        "arbiterSeqAtShot": 55,
+        "arbiterSeqAtAudit": 55,
         "auditDescribesTheShippedFrame": true,
         "map": "map-fermentation",
         "nodes": 150,
@@ -1335,7 +2834,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "c3c27bb00aca3d71",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "holdingRingFillsFrame": "b5bea41b6c62",
           "everyHeldNodeInFrame": "b5bea41b6c62",
@@ -1353,8 +2852,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:31:12.835Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:43.875Z"
     },
     {
       "id": "07",
@@ -1520,7 +3019,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "dd265abdc8c01ca5",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "ok": "b5bea41b6c62",
           "ladderMonotonic": "b5bea41b6c62",
@@ -1533,8 +3032,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:31:14.387Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:45.435Z"
     },
     {
       "id": "08",
@@ -1542,7 +3041,7 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.2,
+      "seconds": 2.3,
       "status": "captured",
       "error": null,
       "check": {
@@ -1608,7 +3107,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "44bb27a07e81dc26",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "placed": "b5bea41b6c62",
           "stableAfterDrop": "b5bea41b6c62",
@@ -1617,8 +3116,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:31:16.484Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:47.571Z"
     },
     {
       "id": "09",
@@ -1774,7 +3273,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "307df49d193c5df3",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "connectedByThisCapture": "b5bea41b6c62",
           "linkedBefore": "fcbcf165908d",
@@ -1786,8 +3285,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:31:19.567Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:50.711Z"
     },
     {
       "id": "10",
@@ -1795,15 +3294,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 6,
+      "seconds": 6.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 187773,
-        "sha256": "5daf9361e9712f71ddc83e6d72f87afe243dcfb9951a57c168999e895dee95c6"
+        "bytes": 187753,
+        "sha256": "b083a45014ee83fe1559af60c4ff68901531ea7073e5277132bab9abe524397d"
       },
       "claims": {
         "ok": true,
@@ -1965,7 +3464,117 @@
           "invisible": 0,
           "worstContrast": 3.25,
           "invisibleIds": [],
-          "weakest": []
+          "weakest": [],
+          "rows": [
+            {
+              "id": "n043f593b30",
+              "x": 105,
+              "y": 443,
+              "r": 15.9,
+              "peak": 0.2992,
+              "ground": 0.0574,
+              "contrast": 3.25
+            },
+            {
+              "id": "n209e6a2a86",
+              "x": 1105,
+              "y": 663,
+              "r": 32.2,
+              "peak": 0.7979,
+              "ground": 0.0574,
+              "contrast": 7.9
+            },
+            {
+              "id": "n4e9bd59c87",
+              "x": 1217,
+              "y": 538,
+              "r": 55.7,
+              "peak": 0.7976,
+              "ground": 0.0574,
+              "contrast": 7.89
+            },
+            {
+              "id": "n53badd7a56",
+              "x": 489,
+              "y": 711,
+              "r": 36.6,
+              "peak": 0.8111,
+              "ground": 0.0574,
+              "contrast": 8.02
+            },
+            {
+              "id": "n5880a05cab",
+              "x": 567,
+              "y": 884,
+              "r": 38.6,
+              "peak": 0.7979,
+              "ground": 0.0574,
+              "contrast": 7.9
+            },
+            {
+              "id": "n5daeac7b96",
+              "x": 734,
+              "y": 844,
+              "r": 40.9,
+              "peak": 0.8043,
+              "ground": 0.0574,
+              "contrast": 7.96
+            },
+            {
+              "id": "n8118cf8107",
+              "x": 968,
+              "y": 577,
+              "r": 34.4,
+              "peak": 0.9055,
+              "ground": 0.0574,
+              "contrast": 8.9
+            },
+            {
+              "id": "n83224a5de3",
+              "x": 1547,
+              "y": 811,
+              "r": 40,
+              "peak": 0.8046,
+              "ground": 0.0574,
+              "contrast": 7.96
+            },
+            {
+              "id": "n84a7397186",
+              "x": 1496,
+              "y": 662,
+              "r": 52.7,
+              "peak": 0.9055,
+              "ground": 0.0574,
+              "contrast": 8.9
+            },
+            {
+              "id": "n8d055e5297",
+              "x": 125,
+              "y": 571,
+              "r": 14.4,
+              "peak": 0.3001,
+              "ground": 0.0574,
+              "contrast": 3.26
+            },
+            {
+              "id": "n99ff69458f",
+              "x": 1322,
+              "y": 675,
+              "r": 80.6,
+              "peak": 0.9016,
+              "ground": 0.0574,
+              "contrast": 8.86
+            },
+            {
+              "id": "nbc542622a2",
+              "x": 724,
+              "y": 762,
+              "r": 66,
+              "peak": 0.9055,
+              "ground": 0.0574,
+              "contrast": 8.9
+            }
+          ]
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
@@ -2004,7 +3613,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "ef4340f5a9e4398f",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -2022,8 +3631,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:31:25.315Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:20:56.799Z"
     },
     {
       "id": "11",
@@ -2031,7 +3640,7 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 17.7,
+      "seconds": 17.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -2091,7 +3700,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 14541,
+            "serverPid": 16976,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -2103,7 +3712,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 14541,
+            "serverPid": 16976,
             "actor": "android-twin",
             "status": "live"
           }
@@ -2145,7 +3754,7 @@
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T08:18:44.248Z"
+      "fileMtime": "2026-09-06T08:21:06.955Z"
     },
     {
       "id": "12",
@@ -2153,15 +3762,15 @@
       "title": "Twin composite — after",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 787314,
-        "sha256": "ddf9641f6c61e20b257816a8b581e84de07411581332442ec1081550b6e84c35"
+        "bytes": 779091,
+        "sha256": "78a86c5af5954f412712db4c54e305e32202ac8998eb7e962bce629016e23a6c"
       },
       "claims": {
         "ok": true,
@@ -2339,7 +3948,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 14541,
+            "serverPid": 16976,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -2351,7 +3960,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 14541,
+            "serverPid": 16976,
             "actor": "android-twin",
             "status": "live"
           }
@@ -2604,7 +4213,7 @@
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T08:18:51.631Z"
+      "fileMtime": "2026-09-06T08:21:14.106Z"
     },
     {
       "id": "13",
@@ -2676,7 +4285,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "904c8c79130e761a",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "hasPositions": "b5bea41b6c62",
           "hasInstructions": "b5bea41b6c62",
@@ -2686,8 +4295,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:31:43.779Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:21:15.651Z"
     },
     {
       "id": "14",
@@ -2695,7 +4304,7 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.1,
+      "seconds": 3.3,
       "status": "captured",
       "error": null,
       "check": {
@@ -2885,7 +4494,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6eef1bb7a5f4aa9b",
-        "appSha": "f399ca71f9cb51a5",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "allThreeKinds": "b5bea41b6c62",
           "rejectionLeftNoTrace": "b5bea41b6c62",
@@ -2900,8 +4509,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:55:51.411Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:21:18.927Z"
     },
     {
       "id": "15",
@@ -2909,7 +4518,7 @@
       "title": "Settings and gesture reference",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.3,
+      "seconds": 3.5,
       "status": "captured",
       "error": null,
       "check": {
@@ -2954,15 +4563,15 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8891521182f0f526",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "referenceMatchesTheRuntime": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:31:49.579Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:21:22.203Z"
     },
     {
       "id": "16",
@@ -2970,15 +4579,15 @@
       "title": "Touch gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 30s",
-      "seconds": 109.6,
+      "seconds": 101.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1877454,
-        "sha256": "222e5863b1bd99f45576d20ac30f348a691009752a0d5da4cf93af91169f03c5",
+        "bytes": 1337443,
+        "sha256": "8fcc80d01caec16d2476c36ec874047245302bbca1d6668ec74ad2131fd0e144",
         "seconds": 34,
         "fps": 30,
         "frames": 1020
@@ -3009,6 +4618,22 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "devicePortraitAsInTheHero",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "marginReferenceFitsItsColumn",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -3024,7 +4649,16 @@
           "gyro"
         ],
         "count": 7,
-        "quickAddedNode": "nmt1gy70u1mte8",
+        "quickAddedNode": "nmt1gy51l1mte8",
+        "deviceViewport": [
+          1280,
+          1440
+        ],
+        "devicePortraitAsInTheHero": true,
+        "vocabularyInMargin": 6,
+        "marginRoomPx": 836,
+        "marginWorstLinePx": 586,
+        "marginReferenceFitsItsColumn": true,
         "tapSelected": true,
         "doubleTapConnected": true,
         "dragPlacedIt": true,
@@ -3047,18 +4681,20 @@
         "runtimes": [
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "cd01c1b5a2319bda",
-        "appSha": "50b6d8a405e31eb9",
+        "fnSha": "6fd8acbcaabc26b4",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "tapSelected": "b5bea41b6c62",
           "doubleTapConnected": "b5bea41b6c62",
-          "dragPlacedIt": "b5bea41b6c62"
+          "dragPlacedIt": "b5bea41b6c62",
+          "devicePortraitAsInTheHero": "b5bea41b6c62",
+          "marginReferenceFitsItsColumn": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:33:37.170Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:23:02.006Z"
     },
     {
       "id": "17",
@@ -3066,21 +4702,21 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 599.8,
-      "status": "captured",
+      "seconds": 593.2,
+      "status": "claim-not-met",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 7036610,
-        "sha256": "7a1dd4d7ab7a6f985d13c8b1b1986bda84327202603a6b1382941b08a8b1d832",
+        "bytes": 7737259,
+        "sha256": "409a2969d15651549f46b674752d58512590cb44673b3f0937a540346db6f415",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
       },
       "claims": {
-        "ok": true,
+        "ok": false,
         "claims": [
           {
             "claim": "clusterMovedByPose",
@@ -3109,8 +4745,8 @@
           {
             "claim": "mapReturnedToItsStartingLayout",
             "expected": true,
-            "actual": true,
-            "pass": true,
+            "actual": false,
+            "pass": false,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
           },
@@ -3146,7 +4782,8 @@
             "rule": "(n) => n >= 4",
             "ruleSha": "99e5481824a9"
           }
-        ]
+        ],
+        "why": "declared claim(s) not met: mapReturnedToItsStartingLayout = false"
       },
       "result": {
         "posesRecognised": [
@@ -3156,7 +4793,7 @@
           "gather"
         ],
         "count": 4,
-        "samples": 2147,
+        "samples": 2143,
         "poseGrabs": [
           {
             "cluster": "Safety and pH",
@@ -3165,24 +4802,24 @@
               "fist"
             ],
             "centroidBefore": [
-              -2.89,
-              0.951,
-              17.007
+              -0.96,
+              -2.624,
+              17.014
             ],
             "centroidAfter": [
-              2.24,
-              -5.411,
-              16.495
+              5.036,
+              -4.762,
+              15.521
             ],
-            "travelled": 8.1886,
+            "travelled": 6.5387,
             "maxMemberDrift": 0,
             "frames": [
-              31,
-              32
+              32,
+              33
             ],
             "seconds": [
-              1.03,
-              1.07
+              1.07,
+              1.1
             ]
           },
           {
@@ -3192,14 +4829,14 @@
               "fist"
             ],
             "centroidBefore": [
-              -20.645,
-              -14.167,
-              9.995
+              -19.806,
+              -14.297,
+              9.757
             ],
             "centroidAfter": [
-              -20.645,
-              -14.167,
-              9.995
+              -19.806,
+              -14.297,
+              9.757
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
@@ -3219,24 +4856,24 @@
               "fist"
             ],
             "centroidBefore": [
-              -18.41,
-              -17.487,
-              9.865
+              -19.079,
+              -16.457,
+              9.897
             ],
             "centroidAfter": [
-              -16.67,
-              -18.931,
-              9.57
+              -17.844,
+              -17.163,
+              9.635
             ],
-            "travelled": 2.2806,
+            "travelled": 1.4466,
             "maxMemberDrift": 0,
             "frames": [
-              38,
-              46
+              39,
+              43
             ],
             "seconds": [
-              1.27,
-              1.53
+              1.3,
+              1.43
             ]
           },
           {
@@ -3246,51 +4883,78 @@
               "fist"
             ],
             "centroidBefore": [
-              -13.437,
-              -17.646,
-              8.353
+              -15.808,
+              -17.465,
+              9.056
             ],
             "centroidAfter": [
-              -11.8,
-              -19.539,
-              8.166
+              -10.728,
+              -19.066,
+              7.755
             ],
-            "travelled": 2.509,
+            "travelled": 5.4829,
             "maxMemberDrift": 0,
             "frames": [
-              48,
-              51
+              45,
+              56
             ],
             "seconds": [
-              1.6,
-              1.7
+              1.5,
+              1.87
             ]
           },
           {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
+            "cluster": "Safety and pH",
+            "members": 12,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -9.742,
-              -20.525,
-              7.696
+              2.161,
+              -4.787,
+              16.414
             ],
             "centroidAfter": [
-              0.865,
-              -17.196,
-              3.853
+              6.856,
+              -5.523,
+              15.086
             ],
-            "travelled": 11.7622,
+            "travelled": 4.9343,
             "maxMemberDrift": 0,
             "frames": [
-              53,
-              66
+              58,
+              65
             ],
             "seconds": [
-              1.77,
-              2.2
+              1.93,
+              2.17
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              7.538,
+              -3.029,
+              14.454
+            ],
+            "centroidAfter": [
+              7.538,
+              -3.029,
+              14.454
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              69,
+              69
+            ],
+            "seconds": [
+              2.3,
+              2.3
             ]
           },
           {
@@ -3300,24 +4964,24 @@
               "fist"
             ],
             "centroidBefore": [
-              -19.733,
-              -2.756,
-              -5.914
+              -19.092,
+              -1.606,
+              -6.307
             ],
             "centroidAfter": [
-              -14.353,
-              -9.2,
-              -6.49
+              -19.092,
+              -1.606,
+              -6.307
             ],
-            "travelled": 8.4138,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
               189,
-              201
+              189
             ],
             "seconds": [
               6.3,
-              6.7
+              6.3
             ]
           },
           {
@@ -3327,24 +4991,132 @@
               "fist"
             ],
             "centroidBefore": [
-              0.912,
-              -17.096,
-              3.821
+              -9.196,
+              -19.172,
+              7.299
             ],
             "centroidAfter": [
-              4.324,
-              -18.105,
-              2.936
+              -9.502,
+              -23.898,
+              8.192
             ],
-            "travelled": 3.6664,
+            "travelled": 4.8199,
             "maxMemberDrift": 0,
             "frames": [
-              203,
-              210
+              191,
+              192
             ],
             "seconds": [
-              6.77,
-              7
+              6.37,
+              6.4
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -8.242,
+              -25.078,
+              8.001
+            ],
+            "centroidAfter": [
+              -6.649,
+              -25.064,
+              7.506
+            ],
+            "travelled": 1.6678,
+            "maxMemberDrift": 0,
+            "frames": [
+              194,
+              200
+            ],
+            "seconds": [
+              6.47,
+              6.67
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -8.765,
+              -26.3,
+              8.37
+            ],
+            "centroidAfter": [
+              -4.669,
+              -27.509,
+              7.307
+            ],
+            "travelled": 4.4002,
+            "maxMemberDrift": 0,
+            "frames": [
+              202,
+              203
+            ],
+            "seconds": [
+              6.73,
+              6.77
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -3.864,
+              -26.899,
+              6.955
+            ],
+            "centroidAfter": [
+              -0.872,
+              -28.464,
+              6.294
+            ],
+            "travelled": 3.4414,
+            "maxMemberDrift": 0,
+            "frames": [
+              206,
+              209
+            ],
+            "seconds": [
+              6.87,
+              6.97
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -5.094,
+              -25.745,
+              -6.385
+            ],
+            "centroidAfter": [
+              0.284,
+              -26.003,
+              -8.005
+            ],
+            "travelled": 5.6228,
+            "maxMemberDrift": 0,
+            "frames": [
+              215,
+              221
+            ],
+            "seconds": [
+              7.17,
+              7.37
             ]
           },
           {
@@ -3354,24 +5126,24 @@
               "fist"
             ],
             "centroidBefore": [
-              -13.776,
-              -8.941,
-              -6.712
+              -11.578,
+              -9.987,
+              -7.216
             ],
             "centroidAfter": [
-              -4.15,
-              -10.169,
-              -9.482
+              -9.044,
+              -13.166,
+              -7.462
             ],
-            "travelled": 10.0915,
+            "travelled": 4.0723,
             "maxMemberDrift": 0,
             "frames": [
-              211,
-              220
+              346,
+              347
             ],
             "seconds": [
-              7.03,
-              7.33
+              11.53,
+              11.57
             ]
           },
           {
@@ -3381,24 +5153,78 @@
               "fist"
             ],
             "centroidBefore": [
-              1.29,
-              -13.378,
-              -10.623
+              -11.126,
+              -11.752,
+              -7.057
             ],
             "centroidAfter": [
-              5.66,
-              -17.777,
-              -11.232
+              -9.439,
+              -13.712,
+              -7.248
             ],
-            "travelled": 6.2303,
+            "travelled": 2.5925,
             "maxMemberDrift": 0,
             "frames": [
-              342,
-              343
+              351,
+              357
             ],
             "seconds": [
-              11.4,
-              11.43
+              11.7,
+              11.9
+            ]
+          },
+          {
+            "cluster": "Microbiology",
+            "members": 18,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -7.674,
+              -14.955,
+              -7.584
+            ],
+            "centroidAfter": [
+              5.056,
+              -16.658,
+              -11.234
+            ],
+            "travelled": 13.3514,
+            "maxMemberDrift": 0,
+            "frames": [
+              359,
+              380
+            ],
+            "seconds": [
+              11.97,
+              12.67
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              11.469,
+              -6.209,
+              13.775
+            ],
+            "centroidAfter": [
+              11.149,
+              -6.425,
+              13.91
+            ],
+            "travelled": 0.409,
+            "maxMemberDrift": 0,
+            "frames": [
+              503,
+              504
+            ],
+            "seconds": [
+              16.77,
+              16.8
             ]
           },
           {
@@ -3408,24 +5234,24 @@
               "fist"
             ],
             "centroidBefore": [
-              2.428,
-              -17.808,
-              3.473
+              -1.179,
+              -26.633,
+              6.079
             ],
             "centroidAfter": [
-              4.756,
-              -19.248,
-              2.996
+              -1.179,
+              -26.633,
+              6.079
             ],
-            "travelled": 2.7781,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              361,
-              365
+              526,
+              526
             ],
             "seconds": [
-              12.03,
-              12.17
+              17.53,
+              17.53
             ]
           },
           {
@@ -3435,24 +5261,24 @@
               "fist"
             ],
             "centroidBefore": [
-              3.266,
-              -17.86,
-              3.222
+              -0.693,
+              -26.413,
+              5.892
             ],
             "centroidAfter": [
-              12.589,
-              -16.119,
-              0.044
+              2.247,
+              -28.188,
+              5.282
             ],
-            "travelled": 10.0023,
+            "travelled": 3.4875,
             "maxMemberDrift": 0,
             "frames": [
-              368,
-              376
+              528,
+              537
             ],
             "seconds": [
-              12.27,
-              12.53
+              17.6,
+              17.9
             ]
           },
           {
@@ -3462,51 +5288,51 @@
               "fist"
             ],
             "centroidBefore": [
-              6.832,
-              -12.135,
-              16.211
+              8.054,
+              -5.731,
+              14.751
             ],
             "centroidAfter": [
-              11.125,
-              -13.892,
-              15.179
+              8.054,
+              -5.731,
+              14.751
             ],
-            "travelled": 4.7524,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              496,
-              497
+              662,
+              662
             ],
             "seconds": [
-              16.53,
-              16.57
+              22.07,
+              22.07
             ]
           },
           {
-            "cluster": "Equipment",
-            "members": 12,
+            "cluster": "Lacto-vegetables",
+            "members": 20,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -5.184,
-              -23.524,
-              -6.733
+              5,
+              -24.227,
+              3.761
             ],
             "centroidAfter": [
-              -4.846,
-              -23.327,
-              -6.871
+              9.861,
+              -24.189,
+              2.251
             ],
-            "travelled": 0.4148,
+            "travelled": 5.0907,
             "maxMemberDrift": 0,
             "frames": [
-              519,
-              521
+              696,
+              697
             ],
             "seconds": [
-              17.3,
-              17.37
+              23.2,
+              23.23
             ]
           },
           {
@@ -3516,109 +5342,28 @@
               "fist"
             ],
             "centroidBefore": [
-              9.208,
-              -15.68,
-              16.074
+              6.704,
+              -4.439,
+              14.95
             ],
             "centroidAfter": [
-              14.159,
-              -14.443,
-              14.334
-            ],
-            "travelled": 5.3914,
-            "maxMemberDrift": 0,
-            "frames": [
-              524,
-              530
-            ],
-            "seconds": [
-              17.47,
-              17.67
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -2.537,
-              -23.302,
-              -7.589
-            ],
-            "centroidAfter": [
-              -2.537,
-              -23.302,
-              -7.589
+              6.704,
+              -4.439,
+              14.95
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              650,
-              650
+              700,
+              700
             ],
             "seconds": [
-              21.67,
-              21.67
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              3.193,
-              -22.326,
-              -9.526
-            ],
-            "centroidAfter": [
-              3.193,
-              -22.326,
-              -9.526
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              686,
-              686
-            ],
-            "seconds": [
-              22.87,
-              22.87
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              14.159,
-              -14.443,
-              14.334
-            ],
-            "centroidAfter": [
-              14.159,
-              -14.443,
-              14.334
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              690,
-              690
-            ],
-            "seconds": [
-              23,
-              23
+              23.33,
+              23.33
             ]
           }
         ],
-        "poseGrabCount": 17,
+        "poseGrabCount": 21,
         "poseGrabbedClusters": [
           "Safety and pH",
           "Lacto-vegetables",
@@ -3626,14 +5371,14 @@
           "Equipment"
         ],
         "poseGrabLargest": 20,
-        "poseGrabMaxTravel": 11.7622,
+        "poseGrabMaxTravel": 13.3514,
         "captionFramesShowing": 1124,
-        "captionFramesMarkedHeld": 108,
+        "captionFramesMarkedHeld": 98,
         "captionFramesOutrunningTheDetector": 0,
         "captionOutrunExamples": [],
         "captionNeverOutrunsTheDetector": true,
         "undoStackEmptiedOnCamera": true,
-        "mapReturnedToItsStartingLayout": true,
+        "mapReturnedToItsStartingLayout": false,
         "clusterMovedByPose": true,
         "clusterArrangementPreservedByPose": true,
         "clusterGrabbed": "Koji",
@@ -3644,15 +5389,15 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          2.701,
-          0.477,
-          -3.504
+          2.715,
+          0.56,
+          -3.523
         ],
-        "clusterCentroidTravelled": 17.0271,
+        "clusterCentroidTravelled": 16.967,
         "clusterMaxMemberDrift": 0,
         "clusterLedgerBeforeOnPeer": "5144cc62a503",
-        "clusterLedgerAfterOnPeer": "43fe055e1138",
-        "clusterLedgerAfterHere": "43fe055e1138",
+        "clusterLedgerAfterOnPeer": "fbc18a0e26dd",
+        "clusterLedgerAfterHere": "fbc18a0e26dd",
         "clusterMoveReachedTheHeadlessPeer": true,
         "clusterMovedByMouse": true,
         "clusterInternalArrangementPreserved": true,
@@ -3670,7 +5415,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "e970abeb8db86518",
-        "appSha": "f399ca71f9cb51a5",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "clusterMovedByPose": "b5bea41b6c62",
           "clusterArrangementPreservedByPose": "b5bea41b6c62",
@@ -3684,8 +5429,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T08:05:47.848Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:32:53.539Z"
     },
     {
       "id": "18",
@@ -3693,15 +5438,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 75.5,
+      "seconds": 75.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2940285,
-        "sha256": "62712129b2c00c91c48311352bf92b0c7df0e6373e37b07720066aeb949ba1c3",
+        "bytes": 2939066,
+        "sha256": "0d1d6f9c36e5cab836b126c524a203d7aa7ec1a7696d6485e4e162af284faed7",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -3802,7 +5547,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "a60024ab92924687",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "steppedToASecondHit": "b5bea41b6c62",
           "severalHitsMatched": "b5bea41b6c62",
@@ -3812,8 +5557,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:44:43.816Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:34:11.265Z"
     },
     {
       "id": "19",
@@ -3821,15 +5566,15 @@
       "title": "Capture, place, connect, refind",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 131.8,
+      "seconds": 131.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2096034,
-        "sha256": "87da8770c78b8320ce884459346ace439247379774f6e7e556b2fc83da793c10",
+        "bytes": 2096334,
+        "sha256": "f207858b0d62817a5dd925a1f260895b6b101d3841cc0e98b0aea27560a09943",
         "seconds": 23,
         "fps": 30,
         "frames": 690
@@ -3939,7 +5684,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8f6ace6323401f42",
-        "appSha": "50b6d8a405e31eb9",
+        "appSha": "b0726eacdd308f87",
         "claimShas": {
           "created": "b5bea41b6c62",
           "placed": "b5bea41b6c62",
@@ -3951,8 +5696,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:46:52.983Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T08:36:20.083Z"
     },
     {
       "id": "20",
@@ -3960,155 +5705,16 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 92.2,
-      "status": "captured",
-      "error": null,
+      "seconds": 136.8,
+      "status": "driver-error",
+      "error": "page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-t=finder-generate]')\u001b[22m\n\nCall log:\n\u001b[2m  - waiting for locator('[data-t=finder-generate]')\u001b[22m\n",
       "check": {
-        "ok": true,
-        "width": 1920,
-        "height": 1080,
-        "bytes": 668971,
-        "sha256": "a9dc9167e4b996308434a70a827a7c48471d86e1510a7e3c1c38991b28d5d52c",
-        "seconds": 30,
-        "fps": 30,
-        "frames": 900
+        "ok": false,
+        "why": "not produced"
       },
       "claims": {
         "ok": true,
-        "claims": [
-          {
-            "claim": "rejectionLeftNoTrace",
-            "expected": true,
-            "actual": true,
-            "pass": true,
-            "rule": "true",
-            "ruleSha": "b5bea41b6c62"
-          },
-          {
-            "claim": "allThreeKindsAccepted",
-            "expected": true,
-            "actual": true,
-            "pass": true,
-            "rule": "true",
-            "ruleSha": "b5bea41b6c62"
-          },
-          {
-            "claim": "placementRejectionLeftNoTrace",
-            "expected": true,
-            "actual": true,
-            "pass": true,
-            "rule": "true",
-            "ruleSha": "b5bea41b6c62"
-          },
-          {
-            "claim": "bothRejectionKindsShown",
-            "expected": true,
-            "actual": true,
-            "pass": true,
-            "rule": "true",
-            "ruleSha": "b5bea41b6c62"
-          },
-          {
-            "claim": "clipboardCarriesTheExportedPrompt",
-            "expected": true,
-            "actual": true,
-            "pass": true,
-            "rule": "true",
-            "ruleSha": "b5bea41b6c62"
-          }
-        ]
-      },
-      "result": {
-        "placementAccepted": {
-          "node": "s13669df17f",
-          "from": [
-            0.869,
-            -8.496,
-            0.944
-          ],
-          "to": [
-            -5.4,
-            -3.6,
-            -2.2
-          ],
-          "landedWhereSuggested": true,
-          "wasUnplaced": true,
-          "nowPlaced": true,
-          "holding": [
-            4,
-            3
-          ]
-        },
-        "replyPath": "authored by the agent's own session acting as the chat (declared in report.md); a malformed reply and an adversarially messy reply pass through the same parser in the same take",
-        "malformed": {
-          "ok": false,
-          "error": "No JSON found in that reply. Nothing was changed.",
-          "staged": 0,
-          "links": 6
-        },
-        "messy": {
-          "ok": true,
-          "staged": 5,
-          "dropped": 6,
-          "kinds": [
-            "connection",
-            "connection",
-            "grouping",
-            "placement",
-            "placement"
-          ]
-        },
-        "clipboardChars": 2698,
-        "clipboardCarriesTheExportedPrompt": true,
-        "accepted": {
-          "kind": "connection",
-          "id": "s1"
-        },
-        "rejected": {
-          "kind": "connection",
-          "id": "s2"
-        },
-        "groupingAccepted": {
-          "name": "Framing",
-          "nodes": 2,
-          "labelsBefore": [
-            "arc",
-            "ground"
-          ],
-          "labelsAfter": [
-            "Framing",
-            "Framing"
-          ],
-          "applied": true
-        },
-        "allThreeKindsAccepted": true,
-        "placementRejected": {
-          "node": "Steal the parking-lot bit",
-          "wouldHaveMovedTo": [
-            -6.2,
-            2.4,
-            1.1
-          ],
-          "posBefore": [
-            2.056,
-            -10.26,
-            3.869
-          ],
-          "posAfter": [
-            2.056,
-            -10.26,
-            3.869
-          ],
-          "holding": [
-            4,
-            4
-          ]
-        },
-        "placementRejectionLeftNoTrace": true,
-        "bothRejectionKindsShown": true,
-        "rejectionLeftNoTrace": true,
-        "linksBefore": 6,
-        "linksAfter": 7
+        "claims": []
       },
       "pageErrors": [],
       "recipe": {
@@ -4118,31 +5724,22 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "d330c0cced08a982",
-        "appSha": "50b6d8a405e31eb9",
-        "claimShas": {
-          "rejectionLeftNoTrace": "b5bea41b6c62",
-          "allThreeKindsAccepted": "b5bea41b6c62",
-          "placementRejectionLeftNoTrace": "b5bea41b6c62",
-          "bothRejectionKindsShown": "b5bea41b6c62",
-          "clipboardCarriesTheExportedPrompt": "b5bea41b6c62"
-        }
+        "fnSha": "e2b1634f5e18f601",
+        "appSha": "b0726eacdd308f87",
+        "claimShas": {}
       },
-      "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T07:48:27.188Z"
+      "capturedInCycle": 12
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T08:18:53.791Z",
+  "finishedAt": "2026-09-06T08:38:42.602Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 818237,
     "sha256": "b0726eacdd308f8772f04ea9e4df1622bc058e5ca8b7839494f5fe39270d5a2f"
   },
-  "captured": 20,
+  "captured": 18,
   "total": 20
 }

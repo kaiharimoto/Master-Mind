@@ -139,6 +139,13 @@ export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame 
   const done = new Promise((res, rej) => {
     ff.on('close', c => c === 0 ? res() : rej(new Error(`ffmpeg exit ${c}: ${ffErr.slice(-800)}`)));
   });
+  // A TAKE THAT DIES MID-FRAME MUST FAIL, NOT HANG. When a driver step threw,
+  // the exception left this function with ffmpeg's stdin still open, and ffmpeg
+  // sat on the pipe forever: cycle 12's second run recorded artifact 20's error
+  // and then hung for twenty-five minutes with no browser left alive and
+  // nothing on stdout to say so. The pipe is closed in a finally now, and the
+  // original error is what surfaces.
+  try {
   for (let i = 0; i < total; i++) {
     const t = startMs + (i / fps) * 1000;
     if (onFrame) await onFrame(i, t, total);
@@ -164,7 +171,10 @@ export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame 
     const buf = await grab(cdp, { format: 'jpeg', quality: 94 });
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
   }
-  ff.stdin.end();
+  } finally {
+    // Always, on the success path and on the failure path alike.
+    try { ff.stdin.end(); } catch { /* already gone */ }
+  }
   await done;
   return out;
 }

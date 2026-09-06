@@ -1247,6 +1247,7 @@ export default [
     closeGrab();
     const endLedger = JSON.stringify(await H.positions(page));
     const undoLeft = await page.evaluate(() => window.mm.store.undoDepth);
+    const undoDropped = await page.evaluate(() => window.mm.store.movesDropped);
     const uniq = [...new Set(poses)].filter(p => p !== 'none');
     // "Moved" is a question about the CENTROID; "arrangement preserved" is a
     // question about each member's offset FROM that centroid. The old check
@@ -1288,6 +1289,9 @@ export default [
              // EVERY COORDINATE THE TAKE MOVED IS GIVEN BACK, through the app's
              // own Undo control rather than by the harness writing positions.
              undoStackEmptiedOnCamera: undoLeft === 0,
+             // A bounded stack that silently drops the oldest acts cannot
+             // return a map, and said nothing about it. Reported.
+             undoActsDroppedByTheCap: undoDropped,
              mapReturnedToItsStartingLayout: endLedger === startLedger,
              clusterMovedByPose: movedByPose.length > 0,
              clusterArrangementPreservedByPose:
@@ -1669,8 +1673,16 @@ export default [
                                      null, { timeout: 20000 });
           await page.evaluate(() => window.mm.frameAll(1.12));
         } },
-      { at: 980, fn: async () => { await page.click('[data-t=open-finder]');
-                                   await page.evaluate(() => window.mm.clearOfPanels()); } },
+      // OPEN IT, do not TOGGLE it. The finder was still open from the first half
+      // of the take, so clicking the button closed it and the next beat waited
+      // thirty seconds for a Generate button that was no longer on the page —
+      // the take's only failure, and it took the whole run down with it because
+      // a dead take used to hang the recorder rather than fail it.
+      { at: 980, fn: async () => {
+          const open = await page.$('[data-t=finder-generate]');
+          if (!open) await page.click('[data-t=open-finder]');
+          await page.waitForSelector('[data-t=finder-generate]', { timeout: 10000 });
+          await page.evaluate(() => window.mm.clearOfPanels()); } },
       { at: 1010, fn: async () => { await page.click('[data-t=finder-generate]');
           log.bigPrompt = await page.evaluate(() => ({
             chars: document.querySelector('[data-t=finder-prompt]').value.length,

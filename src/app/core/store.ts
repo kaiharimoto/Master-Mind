@@ -146,6 +146,8 @@ export class Store {
    * is not a general history, it is the way back from a move.
    */
   private moveStack: { what: string; at: number; before: [NodeId, Vec3][] }[] = [];
+  /** Acts that fell off the bottom of the stack and can no longer be undone. */
+  movesDropped = 0;
   private pending: Map<NodeId, Vec3> | null = null;
 
   /**
@@ -181,7 +183,14 @@ export class Store {
     }
     if (!before.length) return;
     this.moveStack.push({ what, at: Date.now(), before });
-    if (this.moveStack.length > 24) this.moveStack.shift();
+    // A CAP THAT DROPS ACTS SILENTLY IS A CAP THAT LOSES MAPS. At 24 the
+    // hand-vocabulary take overran it — a held fist opens a new act every time
+    // the detector loses the hand for a frame — so the oldest moves fell off
+    // the bottom and undoing everything on the stack could not return the
+    // layout. `mapReturnedToItsStartingLayout` caught it. The bound is now high
+    // enough for a working session, each entry is a handful of vectors, and
+    // what it does drop is counted so it can never be silent again.
+    while (this.moveStack.length > 200) { this.moveStack.shift(); this.movesDropped++; }
   }
 
   /** Record a node's position as it stood before the act now being collected. */
