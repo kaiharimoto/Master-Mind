@@ -6,9 +6,11 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T11:09:11.752Z",
+  "lastRunAt": "2026-09-06T11:39:45.003Z",
   "lastRunCaptured": [
-    "01"
+    "02",
+    "06",
+    "10"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -18,7 +20,7 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3,
+      "seconds": 2.9,
       "status": "captured",
       "error": null,
       "check": {
@@ -90,8 +92,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T11:09:14.577Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T11:09:55.309Z"
     },
     {
       "id": "02",
@@ -99,7 +101,7 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.1,
+      "seconds": 1.8,
       "status": "captured",
       "error": null,
       "check": {
@@ -245,7 +247,7 @@
           ]
         },
         "cameraPinned": true,
-        "arbiterSeq": 7,
+        "arbiterSeq": 5,
         "labelsAudited": 63,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Carrot batons hold crunch",
@@ -315,6 +317,7 @@
         "everyLabelStaysBesideItsNode": true,
         "labelWorstAmbiguityRatio": 3.41,
         "labelsAmbiguousWithoutALeader": 0,
+        "labelsAmbiguousWithoutALeaderIds": [],
         "everyLabelUnambiguouslyBound": true,
         "chromeChecked": 5,
         "chromeOverlappingPairs": 0,
@@ -914,8 +917,8 @@
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 7,
-        "arbiterSeqAtAudit": 7,
+        "arbiterSeqAtShot": 5,
+        "arbiterSeqAtAudit": 5,
         "auditDescribesTheShippedFrame": true
       },
       "pageErrors": [],
@@ -927,7 +930,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "73b7deb0e7bd2172",
-        "appSha": "9bfd7dd6585c83ad",
+        "appSha": "afee2ffa14e2e205",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -946,8 +949,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:02:26.531Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T11:39:46.432Z"
     },
     {
       "id": "03",
@@ -955,15 +958,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 4.8,
+      "seconds": 3.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 841103,
-        "sha256": "20ce871e6cab7008eec8b2aa5efc8a6408f2d78fa96d26a9a9be1f70db697fa1"
+        "bytes": 795552,
+        "sha256": "29c101683678784f0df5ed6bbf44c485dfc8f0ce40ae8957f286c94e2d47e82a"
       },
       "claims": {
         "ok": true,
@@ -1104,7 +1107,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "9fd1fb456beeaa7c",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "gyroDroveTheView": "b5bea41b6c62",
           "positionsUnchangedBetweenPanels": "b5bea41b6c62",
@@ -1116,7 +1119,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:33:05.730Z"
+      "fileMtime": "2026-09-06T11:10:00.282Z"
     },
     {
       "id": "04",
@@ -1131,8 +1134,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 445196,
-        "sha256": "2c8686f126c16374bccae8f26e3fb6dc72542c5cd176a13b5799751b79977c96"
+        "bytes": 441684,
+        "sha256": "8b35db85516f78c6b9d534ac667b842f0ce7fa46471748a78069f3523aee3457"
       },
       "claims": {
         "ok": true,
@@ -1287,7 +1290,7 @@
         ],
         "nodesOnScreen": 150,
         "allFiveStatesAtWholeMapDensity": true,
-        "arbiterSeq": 10,
+        "arbiterSeq": 12,
         "labelsAudited": 67,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Fido jars burp themselves",
@@ -1360,8 +1363,40 @@
         "labelWorstDisplacementEm": 2.58,
         "everyLabelStaysBesideItsNode": true,
         "labelWorstAmbiguityRatio": 3.84,
-        "labelsAmbiguousWithoutALeader": 0,
-        "everyLabelUnambiguouslyBound": true,
+        "labelsAmbiguousWithoutALeader": 50,
+        "labelsAmbiguousWithoutALeaderIds": [
+          "n0433ea1e7e",
+          "n12900c3690",
+          "n191b9e1952",
+          "n1aba7a1979",
+          "n1ada6cb3e2",
+          "n1d49087545",
+          "n20cb5b490f",
+          "n2570828592",
+          "n2a2ac6dd57",
+          "n2eac7c2b16",
+          "n354196ac48",
+          "n356aeca57a",
+          "n36627f75c9",
+          "n383f10ab25",
+          "n3a2b198a84",
+          "n3ad7401001",
+          "n3eba301186",
+          "n4163afee7d",
+          "n4233b3d94d",
+          "n48e5dd13da",
+          "n523c38191a",
+          "n53badd7a56",
+          "n5880a05cab",
+          "n5b46c6f107",
+          "n5f31be08e0",
+          "n618ee08ab3",
+          "n633fb7a959",
+          "n69344565b8",
+          "n703e3384c3",
+          "n7091638a5d"
+        ],
+        "everyLabelUnambiguouslyBound": false,
         "chromeChecked": 9,
         "chromeOverlappingPairs": 0,
         "chromeWorstOverlapPx": 0,
@@ -1996,8 +2031,8 @@
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 10,
-        "arbiterSeqAtAudit": 10,
+        "arbiterSeqAtShot": 12,
+        "arbiterSeqAtAudit": 12,
         "auditDescribesTheShippedFrame": true,
         "recencyByDistrict": {
           "violet": {
@@ -2104,7 +2139,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bac9916dd5a965ca",
-        "appSha": "5b37b3b57ff185bf",
+        "appSha": "4c462f0e19ad0bac",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -2125,7 +2160,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:03:42.563Z"
+      "fileMtime": "2026-09-06T11:38:29.332Z"
     },
     {
       "id": "05",
@@ -2133,15 +2168,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 13.7,
+      "seconds": 14.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 566725,
-        "sha256": "493a298b38baf8ece8330d7302b22374a837178e1d06338917697a8425547559"
+        "bytes": 567340,
+        "sha256": "ab7bd253703e622eb8ddf542601b69ec3653623a4826fd9e60d02ae8c72baf73"
       },
       "claims": {
         "ok": true,
@@ -2228,8 +2263,8 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 0.995,
-        "confidence": 0.951,
+        "fan": 1.014,
+        "confidence": 0.944,
         "distBefore": 441.69,
         "distAfter": 383,
         "distAfterReadFromTheFrame": true,
@@ -2278,9 +2313,9 @@
         "detectorAtShutter": {
           "pose": "spread",
           "present": true,
-          "conf": 0.948
+          "conf": 0.944
         },
-        "confidenceBefore": 0.951,
+        "confidenceBefore": 0.944,
         "detectorLiveInBothPanels": true,
         "chipPromisesNoLegibilityItCannotDeliver": true,
         "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
@@ -2296,8 +2331,8 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "79c0a904d8cd3a9f",
-        "appSha": "1645e6b3340188b3",
+        "fnSha": "d9db4435dc00e9d3",
+        "appSha": "ccc8fd2986242823",
         "claimShas": {
           "operationTookEffect": "b5bea41b6c62",
           "declaredSynthetic": "b5bea41b6c62",
@@ -2313,7 +2348,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:59:10.403Z"
+      "fileMtime": "2026-09-06T11:36:02.248Z"
     },
     {
       "id": "06",
@@ -2321,7 +2356,7 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 4.3,
+      "seconds": 4.6,
       "status": "captured",
       "error": null,
       "check": {
@@ -2441,7 +2476,7 @@
         ]
       },
       "result": {
-        "arbiterSeq": 54,
+        "arbiterSeq": 56,
         "labelsAudited": 7,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Ask M about her crock",
@@ -2470,6 +2505,7 @@
         "everyLabelStaysBesideItsNode": true,
         "labelWorstAmbiguityRatio": 1.53,
         "labelsAmbiguousWithoutALeader": 0,
+        "labelsAmbiguousWithoutALeaderIds": [],
         "everyLabelUnambiguouslyBound": true,
         "chromeChecked": 5,
         "chromeOverlappingPairs": 0,
@@ -2565,8 +2601,8 @@
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 54,
-        "arbiterSeqAtAudit": 54,
+        "arbiterSeqAtShot": 56,
+        "arbiterSeqAtAudit": 56,
         "auditDescribesTheShippedFrame": true,
         "map": "map-fermentation",
         "nodes": 150,
@@ -2671,7 +2707,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8dd48b690de940ed",
-        "appSha": "9bfd7dd6585c83ad",
+        "appSha": "afee2ffa14e2e205",
         "claimShas": {
           "holdingRingFillsFrame": "b5bea41b6c62",
           "everyHeldNodeInFrame": "b5bea41b6c62",
@@ -2690,8 +2726,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:02:33.531Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T11:39:51.096Z"
     },
     {
       "id": "07",
@@ -2706,8 +2742,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 188530,
-        "sha256": "fbccecd71f4382238987d6023f6e4f418ea951552e453f2e06900370583eeaa8"
+        "bytes": 188247,
+        "sha256": "16e9d3036168bfddc9d825aa1cbf2fb868ea684d6a38a03916f7da8d872fe3c6"
       },
       "claims": {
         "ok": true,
@@ -2804,6 +2840,10 @@
         "noTwoChromePanelsOverlap": true,
         "everyChromeBadgeInsideTheFrame": true,
         "noNodeBuriedByChrome": true,
+        "namesDrawn": 10,
+        "namesListed": 0,
+        "thoughtsLeftUnnamed": 0,
+        "everyThoughtOnScreenIsNamed": true,
         "measuredRungsLuma709": {
           "plain": 0.2564,
           "connected": 0.4225,
@@ -2863,7 +2903,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "dd265abdc8c01ca5",
-        "appSha": "1645e6b3340188b3",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "ok": "b5bea41b6c62",
           "ladderMonotonic": "b5bea41b6c62",
@@ -2877,7 +2917,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:59:16.583Z"
+      "fileMtime": "2026-09-06T11:10:22.080Z"
     },
     {
       "id": "08",
@@ -2885,15 +2925,15 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.7,
+      "seconds": 2.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 212286,
-        "sha256": "9dab0a2bc0f8dfcba49a1fcaaa578d218476d7fe66c401b6c03cde5152f90ab7"
+        "bytes": 235763,
+        "sha256": "0f8124f51fe5175266c30edd30fe688044f8a3fdc8bb6c7c4f698ca2d22747cc"
       },
       "claims": {
         "ok": true,
@@ -2986,7 +3026,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "c0d91001f279cf6c",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "placed": "b5bea41b6c62",
           "stableAfterDrop": "b5bea41b6c62",
@@ -2999,7 +3039,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:33:45.891Z"
+      "fileMtime": "2026-09-06T11:10:24.239Z"
     },
     {
       "id": "09",
@@ -3007,15 +3047,15 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.6,
+      "seconds": 2.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 269827,
-        "sha256": "6b66658f5fa9ea7a691e8cd8073114d7718499554a9a108d364b32c1f365c239"
+        "bytes": 217891,
+        "sha256": "e8e3feea33a65091aa4e81e5a89f289a5d5c2a8facfe674502170eeb315b6586"
       },
       "claims": {
         "ok": true,
@@ -3078,60 +3118,40 @@
         "linkedBefore": false,
         "linkedAfter": true,
         "connectedByThisCapture": true,
-        "labelsInBothPanels": 5,
+        "labelsInBothPanels": 3,
         "labelsThatShifted": 0,
         "labelsThatShiftedOn": [],
         "labelPlacementsBefore": {
-          "n209e6a2a86": [
-            -125,
-            52,
-            259
-          ],
           "n35b0bd9a37": [
-            -102,
-            -73,
+            -67,
+            -63,
             211
           ],
-          "n4e9bd59c87": [
-            -161,
-            19,
-            104
-          ],
           "n83224a5de3": [
-            -69,
-            38,
+            -54,
+            48,
             125
           ],
           "n84a7397186": [
             -79,
-            62,
+            52,
             167
           ]
         },
         "labelPlacementsAfter": {
-          "n209e6a2a86": [
-            -125,
-            52,
-            259
-          ],
           "n35b0bd9a37": [
-            -102,
-            -73,
+            -67,
+            -63,
             211
           ],
-          "n4e9bd59c87": [
-            -161,
-            19,
-            104
-          ],
           "n83224a5de3": [
-            -69,
-            40,
+            -54,
+            49,
             125
           ],
           "n84a7397186": [
             -79,
-            62,
+            52,
             167
           ]
         },
@@ -3155,7 +3175,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "307df49d193c5df3",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "connectedByThisCapture": "b5bea41b6c62",
           "linkedBefore": "fcbcf165908d",
@@ -3168,7 +3188,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:33:50.306Z"
+      "fileMtime": "2026-09-06T11:10:27.205Z"
     },
     {
       "id": "10",
@@ -3176,15 +3196,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 6.4,
+      "seconds": 5.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 189647,
-        "sha256": "7b28db4c4e3f863ecf720370e5f79e0b9ffe8397a41b209db5988716699fb911"
+        "bytes": 173903,
+        "sha256": "8e9bdbaee38709eb13fe52e2584fd54dc626358a1652a1b0a1173e5e3fa41420"
       },
       "claims": {
         "ok": true,
@@ -3305,7 +3325,7 @@
         },
         "searchMatchReasonShown": true,
         "searchMatchReasonUnoccluded": true,
-        "labelsAudited": 11,
+        "labelsAudited": 9,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Amazake",
         "labelWorstOffFramePx": 0,
@@ -3328,36 +3348,29 @@
           "Barley miso, 18 months",
           "Stir at 24h to cool"
         ],
-        "labelWorstDisplacementPx": 52,
-        "labelsMoreThan40pxFromTheirNode": 7,
+        "labelWorstDisplacementPx": 60.2,
+        "labelsMoreThan40pxFromTheirNode": 6,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
-        "labelWorstReservedDisplacementPx": 52,
-        "labelWorstDisplacementEm": 2.16,
+        "labelWorstReservedDisplacementPx": 58.2,
+        "labelWorstDisplacementEm": 2.51,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 3.18,
+        "labelWorstAmbiguityRatio": 1.21,
         "labelsAmbiguousWithoutALeader": 0,
+        "labelsAmbiguousWithoutALeaderIds": [],
+        "labelsAmbiguousWithoutALeaderOn": [],
         "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
-          "checked": 11,
-          "sampled": 11,
+          "checked": 9,
+          "sampled": 9,
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
-          "worstContrast": 2.68,
+          "worstContrast": 7.71,
           "invisibleIds": [],
           "weakest": [],
           "rows": [
-            {
-              "id": "n043f593b30",
-              "x": 105,
-              "y": 443,
-              "r": 15.9,
-              "peak": 0.2373,
-              "ground": 0.0574,
-              "contrast": 2.68
-            },
             {
               "id": "n209e6a2a86",
               "x": 1105,
@@ -3431,15 +3444,6 @@
               "contrast": 7.81
             },
             {
-              "id": "n8d055e5297",
-              "x": 125,
-              "y": 571,
-              "r": 14.4,
-              "peak": 0.2463,
-              "ground": 0.0574,
-              "contrast": 2.76
-            },
-            {
               "id": "nbc542622a2",
               "x": 724,
               "y": 762,
@@ -3486,8 +3490,8 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "ef4340f5a9e4398f",
-        "appSha": "9bfd7dd6585c83ad",
+        "fnSha": "fd63e3fef04b71f6",
+        "appSha": "afee2ffa14e2e205",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -3505,8 +3509,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:02:39.903Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T11:39:56.800Z"
     },
     {
       "id": "11",
@@ -3514,15 +3518,15 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 18.5,
+      "seconds": 19,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 173250,
-        "sha256": "2d98e164c2aa6804d92434fe6729fbf9a3434dba648f55a222557fe583c39147"
+        "bytes": 169053,
+        "sha256": "a994f2ff430d29c176ffc10e7b111e84ef6617b5955203d7972bbfc90a5d3923"
       },
       "claims": {
         "ok": true,
@@ -3574,7 +3578,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 21620,
+            "serverPid": 11542,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -3586,7 +3590,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 21620,
+            "serverPid": 11542,
             "actor": "android-twin",
             "status": "live"
           }
@@ -3617,7 +3621,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "861f6cca2f545723",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "05367ac3f2489b52",
         "claimShas": {
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "twoDistinctSockets": "b5bea41b6c62",
@@ -3628,7 +3632,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:34:09.728Z"
+      "fileMtime": "2026-09-06T11:31:50.606Z"
     },
     {
       "id": "12",
@@ -3643,8 +3647,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 789746,
-        "sha256": "774dcc4bafaba1b5cb5439baa72955ef640ca52a8b8106b64727231717044c0c"
+        "bytes": 910802,
+        "sha256": "28ce6e5ee5c1966163f23655d3aea49a5cca59b63c1454534ac13e250731035f"
       },
       "claims": {
         "ok": true,
@@ -3822,7 +3826,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 21620,
+            "serverPid": 11542,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -3834,7 +3838,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 21620,
+            "serverPid": 11542,
             "actor": "android-twin",
             "status": "live"
           }
@@ -3848,44 +3852,44 @@
           "restored": true,
           "pixels": {
             "members": 20,
-            "medianSeparationPx": 66.75,
-            "minSeparationPx": 61.76,
+            "medianSeparationPx": 72.83,
+            "minSeparationPx": 71.25,
             "markersAtDisplacedPositions": 20,
-            "shaPrinted": "8a9ee216fc",
-            "shaAfterRaster": "8a9ee216fc",
-            "worstDisplacedContrast": 3.03,
-            "changedPixels": 24232,
-            "changedFraction": 2.337,
+            "shaPrinted": "c0bb79690c",
+            "shaAfterRaster": "c0bb79690c",
+            "worstDisplacedContrast": 3.11,
+            "changedPixels": 64303,
+            "changedFraction": 6.202,
             "changedBox": {
-              "x0": 84,
+              "x0": 240,
               "y0": 104,
-              "x1": 847,
-              "y1": 1000
+              "x1": 938,
+              "y1": 1015
             },
             "districtBox": {
-              "x0": 133,
-              "y0": 536,
-              "x1": 386,
-              "y1": 748
+              "x0": 366,
+              "y0": 520,
+              "x1": 513,
+              "y1": 652
             },
-            "changedSampled": 378,
-            "changedInsideDistrict": 157,
-            "changedInsideDistrictPct": 41.5,
-            "lightArrivedAtNewPositions": 12,
-            "lightLeftOldPositions": 14,
-            "membersThatDidBoth": 8,
+            "changedSampled": 1004,
+            "changedInsideDistrict": 70,
+            "changedInsideDistrictPct": 7,
+            "lightArrivedAtNewPositions": 18,
+            "lightLeftOldPositions": 12,
+            "membersThatDidBoth": 11,
             "expectedTravelPx": [
-              44.3,
-              49.3
+              52.6,
+              50.2
             ],
             "measuredTravelPx": [
-              45,
-              48
+              52,
+              50
             ],
-            "travelAgreementPx": 1.5,
-            "matchAtMeasured": 0.364,
-            "matchIfItHadNotMoved": 0.259,
-            "matchSamples": 615
+            "travelAgreementPx": 0.6,
+            "matchAtMeasured": 0.708,
+            "matchIfItHadNotMoved": 0.296,
+            "matchSamples": 301
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -3899,88 +3903,88 @@
           "restored": true,
           "pixels": {
             "members": 20,
-            "medianSeparationPx": 66.75,
-            "minSeparationPx": 61.76,
+            "medianSeparationPx": 72.83,
+            "minSeparationPx": 71.25,
             "markersAtDisplacedPositions": 20,
-            "shaPrinted": "8a9ee216fc",
-            "shaAfterRaster": "8a9ee216fc",
-            "worstDisplacedContrast": 3.03,
-            "changedPixels": 24232,
-            "changedFraction": 2.337,
+            "shaPrinted": "c0bb79690c",
+            "shaAfterRaster": "c0bb79690c",
+            "worstDisplacedContrast": 3.11,
+            "changedPixels": 64303,
+            "changedFraction": 6.202,
             "changedBox": {
-              "x0": 84,
+              "x0": 240,
               "y0": 104,
-              "x1": 847,
-              "y1": 1000
+              "x1": 938,
+              "y1": 1015
             },
             "districtBox": {
-              "x0": 133,
-              "y0": 536,
-              "x1": 386,
-              "y1": 748
+              "x0": 366,
+              "y0": 520,
+              "x1": 513,
+              "y1": 652
             },
-            "changedSampled": 378,
-            "changedInsideDistrict": 157,
-            "changedInsideDistrictPct": 41.5,
-            "lightArrivedAtNewPositions": 12,
-            "lightLeftOldPositions": 14,
-            "membersThatDidBoth": 8,
+            "changedSampled": 1004,
+            "changedInsideDistrict": 70,
+            "changedInsideDistrictPct": 7,
+            "lightArrivedAtNewPositions": 18,
+            "lightLeftOldPositions": 12,
+            "membersThatDidBoth": 11,
             "expectedTravelPx": [
-              44.3,
-              49.3
+              52.6,
+              50.2
             ],
             "measuredTravelPx": [
-              45,
-              48
+              52,
+              50
             ],
-            "travelAgreementPx": 1.5,
-            "matchAtMeasured": 0.364,
-            "matchIfItHadNotMoved": 0.259,
-            "matchSamples": 615
+            "travelAgreementPx": 0.6,
+            "matchAtMeasured": 0.708,
+            "matchIfItHadNotMoved": 0.296,
+            "matchSamples": 301
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
         },
         "clusterPixelProof": {
           "members": 20,
-          "medianSeparationPx": 66.75,
-          "minSeparationPx": 61.76,
+          "medianSeparationPx": 72.83,
+          "minSeparationPx": 71.25,
           "markersAtDisplacedPositions": 20,
-          "shaPrinted": "8a9ee216fc",
-          "shaAfterRaster": "8a9ee216fc",
-          "worstDisplacedContrast": 3.03,
-          "changedPixels": 24232,
-          "changedFraction": 2.337,
+          "shaPrinted": "c0bb79690c",
+          "shaAfterRaster": "c0bb79690c",
+          "worstDisplacedContrast": 3.11,
+          "changedPixels": 64303,
+          "changedFraction": 6.202,
           "changedBox": {
-            "x0": 84,
+            "x0": 240,
             "y0": 104,
-            "x1": 847,
-            "y1": 1000
+            "x1": 938,
+            "y1": 1015
           },
           "districtBox": {
-            "x0": 133,
-            "y0": 536,
-            "x1": 386,
-            "y1": 748
+            "x0": 366,
+            "y0": 520,
+            "x1": 513,
+            "y1": 652
           },
-          "changedSampled": 378,
-          "changedInsideDistrict": 157,
-          "changedInsideDistrictPct": 41.5,
-          "lightArrivedAtNewPositions": 12,
-          "lightLeftOldPositions": 14,
-          "membersThatDidBoth": 8,
+          "changedSampled": 1004,
+          "changedInsideDistrict": 70,
+          "changedInsideDistrictPct": 7,
+          "lightArrivedAtNewPositions": 18,
+          "lightLeftOldPositions": 12,
+          "membersThatDidBoth": 11,
           "expectedTravelPx": [
-            44.3,
-            49.3
+            52.6,
+            50.2
           ],
           "measuredTravelPx": [
-            45,
-            48
+            52,
+            50
           ],
-          "travelAgreementPx": 1.5,
-          "matchAtMeasured": 0.364,
-          "matchIfItHadNotMoved": 0.259,
-          "matchSamples": 615
+          "travelAgreementPx": 0.6,
+          "matchAtMeasured": 0.708,
+          "matchIfItHadNotMoved": 0.296,
+          "matchSamples": 301
         },
         "printedShaMatchesRenderedState": true,
         "clusterDisplacementVisibleInPixels": true,
@@ -4033,15 +4037,15 @@
             "android": 150
           },
           "sha": {
-            "windows": "8a9ee216fc",
-            "android": "8a9ee216fc"
+            "windows": "c0bb79690c",
+            "android": "c0bb79690c"
           },
           "identical": true,
           "shown": true,
           "camera": {
             "yaw": 0.34,
             "pitch": 0.16,
-            "dist": 122.82488576389757,
+            "dist": 452.2206871281054,
             "target": [
               4.227,
               -4.996000000000002,
@@ -4063,7 +4067,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "936d2e118cf8cc23",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "05367ac3f2489b52",
         "claimShas": {
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "positionEditPropagated": "b5bea41b6c62",
@@ -4087,7 +4091,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:34:18.017Z"
+      "fileMtime": "2026-09-06T11:31:59.313Z"
     },
     {
       "id": "13",
@@ -4102,8 +4106,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 276295,
-        "sha256": "9d053787b503a84a2f3f8c3e8247256838aacc8d0d497bcfbc381d6251b449bc"
+        "bytes": 273865,
+        "sha256": "ea0cc1ec001f749a1a6e0421e555dd0f9e7f75f8abe457e6e567c837d94582ab"
       },
       "claims": {
         "ok": true,
@@ -4159,7 +4163,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "904c8c79130e761a",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "hasPositions": "b5bea41b6c62",
           "hasInstructions": "b5bea41b6c62",
@@ -4170,7 +4174,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:34:19.607Z"
+      "fileMtime": "2026-09-06T11:10:51.660Z"
     },
     {
       "id": "14",
@@ -4185,8 +4189,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 399506,
-        "sha256": "407cf964933b068a87c89e6512e178564cab35c42ea9b420bc60f25418c7b4eb"
+        "bytes": 391770,
+        "sha256": "6d160780b741cd713a2210e44a7eaaefe8d2503109439658ec28d279ffa3a61d"
       },
       "claims": {
         "ok": true,
@@ -4289,34 +4293,34 @@
             "h": 404
           },
           {
-            "x": 510,
+            "x": 518,
             "y": 58,
-            "w": 502,
-            "h": 420
+            "w": 504,
+            "h": 422
           },
           {
-            "x": 510,
+            "x": 518,
             "y": 58,
-            "w": 502,
-            "h": 420
+            "w": 504,
+            "h": 422
           },
           {
-            "x": 548,
-            "y": 78,
-            "w": 696,
-            "h": 584
+            "x": 556,
+            "y": 76,
+            "w": 698,
+            "h": 586
           }
         ],
         "detailMagnificationsOfThePanel": [
           1.99,
-          1.91,
-          1.91,
+          1.9,
+          1.9,
           1.38
         ],
         "detailMagnificationsOfAppPixels": [
           1,
-          0.96,
-          0.96,
+          0.95,
+          0.95,
           0.69
         ],
         "detailHeadlineQuotesAppPixels": true,
@@ -4368,7 +4372,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6eef1bb7a5f4aa9b",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "allThreeKinds": "b5bea41b6c62",
           "rejectionLeftNoTrace": "b5bea41b6c62",
@@ -4384,7 +4388,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:34:22.794Z"
+      "fileMtime": "2026-09-06T11:10:54.859Z"
     },
     {
       "id": "15",
@@ -4392,7 +4396,7 @@
       "title": "Settings and gesture reference",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 4,
+      "seconds": 3.2,
       "status": "captured",
       "error": null,
       "check": {
@@ -4437,7 +4441,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8891521182f0f526",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "referenceMatchesTheRuntime": "b5bea41b6c62"
         }
@@ -4445,7 +4449,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:34:26.459Z"
+      "fileMtime": "2026-09-06T11:10:57.860Z"
     },
     {
       "id": "16",
@@ -4453,15 +4457,15 @@
       "title": "Touch gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 30s",
-      "seconds": 103.4,
+      "seconds": 101.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1309220,
-        "sha256": "8ee01bb1c6b63a2271993198a3758acc666276c1f967dba4d6bb71209a1d991c",
+        "bytes": 1175600,
+        "sha256": "fa07ded67ee246982f38f6481d8253892b18f7526e7846157a6492c2275a493f",
         "seconds": 34,
         "fps": 30,
         "frames": 1020
@@ -4523,7 +4527,7 @@
           "gyro"
         ],
         "count": 7,
-        "quickAddedNode": "nmt1gy5l31mte8",
+        "quickAddedNode": "nmt1gy58p1mte8",
         "deviceViewport": [
           1280,
           1440
@@ -4556,7 +4560,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6fd8acbcaabc26b4",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "tapSelected": "b5bea41b6c62",
           "doubleTapConnected": "b5bea41b6c62",
@@ -4568,7 +4572,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:36:08.435Z"
+      "fileMtime": "2026-09-06T11:12:37.817Z"
     },
     {
       "id": "17",
@@ -4576,15 +4580,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 626.6,
+      "seconds": 556,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 7814237,
-        "sha256": "bef2918fa574685d06565e8857bbae5955048e09b757bca8725a79dc77b055aa",
+        "bytes": 10708026,
+        "sha256": "bcf8a5f72410a5e9ba4ee6340f87fca4610a319efccbd5be6d94592c4a0b4d18",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -4661,12 +4665,12 @@
       "result": {
         "posesRecognised": [
           "spread",
-          "fist",
           "two",
+          "fist",
           "gather"
         ],
         "count": 4,
-        "samples": 2137,
+        "samples": 2076,
         "poseGrabs": [
           {
             "cluster": "Safety and pH",
@@ -4675,24 +4679,78 @@
               "fist"
             ],
             "centroidBefore": [
-              -2.654,
-              -4.63,
-              17.877
+              0.057,
+              -1.553,
+              16.519
             ],
             "centroidAfter": [
-              -2.654,
-              -4.63,
-              17.877
+              3.354,
+              -6.771,
+              16.38
+            ],
+            "travelled": 6.1736,
+            "maxMemberDrift": 0,
+            "frames": [
+              31,
+              32
+            ],
+            "seconds": [
+              1.03,
+              1.07
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -18.859,
+              -15.293,
+              9.633
+            ],
+            "centroidAfter": [
+              -16.716,
+              -16.388,
+              9.155
+            ],
+            "travelled": 2.4533,
+            "maxMemberDrift": 0,
+            "frames": [
+              36,
+              43
+            ],
+            "seconds": [
+              1.2,
+              1.43
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -14.23,
+              -17.133,
+              8.511
+            ],
+            "centroidAfter": [
+              -14.23,
+              -17.133,
+              8.511
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              30,
-              30
+              45,
+              45
             ],
             "seconds": [
-              1,
-              1
+              1.5,
+              1.5
             ]
           },
           {
@@ -4702,24 +4760,24 @@
               "fist"
             ],
             "centroidBefore": [
-              0.601,
-              -6.493,
-              17.185
+              2.281,
+              -8.143,
+              16.944
             ],
             "centroidAfter": [
-              7.298,
-              -12.103,
-              16.061
+              4.385,
+              -9.784,
+              16.57
             ],
-            "travelled": 8.8076,
+            "travelled": 2.6945,
             "maxMemberDrift": 0,
             "frames": [
-              32,
-              50
+              47,
+              53
             ],
             "seconds": [
-              1.07,
-              1.67
+              1.57,
+              1.77
             ]
           },
           {
@@ -4729,24 +4787,24 @@
               "fist"
             ],
             "centroidBefore": [
-              -19.93,
-              -13.189,
-              9.609
+              -12.529,
+              -17.585,
+              8.062
             ],
             "centroidAfter": [
-              -10.914,
-              -12.531,
-              6.708
+              4.231,
+              -18.172,
+              2.977
             ],
-            "travelled": 9.4939,
+            "travelled": 17.5245,
             "maxMemberDrift": 0,
             "frames": [
-              52,
-              60
+              55,
+              66
             ],
             "seconds": [
-              1.73,
-              2
+              1.83,
+              2.2
             ]
           },
           {
@@ -4756,24 +4814,78 @@
               "fist"
             ],
             "centroidBefore": [
-              8.053,
-              -11.526,
-              15.73
+              6.537,
+              -13.762,
+              16.577
             ],
             "centroidAfter": [
-              8.053,
-              -11.526,
-              15.73
+              9.328,
+              -15.516,
+              16.009
+            ],
+            "travelled": 3.3451,
+            "maxMemberDrift": 0,
+            "frames": [
+              197,
+              198
+            ],
+            "seconds": [
+              6.57,
+              6.6
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              1.573,
+              -15.351,
+              3.322
+            ],
+            "centroidAfter": [
+              1.416,
+              -15.056,
+              3.321
+            ],
+            "travelled": 0.3337,
+            "maxMemberDrift": 0,
+            "frames": [
+              210,
+              211
+            ],
+            "seconds": [
+              7,
+              7.03
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              1.756,
+              -17.395,
+              3.611
+            ],
+            "centroidAfter": [
+              1.756,
+              -17.395,
+              3.611
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              63,
-              64
+              213,
+              213
             ],
             "seconds": [
-              2.1,
-              2.13
+              7.1,
+              7.1
             ]
           },
           {
@@ -4783,159 +4895,24 @@
               "fist"
             ],
             "centroidBefore": [
-              -4.87,
-              -16.511,
-              5.511
+              3.114,
+              -17.682,
+              3.239
             ],
             "centroidAfter": [
-              -4.335,
-              -18.989,
-              5.764
+              6.063,
+              -20.209,
+              2.754
             ],
-            "travelled": 2.5482,
+            "travelled": 3.9132,
             "maxMemberDrift": 0,
             "frames": [
-              172,
-              173
+              216,
+              219
             ],
             "seconds": [
-              5.73,
-              5.77
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -6.662,
-              -19.782,
-              6.618
-            ],
-            "centroidAfter": [
-              -6.662,
-              -19.782,
-              6.618
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              176,
-              176
-            ],
-            "seconds": [
-              5.87,
-              5.87
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -5.797,
-              -18.825,
-              6.189
-            ],
-            "centroidAfter": [
-              -4.665,
-              -20.418,
-              6.108
-            ],
-            "travelled": 1.9561,
-            "maxMemberDrift": 0,
-            "frames": [
-              178,
-              182
-            ],
-            "seconds": [
-              5.93,
-              6.07
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -2.651,
-              -21.26,
-              5.627
-            ],
-            "centroidAfter": [
-              7.974,
-              -23.661,
-              2.746
-            ],
-            "travelled": 11.2676,
-            "maxMemberDrift": 0,
-            "frames": [
-              184,
-              203
-            ],
-            "seconds": [
-              6.13,
-              6.77
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -5.719,
-              -26.051,
-              -6.14
-            ],
-            "centroidAfter": [
-              -5.719,
-              -26.051,
-              -6.14
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              340,
-              340
-            ],
-            "seconds": [
-              11.33,
-              11.33
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -5.749,
-              -25.267,
-              -6.264
-            ],
-            "centroidAfter": [
-              -3.2,
-              -24.27,
-              -7.22
-            ],
-            "travelled": 2.8992,
-            "maxMemberDrift": 0,
-            "frames": [
-              342,
-              349
-            ],
-            "seconds": [
-              11.4,
-              11.63
+              7.2,
+              7.3
             ]
           },
           {
@@ -4945,105 +4922,51 @@
               "fist"
             ],
             "centroidBefore": [
-              11.275,
-              -11.312,
-              14.697
+              6.837,
+              -16.299,
+              16.912
             ],
             "centroidAfter": [
-              11.275,
-              -11.312,
-              14.697
+              8.274,
+              -17.908,
+              16.739
             ],
-            "travelled": 0,
+            "travelled": 2.1644,
             "maxMemberDrift": 0,
             "frames": [
-              352,
-              352
+              221,
+              223
             ],
             "seconds": [
-              11.73,
-              11.73
+              7.37,
+              7.43
             ]
           },
           {
-            "cluster": "Equipment",
-            "members": 12,
+            "cluster": "Lacto-vegetables",
+            "members": 20,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -3.149,
-              -25.269,
-              -7.068
+              6.746,
+              -21.152,
+              2.702
             ],
             "centroidAfter": [
-              -3.149,
-              -25.269,
-              -7.068
+              8.738,
+              -21.004,
+              2.061
             ],
-            "travelled": 0,
+            "travelled": 2.0978,
             "maxMemberDrift": 0,
             "frames": [
-              468,
-              468
+              224,
+              230
             ],
             "seconds": [
-              15.6,
-              15.6
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -6.47,
-              -25.38,
-              -6.022
-            ],
-            "centroidAfter": [
-              -6.47,
-              -25.38,
-              -6.022
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              493,
-              493
-            ],
-            "seconds": [
-              16.43,
-              16.43
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -3.327,
-              -23.942,
-              -7.237
-            ],
-            "centroidAfter": [
-              0.649,
-              -22.989,
-              -8.628
-            ],
-            "travelled": 4.3193,
-            "maxMemberDrift": 0,
-            "frames": [
-              496,
-              500
-            ],
-            "seconds": [
-              16.53,
-              16.67
+              7.47,
+              7.67
             ]
           },
           {
@@ -5053,51 +4976,24 @@
               "fist"
             ],
             "centroidBefore": [
-              17.466,
-              -11.76,
-              12.858
+              10.16,
+              -18.327,
+              16.227
             ],
             "centroidAfter": [
-              17.509,
-              -8.646,
-              12.318
-            ],
-            "travelled": 3.1613,
-            "maxMemberDrift": 0,
-            "frames": [
-              502,
-              503
-            ],
-            "seconds": [
-              16.73,
-              16.77
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -0.581,
-              -22.733,
-              -8.29
-            ],
-            "centroidAfter": [
-              -0.581,
-              -22.733,
-              -8.29
+              10.16,
+              -18.327,
+              16.227
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              619,
-              619
+              235,
+              235
             ],
             "seconds": [
-              20.63,
-              20.63
+              7.83,
+              7.83
             ]
           },
           {
@@ -5107,37 +5003,226 @@
               "fist"
             ],
             "centroidBefore": [
-              -2.709,
-              -21.99,
-              -7.757
+              -7.596,
+              -24.212,
+              -5.87
             ],
             "centroidAfter": [
-              4.279,
-              -20.45,
-              -10.179
+              -7.596,
+              -24.212,
+              -5.87
             ],
-            "travelled": 7.5549,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              645,
-              653
+              368,
+              368
             ],
             "seconds": [
-              21.5,
-              21.77
+              12.27,
+              12.27
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -8.385,
+              -24.144,
+              -5.638
+            ],
+            "centroidAfter": [
+              -6.835,
+              -25.506,
+              -5.887
+            ],
+            "travelled": 2.0792,
+            "maxMemberDrift": 0,
+            "frames": [
+              385,
+              388
+            ],
+            "seconds": [
+              12.83,
+              12.93
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -6.742,
+              -23.865,
+              -6.193
+            ],
+            "centroidAfter": [
+              -4.68,
+              -26.257,
+              -6.427
+            ],
+            "travelled": 3.1665,
+            "maxMemberDrift": 0,
+            "frames": [
+              390,
+              394
+            ],
+            "seconds": [
+              13,
+              13.13
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -5.566,
+              -27.334,
+              -5.971
+            ],
+            "centroidAfter": [
+              -4.141,
+              -26.609,
+              -6.535
+            ],
+            "travelled": 1.6959,
+            "maxMemberDrift": 0,
+            "frames": [
+              396,
+              403
+            ],
+            "seconds": [
+              13.2,
+              13.43
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              13.616,
+              -17.98,
+              15.099
+            ],
+            "centroidAfter": [
+              13.749,
+              -15.711,
+              14.675
+            ],
+            "travelled": 2.3122,
+            "maxMemberDrift": 0,
+            "frames": [
+              407,
+              408
+            ],
+            "seconds": [
+              13.57,
+              13.6
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              13.749,
+              -15.711,
+              14.675
+            ],
+            "centroidAfter": [
+              13.749,
+              -15.711,
+              14.675
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              577,
+              577
+            ],
+            "seconds": [
+              19.23,
+              19.23
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              5.616,
+              -13.334,
+              16.789
+            ],
+            "centroidAfter": [
+              7.435,
+              -14.06,
+              16.349
+            ],
+            "travelled": 2.0083,
+            "maxMemberDrift": 0,
+            "frames": [
+              730,
+              737
+            ],
+            "seconds": [
+              24.33,
+              24.57
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              7.742,
+              -14.305,
+              16.296
+            ],
+            "centroidAfter": [
+              11.003,
+              -15.015,
+              15.407
+            ],
+            "travelled": 3.4539,
+            "maxMemberDrift": 0,
+            "frames": [
+              741,
+              749
+            ],
+            "seconds": [
+              24.7,
+              24.97
             ]
           }
         ],
-        "poseGrabCount": 17,
+        "poseGrabCount": 20,
         "poseGrabbedClusters": [
           "Safety and pH",
           "Lacto-vegetables",
           "Equipment"
         ],
         "poseGrabLargest": 20,
-        "poseGrabMaxTravel": 11.2676,
+        "poseGrabMaxTravel": 17.5245,
         "captionFramesShowing": 1124,
-        "captionFramesMarkedHeld": 102,
+        "captionFramesMarkedHeld": 107,
         "captionFramesOutrunningTheDetector": 0,
         "captionOutrunExamples": [],
         "captionNeverOutrunsTheDetector": true,
@@ -5154,15 +5239,15 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          2.284,
-          0.286,
-          -3.343
+          -7.238,
+          -8.674,
+          1.116
         ],
-        "clusterCentroidTravelled": 17.508,
+        "clusterCentroidTravelled": 31.2023,
         "clusterMaxMemberDrift": 0,
         "clusterLedgerBeforeOnPeer": "5144cc62a503",
-        "clusterLedgerAfterOnPeer": "7720fe60c994",
-        "clusterLedgerAfterHere": "7720fe60c994",
+        "clusterLedgerAfterOnPeer": "ad4e2c9172b0",
+        "clusterLedgerAfterHere": "ad4e2c9172b0",
         "clusterMoveReachedTheHeadlessPeer": true,
         "clusterMovedByMouse": true,
         "clusterInternalArrangementPreserved": true,
@@ -5180,7 +5265,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "d38003b65a7d9754",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "clusterMovedByPose": "b5bea41b6c62",
           "clusterArrangementPreservedByPose": "b5bea41b6c62",
@@ -5195,7 +5280,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:46:33.696Z"
+      "fileMtime": "2026-09-06T11:21:52.104Z"
     },
     {
       "id": "18",
@@ -5203,15 +5288,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 75.7,
+      "seconds": 70.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2969315,
-        "sha256": "1071cf31a13961e7b465822233cccd3b1a20a9680f09d1afbbb9461790228bd4",
+        "bytes": 2777134,
+        "sha256": "d4aa998c5a58749b49c88d7d28a45e26dcac53af4ef50742d07ff4cb6aa2d228",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -5312,7 +5397,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "a60024ab92924687",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "steppedToASecondHit": "b5bea41b6c62",
           "severalHitsMatched": "b5bea41b6c62",
@@ -5323,7 +5408,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:47:51.479Z"
+      "fileMtime": "2026-09-06T11:23:05.402Z"
     },
     {
       "id": "19",
@@ -5331,15 +5416,15 @@
       "title": "Capture, place, connect, refind",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 129.1,
+      "seconds": 127.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2141361,
-        "sha256": "3e585f94e033082f78f016ff56b410f38a181c314423d892f46836eb203ec6e4",
+        "bytes": 2101061,
+        "sha256": "f23539100ef8185cefd8b8bb92c1e01e4a4d48489732f891e6d66fe4a7db3bdb",
         "seconds": 23,
         "fps": 30,
         "frames": 690
@@ -5449,7 +5534,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8f6ace6323401f42",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "created": "b5bea41b6c62",
           "placed": "b5bea41b6c62",
@@ -5462,7 +5547,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:49:58.127Z"
+      "fileMtime": "2026-09-06T11:25:10.553Z"
     },
     {
       "id": "20",
@@ -5470,15 +5555,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 185.6,
+      "seconds": 186,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1192948,
-        "sha256": "ce0df9c26a5b858746ffddc80b8bed1c50f16ad6351c09546e90951e6554c29e",
+        "bytes": 1194327,
+        "sha256": "ce0696b38f8b648fa2e722a14f9707b3d67f9cda84b2669efef049bab2e80d24",
         "seconds": 47,
         "fps": 30,
         "frames": 1410
@@ -5706,7 +5791,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "9387e777a5795c22",
-        "appSha": "5b37b3b57ff185bf",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "rejectionLeftNoTrace": "b5bea41b6c62",
           "allThreeKindsAccepted": "b5bea41b6c62",
@@ -5722,20 +5807,41 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:07:57.444Z"
+      "fileMtime": "2026-09-06T11:28:18.026Z"
+    }
+  ],
+  "supersededRuns": [
+    {
+      "supersededAt": "2026-09-06T11:09:52.528Z",
+      "captured": 17,
+      "total": 20,
+      "failed": [
+        {
+          "id": "01",
+          "status": "driver-error"
+        },
+        {
+          "id": "05",
+          "status": "claim-not-met"
+        },
+        {
+          "id": "06",
+          "status": "claim-not-met"
+        }
+      ]
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T11:09:16.195Z",
+  "finishedAt": "2026-09-06T11:39:58.661Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 825666,
-    "sha256": "c13f41989ff7251814e421c06d677b067f789605ae429a5f55de4a354d119303",
-    "appSha": "c13f41989ff72518",
-    "gitHead": "3263831b97d9",
-    "gitHeadAt": "2026-09-06T11:04:02+00:00",
+    "bytes": 825894,
+    "sha256": "afee2ffa14e2e20574cd23b60be9d364ea4dcea23ef748a2ce2ee958189f1aff",
+    "appSha": "afee2ffa14e2e205",
+    "gitHead": "0aa6817c1ef2",
+    "gitHeadAt": "2026-09-06T11:09:31+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,

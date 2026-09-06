@@ -85,6 +85,12 @@ export default [
     await page.click('[data-t=hands-chip]');
     await page.waitForFunction(() => window.mm.hands.enabled, null, { timeout: 90000 });
     await page.waitForFunction(() => window.mm.hands.frame.present, null, { timeout: 90000 });
+    // FRAMED AGAIN NOW THE WEBCAM PANEL IS THERE. The framing reserves room for
+    // whatever chrome is open, and the panel opens after it — which also moves
+    // the recovery column to the emptier rail. Framed once, the map sat under
+    // the column it had been framed clear of, and 67 thoughts went behind the
+    // panel that lists the thoughts the frame cannot name.
+    await FRAME_ALL(page, 1.32);
     // Hold at the neutral framing with the hand present but before the pose has
     // acted, so the two panels differ by the operation and nothing else.
     const distBefore = await page.evaluate(() => window.mm.scene.pose.dist);
@@ -556,6 +562,8 @@ export default [
              everyLabelStaysBesideItsNode: audit.checked > 0 && audit.worstDisplacementEm <= 2.8,
              labelWorstAmbiguityRatio: audit.worstAmbiguityRatio,
              labelsAmbiguousWithoutALeader: audit.ambiguousUnleaded,
+             labelsAmbiguousWithoutALeaderIds: audit.ambiguousUnleadedIds,
+             labelsAmbiguousWithoutALeaderOn: (audit.ambiguousUnleadedIds ?? []).slice(0, 8),
              // Beside its node is not the same as unmistakably ITS. A label
              // whose second-nearest marker is within 0.6 of its nearest is
              // ambiguous however close it sits, and gets a leader or fails.

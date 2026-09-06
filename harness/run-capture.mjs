@@ -748,17 +748,28 @@ async function runDriver(d) {
       });
       for (const p2 of [w, a]) { await POSE(p2.page, bigPose); await sleepFrames(p2.page, 0, 3); }
       const preMoveShot = await shot(w.page, w.cdp, resolve(TMP, 'twin-w-big-pre.png'));
-      await w.page.evaluate((l) => {
+      // THE MOVE IS SIZED IN PIXELS, NOT IN WORLD UNITS.
+      //
+      // A fixed world delta projects to whatever the framing makes of it, and
+      // the framing is solved per run: when the recovery column began reserving
+      // its own rail the map got smaller and the same 8.5-unit move fell from
+      // 66 px of travel to 18, under the 30 px floor the claim needs to have
+      // any power. The delta is solved from the projection instead, so the
+      // district always travels about eighty pixels whatever the framing — and
+      // every coordinate is written back afterwards either way.
+      const pxPerWorld = await w.page.evaluate(() => {
+        const sc = window.mm.scene;
+        const q = sc.screenPositions();
+        return q.length ? q.reduce((t, p2) => t + p2.pxPerWorld, 0) / q.length : 8;
+      });
+      const WANT_PX = 80;
+      const k = WANT_PX / Math.max(pxPerWorld, 0.5) / Math.hypot(1.7, -1.1, 0.6);
+      const DELTA = [1.7 * k, -1.1 * k, 0.6 * k];
+      await w.page.evaluate(({ l, d }) => {
         const ids = Object.values(window.mm.store.doc.nodes)
           .filter(n => n.placed && n.label === l).map(n => n.id);
-        // 6.8, -4.4, 2.4 — four times the old delta. At the old size the move
-        // projected to about fifteen pixels on a map whose node cores are nine
-        // pixels across, so the cycle-11 Auditor read the district as sitting
-        // where it had been and was not wrong to: a claim the frame makes has
-        // to be legible in the frame. Every coordinate is written back
-        // afterwards either way, so a larger move costs the ledger nothing.
-        window.mm.store.moveCluster(ids, [6.8, -4.4, 2.4]);
-      }, CLUSTER);
+        window.mm.store.moveCluster(ids, d);
+      }, { l: CLUSTER, d: DELTA });
       const clusterAfterW = await clusterLedger(w.page, CLUSTER);
       let clusterArrived = false;
       for (let k = 0; k < 60 && !clusterArrived; k++) {

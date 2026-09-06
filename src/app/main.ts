@@ -562,7 +562,13 @@ export class App {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e || getComputedStyle(e).display === 'none') continue;
       const r = e.getBoundingClientRect();
-      if (r.width > 2 && r.height > 2) right = Math.max(right, w - r.left + 14);
+      if (r.width < 2 || r.height < 2) continue;
+      // WHICHEVER SIDE IT IS ACTUALLY ON. The recovery column can now take the
+      // left rail when the right one is busy, and reserving the right for it
+      // regardless put the map straight under it: 67 thoughts behind the panel
+      // listing the thoughts the frame could not name.
+      if (r.left < w / 2) left = Math.max(left, r.right + 14);
+      else right = Math.max(right, w - r.left + 14);
     }
     return { top: Math.min((top + line) / h, 0.22), bottom: Math.min((bottom + line) / h, 0.22),
              left: Math.min(left / w, 0.38), right: Math.min(right / w, 0.38) };
@@ -1301,7 +1307,8 @@ export class App {
     // frame is about, plus the top of its ring. A badge that explains what is
     // missing must not be the thing making something missing.
     for (const sel of ['#top', '#states', '#editor', '#finder', '#hands', '#tools',
-                       '#unlabelled', '#pinmark', '#grabmark']) {
+                       '#unlabelled', '#pinmark', '#grabmark', '#lenstag', '#gesture',
+                       '#argyro', '#clusterproof']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e || getComputedStyle(e).display === 'none') continue;
       const r = this.outerRect(e);
@@ -1521,33 +1528,13 @@ export class App {
       // 130 px away, reading at a glance as two thoughts that say the same
       // thing. The chip carries the name; nothing else may.
       if (this.namedElsewhere().has(s.id)) continue;
+      // THE ARBITER HAS ALREADY DECIDED. This used to re-derive the ambiguity
+      // from a fresh projection while the audit derived it from the arbiter's —
+      // two readings of one quantity, disagreeing on exactly one label of
+      // artifact 10, so the frame drew no leader where the audit found one
+      // needed. The scene decides against the projection it laid out with.
       const far = this.scene.labelNeedsLeader.has(s.id);
-      // AMBIGUITY IS THE TEST, AND IT IS A MARGIN, NOT A TIE.
-      //
-      // A leader used to be drawn only when the nearest node to a label's box
-      // was outright not its own, and only for held or far-placed labels. The
-      // cycle-10 Art Director's binding ruling is that this is too weak:
-      // a label can be nearest to its own node and still unreadable as a
-      // binding when several identical markers sit at almost the same distance
-      // — measured nearest/second-nearest ratios of 0.84, 0.67 and 0.71 on
-      // artifact 10, all of them ambiguous, none of them getting a line.
-      //
-      // So the trigger is the RATIO. A label whose second-nearest marker is
-      // within 0.6 of its nearest gets a leader, whoever the nearest is.
-      const near = (p: { x: number; y: number }) => {
-        const px = Math.min(Math.max(p.x, r.x0), r.x1), py = Math.min(Math.max(p.y, r.y0), r.y1);
-        return Math.hypot(p.x - px, p.y - py);
-      };
-      const own = near(s);
-      let best = Infinity, closest = s;
-      for (const q of scr) {
-        if (q.id === s.id) continue;
-        const d = near(q);
-        if (d < best) { best = d; closest = q; }
-      }
-      const ratio = best > 0 ? own / best : 1;
-      const ambiguous = closest.id !== s.id && best < own ? true : ratio > 0.6;
-      if (!far && !ambiguous) continue;
+      if (!far && !this.scene.ambiguousLabels.has(s.id)) continue;
       this.leaderFor.add(s.id);
       const x = s.x / dpr, y = s.y / dpr;
       const tx = Math.min(Math.max(x, r.x0 / dpr), r.x1 / dpr);
@@ -1606,30 +1593,25 @@ export class App {
                  !this.panelOpen();
     col.className = show ? 'show' : '';
     if (!show) { col.innerHTML = ''; col.style.top = ''; return; }
-    // WHICHEVER SIDE HAS ROOM. Measured, not assumed: the free vertical run on
-    // each side after whatever is already there, and the column takes the
-    // larger. On artifact 04 the editor occupies the right rail and the left
-    // margin is empty, and the column was starting under the editor with a
-    // third of the height — 30 of 149 thoughts unnamed anywhere in the frame.
+    // THE SIDE IS DECIDED BY ONE FACT: is the editor open?
+    //
+    // The first version measured the free run on each side and took the larger,
+    // which is the better rule and unusable here — the measurement includes the
+    // badges, the badges are placed to avoid the column, and the column then
+    // moves because of where they went. Frame to frame it oscillated, and on
+    // artifact 05 it ended with the map framed clear of one rail and the column
+    // sitting in the other, burying 135 of 150 thoughts.
+    //
+    // The editor is the only large panel that squeezes this column, it is a
+    // property of what the user is doing rather than of this frame's layout,
+    // and it cannot move in response to the column. So: the column takes the
+    // left rail when the editor holds the right one, and the right rail
+    // otherwise. Stable by construction.
     {
-      const H2 = window.innerHeight;
-      const freeFrom = (side: 'left' | 'right') => {
-        let top = 96, bottom = H2 - 12;
-        for (const sel of ['#editor', '#states', '#finder', '#hands', '#hidden',
-                           '#hitbreak', '#origin', '#tools']) {
-          const e = document.querySelector(sel) as HTMLElement | null;
-          if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
-          const r = this.outerRect(e);
-          if (r.width < 2 || r.height < 2) continue;
-          const onSide = side === 'right' ? r.right > window.innerWidth - 460
-                                          : r.left < 460;
-          if (!onSide) continue;
-          if (r.bottom < H2 * 0.6) top = Math.max(top, r.bottom + 10);
-          else bottom = Math.min(bottom, r.top - 10);
-        }
-        return bottom - top;
-      };
-      col.classList.toggle('left', freeFrom('left') > freeFrom('right') + 40);
+      const ed = document.getElementById('editor');
+      const open = !!ed && getComputedStyle(ed).display !== 'none' &&
+                   ed.getBoundingClientRect().width > 2;
+      col.classList.toggle('left', open);
     }
     // BELOW EVERYTHING ALREADY IN THE RAIL IT CHOSE, not only the editor.
     //
@@ -1649,7 +1631,8 @@ export class App {
       // height left — the recovery list reduced to nothing by the rule meant to
       // keep it clear. What is below the column shortens it instead; see
       // floor() further down.
-      for (const sel of ['#editor', '#hidden', '#hitbreak', '#origin', '#states']) {
+      for (const sel of ['#editor', '#hidden', '#hitbreak', '#origin', '#states',
+                         '#finder', '#clusterproof']) {
         const e = document.querySelector(sel) as HTMLElement | null;
         if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
         const r = this.outerRect(e);
@@ -1665,7 +1648,7 @@ export class App {
       col.style.bottom = '';
       const mine = col.getBoundingClientRect();
       let floorY = window.innerHeight - 12;
-      for (const sel of ['#hands', '#tools', '#gesture']) {
+      for (const sel of ['#hands', '#tools', '#gesture', '#lenstag', '#argyro']) {
         const e = document.querySelector(sel) as HTMLElement | null;
         if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
         const r = this.outerRect(e);
@@ -1733,7 +1716,7 @@ export class App {
     const floor = () => {
       let f = Math.min(col!.getBoundingClientRect().bottom, window.innerHeight - 12);
       const own = col!.getBoundingClientRect();
-      for (const sel of ['#hands', '#tools', '#gesture']) {
+      for (const sel of ['#hands', '#tools', '#gesture', '#lenstag', '#argyro']) {
         const e = document.querySelector(sel) as HTMLElement | null;
         if (!e || getComputedStyle(e).display === 'none') continue;
         const r = this.outerRect(e);
@@ -1746,7 +1729,13 @@ export class App {
       const last = col!.lastElementChild as HTMLElement | null;
       return !last || last.getBoundingClientRect().bottom <= floor() - 2;
     };
-    if (!fits()) {
+    // TWO COLUMNS ONLY WHERE THERE IS A FRAME TO SPEND ON THEM. At 440 px the
+    // widened column is 46 % of a 960 px panel, and the framing's own inset cap
+    // is 38 % — so on artifact 05's half-width panels the map was fitted to a
+    // rail that had not been fully reserved and 75 thoughts ended up behind the
+    // list. Wide frames widen; narrow ones stay at one column and trim, which
+    // is what the trim is for.
+    if (!fits() && window.innerWidth >= 1400) {
       col.classList.add('two');
       col.innerHTML = render(named);
     }

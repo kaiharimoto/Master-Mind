@@ -1100,6 +1100,42 @@ export class Scene {
     // label to hide, and counting it would overstate what the view is omitting.
     // Counted from the same map the frame is drawn from, so the number the
     // chrome prints and the labels that are actually missing cannot disagree.
+    // WHICH LABELS ARE AMBIGUOUSLY BOUND, decided ONCE, here, against the same
+    // projection and the same drawn boxes the audit measures.
+    //
+    // The chrome computed this a second time from a fresh `screenPositions()`
+    // to decide where to draw leaders, while the audit computed it from
+    // `lastScreen` and the drawn glyph box — two readings of one quantity over
+    // two projections and two rectangles, which is F-034 in a new place. They
+    // disagreed on exactly one label of artifact 10, "Amylase plus protease",
+    // so the frame drew no leader and the audit reported an unleadered
+    // ambiguity. The arbiter decides; the chrome draws what it is told; the
+    // audit checks that a leader was DRAWN for each, which is a real check of
+    // the drawing rather than a second opinion on the decision.
+    this.ambiguousLabels.clear();
+    for (let li = 0; li < this.runMeta.length; li++) {
+      const aid = this.runMeta[li].id;
+      const rr = this.labelRects.get(aid);
+      const own = this.lastScreen.get(aid);
+      if (!rr || !own || rr.alpha <= 0.02) continue;
+      if (this.namedByChrome.has(aid) || aid === this.pinned) continue;
+      const box = this.text.drawnRect(li, own.x, own.y, own.pxPerWorld);
+      if (!box) continue;
+      const near = (q: { x: number; y: number }) => {
+        const px = Math.min(Math.max(q.x, box.x0), box.x1);
+        const py = Math.min(Math.max(q.y, box.y0), box.y1);
+        return Math.hypot(q.x - px, q.y - py);
+      };
+      const dOwn = near(own);
+      let other = Infinity;
+      for (const [oid, oq] of this.lastScreen) {
+        if (oid === aid) continue;
+        const od = near(oq);
+        if (od < other) other = od;
+      }
+      const m = other > 0 && Number.isFinite(other) ? dOwn / other : 0;
+      if (m > 0.6) this.ambiguousLabels.add(aid);
+    }
     this.deconflictSeq++;
     this.suppressed = 0;
     this.suppressedIds.length = 0;
@@ -1156,6 +1192,13 @@ export class Scene {
    * viewer is told what the overview is not showing, rather than left to assume
    * the map has anonymous nodes.
    */
+  /**
+   * Labels whose nearest other marker is within 0.6 of their own — ambiguously
+   * bound, and needing a leader. Decided by the arbiter against the projection
+   * it laid out with, so nothing downstream has to compute it again.
+   */
+  readonly ambiguousLabels = new Set<NodeId>();
+
   suppressed = 0;
 
   /**
@@ -1341,7 +1384,11 @@ export class Scene {
         }
         const margin = other > 0 && Number.isFinite(other) ? d / other : 0;
         if (margin > worstMargin) { worstMargin = margin; worstMarginId = meta.id; }
-        if (margin > 0.6 && !this.drawnLeaders.has(meta.id)) ambiguousIds.push(meta.id);
+        // Compared against what the ARBITER decided, so this reports a leader
+        // that was not DRAWN rather than re-deriving the decision and reaching
+        // its own answer to the same question.
+        if (this.ambiguousLabels.has(meta.id) && !this.drawnLeaders.has(meta.id))
+          ambiguousIds.push(meta.id);
         // AND THE SAME DISTANCE IN THE LABEL'S OWN TYPE SIZE, which is the
         // measure the cap is expressed in and the one that means the same thing
         // at every zoom. Forty pixels is far beside 12 px type and adjacent

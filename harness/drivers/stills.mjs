@@ -98,6 +98,9 @@ const labelAudit = async (page) => {
            everyLabelStaysBesideItsNode: a.checked > 0 && a.worstDisplacementEm <= 2.8,
            labelWorstAmbiguityRatio: a.worstAmbiguityRatio,
            labelsAmbiguousWithoutALeader: a.ambiguousUnleaded,
+           // WHICH ones, not only how many. A count of one is a count nobody
+           // can act on; the ids make the failure a thing to look at.
+           labelsAmbiguousWithoutALeaderIds: a.ambiguousUnleadedIds,
            // Beside its node is not the same as unmistakably ITS. A label
            // whose second-nearest marker is within 0.6 of its nearest is
            // ambiguous however close it sits, and gets a leader or fails.
