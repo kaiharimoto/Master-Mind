@@ -1797,6 +1797,20 @@ is the union of both moments. Before that it was wrong in a second way:
 `getBoundingClientRect` does not include the footer at all, which is the same
 overflow lesson the badge solver learned in cycle 12.
 
+**One claim was removed this cycle, and it is named here because a removed
+passing claim is the thing an auditor should be hardest on.** Artifact 09's
+`everyOtherLabelHeldItsPlace` is replaced by
+`everyOtherLabelHeldItsPlaceOrYieldedToAnActedName`. The reframing that put the
+edited node in shot moved the vantage closer, and in the tighter frame the newly
+*connected* far end earns a name it did not have before — which lands in the
+space 'Inoculate at 30C' was using, so that name flips from above its node to
+below it. The old claim called that a failure. The new one is not weaker in the
+way that matters: it requires the shifted name's old box to actually *collide*
+with a box one of the two acted thoughts now occupies, measured in absolute
+frame coordinates, and `labelsShiftedWithoutACollision` is reported beside it. A
+name that moves for no reason still fails. What changed is that the claim now
+names the reason the artifact is *about*.
+
 **What the five gates measure now.** 06: 17 placed markers lit in the written
 file and 3292 chromatic pixels on the canvas. 09: teal 0 before, 410 after, in
 the same window in both panel files. 05: 150 of 150 markers lit in each panel,
