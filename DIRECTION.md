@@ -350,6 +350,54 @@ The cost is stated on the frame rather than absorbed: artifact 02 draws **66 of
 suppressed label costs one label; an orphan costs one label and adds a false
 object.
 
+### Amendment, cycle 12 — the truncation floor gets a tier below it, and the reason the floor existed is what governs the tier
+
+The cycle-9 Art Director ruled a ten-glyph floor on truncation: below it a label
+is not shortened at all, it takes its chances on being placed whole and is
+hidden and listed if it cannot be. The reason given was specific and correct —
+sixteen of artifact 02's thirty-six truncations kept six characters or fewer,
+and **"Rice…" (Rice vinegar base) was indistinguishable from a prefix of "Rice
+koji: polish to 70 %" drawn in the same frame**. A stub that could be either of
+two thoughts on screen costs a full name's ink and collision budget and returns
+nothing.
+
+The cycle-11 Art Director, ruling on the same category, asks for the opposite:
+an always-on compressed identity for suppressed nodes, because **about 78 % of
+the nodes on a whole-brain frame carry no text at all** and an overview of
+coloured dots plus a sidebar is not what the detail standard asks for. That
+critic called the district-grouped index "an honest and well-made mitigation"
+and still scored the category at its minimum on this gap.
+
+**This is the Art Director's own call, revisited by the Art Director on a
+different proposal — not the builder reopening a settled decision, and not the
+floor being dropped.** It is recorded here rather than applied quietly because
+the two rulings read as contradictory and a reader is owed the reconciliation.
+
+**Decision.** The ten-glyph floor stands for *shortening a name*. Below it there
+is one further tier, tried last and only where the alternative is no text at
+all: a **compressed identity**, admissible if and only if it is **unique in the
+frame**. Its length is not a constant — it is solved per frame as the shortest
+prefix between three and eight characters that no other text on screen shares.
+Two thoughts beginning "Rice" therefore get "Rice v…" and "Rice k…", never
+"Rice…" twice. The exact failure the floor was raised against is excluded by
+construction rather than by a promise, and the ellipsis still marks it as
+incomplete.
+
+A compressed identity is **counted and reported apart from a shortened name**,
+because they are different omissions: a shortened name has lost its tail, a
+compressed one was never said. The badge states all three numbers, and the
+recovery column still carries the full text of everything the frame is not
+saying.
+
+Measured on the 150-node map at canvas framing the tier takes the drawn count
+from **34 to 69** and the hidden count from **109 to 81**.
+
+**And which names survive is now a structural question.** Within a priority tier
+the arbiter settled ties on camera depth. Degree is folded in as a fraction of a
+tier — capped so it can never promote a plain node past a search hit — so a
+thought that joins six others is named ahead of a leaf. That was the second half
+of the same critic's correction.
+
 ## D-013 · Node hues render at one reference lightness  · cycle 3 · SETTLED
 
 D-006 declares a luminance ladder — plain 0.50, connected 0.72, unplaced 0.86,
