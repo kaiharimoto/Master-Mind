@@ -6,12 +6,11 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T10:30:07.870Z",
+  "lastRunAt": "2026-09-06T10:32:08.320Z",
   "lastRunCaptured": [
-    "08",
-    "11",
-    "12"
+    "01"
   ],
+  "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
     {
       "id": "01",
@@ -19,7 +18,7 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.3,
+      "seconds": 3.9,
       "status": "captured",
       "error": null,
       "check": {
@@ -82,7 +81,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "e97c2524c7397c53",
-        "appSha": "78e03b777fc6b68f",
+        "appSha": "fe7d8822be86ef5c",
         "claimShas": {
           "listedCountsMatchTheModel": "b5bea41b6c62",
           "mapsAfterDelete": "ee189345aa72",
@@ -91,8 +90,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:15:17.336Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T10:32:12.032Z"
     },
     {
       "id": "02",
@@ -3172,7 +3171,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T10:30:10.493Z"
     },
     {
@@ -3798,7 +3797,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T10:30:22.043Z"
     },
     {
@@ -4257,7 +4256,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T10:30:31.378Z"
     },
     {
@@ -5654,7 +5653,7 @@
       },
       "capturedInCycle": 12,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:30:22.395Z"
+      "fileMtime": "2026-09-06T10:32:01.109Z"
     },
     {
       "id": "20",
@@ -5875,19 +5874,22 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:36:07.196Z"
+      "fileMtime": "2026-09-06T10:32:10.259Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T10:30:34.193Z",
+  "finishedAt": "2026-09-06T10:32:14.437Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 822419,
-    "sha256": "fe7d8822be86ef5c2bbc144443629bfc9cd7040310af75455b5f30389d4cff42"
+    "sha256": "fe7d8822be86ef5c2bbc144443629bfc9cd7040310af75455b5f30389d4cff42",
+    "appSha": "fe7d8822be86ef5c",
+    "gitHead": "8862d4e4eed3",
+    "gitHeadAt": "2026-09-06T10:30:55+00:00",
+    "treeDirtyAtCapture": true
   },
   "captured": 20,
   "total": 20

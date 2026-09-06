@@ -1281,14 +1281,60 @@ const list = DRIVERS.filter(d => !want.size || want.has(d.id));
 // cycle stamp carried forward unless this run names one.
 const manPath = resolve(OUTDIR, 'MANIFEST.json');
 const prior = existsSync(manPath) ? JSON.parse(readFileSync(manPath, 'utf8')) : null;
+// AN ANCHOR OUTSIDE THE PROCESS UNDER AUDIT.
+//
+// The cycle-12 Auditor's m1: artifact 01 is byte-identical across cycles, which
+// is exactly what determinism should produce — and the ONLY evidence that it
+// was recaptured rather than copied forward is `capturedInThisRun` and a file
+// mtime, both self-reported by the capturer. A commit hash is not: it exists in
+// git with its own timestamp and parentage, and a reader can check that the
+// bundle at that commit hashes to the appSha every artifact records. Stamped
+// per run, alongside whether the tree was clean when the run started.
+const gitAt = (() => {
+  const at = (a) => spawnSync('git', a, { cwd: ROOT, encoding: 'utf8' }).stdout.trim();
+  return { head: at(['rev-parse', 'HEAD']).slice(0, 12),
+           headAt: at(['show', '-s', '--format=%cI', 'HEAD']),
+           dirty: at(['status', '--porcelain']).length > 0 };
+})();
 const manifest = {
   cycle: CYCLE === '0' && prior ? prior.cycle : (Number.isNaN(Number(CYCLE)) ? CYCLE : Number(CYCLE)),
   seed: SEED,
   startedAt: prior?.startedAt ?? new Date().toISOString(),
   lastRunAt: new Date().toISOString(),
   lastRunCaptured: [],
+  // What produced this set, checkable without trusting the producer.
+  // WHAT `ruleSha` IS AND IS NOT, said in the record rather than left to be
+  // inferred. It fingerprints the ACCEPTANCE RULE — for a boolean claim that is
+  // the literal `true`, which is why sixteen of one artifact's seventeen claims
+  // share one hash. The code that PRODUCES the value is fingerprinted by the
+  // recipe's fnSha (the capture script) and appSha (the app bundle); those are
+  // the hashes that move when a measurement changes.
+  claimFingerprintScope:
+    'recipe.claimShas hashes each claim\u2019s acceptance rule only. The code producing the ' +
+    'measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).',
   artifacts: prior?.artifacts ? [...prior.artifacts] : [],
 };
+// A run of a cycle number that already has a frozen set records what it is
+// replacing, IN the set, so the disclosure does not live only in README.md and
+// in git. The cycle-12 Auditor's m2.
+{
+  // Only a FULL run of a named cycle supersedes a frozen set. A `--only` run is
+  // repair work on the working directory and replaces nothing.
+  const frozenMan = resolve(OUTDIR, `cycles/cycle-${manifest.cycle}/MANIFEST.json`);
+  if (CYCLE !== '0' && !ONLY.length && existsSync(frozenMan)) {
+    try {
+      const was = JSON.parse(readFileSync(frozenMan, 'utf8'));
+      const failed = (was.artifacts ?? []).filter(a => a.status !== 'captured');
+      const entry = { supersededAt: new Date().toISOString(),
+                      captured: was.captured ?? null, total: was.total ?? null,
+                      failed: failed.map(a => ({ id: a.id, status: a.status })) };
+      const seen = prior?.supersededRuns ?? [];
+      manifest.supersededRuns = seen.some(r => r.captured === entry.captured &&
+                                               r.failed.length === entry.failed.length)
+        ? seen : [...seen, entry];
+    } catch { /* an unreadable frozen manifest is not this run's business */ }
+  } else if (prior?.supersededRuns) manifest.supersededRuns = prior.supersededRuns;
+}
 console.log(`capturing ${list.length} artifact(s) into ${OUTDIR}`);
 for (const d of list) {
   const t0 = Date.now();
@@ -1371,7 +1417,9 @@ manifest.allCapturedInThisCycle = manifest.staleFromEarlierCycles.length === 0;
 
 manifest.finishedAt = new Date().toISOString();
 manifest.lateFaults = LATE_FAULTS;
-manifest.build = BUILD;
+manifest.build = { ...BUILD, appSha: BUILD.sha256.slice(0, 16),
+                   gitHead: gitAt.head, gitHeadAt: gitAt.headAt,
+                   treeDirtyAtCapture: gitAt.dirty };
 manifest.artifacts.sort((a, b) => a.id.localeCompare(b.id));
 manifest.captured = manifest.artifacts.filter(a => a.status === 'captured').length;
 manifest.total = DRIVERS.length;
