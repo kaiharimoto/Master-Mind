@@ -24,7 +24,10 @@ export default [
               // it buys more of them written out in full instead of compressed
               // to their first characters. Counted off the two panels' own label
               // layers, so the frames cannot say one thing and the record another.
-              chipPromisesNoLegibilityItCannotDeliver: true },
+              chipPromisesNoLegibilityItCannotDeliver: true,
+              // The still titled "Hand tracking live" shows a live detection in
+              // both of its panels, or it is a failed capture.
+              detectorLiveInBothPanels: true },
   demonstrates: 'Windows hand tracking: an open-palm move-closer shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
@@ -112,10 +115,28 @@ export default [
     // so the only correct stopping condition is the detector no longer reading
     // the pose that is acting. The after panel is then the largest dolly one
     // held pose actually buys, which is what the artifact is about.
-    let held = 0;
+    // THE SHUTTER WAITS FOR THE DETECTOR, NOT ONLY FOR THE MAP.
+    //
+    // Holding for the pose's whole duration got the dolly it needed and shot at
+    // the worst possible instant: the frame where the pose ENDS, which is the
+    // frame where the recogniser has just lost the hand. The cycle-12 Audience
+    // read the result exactly right — a hand plainly in the webcam frame, the
+    // readout saying `no hand · conf 0.00`, and the caption admitting it was
+    // running on a held pose, on the one still whose title is "Hand tracking
+    // live". So the loop now stops at the first moment BOTH things are true:
+    // the vantage has travelled far enough to see, and the detector is reading
+    // the acting pose with confidence. If the hold ends before that moment
+    // arrives, `detectorLiveInBothPanels` fails the capture rather than the
+    // frame quietly asserting a pose nothing is seeing.
+    let held = 0, shutter = null;
     for (let i = 0; i < 400; i++) {
-      const now = await page.evaluate(() => window.mm.hands.frame.pose);
-      if (now !== acting.pose) break;
+      const st = await page.evaluate(() => {
+        const f = window.mm.hands.frame;
+        return { pose: f.pose, present: !!f.present, conf: f.confidence,
+                 dist: window.mm.scene.pose.dist };
+      });
+      if (st.pose !== acting.pose) break;
+      if (st.present && st.conf >= 0.9 && distBefore / st.dist >= 1.25) { shutter = st; break; }
       await page.evaluate(t => window.mm.renderAt(t), 800 + i * 33.3);
       await page.waitForTimeout(4);
       held = i;
@@ -137,6 +158,13 @@ export default [
     });
     const distAfter = hudAfter ?? await page.evaluate(() => window.mm.scene.pose.dist);
     const f = acting;
+    // The detector's state AT THE SHUTTER, read before the panel is taken, so
+    // the claim describes the frame rather than a moment near it.
+    const shot05 = shutter ?? await page.evaluate(() => {
+      const g = window.mm.hands.frame;
+      return { pose: g.pose, present: !!g.present, conf: g.confidence,
+               dist: window.mm.scene.pose.dist };
+    });
     // THE CAPTION IS READ FROM THE APP'S OWN VOCABULARY, not written beside it.
     //
     // It was a hardcoded string, and when the vocabulary was renamed everywhere
@@ -230,6 +258,14 @@ export default [
              // and this asserts, on both panels, that no such promise is on the
              // frame. Every number above is printed beside it.
              hiddenChipBefore: chipBefore, hiddenChipAfter: chipAfter,
+             detectorAtShutter: { pose: shot05.pose, present: shot05.present,
+                                  conf: +Number(shot05.conf ?? 0).toFixed(3) },
+             confidenceBefore: +Number(f.confidence ?? 0).toFixed(3),
+             // BOTH panels show a hand the recogniser is actually reading. The
+             // after panel used to be taken at the instant the pose ended.
+             detectorLiveInBothPanels:
+               !!f.present && f.confidence >= 0.9 && f.pose === acting.pose &&
+               !!shot05.present && Number(shot05.conf ?? 0) >= 0.9 && shot05.pose === acting.pose,
              chipPromisesNoLegibilityItCannotDeliver:
                !/move closer|to read them/i.test(`${chipBefore} ${chipAfter}`),
              captureSource: src.label, declaredSynthetic: src.synthetic };

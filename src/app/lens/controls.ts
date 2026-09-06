@@ -189,6 +189,7 @@ export class Controls {
     // gets a permanent position, so it stops being a static contour and starts
     // being the line the drag is being judged against.
     this.scene.holding.setActive(true);
+    this.scene.setDragging(id);
     this.scene.markDirty();
   }
 
@@ -244,6 +245,7 @@ export class Controls {
     // next undo would put back, and refreshing first showed it the act before
     // this one.
     if (wasDragging) this.hooks.onDragEnd?.();
+    this.scene.setDragging(null);
     this.scene.holding.setActive(false);
     this.scene.markDirty();
   }

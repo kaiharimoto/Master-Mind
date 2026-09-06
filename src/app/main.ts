@@ -345,6 +345,17 @@ export class App {
     r.style.width = r.style.height = `${Math.round(rad * 2)}px`;
     const tag = $('[data-t=pin-name]', r) as HTMLElement;
     tag.textContent = this.store.doc.nodes[id].text;
+    // THE NAMED THOUGHT IS NOT THE SMALLEST TEXT ON THE MAP.
+    //
+    // The tag stands in for the node's own canvas label, and it was set at a
+    // fixed 12 px while the labels around it are drawn at the lens's own size —
+    // so on artifact 10 the thought the search had just flown to was labelled in
+    // 18 px against its neighbours' 24 px, the least readable name in a frame
+    // whose whole promise is that it ends crisp enough to read. The cycle-12
+    // Audience measured it. It takes the size the canvas is using, so the tag
+    // reads as the same layer of type, only ringed.
+    const em = this.scene.labelEmPxFor(id);
+    tag.style.fontSize = em ? `${Math.round(Math.max(em, 12))}px` : '';
     this.placeTag(tag, s, rad, dpr, id);
   }
 
@@ -870,6 +881,12 @@ export class App {
     // These read the frame that was just drawn — where the device is pointed,
     // and how many names the arbiter could not place — so they belong here
     // rather than on the chrome refresh, which does not run every frame.
+    // THE MARKS THAT NAME A NODE GO DOWN FIRST, then the badges that must avoid
+    // them. `badgeBlockers()` reads the DOM, so a chip drawn after a badge was
+    // placed is a chip the badge could not have avoided — which is exactly how
+    // artifact 08's notice came to be sitting on the thought it was about.
+    this.renderPin();
+    this.renderGrab();
     this.renderReticle();
     this.renderHidden();
     this.renderClusterProof();
@@ -1100,7 +1117,13 @@ export class App {
   /** The panels a badge must not sit on: they are the frame's subject. */
   private badgeBlockers(): DOMRect[] {
     const out: DOMRect[] = [];
-    for (const sel of ['#top', '#states', '#editor', '#finder', '#hands', '#tools', '#unlabelled']) {
+    // #pinmark IS IN THIS LIST because it is a node's own name, not chrome the
+    // reader can do without: on artifact 08 the framing notice was drawn across
+    // the selection chip and clipped the last letter of the very thought the
+    // frame is about, plus the top of its ring. A badge that explains what is
+    // missing must not be the thing making something missing.
+    for (const sel of ['#top', '#states', '#editor', '#finder', '#hands', '#tools',
+                       '#unlabelled', '#pinmark', '#grabmark']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e || getComputedStyle(e).display === 'none') continue;
       const r = e.getBoundingClientRect();
@@ -1129,9 +1152,12 @@ export class App {
     if (cut > 0) parts.push(`${cut} shortened`);
     // Named apart from "shortened", because they are different omissions: a
     // shortened name has lost its tail, a compressed one was never said — it
-    // identifies the thought and leaves the words to the list.
+    // identifies the thought and leaves the rest to the list. "First letters"
+    // was the honest word for it in cycle 12 and is not any more: every stub
+    // now carries a whole word where one fits in the band, so "Bed…" and
+    // "Fil…" have become "Bed depth…" and "Filter…".
     const abbr = this.scene.compressed;
-    if (abbr > 0) parts.push(`${abbr} named by their first letters`);
+    if (abbr > 0) parts.push(`${abbr} named by their opening word`);
     // "MOVE CLOSER TO READ THEM" WAS A PROMISE THE FRAME COULD BREAK. The
     // cycle-11 Audience put artifact 05's two panels side by side: after the
     // open-palm move-closer the chip read `118 labels hidden` where before it
@@ -1174,8 +1200,6 @@ export class App {
     this.renderUnlabelled();
     this.renderLeaders();
     this.renderHitBreakdown();
-    this.renderPin();
-    this.renderGrab();
   }
 
   /**
@@ -1301,6 +1325,15 @@ export class App {
       // open canvas by design, and without the line it names nothing. Held
       // thoughts get one when their name is nearer a neighbour's dot than
       // their own. Every other label sits against its node and needs none.
+      //
+      // ONE LABEL PER THOUGHT, ALWAYS. A node the chrome is already naming —
+      // the selection tag, the pin, the AR reticle — has its canvas run stood
+      // down, and drawing a leader to it produced the same words twice on one
+      // frame with a line between them: on artifact 16 "Slide budget: 12"
+      // appeared as an orange chip under its node and again as a grey callout
+      // 130 px away, reading at a glance as two thoughts that say the same
+      // thing. The chip carries the name; nothing else may.
+      if (this.namedElsewhere().has(s.id)) continue;
       const far = this.scene.labelNeedsLeader.has(s.id);
       // AMBIGUITY IS THE TEST, AND IT IS A MARGIN, NOT A TIE.
       //
@@ -1785,7 +1818,17 @@ export class App {
     const b = document.querySelector('[data-t=hand-toggle]');
     if (b) { b.textContent = `Hand tracking: ${this.handsOn ? 'on' : 'off'}`; b.classList.toggle('on', this.handsOn); }
     const st = document.querySelector('[data-t=hand-status]');
-    if (st) st.textContent = `status: ${this.hands.status}` + (this.hands.frame.present ? ` · ${this.hands.frame.pose}` : '');
+    // THE POSE'S NAME, NOT ITS KEY. This chip printed the raw internal id — so
+    // the settings frame read "status: tracking · spread" directly above a
+    // reference table calling the same pose "Open palm", and the demo showed
+    // two names for one thing. It goes through the same vocabulary the table
+    // and every caption use.
+    if (st) {
+      const f2 = this.hands.frame;
+      const nm = HAND_VOCAB.find(h => h.id === f2.pose)?.name;
+      st.textContent = `status: ${this.hands.status}` +
+        (f2.present ? ` · ${nm ?? 'unrecognised'}` : '');
+    }
   }
 
   /** The node-state legend. The five signatures, named, so the map's language

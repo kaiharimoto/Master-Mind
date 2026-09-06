@@ -362,7 +362,19 @@ export class Scene {
       links.push({ a, b, live, cross });
     }
     this.filaments.build(links);
-    this.holdingMembers = ns.filter(n => !n.placed).map(n => n.pos.slice() as [number, number, number]);
+    // THE BOUNDARY IS A LINE TO CROSS, NOT A LASSO THAT FOLLOWS YOU.
+    //
+    // The ring is sized to contain every unplaced thought, and a thought being
+    // dragged OUT of holding is still unplaced until the drop — so dragging one
+    // away stretched the boundary after it, from a 308 px radius to 673 px over
+    // two and a half seconds, until it encircled most of the placed map. The
+    // cycle-12 Audience read that as gratuitous moving chrome and it is worse
+    // than that: the whole point of `setActive` is that crossing this circle is
+    // what places a thought, and a circle that runs away from you cannot be
+    // crossed. The thought under the hand is left out of the extent, so the
+    // line holds still and the drag visibly leaves it.
+    this.holdingMembers = ns.filter(n => !n.placed && n.id !== this.dragging)
+      .map(n => n.pos.slice() as [number, number, number]);
     this.fitHoldingShell();
     this.screenCache = [];
     this.dirty = false;
@@ -405,6 +417,24 @@ export class Scene {
   }
 
   private holdingMembers: [number, number, number][] = [];
+
+  /**
+   * The type size, in CSS pixels, that this node's canvas label would be drawn
+   * at right now. Used by the chrome that stands in for a label so it is set in
+   * the same type as the labels around it rather than in a fixed small size.
+   */
+  labelEmPxFor(id: NodeId): number | null {
+    const i = this.runMeta.findIndex(m => m.id === id);
+    if (i < 0) return null;
+    const s = this.lastScreen.get(id);
+    if (!s) return null;
+    const dpr = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    return this.text.emPxFor(i, s.pxPerWorld) / Math.max(dpr, 0.0001);
+  }
+
+  /** The thought currently under the hand, if any. See holdingMembers above. */
+  private dragging: NodeId | null = null;
+  setDragging(id: NodeId | null) { if (id !== this.dragging) { this.dragging = id; this.dirty = true; } }
 
   /**
    * Size the holding boundary so it CONTAINS the nodes the holding count counts.
@@ -739,7 +769,23 @@ export class Scene {
         // This is a ruling by the same role that made the earlier one, on a
         // different proposal; it is recorded as an amendment in DIRECTION.md,
         // not applied quietly.
-        const stub = this.stubLen.get(this.runMeta[b.i].id) ?? 0;
+        // A STUB CARRIES A WHOLE WORD WHERE ONE FITS.
+        //
+        // The cycle-12 Audience judged three-character stubs — "Bed…", "Amy…",
+        // "Fil…" — as ink without a thought, and against the cycle-11 Art
+        // Director who asked for exactly this tier. Both are right about their
+        // own case and the reconciliation is the same one that admitted the
+        // tier at all: make the stub carry as much as it can. The length is the
+        // LONGER of the unique-prefix length and the first word boundary at or
+        // below it plus one more word where the word ends inside the band, so
+        // "Bed depth" is preferred to "Bed" whenever it is no wider than the
+        // band allows. Uniqueness still governs the floor, so nothing becomes
+        // ambiguous by growing.
+        let stub = this.stubLen.get(this.runMeta[b.i].id) ?? 0;
+        if (stub >= STUB_MIN) {
+          const word = span.wordEnds.find(k => k >= stub && k <= STUB_MAX + 4);
+          if (word) stub = word;
+        }
         if (stub >= STUB_MIN && stub < glyphs.length &&
             !widths.some(w => w.vis === stub)) {
           widths.push({ w: Math.max((glyphs[stub - 1] - span.x0Em) * sh.emPx + ellW, 6), vis: stub });
