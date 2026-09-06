@@ -1613,6 +1613,23 @@ export default [
              // EVERY COORDINATE THE TAKE MOVED IS GIVEN BACK, through the app's
              // own Undo control rather than by the harness writing positions.
              undoStackEmptiedOnCamera: undoLeft === 0,
+             undoDepthAtEnd: undoLeft,
+             // WHICH coordinates did not come back, when they do not. A claim
+             // that fails with nothing but a false beside it costs a whole
+             // capture to diagnose.
+             positionsNotReturned: (() => {
+               const A = JSON.parse(startLedger), B = JSON.parse(endLedger);
+               const out = [];
+               const walk = (a, b, path) => {
+                 if (Array.isArray(a) || typeof a !== 'object' || a === null) {
+                   if (JSON.stringify(a) !== JSON.stringify(b)) out.push([path, a, b]);
+                   return;
+                 }
+                 for (const k of Object.keys(a)) walk(a[k], (b ?? {})[k], `${path}/${k}`);
+               };
+               walk(A, B, '');
+               return out.slice(0, 8);
+             })(),
              // A bounded stack that silently drops the oldest acts cannot
              // return a map, and said nothing about it. Reported.
              undoActsDroppedByTheCap: undoDropped,

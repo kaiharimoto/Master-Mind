@@ -6,9 +6,28 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T13:19:47.979Z",
+  "lastRunAt": "2026-09-06T13:20:14.864Z",
   "lastRunCaptured": [
-    "14"
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -18,7 +37,7 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.1,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
@@ -81,7 +100,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bde6b0f3cd6905e1",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "listedCountsMatchTheModel": "b5bea41b6c62",
           "mapsAfterDelete": "ee189345aa72",
@@ -90,8 +109,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:40:38.923Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:17.732Z"
     },
     {
       "id": "02",
@@ -106,8 +125,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 415690,
-        "sha256": "b21bac3789516dd18bab0da3088b462b1ba751f62e205877f580a0dcd903d1a9"
+        "bytes": 416272,
+        "sha256": "159fefa349071375c13b38eb2a43742c6c1b197c74b5b02eaa2ea1be2ab0f0d3"
       },
       "claims": {
         "ok": true,
@@ -340,7 +359,7 @@
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
-          "worstContrast": 2.71,
+          "worstContrast": 3.07,
           "invisibleIds": [],
           "weakest": [],
           "rows": [
@@ -349,18 +368,18 @@
               "x": 1133,
               "y": 592,
               "r": 14.4,
-              "peak": 0.2835,
+              "peak": 0.2934,
               "ground": 0.0574,
-              "contrast": 3.11
+              "contrast": 3.2
             },
             {
               "id": "n12900c3690",
               "x": 1378,
               "y": 322,
               "r": 14.4,
-              "peak": 0.2639,
+              "peak": 0.2877,
               "ground": 0.0574,
-              "contrast": 2.92
+              "contrast": 3.14
             },
             {
               "id": "n191b9e1952",
@@ -376,9 +395,9 @@
               "x": 1106,
               "y": 453,
               "r": 14.4,
-              "peak": 0.3045,
+              "peak": 0.3167,
               "ground": 0.0574,
-              "contrast": 3.3
+              "contrast": 3.42
             },
             {
               "id": "n1ada6cb3e2",
@@ -394,45 +413,45 @@
               "x": 883,
               "y": 698,
               "r": 14.4,
-              "peak": 0.2554,
+              "peak": 0.2834,
               "ground": 0.0574,
-              "contrast": 2.84
+              "contrast": 3.11
             },
             {
               "id": "n1d49087545",
               "x": 685,
               "y": 582,
               "r": 14.4,
-              "peak": 0.263,
+              "peak": 0.286,
               "ground": 0.0574,
-              "contrast": 2.91
+              "contrast": 3.13
             },
             {
               "id": "n20cb5b490f",
               "x": 723,
               "y": 436,
               "r": 14.4,
-              "peak": 0.2491,
+              "peak": 0.2813,
               "ground": 0.0574,
-              "contrast": 2.78
+              "contrast": 3.08
             },
             {
               "id": "n2570828592",
               "x": 676,
               "y": 262,
               "r": 14.4,
-              "peak": 0.2681,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 2.96
+              "contrast": 3.16
             },
             {
               "id": "n28b9263cd2",
               "x": 1155,
               "y": 622,
               "r": 14.4,
-              "peak": 0.2877,
+              "peak": 0.2947,
               "ground": 0.0574,
-              "contrast": 3.14
+              "contrast": 3.21
             },
             {
               "id": "n2a2ac6dd57",
@@ -448,45 +467,45 @@
               "x": 938,
               "y": 689,
               "r": 14.4,
-              "peak": 0.254,
+              "peak": 0.2818,
               "ground": 0.0574,
-              "contrast": 2.83
+              "contrast": 3.09
             },
             {
               "id": "n2eac7c2b16",
               "x": 1324,
               "y": 352,
               "r": 14.4,
-              "peak": 0.2639,
+              "peak": 0.2885,
               "ground": 0.0574,
-              "contrast": 2.92
+              "contrast": 3.15
             },
             {
               "id": "n344b78a9bd",
               "x": 842,
               "y": 569,
               "r": 14.4,
-              "peak": 0.2803,
+              "peak": 0.2948,
               "ground": 0.0574,
-              "contrast": 3.08
+              "contrast": 3.21
             },
             {
               "id": "n354196ac48",
               "x": 890,
               "y": 677,
               "r": 14.4,
-              "peak": 0.2526,
+              "peak": 0.2838,
               "ground": 0.0574,
-              "contrast": 2.82
+              "contrast": 3.11
             },
             {
               "id": "n36627f75c9",
               "x": 641,
               "y": 602,
               "r": 14.4,
-              "peak": 0.263,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 2.91
+              "contrast": 3.15
             },
             {
               "id": "n380afc9e85",
@@ -502,63 +521,63 @@
               "x": 1067,
               "y": 426,
               "r": 14.4,
-              "peak": 0.2654,
+              "peak": 0.29,
               "ground": 0.0574,
-              "contrast": 2.94
+              "contrast": 3.17
             },
             {
               "id": "n3a2b198a84",
               "x": 690,
               "y": 345,
               "r": 14.4,
-              "peak": 0.2608,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 2.89
+              "contrast": 3.15
             },
             {
               "id": "n3e0d08c741",
               "x": 1101,
               "y": 375,
               "r": 14.4,
-              "peak": 0.2659,
+              "peak": 0.2883,
               "ground": 0.0574,
-              "contrast": 2.94
+              "contrast": 3.15
             },
             {
               "id": "n3eba301186",
               "x": 1344,
               "y": 353,
               "r": 14.4,
-              "peak": 0.2592,
+              "peak": 0.2863,
               "ground": 0.0574,
-              "contrast": 2.88
+              "contrast": 3.13
             },
             {
               "id": "n4163afee7d",
               "x": 880,
               "y": 720,
               "r": 14.4,
-              "peak": 0.2492,
+              "peak": 0.2817,
               "ground": 0.0574,
-              "contrast": 2.79
+              "contrast": 3.09
             },
             {
               "id": "n48e5dd13da",
               "x": 1035,
               "y": 165,
               "r": 14.4,
-              "peak": 0.261,
+              "peak": 0.2857,
               "ground": 0.0574,
-              "contrast": 2.9
+              "contrast": 3.13
             },
             {
               "id": "n49831ccd16",
               "x": 660,
               "y": 226,
               "r": 14.4,
-              "peak": 0.265,
+              "peak": 0.2863,
               "ground": 0.0574,
-              "contrast": 2.93
+              "contrast": 3.13
             },
             {
               "id": "n4fd66d29cd",
@@ -574,108 +593,108 @@
               "x": 686,
               "y": 651,
               "r": 14.4,
-              "peak": 0.2672,
+              "peak": 0.289,
               "ground": 0.0574,
-              "contrast": 2.95
+              "contrast": 3.16
             },
             {
               "id": "n5630d9df9f",
               "x": 1214,
               "y": 645,
               "r": 14.4,
-              "peak": 0.293,
+              "peak": 0.2966,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 3.23
             },
             {
               "id": "n5880a05cab",
               "x": 1040,
               "y": 426,
               "r": 14.4,
-              "peak": 0.2712,
+              "peak": 0.2891,
               "ground": 0.0574,
-              "contrast": 2.99
+              "contrast": 3.16
             },
             {
               "id": "n5b46c6f107",
               "x": 801,
               "y": 542,
               "r": 14.4,
-              "peak": 0.2854,
+              "peak": 0.2949,
               "ground": 0.0574,
-              "contrast": 3.12
+              "contrast": 3.21
             },
             {
               "id": "n5daeac7b96",
               "x": 1065,
               "y": 417,
               "r": 14.4,
-              "peak": 0.2654,
+              "peak": 0.29,
               "ground": 0.0574,
-              "contrast": 2.94
+              "contrast": 3.17
             },
             {
               "id": "n618ee08ab3",
               "x": 1036,
               "y": 416,
               "r": 14.4,
-              "peak": 0.2712,
+              "peak": 0.2891,
               "ground": 0.0574,
-              "contrast": 2.99
+              "contrast": 3.16
             },
             {
               "id": "n69344565b8",
               "x": 757,
               "y": 490,
               "r": 14.4,
-              "peak": 0.2852,
+              "peak": 0.295,
               "ground": 0.0574,
-              "contrast": 3.12
+              "contrast": 3.21
             },
             {
               "id": "n703e3384c3",
               "x": 1330,
               "y": 280,
               "r": 14.4,
-              "peak": 0.2639,
+              "peak": 0.2885,
               "ground": 0.0574,
-              "contrast": 2.92
+              "contrast": 3.15
             },
             {
               "id": "n7091638a5d",
               "x": 1314,
               "y": 358,
               "r": 14.4,
-              "peak": 0.2639,
+              "peak": 0.2885,
               "ground": 0.0574,
-              "contrast": 2.92
+              "contrast": 3.15
             },
             {
               "id": "n70b3c5270b",
               "x": 975,
               "y": 159,
               "r": 14.4,
-              "peak": 0.2563,
+              "peak": 0.2846,
               "ground": 0.0574,
-              "contrast": 2.85
+              "contrast": 3.12
             },
             {
               "id": "n714166721d",
               "x": 1104,
               "y": 435,
               "r": 14.4,
-              "peak": 0.2902,
+              "peak": 0.3028,
               "ground": 0.0574,
-              "contrast": 3.17
+              "contrast": 3.29
             },
             {
               "id": "n75d8f580e5",
               "x": 667,
               "y": 405,
               "r": 14.4,
-              "peak": 0.2477,
+              "peak": 0.2824,
               "ground": 0.0574,
-              "contrast": 2.77
+              "contrast": 3.1
             },
             {
               "id": "n798586ed6b",
@@ -691,45 +710,45 @@
               "x": 689,
               "y": 641,
               "r": 14.4,
-              "peak": 0.2672,
+              "peak": 0.289,
               "ground": 0.0574,
-              "contrast": 2.95
+              "contrast": 3.16
             },
             {
               "id": "n7e876747ad",
               "x": 1171,
               "y": 670,
               "r": 14.4,
-              "peak": 0.279,
+              "peak": 0.2922,
               "ground": 0.0574,
-              "contrast": 3.06
+              "contrast": 3.19
             },
             {
               "id": "n83224a5de3",
               "x": 1154,
               "y": 408,
               "r": 14.4,
-              "peak": 0.2581,
+              "peak": 0.2852,
               "ground": 0.0574,
-              "contrast": 2.87
+              "contrast": 3.12
             },
             {
               "id": "n9a939af75c",
               "x": 730,
               "y": 579,
               "r": 14.4,
-              "peak": 0.2622,
+              "peak": 0.2876,
               "ground": 0.0574,
-              "contrast": 2.91
+              "contrast": 3.14
             },
             {
               "id": "n9aee67caa2",
               "x": 1217,
               "y": 583,
               "r": 14.4,
-              "peak": 0.28,
+              "peak": 0.2935,
               "ground": 0.0574,
-              "contrast": 3.07
+              "contrast": 3.2
             },
             {
               "id": "na2358b2b07",
@@ -745,144 +764,144 @@
               "x": 1100,
               "y": 245,
               "r": 14.4,
-              "peak": 0.2851,
+              "peak": 0.2963,
               "ground": 0.0574,
-              "contrast": 3.12
+              "contrast": 3.22
             },
             {
               "id": "na9606fee1c",
               "x": 1236,
               "y": 614,
               "r": 14.4,
-              "peak": 0.2888,
+              "peak": 0.2961,
               "ground": 0.0574,
-              "contrast": 3.15
+              "contrast": 3.22
             },
             {
               "id": "nba2805e3e1",
               "x": 869,
               "y": 537,
               "r": 14.4,
-              "peak": 0.286,
+              "peak": 0.2967,
               "ground": 0.0574,
-              "contrast": 3.13
+              "contrast": 3.23
             },
             {
               "id": "nc03712e059",
               "x": 1169,
               "y": 582,
               "r": 14.4,
-              "peak": 0.2793,
+              "peak": 0.2922,
               "ground": 0.0574,
-              "contrast": 3.07
+              "contrast": 3.19
             },
             {
               "id": "nd682eed70b",
               "x": 965,
               "y": 208,
               "r": 14.4,
-              "peak": 0.2487,
+              "peak": 0.2812,
               "ground": 0.0574,
-              "contrast": 2.78
+              "contrast": 3.08
             },
             {
               "id": "nd960763431",
               "x": 1153,
               "y": 648,
               "r": 14.4,
-              "peak": 0.2773,
+              "peak": 0.2938,
               "ground": 0.0574,
-              "contrast": 3.05
+              "contrast": 3.2
             },
             {
               "id": "nd9ddb0ca5c",
               "x": 1135,
               "y": 265,
               "r": 14.4,
-              "peak": 0.3063,
+              "peak": 0.31,
               "ground": 0.0574,
-              "contrast": 3.32
+              "contrast": 3.35
             },
             {
               "id": "ndae1a65514",
               "x": 770,
               "y": 656,
               "r": 14.4,
-              "peak": 0.2588,
+              "peak": 0.2874,
               "ground": 0.0574,
-              "contrast": 2.88
+              "contrast": 3.14
             },
             {
               "id": "ndd346f34ee",
               "x": 597,
               "y": 285,
               "r": 14.4,
-              "peak": 0.2695,
+              "peak": 0.2899,
               "ground": 0.0574,
-              "contrast": 2.98
+              "contrast": 3.17
             },
             {
               "id": "nddfd2443e1",
               "x": 1123,
               "y": 311,
               "r": 14.4,
-              "peak": 0.2937,
+              "peak": 0.2974,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 3.23
             },
             {
               "id": "nde70483d7f",
               "x": 721,
               "y": 470,
               "r": 14.4,
-              "peak": 0.2412,
+              "peak": 0.2802,
               "ground": 0.0574,
-              "contrast": 2.71
+              "contrast": 3.07
             },
             {
               "id": "ndebe2ada83",
               "x": 637,
               "y": 301,
               "r": 14.4,
-              "peak": 0.2588,
+              "peak": 0.2865,
               "ground": 0.0574,
-              "contrast": 2.88
+              "contrast": 3.13
             },
             {
               "id": "ne85bc87b03",
               "x": 916,
               "y": 491,
               "r": 14.4,
-              "peak": 0.2821,
+              "peak": 0.2938,
               "ground": 0.0574,
-              "contrast": 3.09
+              "contrast": 3.2
             },
             {
               "id": "nee0ed92067",
               "x": 1143,
               "y": 262,
               "r": 14.4,
-              "peak": 0.3063,
+              "peak": 0.31,
               "ground": 0.0574,
-              "contrast": 3.32
+              "contrast": 3.35
             },
             {
               "id": "nef369efdfc",
               "x": 684,
               "y": 427,
               "r": 14.4,
-              "peak": 0.2449,
+              "peak": 0.281,
               "ground": 0.0574,
-              "contrast": 2.75
+              "contrast": 3.08
             },
             {
               "id": "nf155ca376d",
               "x": 699,
               "y": 667,
               "r": 14.4,
-              "peak": 0.2613,
+              "peak": 0.2871,
               "ground": 0.0574,
-              "contrast": 2.9
+              "contrast": 3.14
             },
             {
               "id": "nf2bb761959",
@@ -898,18 +917,18 @@
               "x": 1005,
               "y": 271,
               "r": 14.4,
-              "peak": 0.2554,
+              "peak": 0.2837,
               "ground": 0.0574,
-              "contrast": 2.84
+              "contrast": 3.11
             },
             {
               "id": "nf53f4946cf",
               "x": 595,
               "y": 296,
               "r": 14.4,
-              "peak": 0.2695,
+              "peak": 0.2899,
               "ground": 0.0574,
-              "contrast": 2.98
+              "contrast": 3.17
             }
           ]
         },
@@ -928,7 +947,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "73b7deb0e7bd2172",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -947,8 +966,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:40:40.484Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:19.256Z"
     },
     {
       "id": "03",
@@ -956,15 +975,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3.2,
+      "seconds": 3.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 796054,
-        "sha256": "efd770e7f748bec743d6079e4c85775b594ef6dee0f836c13fd6deeba23280c7"
+        "bytes": 797066,
+        "sha256": "f0a193c75f3a33a905c76a71f440a3cd1ef235fad8b0de4d143be911ae0a4535"
       },
       "claims": {
         "ok": true,
@@ -1105,7 +1124,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "9fd1fb456beeaa7c",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "gyroDroveTheView": "b5bea41b6c62",
           "positionsUnchangedBetweenPanels": "b5bea41b6c62",
@@ -1116,8 +1135,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:40:43.967Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:22.874Z"
     },
     {
       "id": "04",
@@ -1125,7 +1144,7 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.5,
+      "seconds": 2.3,
       "status": "captured",
       "error": null,
       "check": {
@@ -2106,7 +2125,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bac9916dd5a965ca",
-        "appSha": "953acb913dd6aeee",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -2126,8 +2145,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T13:11:03.268Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:24.980Z"
     },
     {
       "id": "05",
@@ -2135,15 +2154,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 15.7,
+      "seconds": 15.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 611339,
-        "sha256": "1c19e2a4b55d09f4ee1461f15897111774d7e2ba0549351673fa8bbdb204922e"
+        "bytes": 611289,
+        "sha256": "507d383b26961f96875b4566f06c751850ce8bba4c72e6f2a37ef911bdf296c2"
       },
       "claims": {
         "ok": true,
@@ -2246,8 +2265,8 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 1.014,
-        "confidence": 0.944,
+        "fan": 1.034,
+        "confidence": 0.943,
         "distBefore": 441.69,
         "distAfter": 383,
         "distAfterReadFromTheFrame": true,
@@ -2622,9 +2641,9 @@
         "detectorAtShutter": {
           "pose": "spread",
           "present": true,
-          "conf": 0.945
+          "conf": 0.943
         },
-        "confidenceBefore": 0.944,
+        "confidenceBefore": 0.943,
         "detectorLiveInBothPanels": true,
         "chipPromisesNoLegibilityItCannotDeliver": true,
         "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
@@ -2641,7 +2660,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6211b3e2b5a1cd91",
-        "appSha": "953acb913dd6aeee",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "operationTookEffect": "b5bea41b6c62",
           "declaredSynthetic": "b5bea41b6c62",
@@ -2658,8 +2677,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T13:12:44.305Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:40.320Z"
     },
     {
       "id": "06",
@@ -2667,7 +2686,7 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 10.2,
+      "seconds": 10.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -3176,7 +3195,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "7b57d2816b8426b0",
-        "appSha": "2ebc6889cef60871",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "holdingRingFillsFrame": "b5bea41b6c62",
           "everyHeldNodeInFrame": "b5bea41b6c62",
@@ -3197,8 +3216,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T13:03:18.756Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:49.888Z"
     },
     {
       "id": "07",
@@ -3393,7 +3412,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "d20566e6d80c4370",
-        "appSha": "9bc41e425844cf98",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "ok": "b5bea41b6c62",
           "ladderMonotonic": "b5bea41b6c62",
@@ -3407,8 +3426,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T13:00:47.376Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:51.984Z"
     },
     {
       "id": "08",
@@ -3563,8 +3582,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T13:17:28.526Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:54.196Z"
     },
     {
       "id": "09",
@@ -3572,7 +3591,7 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3,
+      "seconds": 3.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -3819,7 +3838,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6e328e9bc52a8290",
-        "appSha": "08845a35fe02b393",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "connectedByThisCapture": "b5bea41b6c62",
           "linkedBefore": "fcbcf165908d",
@@ -3834,8 +3853,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T13:09:57.729Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:20:57.947Z"
     },
     {
       "id": "10",
@@ -3843,7 +3862,7 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 6.1,
+      "seconds": 5.8,
       "status": "captured",
       "error": null,
       "check": {
@@ -4174,7 +4193,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "4e38fdfef29cba10",
-        "appSha": "953acb913dd6aeee",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -4193,8 +4212,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T13:11:09.400Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:21:03.468Z"
     },
     {
       "id": "11",
@@ -4202,15 +4221,15 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 17.7,
+      "seconds": 20,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 171744,
-        "sha256": "53fb7fa701df9dd966a5167e577f1d46bfe955ea58fef73b6e142dfd2be9e840"
+        "bytes": 160462,
+        "sha256": "9b17a23ff6218785939c2f18a20b74a723bc313a4106eb13f3b6e7ec99ec52f6"
       },
       "claims": {
         "ok": true,
@@ -4262,7 +4281,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 17961,
+            "serverPid": 29989,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -4274,7 +4293,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 17961,
+            "serverPid": 29989,
             "actor": "android-twin",
             "status": "live"
           }
@@ -4305,7 +4324,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "861f6cca2f545723",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "twoDistinctSockets": "b5bea41b6c62",
@@ -4315,8 +4334,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:41:26.686Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:21:14.839Z"
     },
     {
       "id": "12",
@@ -4331,8 +4350,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 671771,
-        "sha256": "e051ca28c1c38aa833ffee06f8ac9248c4dbbe21112717f12d4b937ef4f2fb6b"
+        "bytes": 713179,
+        "sha256": "70dc11114c9a6defdf19275ea373c85d2506aa36116f3547c56762ff05cbb5de"
       },
       "claims": {
         "ok": true,
@@ -4484,9 +4503,9 @@
           -3.1
         ],
         "movedTo": [
-          6.224564346905375,
-          2.1243814001730583,
-          -8.559369780986067
+          6.116878400441507,
+          2.6079610471651486,
+          -8.604055796387364
         ],
         "positionEditPropagated": true,
         "onlyTheDraggedNodeMoved": true,
@@ -4510,7 +4529,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 17961,
+            "serverPid": 29989,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -4522,7 +4541,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 17961,
+            "serverPid": 29989,
             "actor": "android-twin",
             "status": "live"
           }
@@ -4541,13 +4560,13 @@
             "markersAtDisplacedPositions": 20,
             "shaPrinted": "4ad560a8a2",
             "shaAfterRaster": "4ad560a8a2",
-            "worstDisplacedContrast": 3.17,
-            "changedPixels": 20830,
-            "changedFraction": 2.009,
+            "worstDisplacedContrast": 3.23,
+            "changedPixels": 36803,
+            "changedFraction": 3.55,
             "changedBox": {
-              "x0": 227,
+              "x0": 219,
               "y0": 104,
-              "x1": 839,
+              "x1": 846,
               "y1": 990
             },
             "districtBox": {
@@ -4556,9 +4575,9 @@
               "x1": 492,
               "y1": 669
             },
-            "changedSampled": 325,
-            "changedInsideDistrict": 103,
-            "changedInsideDistrictPct": 31.7,
+            "changedSampled": 575,
+            "changedInsideDistrict": 112,
+            "changedInsideDistrictPct": 19.5,
             "lightArrivedAtNewPositions": 18,
             "lightLeftOldPositions": 7,
             "membersThatDidBoth": 7,
@@ -4571,9 +4590,9 @@
               50
             ],
             "travelAgreementPx": 0.7,
-            "matchAtMeasured": 0.808,
-            "matchIfItHadNotMoved": 0.241,
-            "matchSamples": 328
+            "matchAtMeasured": 0.763,
+            "matchIfItHadNotMoved": 0.231,
+            "matchSamples": 350
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4592,13 +4611,13 @@
             "markersAtDisplacedPositions": 20,
             "shaPrinted": "4ad560a8a2",
             "shaAfterRaster": "4ad560a8a2",
-            "worstDisplacedContrast": 3.17,
-            "changedPixels": 20830,
-            "changedFraction": 2.009,
+            "worstDisplacedContrast": 3.23,
+            "changedPixels": 36803,
+            "changedFraction": 3.55,
             "changedBox": {
-              "x0": 227,
+              "x0": 219,
               "y0": 104,
-              "x1": 839,
+              "x1": 846,
               "y1": 990
             },
             "districtBox": {
@@ -4607,9 +4626,9 @@
               "x1": 492,
               "y1": 669
             },
-            "changedSampled": 325,
-            "changedInsideDistrict": 103,
-            "changedInsideDistrictPct": 31.7,
+            "changedSampled": 575,
+            "changedInsideDistrict": 112,
+            "changedInsideDistrictPct": 19.5,
             "lightArrivedAtNewPositions": 18,
             "lightLeftOldPositions": 7,
             "membersThatDidBoth": 7,
@@ -4622,9 +4641,9 @@
               50
             ],
             "travelAgreementPx": 0.7,
-            "matchAtMeasured": 0.808,
-            "matchIfItHadNotMoved": 0.241,
-            "matchSamples": 328
+            "matchAtMeasured": 0.763,
+            "matchIfItHadNotMoved": 0.231,
+            "matchSamples": 350
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4636,13 +4655,13 @@
           "markersAtDisplacedPositions": 20,
           "shaPrinted": "4ad560a8a2",
           "shaAfterRaster": "4ad560a8a2",
-          "worstDisplacedContrast": 3.17,
-          "changedPixels": 20830,
-          "changedFraction": 2.009,
+          "worstDisplacedContrast": 3.23,
+          "changedPixels": 36803,
+          "changedFraction": 3.55,
           "changedBox": {
-            "x0": 227,
+            "x0": 219,
             "y0": 104,
-            "x1": 839,
+            "x1": 846,
             "y1": 990
           },
           "districtBox": {
@@ -4651,9 +4670,9 @@
             "x1": 492,
             "y1": 669
           },
-          "changedSampled": 325,
-          "changedInsideDistrict": 103,
-          "changedInsideDistrictPct": 31.7,
+          "changedSampled": 575,
+          "changedInsideDistrict": 112,
+          "changedInsideDistrictPct": 19.5,
           "lightArrivedAtNewPositions": 18,
           "lightLeftOldPositions": 7,
           "membersThatDidBoth": 7,
@@ -4666,9 +4685,9 @@
             50
           ],
           "travelAgreementPx": 0.7,
-          "matchAtMeasured": 0.808,
-          "matchIfItHadNotMoved": 0.241,
-          "matchSamples": 328
+          "matchAtMeasured": 0.763,
+          "matchIfItHadNotMoved": 0.231,
+          "matchSamples": 350
         },
         "printedShaMatchesRenderedState": true,
         "clusterDisplacementVisibleInPixels": true,
@@ -4689,7 +4708,7 @@
         "cameraFrozen": {
           "yaw": 0.34,
           "pitch": 0.16,
-          "dist": 53.41637354938651,
+          "dist": 57.93577841423163,
           "target": [
             -0.15000000000000036,
             -3.3499999999999996,
@@ -4705,9 +4724,9 @@
             -3.1
           ],
           "after": [
-            6.224564346905375,
-            2.1243814001730583,
-            -8.559369780986067
+            6.116878400441507,
+            2.6079610471651486,
+            -8.604055796387364
           ]
         },
         "nodesUnderChrome": {
@@ -4751,7 +4770,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "936d2e118cf8cc23",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "positionEditPropagated": "b5bea41b6c62",
@@ -4774,8 +4793,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:41:35.767Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:21:23.708Z"
     },
     {
       "id": "13",
@@ -4790,8 +4809,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 273865,
-        "sha256": "ea0cc1ec001f749a1a6e0421e555dd0f9e7f75f8abe457e6e567c837d94582ab"
+        "bytes": 273926,
+        "sha256": "ef266820c930ba167ac11c34f1d6ce30889d9e44faeab96d321897f40dca5bc1"
       },
       "claims": {
         "ok": true,
@@ -4847,7 +4866,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "904c8c79130e761a",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "hasPositions": "b5bea41b6c62",
           "hasInstructions": "b5bea41b6c62",
@@ -4857,8 +4876,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:41:37.460Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:21:25.388Z"
     },
     {
       "id": "14",
@@ -5087,7 +5106,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T13:19:51.402Z"
+      "fileMtime": "2026-09-06T13:21:28.994Z"
     },
     {
       "id": "15",
@@ -5095,7 +5114,7 @@
       "title": "Settings and gesture reference",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.4,
+      "seconds": 3.8,
       "status": "captured",
       "error": null,
       "check": {
@@ -5140,15 +5159,15 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8891521182f0f526",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "referenceMatchesTheRuntime": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:41:43.824Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:21:32.444Z"
     },
     {
       "id": "16",
@@ -5156,15 +5175,15 @@
       "title": "Touch gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 30s",
-      "seconds": 101.5,
+      "seconds": 102.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1178166,
-        "sha256": "c4ce9d0f8ea8defc6e83ecc81d0e48eff32fe0cbc78dc203ae975efa259bd905",
+        "bytes": 1178684,
+        "sha256": "82e9a00cc8e362ee4f91b7d78ddabf8e9b25cfedbd63d738dc8743c482d15e4b",
         "seconds": 34,
         "fps": 30,
         "frames": 1020
@@ -5226,7 +5245,7 @@
           "gyro"
         ],
         "count": 7,
-        "quickAddedNode": "nmt1gy5bi1mte8",
+        "quickAddedNode": "nmt1gy5cl1mte8",
         "deviceViewport": [
           1280,
           1440
@@ -5259,7 +5278,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6fd8acbcaabc26b4",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "tapSelected": "b5bea41b6c62",
           "doubleTapConnected": "b5bea41b6c62",
@@ -5270,8 +5289,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:43:23.882Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:23:13.866Z"
     },
     {
       "id": "17",
@@ -5279,21 +5298,21 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 561.5,
-      "status": "captured",
+      "seconds": 552.3,
+      "status": "claim-not-met",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 12149883,
-        "sha256": "ea534129fb4e63bbe1fec48ee7990ad92d52a2aac05ba6490816a7542a645dc1",
+        "bytes": 12398078,
+        "sha256": "2d3cad79db7a6f42fc588e4d210be2fd95005e3364366858a41922c300462f01",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
       },
       "claims": {
-        "ok": true,
+        "ok": false,
         "claims": [
           {
             "claim": "clusterMovedByPose",
@@ -5322,16 +5341,16 @@
           {
             "claim": "mapReturnedToItsStartingLayout",
             "expected": true,
-            "actual": true,
-            "pass": true,
+            "actual": false,
+            "pass": false,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
           },
           {
             "claim": "undoStackEmptiedOnCamera",
             "expected": true,
-            "actual": true,
-            "pass": true,
+            "actual": false,
+            "pass": false,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
           },
@@ -5359,7 +5378,8 @@
             "rule": "(n) => n >= 4",
             "ruleSha": "99e5481824a9"
           }
-        ]
+        ],
+        "why": "declared claim(s) not met: mapReturnedToItsStartingLayout = false; undoStackEmptiedOnCamera = false"
       },
       "result": {
         "posesRecognised": [
@@ -5369,60 +5389,33 @@
           "gather"
         ],
         "count": 4,
-        "samples": 2123,
+        "samples": 2122,
         "poseGrabs": [
           {
-            "cluster": "Safety and pH",
-            "members": 12,
+            "cluster": "Lacto-vegetables",
+            "members": 20,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              0.616,
-              -3.143,
-              16.614
+              -20.645,
+              -14.167,
+              9.995
             ],
             "centroidAfter": [
-              2.388,
-              -6.487,
-              16.631
+              -20.09,
+              -14.669,
+              9.908
             ],
-            "travelled": 3.7851,
+            "travelled": 0.7542,
             "maxMemberDrift": 0,
             "frames": [
-              30,
-              31
+              35,
+              37
             ],
             "seconds": [
-              1,
-              1.03
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              1.679,
-              -8.907,
-              17.259
-            ],
-            "centroidAfter": [
-              3.685,
-              -10.037,
-              16.83
-            ],
-            "travelled": 2.3419,
-            "maxMemberDrift": 0,
-            "frames": [
-              33,
-              40
-            ],
-            "seconds": [
-              1.1,
-              1.33
+              1.17,
+              1.23
             ]
           },
           {
@@ -5432,78 +5425,24 @@
               "fist"
             ],
             "centroidBefore": [
-              -16.84,
-              -12.764,
-              8.581
+              -19.144,
+              -15.243,
+              9.713
             ],
             "centroidAfter": [
-              -13.748,
-              -14.895,
-              7.985
+              -9,
+              -18.113,
+              7.06
             ],
-            "travelled": 3.8021,
+            "travelled": 10.8706,
             "maxMemberDrift": 0,
             "frames": [
-              42,
-              52
+              39,
+              54
             ],
             "seconds": [
-              1.4,
-              1.73
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              4.145,
-              -11.015,
-              16.852
-            ],
-            "centroidAfter": [
-              8.917,
-              -10.185,
-              15.236
-            ],
-            "travelled": 5.1065,
-            "maxMemberDrift": 0,
-            "frames": [
-              56,
-              63
-            ],
-            "seconds": [
-              1.87,
-              2.1
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -26.29,
-              2.427,
-              -4.762
-            ],
-            "centroidAfter": [
-              -19.228,
-              -6.063,
-              -5.512
-            ],
-            "travelled": 11.0687,
-            "maxMemberDrift": 0,
-            "frames": [
-              190,
-              192
-            ],
-            "seconds": [
-              6.33,
-              6.4
+              1.3,
+              1.8
             ]
           },
           {
@@ -5513,24 +5452,51 @@
               "fist"
             ],
             "centroidBefore": [
-              -13.001,
-              -15.834,
-              7.912
+              -7.161,
+              -16.897,
+              6.285
             ],
             "centroidAfter": [
-              -4.547,
-              -17.634,
-              5.601
+              -2.462,
+              -15.328,
+              4.566
             ],
-            "travelled": 8.9476,
+            "travelled": 5.2441,
             "maxMemberDrift": 0,
             "frames": [
-              195,
-              222
+              57,
+              65
             ],
             "seconds": [
-              6.5,
-              7.4
+              1.9,
+              2.17
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -2.462,
+              -15.328,
+              4.566
+            ],
+            "centroidAfter": [
+              -2.462,
+              -15.328,
+              4.566
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              69,
+              69
+            ],
+            "seconds": [
+              2.3,
+              2.3
             ]
           },
           {
@@ -5540,23 +5506,104 @@
               "fist"
             ],
             "centroidBefore": [
-              8.917,
-              -10.185,
-              15.236
+              -5.439,
+              3.05,
+              17.441
             ],
             "centroidAfter": [
-              10.003,
-              -7.56,
-              14.457
+              -3.721,
+              -1.929,
+              17.751
             ],
-            "travelled": 2.9453,
+            "travelled": 5.2763,
             "maxMemberDrift": 0,
             "frames": [
-              225,
+              194,
+              196
+            ],
+            "seconds": [
+              6.47,
+              6.53
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.644,
+              -5.588,
+              18.655
+            ],
+            "centroidAfter": [
+              -4.438,
+              -6.534,
+              18.75
+            ],
+            "travelled": 0.9727,
+            "maxMemberDrift": 0,
+            "frames": [
+              198,
+              199
+            ],
+            "seconds": [
+              6.6,
+              6.63
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -3.484,
+              -6.078,
+              18.379
+            ],
+            "centroidAfter": [
+              -2.028,
+              -7.605,
+              18.186
+            ],
+            "travelled": 2.1186,
+            "maxMemberDrift": 0,
+            "frames": [
+              201,
+              206
+            ],
+            "seconds": [
+              6.7,
+              6.87
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              0.608,
+              -8.222,
+              17.475
+            ],
+            "centroidAfter": [
+              7.141,
+              -9.273,
+              15.631
+            ],
+            "travelled": 6.8698,
+            "maxMemberDrift": 0,
+            "frames": [
+              208,
               226
             ],
             "seconds": [
-              7.5,
+              6.93,
               7.53
             ]
           },
@@ -5567,78 +5614,51 @@
               "fist"
             ],
             "centroidBefore": [
-              3.417,
-              -19.082,
-              3.382
+              -0.425,
+              -12.807,
+              3.51
             ],
             "centroidAfter": [
-              2.719,
-              -21.654,
-              4.032
+              -0.425,
+              -12.807,
+              3.51
             ],
-            "travelled": 2.7434,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              357,
-              358
+              228,
+              228
             ],
             "seconds": [
-              11.9,
-              11.93
+              7.6,
+              7.6
             ]
           },
           {
-            "cluster": "Microbiology",
-            "members": 18,
+            "cluster": "Safety and pH",
+            "members": 12,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -17.775,
-              -6.096,
-              -5.956
+              8.867,
+              -11.041,
+              15.396
             ],
             "centroidAfter": [
-              -15.359,
-              -8.476,
-              -6.301
+              8.867,
+              -11.041,
+              15.396
             ],
-            "travelled": 3.4088,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              361,
-              369
+              232,
+              232
             ],
             "seconds": [
-              12.03,
-              12.3
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -9.792,
-              -7.736,
-              -8.148
-            ],
-            "centroidAfter": [
-              -4.728,
-              -9.795,
-              -9.367
-            ],
-            "travelled": 5.6008,
-            "maxMemberDrift": 0,
-            "frames": [
-              371,
-              381
-            ],
-            "seconds": [
-              12.37,
-              12.7
+              7.73,
+              7.73
             ]
           },
           {
@@ -5648,105 +5668,132 @@
               "fist"
             ],
             "centroidBefore": [
-              2.607,
-              -21.555,
-              4.05
+              -0.425,
+              -12.807,
+              3.51
             ],
             "centroidAfter": [
-              8.126,
-              -22.189,
-              2.45
+              4.953,
+              -20.361,
+              3.123
             ],
-            "travelled": 5.7817,
+            "travelled": 9.2802,
             "maxMemberDrift": 0,
             "frames": [
-              382,
-              389
+              359,
+              360
             ],
             "seconds": [
-              12.73,
-              12.97
+              11.97,
+              12
             ]
           },
           {
-            "cluster": "Microbiology",
-            "members": 18,
+            "cluster": "Lacto-vegetables",
+            "members": 20,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -3.432,
-              -10.825,
-              -9.594
+              -1.409,
+              -19.949,
+              5.021
             ],
             "centroidAfter": [
-              -3.706,
-              -14.376,
-              -8.909
+              0.976,
+              -19.843,
+              4.266
             ],
-            "travelled": 3.627,
+            "travelled": 2.5042,
             "maxMemberDrift": 0,
             "frames": [
-              520,
-              521
+              365,
+              368
             ],
             "seconds": [
-              17.33,
-              17.37
+              12.17,
+              12.27
             ]
           },
           {
-            "cluster": "Microbiology",
-            "members": 18,
+            "cluster": "Lacto-vegetables",
+            "members": 20,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -7.307,
-              -15.949,
-              -7.53
+              1.745,
+              -21.17,
+              4.252
             ],
             "centroidAfter": [
-              -1.731,
-              -18.064,
-              -8.897
+              3.451,
+              -21.239,
+              3.736
             ],
-            "travelled": 6.1175,
+            "travelled": 1.7832,
             "maxMemberDrift": 0,
             "frames": [
-              536,
-              542
+              370,
+              373
             ],
             "seconds": [
-              17.87,
-              18.07
+              12.33,
+              12.43
             ]
           },
           {
-            "cluster": "Microbiology",
-            "members": 18,
+            "cluster": "Lacto-vegetables",
+            "members": 20,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              0.304,
-              -18.999,
-              -9.369
+              3.164,
+              -21.085,
+              3.799
             ],
             "centroidAfter": [
-              4.895,
-              -18.336,
-              -10.901
+              4.994,
+              -22.724,
+              3.509
             ],
-            "travelled": 4.8845,
+            "travelled": 2.4741,
             "maxMemberDrift": 0,
             "frames": [
-              548,
-              555
+              376,
+              382
             ],
             "seconds": [
-              18.27,
-              18.5
+              12.53,
+              12.73
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              5.182,
+              -22.552,
+              3.422
+            ],
+            "centroidAfter": [
+              6.583,
+              -22.065,
+              2.907
+            ],
+            "travelled": 1.5697,
+            "maxMemberDrift": 0,
+            "frames": [
+              384,
+              392
+            ],
+            "seconds": [
+              12.8,
+              13.07
             ]
           },
           {
@@ -5756,51 +5803,51 @@
               "fist"
             ],
             "centroidBefore": [
-              12.257,
-              -7.886,
-              13.815
+              11.293,
+              -12.169,
+              14.836
             ],
             "centroidAfter": [
-              10.962,
-              -9.681,
-              14.518
+              11.496,
+              -9.896,
+              14.39
             ],
-            "travelled": 2.3221,
+            "travelled": 2.3252,
             "maxMemberDrift": 0,
             "frames": [
-              680,
-              681
+              395,
+              396
             ],
             "seconds": [
-              22.67,
-              22.7
+              13.17,
+              13.2
             ]
           },
           {
-            "cluster": "Equipment",
+            "cluster": "Safety and pH",
             "members": 12,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -4.887,
-              -24.849,
-              -6.601
+              11.18,
+              -8.997,
+              14.335
             ],
             "centroidAfter": [
-              -4.887,
-              -24.849,
-              -6.601
+              11.18,
+              -8.997,
+              14.335
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              704,
-              704
+              525,
+              525
             ],
             "seconds": [
-              23.47,
-              23.47
+              17.5,
+              17.5
             ]
           },
           {
@@ -5810,24 +5857,51 @@
               "fist"
             ],
             "centroidBefore": [
-              -4.578,
-              -24.729,
-              -6.717
+              -5.217,
+              -24.57,
+              -6.546
             ],
             "centroidAfter": [
-              -2.922,
-              -24.862,
-              -7.207
+              -5.001,
+              -24.641,
+              -6.601
             ],
-            "travelled": 1.732,
+            "travelled": 0.2342,
             "maxMemberDrift": 0,
             "frames": [
-              709,
-              718
+              548,
+              549
             ],
             "seconds": [
-              23.63,
-              23.93
+              18.27,
+              18.3
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.029,
+              -24.55,
+              -6.917
+            ],
+            "centroidAfter": [
+              -2.433,
+              -25.202,
+              -7.3
+            ],
+            "travelled": 1.7658,
+            "maxMemberDrift": 0,
+            "frames": [
+              553,
+              559
+            ],
+            "seconds": [
+              18.43,
+              18.63
             ]
           },
           {
@@ -5837,44 +5911,124 @@
               "fist"
             ],
             "centroidBefore": [
-              9.47,
-              -9.003,
-              14.865
+              16.534,
+              -10.499,
+              12.933
             ],
             "centroidAfter": [
-              17.562,
-              -7.813,
-              12.161
+              20.334,
+              -6.836,
+              11.139
             ],
-            "travelled": 8.6146,
+            "travelled": 5.5745,
             "maxMemberDrift": 0,
             "frames": [
-              720,
-              722
+              562,
+              564
             ],
             "seconds": [
-              24,
-              24.07
+              18.73,
+              18.8
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.37,
+              -17.598,
+              2.836
+            ],
+            "centroidAfter": [
+              -3.042,
+              -21.32,
+              5.758
+            ],
+            "travelled": 8.7936,
+            "maxMemberDrift": 0,
+            "frames": [
+              695,
+              696
+            ],
+            "seconds": [
+              23.17,
+              23.2
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -0.829,
+              -24.939,
+              5.685
+            ],
+            "centroidAfter": [
+              -0.829,
+              -24.939,
+              5.685
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              705,
+              705
+            ],
+            "seconds": [
+              23.5,
+              23.5
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -1.626,
+              -24.516,
+              5.86
+            ],
+            "centroidAfter": [
+              4.146,
+              -25.499,
+              4.24
+            ],
+            "travelled": 6.0745,
+            "maxMemberDrift": 0,
+            "frames": [
+              712,
+              728
+            ],
+            "seconds": [
+              23.73,
+              24.27
             ]
           }
         ],
-        "poseGrabCount": 18,
+        "poseGrabCount": 23,
         "poseGrabbedClusters": [
-          "Safety and pH",
           "Lacto-vegetables",
-          "Microbiology",
+          "Safety and pH",
           "Equipment"
         ],
         "poseGrabLargest": 20,
-        "poseGrabMaxTravel": 11.0687,
+        "poseGrabMaxTravel": 10.8706,
         "captionFramesShowing": 1124,
-        "captionFramesMarkedHeld": 92,
+        "captionFramesMarkedHeld": 98,
         "captionFramesOutrunningTheDetector": 0,
         "captionOutrunExamples": [],
         "captionNeverOutrunsTheDetector": true,
-        "undoStackEmptiedOnCamera": true,
+        "undoStackEmptiedOnCamera": false,
         "undoActsDroppedByTheCap": 0,
-        "mapReturnedToItsStartingLayout": true,
+        "mapReturnedToItsStartingLayout": false,
         "clusterMovedByPose": true,
         "clusterArrangementPreservedByPose": true,
         "clusterGrabbed": "Koji",
@@ -5885,15 +6039,15 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          2.192,
-          0.269,
-          -3.312
+          2.284,
+          0.286,
+          -3.343
         ],
-        "clusterCentroidTravelled": 17.6005,
+        "clusterCentroidTravelled": 17.508,
         "clusterMaxMemberDrift": 0,
         "clusterLedgerBeforeOnPeer": "5144cc62a503",
-        "clusterLedgerAfterOnPeer": "0bb409905472",
-        "clusterLedgerAfterHere": "0bb409905472",
+        "clusterLedgerAfterOnPeer": "7720fe60c994",
+        "clusterLedgerAfterHere": "7720fe60c994",
         "clusterMoveReachedTheHeadlessPeer": true,
         "clusterMovedByMouse": true,
         "clusterInternalArrangementPreserved": true,
@@ -5911,7 +6065,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "d38003b65a7d9754",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "clusterMovedByPose": "b5bea41b6c62",
           "clusterArrangementPreservedByPose": "b5bea41b6c62",
@@ -5925,8 +6079,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:52:43.364Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:32:24.088Z"
     },
     {
       "id": "18",
@@ -5934,15 +6088,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 70.6,
+      "seconds": 71.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2783534,
-        "sha256": "dd6ea00255c8af8a4b116c9ab57ae558c0f8ddd6248e37078323514ee24e0367",
+        "bytes": 3124928,
+        "sha256": "571f912c7d7ac7488d537a63c6a94e5bb14ead83edbcb361c72152daebca6b37",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -6043,7 +6197,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "a60024ab92924687",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "steppedToASecondHit": "b5bea41b6c62",
           "severalHitsMatched": "b5bea41b6c62",
@@ -6053,8 +6207,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:53:56.682Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:33:38.374Z"
     },
     {
       "id": "19",
@@ -6062,15 +6216,15 @@
       "title": "Capture, place, connect, refind",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 124.2,
+      "seconds": 128.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2083796,
-        "sha256": "dc93041a8d9bbdc0d68ff64007d7c473207fb7bb8e8efd411f21e66c538f0940",
+        "bytes": 2241708,
+        "sha256": "b241814057f5534d50d04b723137be03d910736bf9cf46b084223577f0e22238",
         "seconds": 23,
         "fps": 30,
         "frames": 690
@@ -6180,7 +6334,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8f6ace6323401f42",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "created": "b5bea41b6c62",
           "placed": "b5bea41b6c62",
@@ -6192,8 +6346,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:55:58.469Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:35:44.034Z"
     },
     {
       "id": "20",
@@ -6201,15 +6355,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 183.5,
+      "seconds": 187.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1194621,
-        "sha256": "a1af226959acb12212447ebb6092b5c3d271b849e1a81a5d5e59541d41513381",
+        "bytes": 1195299,
+        "sha256": "2959ff8bdf2bea8e2c8ed2a6b5dda9dfc91b4f948f9a32eae928b2abb9c05650",
         "seconds": 47,
         "fps": 30,
         "frames": 1410
@@ -6437,7 +6591,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "9387e777a5795c22",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "rejectionLeftNoTrace": "b5bea41b6c62",
           "allThreeKindsAccepted": "b5bea41b6c62",
@@ -6452,8 +6606,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:59:03.283Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:38:52.859Z"
     }
   ],
   "supersededRuns": [
@@ -6479,17 +6633,17 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T13:19:53.102Z",
+  "finishedAt": "2026-09-06T13:38:56.935Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 826994,
     "sha256": "10c188b09545c35e81cb410984e9f463e024ef3e937857bc5964d72314b08313",
     "appSha": "10c188b09545c35e",
-    "gitHead": "724c4c25d619",
-    "gitHeadAt": "2026-09-06T13:16:30+00:00",
-    "treeDirtyAtCapture": true
+    "gitHead": "d14cbe1aea50",
+    "gitHeadAt": "2026-09-06T13:20:07+00:00",
+    "treeDirtyAtCapture": false
   },
-  "captured": 20,
+  "captured": 19,
   "total": 20
 }
