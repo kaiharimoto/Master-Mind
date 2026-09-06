@@ -1,18 +1,22 @@
 {
-  "cycle": 10,
-  "previousCycle": 9,
+  "cycle": 9,
+  "previousCycle": 8,
   "previousCycleSource": "derived from the snapshot directory being diffed",
   "capturedNow": 20,
   "capturedPrev": 20,
   "capturedPrevSource": "artifact files actually present in the previous snapshot",
   "previousManifestSelfReport": {
-    "cycle": 9,
+    "cycle": 8,
     "captured": 20
   },
   "headerDisagreement": null,
   "rowsVsCapturedPrev": "ok",
   "notes": [
-    "12 12_sync_twin_after.png: output moved materially: ssim 0.813 is 0.177 below its 0.99 threshold — inspect"
+    "09 09_connect_edit.png: output moved materially: ssim 0.921 is 0.064 below its 0.985 threshold; lit subject moved 21 %, mean luminance 1 % — inspect",
+    "11 11_sync_twin_before.png: output moved materially: ssim 0.859 is 0.131 below its 0.99 threshold — inspect",
+    "12 12_sync_twin_after.png: output moved materially: ssim 0.880 is 0.110 below its 0.99 threshold; lit subject moved 30 %, mean luminance 12 % — inspect",
+    "18 18_search_flyto.mp4: output moved materially: ssim 0.854 is 0.086 below its 0.94 threshold; lit subject moved 38 %, mean luminance 0 % — inspect",
+    "19 19_capture_place_arc.mp4: output moved materially: ssim 0.870 is 0.060 below its 0.93 threshold; lit subject moved 41 %, mean luminance 8 % — inspect"
   ],
   "rows": [
     {
@@ -20,8 +24,8 @@
       "file": "01_maps_home.png",
       "status": "captured",
       "threshold": 0.995,
-      "ssim": 1,
-      "verdict": "unchanged",
+      "ssim": 0.993613,
+      "verdict": "changed",
       "subject": {
         "cur": {
           "litPixels": 32809,
@@ -29,46 +33,47 @@
           "peakLum": 0.9991
         },
         "prev": {
-          "litPixels": 32809,
-          "meanLum": 0.5746,
-          "peakLum": 0.9991
+          "litPixels": 33084,
+          "meanLum": 0.5718,
+          "peakLum": 1
         },
-        "peakDelta": 0,
-        "meanDelta": 0,
-        "litDelta": 0
+        "peakDelta": 0.001,
+        "meanDelta": 0.005,
+        "litDelta": 0.008
       },
-      "substantive": false
+      "whatChanged": "capture script changed (98f7cded25ce50cc -> e97c2524c7397c53); demonstrates now: \"maps home: create, rename and delete a map, both seeded maps listed with node counts\"",
+      "recipeChanged": true,
+      "substantive": true
     },
     {
       "id": "02",
       "file": "02_canvas_large_map.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.888533,
+      "ssim": 0.873529,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 73744,
-          "meanLum": 0.3468,
-          "peakLum": 0.9063
-        },
-        "prev": {
           "litPixels": 54999,
           "meanLum": 0.333,
           "peakLum": 0.9063
         },
+        "prev": {
+          "litPixels": 102790,
+          "meanLum": 0.3216,
+          "peakLum": 0.9063
+        },
         "peakDelta": 0,
-        "meanDelta": 0.041,
-        "litDelta": 0.341
+        "meanDelta": 0.035,
+        "litDelta": 0.465
       },
       "subjectChanged": true,
       "onFrameChanged": [
-        "labelsHidden 84 -> 109",
-        "labelsShortened 36 -> 16",
-        "unlabelledListed 0 -> 48"
+        "labelsHidden 0 -> 84",
+        "labelsShortened undefined -> 36",
+        "searchBreakdown undefined -> null"
       ],
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (e0c4fecc74ced127 -> 73b7deb0e7bd2172); demonstrates now: \"canvas lens at whole-map framing on Windows, 150 nodes with seed provenance\"",
+      "whatChanged": "capture script changed (c2b3f01dd66d3be6 -> e0c4fecc74ced127); demonstrates now: \"canvas lens at whole-map framing on Windows, 150 nodes with seed provenance\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -77,29 +82,30 @@
       "file": "03_hero_ar_coldstart.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.786946,
+      "ssim": 0.793353,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 142740,
-          "meanLum": 0.4634,
-          "peakLum": 1
-        },
-        "prev": {
           "litPixels": 152014,
           "meanLum": 0.4457,
           "peakLum": 0.9991
         },
+        "prev": {
+          "litPixels": 272762,
+          "meanLum": 0.4288,
+          "peakLum": 1
+        },
         "peakDelta": 0.001,
-        "meanDelta": 0.04,
-        "litDelta": 0.061
+        "meanDelta": 0.039,
+        "litDelta": 0.443
       },
+      "subjectChanged": true,
       "onFrameChanged": [
-        "labelsHidden 57 -> 74",
-        "labelsShortened 32 -> 16"
+        "labelsHidden 0 -> 57",
+        "labelsShortened undefined -> 32",
+        "searchBreakdown undefined -> null"
       ],
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (e72dc409832c4e54 -> e7fe41560af4b8c2); demonstrates now: \"AR lens hero on Android at cold first launch, one map at two device orientations\"",
+      "whatChanged": "capture script changed (1e2d90017445b65c -> e72dc409832c4e54); demonstrates now: \"AR lens hero on Android at cold first launch, one map at two device orientations\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -108,32 +114,31 @@
       "file": "04_mind_expansion.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.857559,
+      "ssim": 0.812956,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 78203,
-          "meanLum": 0.4101,
-          "peakLum": 0.9063
-        },
-        "prev": {
           "litPixels": 79540,
           "meanLum": 0.3546,
           "peakLum": 0.9063
         },
+        "prev": {
+          "litPixels": 117235,
+          "meanLum": 0.3621,
+          "peakLum": 0.9063
+        },
         "peakDelta": 0,
-        "meanDelta": 0.157,
-        "litDelta": 0.017
+        "meanDelta": 0.021,
+        "litDelta": 0.322
       },
       "subjectChanged": true,
       "onFrameChanged": [
-        "labelsHidden 87 -> 105",
-        "labelsShortened 34 -> 16",
-        "unlabelledListed 50 -> 0",
-        "searchBreakdown null -> \"19 hits · 6 in the text · 13 in the label “Koji”\""
+        "labelsHidden 0 -> 87",
+        "labelsShortened undefined -> 34",
+        "unlabelledListed 0 -> 50",
+        "searchBreakdown undefined -> null"
       ],
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (36cba3ce79b9e320 -> bac9916dd5a965ca); demonstrates now: \"mind-expansion lens, the whole map and the holding cluster on screen at once\"",
+      "whatChanged": "capture script changed (be545e4dc4aeeb93 -> 36cba3ce79b9e320); demonstrates now: \"mind-expansion lens, the whole map and the holding cluster on screen at once\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -142,25 +147,25 @@
       "file": "05_hand_tracking.png",
       "status": "captured",
       "threshold": 0.94,
-      "ssim": 0.803887,
+      "ssim": 0.534251,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 255333,
-          "meanLum": 0.403,
-          "peakLum": 1
-        },
-        "prev": {
           "litPixels": 258330,
           "meanLum": 0.3939,
           "peakLum": 1
         },
-        "peakDelta": 0,
-        "meanDelta": 0.023,
-        "litDelta": 0.012
+        "prev": {
+          "litPixels": 349957,
+          "meanLum": 0.3746,
+          "peakLum": 0.9987
+        },
+        "peakDelta": 0.001,
+        "meanDelta": 0.052,
+        "litDelta": 0.262
       },
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (4cf1ee94ae474928 -> bfbd59fe83cedb03); demonstrates now: \"Windows hand tracking: an open-palm move-closer shown before and after in one framing\"",
+      "subjectChanged": true,
+      "whatChanged": "demonstrates: \"Windows hand tracking: an open-palm spread shown before and after in one framing\" -> \"Windows hand tracking: an open-palm move-closer shown before and after in one framing\"; capture script changed (8b9786b8aed24e1a -> 4cf1ee94ae474928); demonstrates now: \"Windows hand tracking: an open-palm move-closer shown before and after in one framing\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -169,30 +174,29 @@
       "file": "06_holding_cluster.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.902356,
+      "ssim": 0.888402,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 56317,
-          "meanLum": 0.4435,
-          "peakLum": 0.9063
-        },
-        "prev": {
           "litPixels": 46560,
           "meanLum": 0.431,
           "peakLum": 0.9063
         },
+        "prev": {
+          "litPixels": 70159,
+          "meanLum": 0.4663,
+          "peakLum": 0.9063
+        },
         "peakDelta": 0,
-        "meanDelta": 0.029,
-        "litDelta": 0.21
+        "meanDelta": 0.076,
+        "litDelta": 0.336
       },
       "subjectChanged": true,
       "onFrameChanged": [
-        "labelsHidden 0 -> 8",
-        "unlabelledListed 0 -> 8"
+        "labelsShortened undefined -> 1",
+        "searchBreakdown undefined -> null"
       ],
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (ac50fd35308b5410 -> c3c27bb00aca3d71); demonstrates now: \"the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them\"",
+      "whatChanged": "capture script changed (ad16b81e68f4ef1c -> ac50fd35308b5410); demonstrates now: \"the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -201,25 +205,24 @@
       "file": "07_five_node_states.png",
       "status": "captured",
       "threshold": 0.985,
-      "ssim": 0.987172,
+      "ssim": 0.988498,
       "verdict": "unchanged",
       "subject": {
         "cur": {
-          "litPixels": 72787,
-          "meanLum": 0.4602,
-          "peakLum": 0.9063
-        },
-        "prev": {
           "litPixels": 70834,
           "meanLum": 0.4598,
           "peakLum": 0.9063
         },
+        "prev": {
+          "litPixels": 70106,
+          "meanLum": 0.4605,
+          "peakLum": 0.9063
+        },
         "peakDelta": 0,
-        "meanDelta": 0.001,
-        "litDelta": 0.028
+        "meanDelta": 0.002,
+        "litDelta": 0.01
       },
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (6c1e1ef56d36587e -> 6e5e6422b8ed0a2a); demonstrates now: \"the five node states side by side with the legend, with the luminance ladder measured off the shipped frame\"",
+      "whatChanged": "capture script changed (1cb30f7bbb2450f4 -> 6c1e1ef56d36587e); demonstrates now: \"the five node states side by side with the legend, with the luminance ladder measured off the shipped frame\"",
       "recipeChanged": false,
       "why": "recipe reworded, output unchanged",
       "substantive": false
@@ -229,22 +232,22 @@
       "file": "08_placement_endstate.png",
       "status": "captured",
       "threshold": 0.985,
-      "ssim": 0.96824,
+      "ssim": 0.96745,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 81823,
-          "meanLum": 0.4941,
-          "peakLum": 1
-        },
-        "prev": {
           "litPixels": 79212,
           "meanLum": 0.4964,
           "peakLum": 1
         },
+        "prev": {
+          "litPixels": 81176,
+          "meanLum": 0.5039,
+          "peakLum": 1
+        },
         "peakDelta": 0,
-        "meanDelta": 0.005,
-        "litDelta": 0.033
+        "meanDelta": 0.015,
+        "litDelta": 0.024
       },
       "substantive": false
     },
@@ -253,53 +256,51 @@
       "file": "09_connect_edit.png",
       "status": "captured",
       "threshold": 0.985,
-      "ssim": 0.988987,
-      "verdict": "unchanged",
+      "ssim": 0.921359,
+      "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 94363,
-          "meanLum": 0.5372,
-          "peakLum": 1
-        },
-        "prev": {
           "litPixels": 92110,
           "meanLum": 0.5381,
           "peakLum": 1
         },
+        "prev": {
+          "litPixels": 115907,
+          "meanLum": 0.5353,
+          "peakLum": 1
+        },
         "peakDelta": 0,
-        "meanDelta": 0.002,
-        "litDelta": 0.024
+        "meanDelta": 0.005,
+        "litDelta": 0.205
       },
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (dacb57afebb04362 -> 307df49d193c5df3); demonstrates now: \"connect and edit before/after: a new filament created between two named nodes\"",
-      "recipeChanged": false,
-      "why": "recipe reworded, output unchanged",
-      "substantive": false
+      "subjectChanged": true,
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.921 is 0.064 below its 0.985 threshold; lit subject moved 21 %, mean luminance 1 % — inspect"
     },
     {
       "id": "10",
       "file": "10_search_flyto_end.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.957104,
+      "ssim": 0.894702,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 78017,
-          "meanLum": 0.5194,
-          "peakLum": 0.9063
-        },
-        "prev": {
           "litPixels": 80681,
           "meanLum": 0.5319,
           "peakLum": 0.9063
         },
+        "prev": {
+          "litPixels": 122666,
+          "meanLum": 0.5346,
+          "peakLum": 0.9063
+        },
         "peakDelta": 0,
-        "meanDelta": 0.024,
-        "litDelta": 0.033
+        "meanDelta": 0.005,
+        "litDelta": 0.342
       },
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (8cbc380c9eef1ea6 -> 491ed807d1cf3a88); demonstrates now: \"search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it\"",
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (081211a9ab14a06e -> 8cbc380c9eef1ea6); demonstrates now: \"search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -308,72 +309,73 @@
       "file": "11_sync_twin_before.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.999659,
-      "verdict": "unchanged",
+      "ssim": 0.859247,
+      "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 61909,
-          "meanLum": 0.4957,
-          "peakLum": 1
-        },
-        "prev": {
           "litPixels": 61467,
           "meanLum": 0.4843,
           "peakLum": 1
         },
+        "prev": {
+          "litPixels": 57586,
+          "meanLum": 0.4909,
+          "peakLum": 1
+        },
         "peakDelta": 0,
-        "meanDelta": 0.024,
-        "litDelta": 0.007
+        "meanDelta": 0.013,
+        "litDelta": 0.067
       },
-      "substantive": false
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.859 is 0.131 below its 0.99 threshold — inspect"
     },
     {
       "id": "12",
       "file": "12_sync_twin_after.png",
       "status": "captured",
       "threshold": 0.99,
-      "ssim": 0.812838,
+      "ssim": 0.880369,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 213717,
-          "meanLum": 0.4293,
-          "peakLum": 1
-        },
-        "prev": {
           "litPixels": 187036,
           "meanLum": 0.438,
           "peakLum": 1
         },
+        "prev": {
+          "litPixels": 268016,
+          "meanLum": 0.3919,
+          "peakLum": 1
+        },
         "peakDelta": 0,
-        "meanDelta": 0.02,
-        "litDelta": 0.143
+        "meanDelta": 0.118,
+        "litDelta": 0.302
       },
       "subjectChanged": true,
       "substantive": true,
-      "whatChanged": "output moved materially: ssim 0.813 is 0.177 below its 0.99 threshold — inspect"
+      "whatChanged": "output moved materially: ssim 0.880 is 0.110 below its 0.99 threshold; lit subject moved 30 %, mean luminance 12 % — inspect"
     },
     {
       "id": "13",
       "file": "13_finder_prompt.png",
       "status": "captured",
       "threshold": 0.995,
-      "ssim": 0.997836,
-      "verdict": "unchanged",
+      "ssim": 0.99026,
+      "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 102784,
-          "meanLum": 0.4826,
-          "peakLum": 0.9063
-        },
-        "prev": {
           "litPixels": 103423,
           "meanLum": 0.4785,
           "peakLum": 0.9063
         },
+        "prev": {
+          "litPixels": 105663,
+          "meanLum": 0.4795,
+          "peakLum": 0.9063
+        },
         "peakDelta": 0,
-        "meanDelta": 0.009,
-        "litDelta": 0.006
+        "meanDelta": 0.002,
+        "litDelta": 0.021
       },
       "substantive": false
     },
@@ -382,25 +384,24 @@
       "file": "14_finder_review.png",
       "status": "captured",
       "threshold": 0.995,
-      "ssim": 0.697246,
+      "ssim": 0.898438,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 149024,
-          "meanLum": 0.5066,
-          "peakLum": 1
-        },
-        "prev": {
           "litPixels": 144639,
           "meanLum": 0.4992,
           "peakLum": 1
         },
+        "prev": {
+          "litPixels": 146892,
+          "meanLum": 0.4964,
+          "peakLum": 1
+        },
         "peakDelta": 0,
-        "meanDelta": 0.015,
-        "litDelta": 0.03
+        "meanDelta": 0.006,
+        "litDelta": 0.015
       },
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (03a6103849a97085 -> 67637281bbe5a5e0); demonstrates now: \"the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch\"",
+      "whatChanged": "capture script changed (5bbeba039b3db20a -> 03a6103849a97085); demonstrates now: \"the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -426,6 +427,9 @@
         "meanDelta": 0,
         "litDelta": 0
       },
+      "whatChanged": "capture script changed (ececd27929f61ca1 -> 8891521182f0f526); demonstrates now: \"settings and the gesture reference for touch and hand vocabularies\"",
+      "recipeChanged": false,
+      "why": "recipe reworded, output unchanged",
       "substantive": false
     },
     {
@@ -434,7 +438,7 @@
       "status": "captured",
       "threshold": 0.93,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.975925,
+      "ssim": 0.983657,
       "seconds": {
         "cur": 34,
         "prev": 34
@@ -444,25 +448,25 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 1770993,
-        "prev": 1830531
+        "cur": 1830531,
+        "prev": 2045463
       },
-      "bitrateDelta": -0.033,
+      "bitrateDelta": -0.105,
       "verdict": "unchanged",
       "subject": {
         "cur": {
-          "litPixels": 282518,
-          "meanLum": 0.426,
-          "peakLum": 0.9973
-        },
-        "prev": {
           "litPixels": 284004,
           "meanLum": 0.4212,
           "peakLum": 0.9978
         },
+        "prev": {
+          "litPixels": 288552,
+          "meanLum": 0.4219,
+          "peakLum": 0.9973
+        },
         "peakDelta": 0.001,
-        "meanDelta": 0.011,
-        "litDelta": 0.005
+        "meanDelta": 0.002,
+        "litDelta": 0.016
       },
       "substantive": false
     },
@@ -472,7 +476,7 @@
       "status": "captured",
       "threshold": 0.9,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.835306,
+      "ssim": 0.753569,
       "seconds": {
         "cur": 41,
         "prev": 41
@@ -482,28 +486,28 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 5606539,
-        "prev": 5990642
+        "cur": 5990642,
+        "prev": 11007460
       },
-      "bitrateDelta": -0.064,
+      "bitrateDelta": -0.456,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 693735,
-          "meanLum": 0.3649,
-          "peakLum": 0.9772
-        },
-        "prev": {
           "litPixels": 701199,
           "meanLum": 0.3444,
           "peakLum": 0.9804
         },
-        "peakDelta": 0.003,
-        "meanDelta": 0.06,
-        "litDelta": 0.011
+        "prev": {
+          "litPixels": 1000219,
+          "meanLum": 0.3308,
+          "peakLum": 0.9806
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.041,
+        "litDelta": 0.299
       },
-      "recipeFingerprintChanged": true,
-      "whatChanged": "capture script changed (e29bd581048cec82 -> 269d3aff2a2dd9b9); demonstrates now: \"Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents\"",
+      "subjectChanged": true,
+      "whatChanged": "capture script changed (3dc56152e133bcb2 -> e29bd581048cec82); demonstrates now: \"Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents\"",
       "recipeChanged": true,
       "substantive": true
     },
@@ -513,7 +517,7 @@
       "status": "captured",
       "threshold": 0.94,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.927639,
+      "ssim": 0.853548,
       "seconds": {
         "cur": 13,
         "prev": 13
@@ -523,27 +527,29 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 2576881,
-        "prev": 2690402
+        "cur": 2690402,
+        "prev": 5165843
       },
-      "bitrateDelta": -0.042,
+      "bitrateDelta": -0.479,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 470368,
-          "meanLum": 0.3784,
-          "peakLum": 0.985
-        },
-        "prev": {
           "litPixels": 449006,
           "meanLum": 0.3908,
           "peakLum": 0.9854
         },
-        "peakDelta": 0,
-        "meanDelta": 0.032,
-        "litDelta": 0.048
+        "prev": {
+          "litPixels": 726157,
+          "meanLum": 0.3891,
+          "peakLum": 0.9959
+        },
+        "peakDelta": 0.011,
+        "meanDelta": 0.004,
+        "litDelta": 0.382
       },
-      "substantive": false
+      "subjectChanged": true,
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.854 is 0.086 below its 0.94 threshold; lit subject moved 38 %, mean luminance 0 % — inspect"
     },
     {
       "id": "19",
@@ -551,7 +557,7 @@
       "status": "captured",
       "threshold": 0.93,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.905641,
+      "ssim": 0.87047,
       "seconds": {
         "cur": 23,
         "prev": 23
@@ -561,28 +567,29 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 1724397,
-        "prev": 1636842
+        "cur": 1636842,
+        "prev": 3142820
       },
-      "bitrateDelta": 0.053,
+      "bitrateDelta": -0.479,
       "verdict": "changed",
       "subject": {
         "cur": {
-          "litPixels": 399961,
-          "meanLum": 0.3618,
-          "peakLum": 0.9771
-        },
-        "prev": {
           "litPixels": 343362,
           "meanLum": 0.3629,
           "peakLum": 0.9705
         },
-        "peakDelta": 0.007,
-        "meanDelta": 0.003,
-        "litDelta": 0.165
+        "prev": {
+          "litPixels": 580169,
+          "meanLum": 0.3376,
+          "peakLum": 0.9631
+        },
+        "peakDelta": 0.008,
+        "meanDelta": 0.075,
+        "litDelta": 0.408
       },
       "subjectChanged": true,
-      "substantive": false
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.870 is 0.060 below its 0.93 threshold; lit subject moved 41 %, mean luminance 8 % — inspect"
     },
     {
       "id": "20",
@@ -590,7 +597,7 @@
       "status": "captured",
       "threshold": 0.95,
       "ssimMethod": "contact sheet, 20 frames spanning the take",
-      "ssim": 0.999537,
+      "ssim": 0.998839,
       "seconds": {
         "cur": 30,
         "prev": 30
@@ -600,25 +607,25 @@
         "prev": "30/1"
       },
       "bytes": {
-        "cur": 636707,
-        "prev": 634985
+        "cur": 634985,
+        "prev": 632206
       },
-      "bitrateDelta": 0.003,
+      "bitrateDelta": 0.004,
       "verdict": "unchanged",
       "subject": {
         "cur": {
-          "litPixels": 416400,
-          "meanLum": 0.4231,
-          "peakLum": 0.9656
-        },
-        "prev": {
           "litPixels": 413947,
           "meanLum": 0.4146,
           "peakLum": 0.9574
         },
-        "peakDelta": 0.009,
-        "meanDelta": 0.021,
-        "litDelta": 0.006
+        "prev": {
+          "litPixels": 415144,
+          "meanLum": 0.414,
+          "peakLum": 0.9574
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.001,
+        "litDelta": 0.003
       },
       "substantive": false
     }
@@ -631,21 +638,25 @@
     "identical": true
   },
   "summary": {
-    "unchanged": 8,
-    "changed": 12,
+    "unchanged": 4,
+    "changed": 16,
     "new": 0,
     "missing": 0,
     "uncomparable": 0,
     "total": 20,
     "changedIds": [
+      "01",
       "02",
       "03",
       "04",
       "05",
       "06",
       "08",
+      "09",
       "10",
+      "11",
       "12",
+      "13",
       "14",
       "17",
       "18",
@@ -654,24 +665,28 @@
     "missingIds": [],
     "uncomparableIds": [],
     "substantiveIds": [
+      "01",
       "02",
       "03",
       "04",
       "05",
       "06",
+      "09",
       "10",
+      "11",
       "12",
       "14",
-      "17"
+      "17",
+      "18",
+      "19"
     ],
     "recipeChangedIds": [
+      "01",
       "02",
       "03",
       "04",
       "05",
       "06",
-      "07",
-      "09",
       "10",
       "14",
       "17"

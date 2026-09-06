@@ -1,12 +1,12 @@
 {
-  "cycle": 10,
+  "cycle": 9,
   "seed": {
     "epoch": 1787227200000,
     "rng": 1296913221,
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T04:20:10.737Z",
+  "lastRunAt": "2026-09-05T15:11:22.998Z",
   "lastRunCaptured": [
     "01",
     "02",
@@ -36,7 +36,7 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.1,
+      "seconds": 14.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -94,10 +94,10 @@
         ],
         "fnSha": "e97c2524c7397c53"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:13.671Z"
+      "fileMtime": "2026-09-05T15:11:36.937Z"
     },
     {
       "id": "02",
@@ -105,15 +105,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.1,
+      "seconds": 1.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 300525,
-        "sha256": "25621d0f9b51cb7b22872b345b737d0fe7b9cec5eb0cbb6ed22391927750cfda"
+        "bytes": 243273,
+        "sha256": "86595af720eab4aa193ad4d289c26515eaa6e100a7eb7c742eb2d5da27ec86d2"
       },
       "claims": {
         "ok": true,
@@ -159,12 +159,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "auditDescribesTheShippedFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -178,9 +172,9 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 109,
-          "labelsShortened": 16,
-          "unlabelledListed": 48,
+          "labelsHidden": 84,
+          "labelsShortened": 36,
+          "unlabelledListed": 0,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
         },
@@ -195,10 +189,9 @@
           ]
         },
         "cameraPinned": true,
-        "arbiterSeq": 5,
-        "labelsAudited": 41,
+        "labelsAudited": 66,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Mesophilic vs thermophilic",
+        "labelWorstOverhangOn": "Coffee cherry cascara ferment?",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -206,54 +199,68 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 3.5,
+        "labelTightestPairGapPx": 1.54,
         "labelTightestPairOn": [
-          "Fido jars burp themselves",
-          "Label tape and a marker"
+          "Salt tolerance curve",
+          "Log every batch"
         ],
         "noTwoDrawnLabelsOverlap": true,
-        "labelsTruncated": 16,
+        "labelsTruncated": 36,
         "labelsTruncatedOn": [
+          "Raw milk caution",
+          "Umami stacking",
           "Vinegar from failed wine",
-          "Stiff levain keeps longer",
+          "Fido jars burp themselves",
+          "3.5% for cucumbers",
+          "Salt tolerance curve",
+          "Cold retard overnight",
+          "Cabbage core sugars",
+          "Katz: Wild Fermentation",
+          "Solera stacking",
+          "Filter through muslin",
           "Crock with a water moat",
+          "Rennet vs acid set",
           "Sauerkraut by weight",
-          "Label tape and a marker",
+          "Chevre at room temp",
+          "Sweet vs savoury paths",
+          "Airlock vs burp",
           "Rice koji: polish to 90%",
-          "Kahm yeast is harmless",
+          "Amylase plus protease",
+          "Discard crackers",
+          "Log every batch",
+          "pH 4.6 is the line",
+          "Sanitise, do not sterilise",
+          "Muslin vs cheesecloth",
+          "Blue: P. roqueforti",
+          "Koji Alchemy",
           "Leuconostoc mesenteroides",
-          "Cheese cave humidity",
+          "Beef garum trial",
+          "Grape leaf tannin trick",
           "Noma Guide to Fermentation",
-          "Mesophilic vs thermophilic",
           "Scoring at 30 degrees",
-          "Whey as a brine starter",
           "Wild yeast capture",
           "The Art of Fermentation",
-          "Trust smell over sight"
+          "Steam the first 20 min",
+          "Trust smell over sight",
+          "Rice vinegar base"
         ],
-        "labelWorstDisplacementPx": 36.3,
-        "labelsMoreThan40pxFromTheirNode": 0,
-        "markersBuriedByOtherLabels": 0,
-        "worstBuriedFraction": 0,
-        "noDrawnLabelBuriesAnotherMarker": true,
-        "labelWorstReservedDisplacementPx": 36.3,
-        "labelWorstDisplacementEm": 2.59,
+        "labelWorstDisplacementPx": 32.4,
+        "labelsFarFromTheirNode": 0,
+        "labelWorstReservedDisplacementPx": 31.9,
+        "labelWorstDisplacementEm": 2.6,
         "everyLabelStaysBesideItsNode": true,
         "markerContrast": {
-          "checked": 41,
-          "sampled": 41,
+          "checked": 66,
+          "sampled": 66,
           "offFrame": 0,
           "threshold": 1.45,
           "invisible": 0,
-          "worstContrast": 3,
+          "worstContrast": 2.84,
           "invisibleIds": [],
           "weakest": []
         },
         "labelsWithoutVisibleMarker": 0,
-        "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 5,
-        "arbiterSeqAtAudit": 5,
-        "auditDescribesTheShippedFrame": true
+        "everyDrawnLabelHasAVisibleMarker": true
       },
       "pageErrors": [],
       "recipe": {
@@ -263,12 +270,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "73b7deb0e7bd2172"
+        "fnSha": "e0c4fecc74ced127"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:15.458Z"
+      "fileMtime": "2026-09-05T15:11:38.291Z"
     },
     {
       "id": "03",
@@ -276,15 +283,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3.4,
+      "seconds": 3.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 775754,
-        "sha256": "93ef01bdbbe47ddf94802033647674d0115cf2050d65c81d6cfc46c173225219"
+        "bytes": 812007,
+        "sha256": "8db4c23583a10ebe08cd8b6714d348b20663b68e575642f934909751f67130b1"
       },
       "claims": {
         "ok": true,
@@ -325,8 +332,8 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 74,
-          "labelsShortened": 16,
+          "labelsHidden": 57,
+          "labelsShortened": 32,
           "unlabelledListed": 0,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
@@ -398,12 +405,12 @@
         "runtimes": [
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "e7fe41560af4b8c2"
+        "fnSha": "e72dc409832c4e54"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:19.091Z"
+      "fileMtime": "2026-09-05T15:11:41.803Z"
     },
     {
       "id": "04",
@@ -411,15 +418,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.5,
+      "seconds": 1.8,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 277311,
-        "sha256": "14052c2a54e0265fd5b74b1057d3326e397b7d28f7483c7b596ba42b0b2290e1"
+        "bytes": 327014,
+        "sha256": "77b8f717f1cb10ac3dd7816ece9de136e7ea26d7d99b4cb08efce2d90e8e33ff"
       },
       "claims": {
         "ok": true,
@@ -455,12 +462,6 @@
             "pass": true
           },
           {
-            "claim": "allFiveStatesAtWholeMapDensity",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
             "claim": "noTwoDrawnLabelsOverlap",
             "expected": true,
             "actual": true,
@@ -477,12 +478,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "auditDescribesTheShippedFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -496,10 +491,10 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 105,
-          "labelsShortened": 16,
-          "unlabelledListed": 0,
-          "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
+          "labelsHidden": 87,
+          "labelsShortened": 34,
+          "unlabelledListed": 50,
+          "searchBreakdown": null,
           "mapName": "Fermentation notebook"
         },
         "camera": {
@@ -513,19 +508,9 @@
           ]
         },
         "cameraPinned": true,
-        "statesOnScreen": [
-          "connected",
-          "plain",
-          "searchHit",
-          "selected",
-          "unplaced"
-        ],
-        "nodesOnScreen": 150,
-        "allFiveStatesAtWholeMapDensity": true,
-        "arbiterSeq": 9,
-        "labelsAudited": 45,
+        "labelsAudited": 63,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Fido jars burp themselves",
+        "labelWorstOverhangOn": "Sour cherry kvass",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -533,54 +518,66 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 1.81,
+        "labelTightestPairGapPx": 1.84,
         "labelTightestPairOn": [
-          "Peach pit garum?",
-          "Mesophilic vs thermophilic"
+          "Fido jars burp themselves",
+          "Headspace matters"
         ],
         "noTwoDrawnLabelsOverlap": true,
-        "labelsTruncated": 16,
+        "labelsTruncated": 34,
         "labelsTruncatedOn": [
+          "Raw milk caution",
           "Vinegar from failed wine",
-          "Stiff levain keeps longer",
+          "Slime means a stalled ferment",
+          "Fido jars burp themselves",
+          "3.5% for cucumbers",
+          "Cold retard overnight",
+          "Cabbage core sugars",
+          "Solera stacking",
+          "Filter through muslin",
           "Crock with a water moat",
-          "Sauerkraut by weight",
+          "Rennet vs acid set",
+          "Bulk to 50% rise",
+          "Chevre at room temp",
+          "Airlock vs burp",
           "Rice koji: polish to 90%",
-          "Kahm yeast is harmless",
-          "Strips lie above pH 4",
+          "Amylase plus protease",
+          "Log every batch",
+          "pH 4.6 is the line",
+          "Sanitise, do not sterilise",
+          "Muslin vs cheesecloth",
           "Leuconostoc mesenteroides",
-          "Cheap pH meters drift",
-          "Cheese cave humidity",
-          "Carrot batons hold crunch",
+          "Fruit fly discipline",
+          "Brine as seasoning",
+          "Beef garum trial",
+          "Botulism needs low acid",
+          "Grape leaf tannin trick",
+          "Salt by weight only",
           "Noma Guide to Fermentation",
           "Scoring at 30 degrees",
           "Wild yeast capture",
           "The Art of Fermentation",
-          "Trust smell over sight"
+          "Steam the first 20 min",
+          "Trust smell over sight",
+          "Rice vinegar base"
         ],
-        "labelWorstDisplacementPx": 36.9,
-        "labelsMoreThan40pxFromTheirNode": 0,
-        "markersBuriedByOtherLabels": 0,
-        "worstBuriedFraction": 0,
-        "noDrawnLabelBuriesAnotherMarker": true,
-        "labelWorstReservedDisplacementPx": 36.3,
-        "labelWorstDisplacementEm": 2.63,
+        "labelWorstDisplacementPx": 33.7,
+        "labelsFarFromTheirNode": 0,
+        "labelWorstReservedDisplacementPx": 33.2,
+        "labelWorstDisplacementEm": 2.6,
         "everyLabelStaysBesideItsNode": true,
         "markerContrast": {
-          "checked": 45,
-          "sampled": 45,
+          "checked": 63,
+          "sampled": 63,
           "offFrame": 0,
           "threshold": 1.45,
           "invisible": 0,
-          "worstContrast": 3.16,
+          "worstContrast": 3.1,
           "invisibleIds": [],
           "weakest": []
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 9,
-        "arbiterSeqAtAudit": 9,
-        "auditDescribesTheShippedFrame": true,
         "recencyByDistrict": {
           "violet": {
             "n": 18,
@@ -656,7 +653,7 @@
             ],
             "chroma": [
               0.05,
-              0.365
+              0.404
             ]
           },
           "teal": {
@@ -685,12 +682,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "bac9916dd5a965ca"
+        "fnSha": "36cba3ce79b9e320"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:21.318Z"
+      "fileMtime": "2026-09-05T15:11:43.347Z"
     },
     {
       "id": "05",
@@ -698,15 +695,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 17.1,
+      "seconds": 12.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 769551,
-        "sha256": "431111cb0c542527c261f15204527c202e1de637bd095e55cbf746aa9560a3ba"
+        "bytes": 831324,
+        "sha256": "5b480018edcb17e7f65b5a4a908867f13d5acf003ddf5171b7c356dd93354fa4"
       },
       "claims": {
         "ok": true,
@@ -728,12 +725,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "headlineMatchesTheHud",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -745,12 +736,10 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 1.053,
-        "confidence": 0.949,
+        "fan": 1.021,
+        "confidence": 0.948,
         "distBefore": 148.41,
-        "distAfter": 129.5,
-        "distAfterReadFromTheFrame": true,
-        "headlineMatchesTheHud": true,
+        "distAfter": 133.51,
         "operationTookEffect": true,
         "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
         "declaredSynthetic": true
@@ -765,12 +754,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "bfbd59fe83cedb03"
+        "fnSha": "4cf1ee94ae474928"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:38.575Z"
+      "fileMtime": "2026-09-05T15:11:56.061Z"
     },
     {
       "id": "06",
@@ -778,15 +767,15 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 5.2,
+      "seconds": 4.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 175978,
-        "sha256": "e782388df1a273d157e6b13abc5abc30c60f29594fc7afed32c90aee84a8ac20"
+        "bytes": 139981,
+        "sha256": "08ede002bbc545792ff6abf22fe49b72ad6a9e140c470f81bde106512389e9ce"
       },
       "claims": {
         "ok": true,
@@ -838,20 +827,13 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "auditDescribesTheShippedFrame",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
       "result": {
-        "arbiterSeq": 56,
-        "labelsAudited": 12,
+        "labelsAudited": 8,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Sour cherry kvass",
+        "labelWorstOverhangOn": "Recalibrate the pH meter",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -859,39 +841,33 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 11.39,
+        "labelTightestPairGapPx": 4.24,
         "labelTightestPairOn": [
-          "Read the succession paper",
+          "Recalibrate the pH meter",
           "Nixtamal plus koji"
         ],
         "noTwoDrawnLabelsOverlap": true,
         "labelsTruncated": 1,
         "labelsTruncatedOn": [
-          "Label tape and a marker"
+          "Recalibrate the pH meter"
         ],
-        "labelWorstDisplacementPx": 51.1,
-        "labelsMoreThan40pxFromTheirNode": 5,
-        "markersBuriedByOtherLabels": 0,
-        "worstBuriedFraction": 0,
-        "noDrawnLabelBuriesAnotherMarker": true,
-        "labelWorstReservedDisplacementPx": 51.1,
-        "labelWorstDisplacementEm": 2.13,
+        "labelWorstDisplacementPx": 45.9,
+        "labelsFarFromTheirNode": 2,
+        "labelWorstReservedDisplacementPx": 45.9,
+        "labelWorstDisplacementEm": 1.91,
         "everyLabelStaysBesideItsNode": true,
         "markerContrast": {
-          "checked": 12,
-          "sampled": 12,
+          "checked": 8,
+          "sampled": 8,
           "offFrame": 0,
           "threshold": 1.45,
           "invisible": 0,
-          "worstContrast": 3.25,
+          "worstContrast": 6.95,
           "invisibleIds": [],
           "weakest": []
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 56,
-        "arbiterSeqAtAudit": 56,
-        "auditDescribesTheShippedFrame": true,
         "map": "map-fermentation",
         "nodes": 150,
         "links": 208,
@@ -901,9 +877,9 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 8,
+          "labelsHidden": 0,
           "labelsShortened": 1,
-          "unlabelledListed": 8,
+          "unlabelledListed": 0,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
         },
@@ -913,15 +889,15 @@
           22
         ],
         "holdingRadius": 6.6,
-        "heldMarkerYaw": 5.76,
-        "heldMarkerWorstGapPx": 26.4,
+        "heldMarkerYaw": 2.094,
+        "heldMarkerWorstGapPx": 56.2,
         "heldMarkerClosestPair": [
           "n1ada6cb3e2",
-          "n2a2ac6dd57"
+          "n4fd66d29cd"
         ],
         "everyHeldMarkerCountable": true,
-        "cameraDistance": 20.626,
-        "ringHeightFraction": 0.66,
+        "cameraDistance": 17.782,
+        "ringHeightFraction": 0.8,
         "heldNodes": {
           "held": 8,
           "onScreen": 8,
@@ -930,64 +906,64 @@
         },
         "heldLabelAttribution": [
           {
-            "text": "Sour cherry kvass",
-            "own": 37.8,
+            "text": "Read the succession paper",
+            "own": 27.9,
             "nearestIsOwn": true,
             "hasLeader": false,
-            "margin": 26.3
+            "margin": 35.9
           },
           {
-            "text": "Nixtamal plus koji",
-            "own": 41.4,
-            "nearestIsOwn": false,
-            "hasLeader": true,
-            "margin": 10.1
-          },
-          {
-            "text": "Recalibrate the pH meter",
-            "own": 43.3,
+            "text": "Coffee cherry cascara ferment?",
+            "own": 31.8,
             "nearestIsOwn": true,
             "hasLeader": false,
-            "margin": 55
+            "margin": 45.5
+          },
+          {
+            "text": "Black garlic: 60C for 40 days",
+            "own": 45.1,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 48.7
           },
           {
             "text": "Ask M about her crock",
-            "own": 43.4,
+            "own": 32.9,
             "nearestIsOwn": true,
             "hasLeader": false,
-            "margin": 140.8
+            "margin": 69.4
           },
           {
             "text": "Preserved lemon, batch 3",
             "own": 32.7,
             "nearestIsOwn": false,
             "hasLeader": true,
-            "margin": 1.2
+            "margin": 1.1
           },
           {
-            "text": "Coffee cherry cascara ferment?",
-            "own": 51.1,
+            "text": "Nixtamal plus koji",
+            "own": 45.9,
             "nearestIsOwn": true,
-            "hasLeader": true,
-            "margin": 65.9
+            "hasLeader": false,
+            "margin": 18.9
           },
           {
-            "text": "Black garlic: 60C for 40 days",
-            "own": 44.4,
-            "nearestIsOwn": true,
-            "hasLeader": true,
-            "margin": 33.8
-          },
-          {
-            "text": "Read the succession paper",
-            "own": 26.8,
+            "text": "Recalibrate the pH meter",
+            "own": 31.8,
             "nearestIsOwn": false,
             "hasLeader": true,
-            "margin": 2.7
+            "margin": 9.2
+          },
+          {
+            "text": "Sour cherry kvass",
+            "own": 32.1,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 18.2
           }
         ],
-        "heldLabelsNearestOwnNode": 5,
-        "heldLabelsWithLeader": 5,
+        "heldLabelsNearestOwnNode": 6,
+        "heldLabelsWithLeader": 2,
         "everyHeldLabelAttributable": true,
         "holdingRingFillsFrame": true,
         "everyHeldNodeInFrame": true,
@@ -1001,12 +977,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "c3c27bb00aca3d71"
+        "fnSha": "ac50fd35308b5410"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:43.634Z"
+      "fileMtime": "2026-09-05T15:12:00.323Z"
     },
     {
       "id": "07",
@@ -1014,15 +990,15 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.5,
+      "seconds": 1.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 184269,
-        "sha256": "655821cba11a193ea502708fd84a4b70ee042446a7713900b2c72aed59727b2b"
+        "bytes": 180508,
+        "sha256": "ae60e7fada0ff4bed833bf38cbddeac3fc6725febc18afc59947ed53634a42e1"
       },
       "claims": {
         "ok": true,
@@ -1138,12 +1114,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "6e5e6422b8ed0a2a"
+        "fnSha": "6c1e1ef56d36587e"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:45.186Z"
+      "fileMtime": "2026-09-05T15:12:01.659Z"
     },
     {
       "id": "08",
@@ -1151,15 +1127,15 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.3,
+      "seconds": 2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 187011,
-        "sha256": "1bf2db65375d0694d4d3f436ab23d49ae08f67373c2b02d9f25adb4c793fcf91"
+        "bytes": 170254,
+        "sha256": "ffe910032a03e6dc616a0ad45d31b7039d5801c0cc08ef0a0f9faf9ddfd468f1"
       },
       "claims": {
         "ok": true,
@@ -1212,10 +1188,10 @@
         ],
         "fnSha": "44bb27a07e81dc26"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:47.327Z"
+      "fileMtime": "2026-09-05T15:12:03.550Z"
     },
     {
       "id": "09",
@@ -1223,15 +1199,15 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.9,
+      "seconds": 2.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 240074,
-        "sha256": "a5d79b481f939661d93a1836d64f5ad1d62e9304bc299ceaed6e62c09e76760c"
+        "bytes": 237846,
+        "sha256": "d7bc91c42e801c9ae7f966bfb34dd3d889756ae9a8c5eee8a442303da1883629"
       },
       "claims": {
         "ok": true,
@@ -1265,12 +1241,6 @@
             "expected": true,
             "actual": true,
             "pass": true
-          },
-          {
-            "claim": "everyOtherLabelHeldItsPlace",
-            "expected": true,
-            "actual": true,
-            "pass": true
           }
         ]
       },
@@ -1282,69 +1252,6 @@
         "linkedBefore": false,
         "linkedAfter": true,
         "connectedByThisCapture": true,
-        "labelsInBothPanels": 5,
-        "labelsThatShifted": 0,
-        "labelsThatShiftedOn": [],
-        "labelPlacementsBefore": {
-          "n209e6a2a86": [
-            -125,
-            52,
-            259
-          ],
-          "n35b0bd9a37": [
-            -102,
-            -73,
-            211
-          ],
-          "n83224a5de3": [
-            -69,
-            38,
-            125
-          ],
-          "n84a7397186": [
-            -79,
-            62,
-            167
-          ],
-          "n99ff69458f": [
-            -118,
-            -92,
-            247
-          ]
-        },
-        "labelPlacementsAfter": {
-          "n209e6a2a86": [
-            -125,
-            52,
-            259
-          ],
-          "n35b0bd9a37": [
-            -102,
-            -73,
-            211
-          ],
-          "n4e9bd59c87": [
-            -146,
-            -89,
-            303
-          ],
-          "n83224a5de3": [
-            -69,
-            40,
-            125
-          ],
-          "n84a7397186": [
-            -79,
-            62,
-            167
-          ],
-          "n99ff69458f": [
-            61,
-            -55,
-            328
-          ]
-        },
-        "everyOtherLabelHeldItsPlace": true,
         "nodeCount": 150,
         "editorOpen": true,
         "colourBefore": "coral",
@@ -1363,12 +1270,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "307df49d193c5df3"
+        "fnSha": "dacb57afebb04362"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:50.578Z"
+      "fileMtime": "2026-09-05T15:12:06.137Z"
     },
     {
       "id": "10",
@@ -1376,15 +1283,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 5.7,
+      "seconds": 5.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 179560,
-        "sha256": "fe502f71eaa4732f44c969c88fe030e581ece42e40120964339006eff3e78324"
+        "bytes": 184127,
+        "sha256": "9dc9594d87ecbd384aa6bd6d81b6f6430b82dd5fa57d1c303f2eb71fcd866080"
       },
       "claims": {
         "ok": true,
@@ -1460,7 +1367,7 @@
         "searchMatchReasonShown": true,
         "labelsAudited": 13,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Sweet vs savoury paths",
+        "labelWorstOverhangOn": "Amylase plus protease",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -1468,23 +1375,20 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 33.41,
+        "labelTightestPairGapPx": 14.11,
         "labelTightestPairOn": [
-          "Rice koji: polish to 90%",
-          "Amazake"
+          "Sweet vs savoury paths",
+          "Stir at 24h to cool"
         ],
         "noTwoDrawnLabelsOverlap": true,
         "labelsTruncated": 1,
         "labelsTruncatedOn": [
-          "Amylase plus protease"
+          "Barley miso, 18 months"
         ],
-        "labelWorstDisplacementPx": 58.2,
-        "labelsMoreThan40pxFromTheirNode": 10,
-        "markersBuriedByOtherLabels": 0,
-        "worstBuriedFraction": 0,
-        "noDrawnLabelBuriesAnotherMarker": true,
-        "labelWorstReservedDisplacementPx": 58.2,
-        "labelWorstDisplacementEm": 2.42,
+        "labelWorstDisplacementPx": 57.5,
+        "labelsFarFromTheirNode": 9,
+        "labelWorstReservedDisplacementPx": 57.5,
+        "labelWorstDisplacementEm": 2.39,
         "everyLabelStaysBesideItsNode": true,
         "markerContrast": {
           "checked": 13,
@@ -1532,12 +1436,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "491ed807d1cf3a88"
+        "fnSha": "8cbc380c9eef1ea6"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:20:56.078Z"
+      "fileMtime": "2026-09-05T15:12:11.127Z"
     },
     {
       "id": "11",
@@ -1545,15 +1449,15 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 15.9,
+      "seconds": 60.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 170205,
-        "sha256": "cdcc20deed865ba39edc86333add7e3a7f1dee8c50edfedfb24b683830efa695"
+        "bytes": 169153,
+        "sha256": "7302f630b62238dd01410d8c9087ebe20782dd4b735f342a73fd6b3e7a572867"
       },
       "claims": {
         "ok": true,
@@ -1579,7 +1483,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 29846,
+            "serverPid": 2811,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -1591,7 +1495,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 29846,
+            "serverPid": 2811,
             "actor": "android-twin",
             "status": "live"
           }
@@ -1620,10 +1524,10 @@
         ],
         "fnSha": "861f6cca2f545723"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:21:07.601Z"
+      "fileMtime": "2026-09-05T15:13:08.366Z"
     },
     {
       "id": "12",
@@ -1638,8 +1542,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 736091,
-        "sha256": "e96cef192b22f4f7be0b8ac305c348d0cccb4720e86d4d1dbd8c8593f2d5436c"
+        "bytes": 554584,
+        "sha256": "c01525cbef942a6fd5f46ac3e05ca44e9c97aef463b703d007e2bac91bde2c7e"
       },
       "claims": {
         "ok": true,
@@ -1711,12 +1615,6 @@
             "pass": true
           },
           {
-            "claim": "clusterMoveCrossedTheBoundary",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
             "claim": "bigMapShownOnBothSurfaces",
             "expected": true,
             "actual": true,
@@ -1771,7 +1669,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 29846,
+            "serverPid": 2811,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -1783,20 +1681,12 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 29846,
+            "serverPid": 2811,
             "actor": "android-twin",
             "status": "live"
           }
         },
         "twoDistinctSockets": true,
-        "clusterAcrossSurfaces": {
-          "district": "Lacto-vegetables",
-          "members": 20,
-          "movedOnWindows": true,
-          "arrivedOnAndroid": true,
-          "restored": true
-        },
-        "clusterMoveCrossedTheBoundary": true,
         "panelRuntimes": {
           "windows": "electron 33.4.11",
           "android": "chromium 141.0.7390.37"
@@ -1806,10 +1696,6 @@
           "android": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
         },
         "panelRuntimesDiffer": true,
-        "rasterLineOnFrame": [
-          "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
-          "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
-        ],
         "eachPanelNamesItsRasteriser": true,
         "cameraFrozen": {
           "yaw": 0.34,
@@ -1877,10 +1763,10 @@
         ],
         "fnSha": "936d2e118cf8cc23"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:21:12.197Z"
+      "fileMtime": "2026-09-05T15:13:11.537Z"
     },
     {
       "id": "13",
@@ -1895,8 +1781,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 262904,
-        "sha256": "6eb37e2301763740384ba31334e847a55f85cf2bcb8b80aa5d73465808090ff7"
+        "bytes": 266528,
+        "sha256": "52358e1b00042afc74c0ca2d5ce49e00cedc87d3e12838001caed7ce89d05b97"
       },
       "claims": {
         "ok": true,
@@ -1945,10 +1831,10 @@
         ],
         "fnSha": "904c8c79130e761a"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:21:13.698Z"
+      "fileMtime": "2026-09-05T15:13:12.987Z"
     },
     {
       "id": "14",
@@ -1956,15 +1842,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.1,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 368927,
-        "sha256": "cfde153c77387d832d716afe97602f69ceaaf2c53951459a4ae35b7eddd01145"
+        "bytes": 352441,
+        "sha256": "80caff6be5066cd5493b458fb76317c9754cd71584000314d6e8086379f80255"
       },
       "claims": {
         "ok": true,
@@ -2006,7 +1892,7 @@
             "pass": true
           },
           {
-            "claim": "detailExceedsPanelScale",
+            "claim": "detailIsMagnified",
             "expected": true,
             "actual": true,
             "pass": true
@@ -2039,50 +1925,49 @@
           {
             "x": 14,
             "y": 442,
-            "w": 436,
+            "w": 460,
             "h": 366
           },
           {
             "x": 506,
             "y": 50,
-            "w": 506,
-            "h": 424
+            "w": 518,
+            "h": 412
           },
           {
             "x": 506,
             "y": 50,
-            "w": 506,
-            "h": 424
+            "w": 518,
+            "h": 412
           },
           {
-            "x": 516,
-            "y": 50,
-            "w": 764,
-            "h": 640
+            "x": 546,
+            "y": 86,
+            "w": 702,
+            "h": 558
           }
         ],
         "detailMagnificationsOfThePanel": [
-          2.2,
-          1.9,
-          1.9,
-          1.26
+          2.09,
+          1.85,
+          1.85,
+          1.37
         ],
         "detailMagnificationsOfAppPixels": [
-          1.1,
-          0.95,
-          0.95,
-          0.63
+          1.04,
+          0.93,
+          0.93,
+          0.68
         ],
         "detailHeadlineQuotesAppPixels": true,
         "detailStripPx": 103,
         "detailPanelHeights": [
-          369,
-          369,
-          369,
-          369
+          361,
+          361,
+          361,
+          361
         ],
-        "detailRowBottomPx": 1068,
-        "detailRowBottomMarginPx": 12,
+        "detailRowBottomPx": 1080,
         "detailRowInsideFrame": true,
         "detailNodesFound": 4,
         "acceptedId": "s1",
@@ -2096,9 +1981,8 @@
           "s88f833ea80"
         ],
         "rejectedPairUnjoined": true,
-        "detailExceedsPanelScale": true,
-        "detailMagnificationOfPanelFloor": 1.26,
-        "detailMagnificationOfAppPixelsFloor": 0.63,
+        "detailIsMagnified": true,
+        "detailMagnificationFloor": 1.37,
         "cameraFrozenAcrossPanels": true,
         "rejectedId": "s2",
         "rejectionLeftNoTrace": true,
@@ -2112,12 +1996,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "67637281bbe5a5e0"
+        "fnSha": "03a6103849a97085"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:21:16.816Z"
+      "fileMtime": "2026-09-05T15:13:16.028Z"
     },
     {
       "id": "15",
@@ -2125,7 +2009,7 @@
       "title": "Settings and gesture reference",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.6,
+      "seconds": 3.5,
       "status": "captured",
       "error": null,
       "check": {
@@ -2169,10 +2053,10 @@
         ],
         "fnSha": "8891521182f0f526"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:21:20.202Z"
+      "fileMtime": "2026-09-05T15:13:19.295Z"
     },
     {
       "id": "16",
@@ -2180,15 +2064,15 @@
       "title": "Touch gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 30s",
-      "seconds": 108.4,
+      "seconds": 101.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1770993,
-        "sha256": "44e5e55ac7e4b359891ad4ff7248a79e4bafa16907d1cd1208d5283e5daada2b",
+        "bytes": 1830531,
+        "sha256": "a5051eaefce2f7839ab7f3e65e569c34043097aec6e66e097ff182614ce933dd",
         "seconds": 34,
         "fps": 30,
         "frames": 1020
@@ -2228,7 +2112,7 @@
           "gyro"
         ],
         "count": 7,
-        "quickAddedNode": "nmt1gy5zn1mte8",
+        "quickAddedNode": "nmt1gy4io1mte8",
         "tapSelected": true,
         "doubleTapConnected": true,
         "dragPlacedIt": true,
@@ -2253,10 +2137,10 @@
         ],
         "fnSha": "cd01c1b5a2319bda"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:23:06.415Z"
+      "fileMtime": "2026-09-05T15:14:58.814Z"
     },
     {
       "id": "17",
@@ -2264,15 +2148,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 449.5,
+      "seconds": 400.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 5606539,
-        "sha256": "53d9ba759f1dbe0ebcfff2f176f9dca75c82c5ccf2c6760b20c66f01cd7a1396",
+        "bytes": 5990642,
+        "sha256": "45bd4b19fb64ccab5782d1f79a08bc455fa62072c4bdaf5732f8a49a095d4b1c",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -2293,6 +2177,12 @@
             "pass": true
           },
           {
+            "claim": "clusterMovePropagatedToTheOtherSurface",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
             "claim": "count",
             "expected": "(predicate)",
             "actual": 4,
@@ -2303,12 +2193,12 @@
       "result": {
         "posesRecognised": [
           "spread",
-          "two",
           "fist",
-          "gather"
+          "gather",
+          "two"
         ],
         "count": 4,
-        "samples": 1413,
+        "samples": 1295,
         "clusterGrabbed": "Koji",
         "clusterMembers": 16,
         "clusterCentroidBefore": [
@@ -2342,12 +2232,12 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64",
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "269d3aff2a2dd9b9"
+        "fnSha": "e29bd581048cec82"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:30:34.986Z"
+      "fileMtime": "2026-09-05T15:21:38.351Z"
     },
     {
       "id": "18",
@@ -2355,15 +2245,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 75.4,
+      "seconds": 61,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2576881,
-        "sha256": "324496fc174b4d1d6619a1ccd20410b7899c31783d35cff55bf62663133cc895",
+        "bytes": 2690402,
+        "sha256": "73df425e3ebb5d1c1a5b6e1556d95f3e1d7bacd1da1f11c5b12c3d9b6f7dc080",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -2420,22 +2310,22 @@
         "labelAuditsAcrossTake": 26,
         "labelWorstAuditFrame": {
           "f": 0,
-          "checked": 45,
+          "checked": 66,
           "gap": 0,
           "off": 0,
           "gapOn": {
-            "text": "Mesophilic vs thermophilic",
+            "text": "Coffee cherry cascara ferment?",
             "res": [
-              1179,
-              221,
-              1272,
-              238
+              812,
+              901,
+              957,
+              931
             ],
             "drawn": [
-              1179,
-              221,
-              1270,
-              238
+              843,
+              905,
+              988,
+              935
             ]
           },
           "offOn": null
@@ -2457,10 +2347,10 @@
         ],
         "fnSha": "a60024ab92924687"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:31:52.555Z"
+      "fileMtime": "2026-09-05T15:22:41.316Z"
     },
     {
       "id": "19",
@@ -2468,15 +2358,15 @@
       "title": "Capture, place, connect, refind",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 119.7,
+      "seconds": 108.8,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1724397,
-        "sha256": "46d01d4f9cb896a0163bd850bb8fa3e99eab69ec3db8e3c5faef64f49b07a677",
+        "bytes": 1636842,
+        "sha256": "35f698672c26300d8875639c409daec50f7f751c8c17331bb3442c0bb3d5deb2",
         "seconds": 23,
         "fps": 30,
         "frames": 690
@@ -2527,9 +2417,9 @@
         "created": true,
         "placed": true,
         "pos": [
-          21.886072220568707,
-          -14.641830931020468,
-          13.698109627554544
+          21.90675821839119,
+          -14.641830931020277,
+          13.692161279398377
         ],
         "stayedPut": true,
         "connectedTo": "Vinegar from failed wine",
@@ -2547,19 +2437,19 @@
         "refoundBySearch": true,
         "positionThroughTheLoop": {
           "atDrop": [
-            21.886072220568707,
-            -14.641830931020468,
-            13.698109627554544
+            21.90675821839119,
+            -14.641830931020277,
+            13.692161279398377
           ],
           "afterConnect": [
-            21.886072220568707,
-            -14.641830931020468,
-            13.698109627554544
+            21.90675821839119,
+            -14.641830931020277,
+            13.692161279398377
           ],
           "atEnd": [
-            21.886072220568707,
-            -14.641830931020468,
-            13.698109627554544
+            21.90675821839119,
+            -14.641830931020277,
+            13.692161279398377
           ]
         },
         "positionSurvivedTheWholeLoop": true,
@@ -2575,10 +2465,10 @@
         ],
         "fnSha": "8f6ace6323401f42"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:33:49.664Z"
+      "fileMtime": "2026-09-05T15:24:27.694Z"
     },
     {
       "id": "20",
@@ -2586,15 +2476,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 92.5,
+      "seconds": 84.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 636707,
-        "sha256": "da4b663582f5310cb198a37430f4aba0ef5ab01a0591a5fe6a778e573ee82e4e",
+        "bytes": 634985,
+        "sha256": "11dd9df31c95e55321ef9862086fbc7f6aefe3611202c41241939260c44739f2",
         "seconds": 30,
         "fps": 30,
         "frames": 900
@@ -2728,20 +2618,20 @@
         ],
         "fnSha": "dd8867f00542f2cc"
       },
-      "capturedInCycle": 10,
+      "capturedInCycle": 9,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T04:35:24.052Z"
+      "fileMtime": "2026-09-05T15:25:53.923Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T04:35:28.015Z",
+  "finishedAt": "2026-09-05T15:25:57.218Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 802198,
-    "sha256": "3e825182c75528fd9258f1489d7ecc38f5c3b48bb5b8ae711fb76362e494acde"
+    "bytes": 796817,
+    "sha256": "bde428b571ff29aad05669ed881662e9feb8a2f3369e2e2cbe301a1e88eb0d36"
   },
   "captured": 20,
   "total": 20
