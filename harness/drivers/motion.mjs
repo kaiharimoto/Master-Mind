@@ -1925,7 +1925,11 @@ export default [
               // The loop at the scale the product claims, not only at eleven
               // nodes where the JSON fits in one screenshot.
               roundTripShownAt150Nodes: true, bigMapNothingAppliedWhileStaged: true,
-              acceptLandedAt150Nodes: true, rejectLeftNoTraceAt150Nodes: true },
+              acceptLandedAt150Nodes: true, rejectLeftNoTraceAt150Nodes: true,
+              // The one suggestion kind that writes a coordinate, seen landing:
+              // dark at the destination before, a mark there after, and the
+              // waiting count on the frame one lower.
+              placementLandedInThePixels: true, holdingBadgeFellOnCamera: true },
   demonstrates: 'the finder round-trip in motion: a malformed reply, an adversarially messy one, all three suggestion kinds accepted, and a REJECTED placement that leaves the node exactly where it was', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {
@@ -2048,8 +2052,26 @@ export default [
                      stillQueued: window.mm.suggestions.some(s => s.id === r.id) };
           }, log.rejectedPlacement) : null;
         } },
-      { at: 800, fn: async () => {
+      // A PLACEMENT LANDING, ON CAMERA AND IN THE PIXELS.
+      //
+      // The cycle-14 Art Director: "the finder never shows a placement land —
+      // the type that writes a position, the type the 'positions are sacred'
+      // story makes most consequential, is proven to be refused correctly and
+      // proven to be stageable, but the accept branch is left on the
+      // cutting-room floor". The accept WAS in the take, two seconds before the
+      // map changed, with nothing on the frame announcing it and no sheet frame
+      // landing on it. Two seconds of a small dot appearing is not a
+      // demonstration.
+      //
+      // So: the destination is photographed before the accept, the accept
+      // happens, the landed thought is SELECTED so the frame names it, and the
+      // state is held for nearly four seconds before the map changes.
+      { at: 740, fn: async () => {
           log.holdingBeforePlacement = await page.evaluate(() => window.mm.store.holdingCount());
+          log.badgeBeforePlacement = await page.evaluate(() => {
+            const e = document.querySelector('[data-t=holding-count]');
+            return e ? e.textContent.trim() : null;
+          });
           log.placement = await page.evaluate(() => {
             const s = window.mm.suggestions[window.mm.sugIndex];
             return s && s.kind === 'placement'
@@ -2057,14 +2079,39 @@ export default [
                   from: window.mm.store.doc.nodes[s.node].pos.slice() }
               : null;
           });
+          // Where the thought is ABOUT to be put, in the frame's own pixels.
+          log.destDisc = log.placement ? await page.evaluate((pos) => {
+            const sc = window.mm.scene;
+            const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
+            const q = sc.project(pos);
+            return q ? [{ id: 'destination', x: q.x / dpr, y: q.y / dpr, r: 9 }] : null;
+          }, log.placement.to) : null;
+          if (log.destDisc) {
+            const png = await H.tmpShot(page, cdp, '20-dest-before');
+            log.destBefore = await H.sampleDiscs(png, log.destDisc, 2.0);
+          }
+        } },
+      { at: 760, fn: async () => {
           if (log.placement) await page.click('[data-t=finder-accept]');
         } },
-      { at: 860, fn: async () => {
+      { at: 790, fn: async () => {
           log.afterPlacement = await page.evaluate((n) => {
             const x = n ? window.mm.store.doc.nodes[n] : null;
             return x ? { placed: x.placed, pos: x.pos.slice() } : null;
           }, log.placement ? log.placement.node : null);
           log.holdingAfterPlacement = await page.evaluate(() => window.mm.store.holdingCount());
+          log.badgeAfterPlacement = await page.evaluate(() => {
+            const e = document.querySelector('[data-t=holding-count]');
+            return e ? e.textContent.trim() : null;
+          });
+          // NAMED ON THE FRAME. A dot arriving in a 150-thought map is not a
+          // demonstration unless the frame says which thought arrived; the app's
+          // own selection does that, and it is the same click a user makes.
+          if (log.placement) await page.evaluate(i => window.mm.select(i), log.placement.node);
+          if (log.destDisc) {
+            const png = await H.tmpShot(page, cdp, '20-dest-after');
+            log.destAfter = await H.sampleDiscs(png, log.destDisc, 2.0);
+          }
         } },
       // AND THE SAME LOOP AT A HUNDRED AND FIFTY NODES.
       //
@@ -2162,6 +2209,20 @@ export default [
       Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
     void log.bigPositionsAfter;
     return {
+      // THE LANDING, READ OUT OF THE TWO FRAMES EITHER SIDE OF IT.
+      placementDestination: log.destDisc ? log.destDisc[0] : null,
+      placementDestinationBefore: log.destBefore?.rows?.[0] ?? null,
+      placementDestinationAfter: log.destAfter?.rows?.[0] ?? null,
+      holdingBadgeAcrossPlacement: [log.badgeBeforePlacement ?? null, log.badgeAfterPlacement ?? null],
+      // Nothing at the destination before, a mark there after — in the take's
+      // own frames — and the badge on the frame counts one fewer waiting.
+      placementLandedInThePixels:
+        !!log.destBefore && !!log.destAfter &&
+        log.destBefore.invisible === 1 && log.destAfter.invisible === 0,
+      holdingBadgeFellOnCamera:
+        !!log.badgeBeforePlacement && !!log.badgeAfterPlacement &&
+        Number(String(log.badgeBeforePlacement).replace(/\D+/g, '')) ===
+          Number(String(log.badgeAfterPlacement).replace(/\D+/g, '')) + 1,
       placementAccepted: log.placement && log.afterPlacement
         ? { node: log.placement.node, from: log.placement.from, to: log.afterPlacement.pos,
             landedWhereSuggested: JSON.stringify(log.afterPlacement.pos) === JSON.stringify(log.placement.to),

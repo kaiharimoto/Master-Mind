@@ -26,6 +26,13 @@ const arg = (name, dflt) => {
 };
 const ONLY = (arg('--only', '') || '').split(',').filter(Boolean);
 const OUTDIR = resolve(ROOT, arg('--out', 'evidence'));
+
+/**
+ * The twin composite's camera, pinned per map. Empty until a solve has been
+ * read out of the scene and written down; a map with no entry falls back to the
+ * solve and says so on the console, so the pin is never silently absent.
+ */
+const TWIN_PIN = {};
 // WHICH CYCLE THIS SET BELONGS TO.
 //
 // The flag first; then `evidence/CYCLE`, written by cycle.mjs before the
@@ -708,10 +715,24 @@ async function runDriver(d) {
         await p.page.evaluate(() => window.mm.select(null));
         await sleepFrames(p.page, 0, 2);
       }
-      const frozen = await w.page.evaluate(() => {
+      // PINNED, LIKE 02, 04 AND 07 — not merely frozen within the run.
+      //
+      // The pose was solved fresh every cycle by the fit above, so a change to
+      // marker size or label metrics moved it: the cycle-14 Auditor measured
+      // this artifact's camera going from distance 56.5 to 62.0 between cycles,
+      // every marker shifting 5-13 px with it, and had to fit a perspective
+      // camera to the drawn markers and reproduce the committed seeds at 0.22 px
+      // RMS before it could say no node had moved. A cross-cycle diff that
+      // cannot tell a reframe from a move is not a regression instrument. The
+      // value below is the one the solve produced, read out of the scene and
+      // written down.
+      const solved = await w.page.evaluate(() => {
         const s = window.mm.scene.pose;
         return { yaw: s.yaw, pitch: s.pitch, dist: s.dist, target: [s.target.x, s.target.y, s.target.z] };
       });
+      console.log('    [twin] camera solved', JSON.stringify(solved),
+                  TWIN_PIN[driver.map] ? '(pinned, see TWIN_PIN)' : '(no pin for this map)');
+      const frozen = TWIN_PIN[driver.map] ?? solved;
       const freeze = async (p) => { await POSE(p.page, frozen); await sleepFrames(p.page, 0, 2); };
       for (const p of [w, a]) await freeze(p);
       // And every node must be inside the frame in BOTH halves — an artifact
