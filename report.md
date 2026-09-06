@@ -1818,6 +1818,98 @@ pixel span ratio 1.113 against a projection ratio of 1.113. 08: destination
 contrast 1.00 before, 7.93 after. 14: **zero** pixels differ across the
 rejection, inside the canvas and outside the chrome measured at both moments.
 
+## Cycle 14 — 86.0, every category at its minimum for the third cycle, not regression-free
+
+**21 + 21 + 18 + 13 + 8.5 + 4.5 = 86.0**, against cycle 13's 86.5. Every
+category clears its minimum for the third cycle running, both hard gates hold,
+and the Auditor again declares the cycle **not regression-free**.
+
+| category | 12 | 13 | 14 | min |
+|---|---:|---:|---:|---:|
+| 01 core workflow | 21 | 21 | 21 | 20 |
+| 02 landmarks live | 21 | 22 | 21 | 20 |
+| 03 one model, sacred positions | 18 | 18 | 18 | 17 |
+| 04 evidence and report integrity | 13 | 13 | 13 | 13 |
+| 05 quality compliance | 9 | 8 | **8.5** | 8 |
+| 06 finder round-trip | 5 | 4.5 | 4.5 | 4 |
+| **total** | **87.0** | **86.5** | **86.0** | 90 |
+
+**The three regressions are the record-keeping and two frames, and two of them
+are mine.**
+
+**The frozen cycle-14 set calls itself cycle 13.** `MANIFEST.cycle` reads 13,
+all twenty `capturedInCycle` fields read 13, and `DIFF.json` reads `cycle: 13,
+previousCycle: 13` — a record asserting on its face that it diffed a cycle
+against itself. `run-capture.mjs` inherits the previous manifest's number when
+it is not told one, which is right for a `--only` recapture inside a cycle and
+wrong for the first run of a new one; I captured that way and then froze with
+`cycle.mjs 14 --skip-capture`, which named the directory and wrote the ledger
+without restamping the records inside it. **The frozen files are not edited to
+correct themselves** — three verdicts were written against those bytes — and
+`evidence/cycles/README.md` records the defect where a reader of that set will
+find it. Three machine checks close it: the number is written to
+`evidence/CYCLE` before the capture runs and read by it; the freeze refuses a
+set whose manifest disagrees with the cycle it was invoked with; the differ
+reports a cycle that cannot follow the one it is diffed against.
+
+**Artifact 09 lost a passing claim.** I replaced `everyOtherLabelHeldItsPlace`
+with a broader gate rather than adding the broader one beside it. The Auditor:
+*"a machine-checked assertion that held is no longer being made"*, and it is the
+only claim removal anywhere in the set. Both forms are asserted now, strict
+first, and both measure true.
+
+**Artifact 08's drop landed in the void, and the search that put it there was my
+fix for something else.** The pixel readback of the drop kept finding a
+neighbour already lit at the destination, so I searched for the spot with the
+most clearance — and the emptiest place on a map is nowhere. The cycle-14
+Audience: *"the destination reads as 'just outside the waiting area', not as a
+chosen home"*. Clearance is a floor now (34 px — its own dot, clear of every
+drawn name and panel) and the objective is adjacency: the candidate nearest an
+already-placed thought wins. It lands 34 px from "Slide budget: 12" with both
+neighbours named on the frame, and `droppedAmongThePlacedGraph` is declared, so
+a drop into empty canvas is a failed capture rather than a weaker frame.
+
+**What the Auditor established that no instrument here does.** It fitted a
+perspective camera to artifact 11's drawn markers and reproduced the committed
+seed coordinates at **0.22 px RMS** in cycle 14 and 0.25 px in cycle 13 — which
+is the only way it could clear that artifact's cross-cycle pixel shift as a
+reframe rather than a move, because 11 and 12's cameras are not pinned as 07's
+now is. It also verified `positions.json` byte-identical across thirteen
+consecutive snapshots and exactly matching the seeds for all 161 nodes, and
+found artifact 11's canvas band bit-identical between the Windows and Android
+panels.
+
+**The reading was ruled `restrained-holographic` a second time**, by a second
+fresh-context critic with no access to DIRECTION.md, from measurements of the
+same pixels: hard-edged discs falling to the exact ground within 1-2 px, pure
+background between the rings of the selected state, and 11.6 px median
+nearest-neighbour spacing where any halo large enough to encode a state would
+fuse neighbours. **D-004 records `organic-bioluminescent` as SETTLED and §09
+forbids reopening it, so it stands and nothing in the build moves.** That two
+independent critics put the other name on the same frame is recorded here as a
+fact about this run.
+
+### What the critics found, and what was done
+
+| # | finding | response |
+|---|---|---|
+| Auditor A/major · evidence | the cycle-14 set records itself as cycle 13 in every machine-readable field | **Fixed at the cause**, three checks: `evidence/CYCLE` written before capture, a freeze that refuses a mismatched set, a differ that reports a cycle which cannot follow its predecessor. The frozen bytes are left alone and the defect is recorded in `evidence/cycles/README.md` |
+| Auditor B/major · a09 | the only claim removal in the set: a passing `everyOtherLabelHeldItsPlace` replaced rather than joined | **Fixed.** Both forms asserted, strict first, both true |
+| Audience A/major · a08 | the drop lands in empty canvas — "not as a chosen home" | **Fixed at the cause.** Clearance became a floor, adjacency the objective; both neighbours named on the frame; `droppedAmongThePlacedGraph` declared |
+| Art Director A/major · a02, a04 | 87 of 127 nodes carry no on-canvas label; no placed node shows complete text at whole-brain zoom | **Open — the cycle-15 agenda.** Both Art Directors now name it, and both prescribe the same thing: a tier between "full label" and "nothing" |
+| Art Director B/major · a20 | no placement is ever accepted on camera — the one suggestion kind that writes a coordinate | **Open — the cycle-15 agenda** |
+| Audience A/major · a05 | the pose buys distance, not legibility: 132 of 150 thoughts still unnamed after it | **Open**, and the same root as the Art Director's a02 |
+| Auditor m · a11, a12 | the twin composite's camera is not pinned, so its cross-cycle diff cannot tell a reframe from a move | **Open** |
+| Auditor m · a12 | the Android panel hides a holding label its Windows twin draws — label selection solved per surface | **Open** |
+| Auditor m · evidence | most acceptance rules are the literal `true`, so `ruleSha` fingerprints a tautology | **Open** |
+| Auditor m · a01 | byte-identity rests on the harness's own word; put a per-run witness in every frame | **Open** |
+| Art Director m · a07 | amber does five jobs and is also a user district colour; no frame tests an amber node selected | **Open** |
+| Art Director m · a07 | the active lens pill is the brightest, most saturated non-node object in the frame | **Open** |
+| Art Director m · a02 | the deepest filaments measure 1.02:1 against the ground | **Open** |
+| Art Director m · a13 | the 150-node export is never shown scrolled to its MAP JSON | **Open** |
+| Audience m · a17, a03 | no frame shows a real hand, or either detector failing and recovering | **Open** — the substitution is declared; what is missing is a failure mode |
+| Audience m · a19 | every refind shown is a text query; none is spatial recall | **Open** |
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:

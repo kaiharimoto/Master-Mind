@@ -11,15 +11,32 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 |---|---|
 | Phase | review |
 | Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
-| Review cycle | **13 complete.** All three critics dispatched strictly sequentially in every cycle, all verdicts written verbatim, none altered. **Cycle 14 in progress** — every cycle-13 finding answered in code |
-| Rubric score | **86.5 / 100** at cycle 13 — 21 + 22 + 18 + 13 + 8 + 4.5. Every category at or above its minimum for the second cycle running; both hard gates hold; the Auditor declares cycle 13 **not** regression-free, naming artifacts 06 and 09 |
-| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 → 84.5 → 87.0 → 86.5 (cycles 1–13) |
+| Review cycle | **14 complete.** All three critics dispatched strictly sequentially in every cycle, all verdicts written verbatim, none altered. **Cycle 15 — the last under the cap — in progress** |
+| Rubric score | **86.0 / 100** at cycle 14 — 21 + 21 + 18 + 13 + 8.5 + 4.5. Every category at or above its minimum for the third cycle running; both hard gates hold; the Auditor declares cycle 14 **not** regression-free on three findings, two of them mine and both now closed |
+| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 → 84.5 → 87.0 → 86.5 → 86.0 (cycles 1–14) |
 | Artifacts captured | **20 of 20, all as defined**, in every frozen cycle |
-| Positions | **identical for thirteen consecutive cycles**, compared as model values |
-| Reading | **ruled and closed by the cycle-1 Art Director: organic-bioluminescent** (D-004). The cycle-13 Art Director ruled `restrained-holographic`; §09 forbids reopening a recorded decision, so D-004 stands and the conflict is recorded verbatim in `evidence/critics/art-director-cycle-13.md` |
+| Positions | **identical for fourteen consecutive cycles**; the cycle-14 Auditor fitted a camera to artifact 11 and reproduced the committed seeds at 0.22 px RMS |
+| Reading | **ruled and closed by the cycle-1 Art Director: organic-bioluminescent** (D-004). The cycle-13 AND cycle-14 Art Directors both ruled `restrained-holographic` from the same pixels; §09 forbids reopening a recorded decision, so D-004 stands, the build does not move, and both verdicts are recorded verbatim |
 | Exit condition | total ≥ 90, both hard gates, two consecutive regression-free cycles — or the 15-cycle cap with a final report listing every unmet gate |
 | Cold start | **passed** — 161 positions verified against the committed fixtures as model values |
 
+## The cycle-15 agenda
+
+Two majors, both named by the Art Director, one of them also by the Audience:
+
+1. **A tier between "full label" and "nothing"** at whole-brain zoom. 87 of 127
+   nodes in artifact 02 carry no on-canvas label and not one placed node shows
+   complete text; the side list says what is on the map without saying where.
+   Both Art Directors prescribe the same thing.
+2. **A placement accepted on camera** in artifact 20 — the one suggestion kind
+   that writes a coordinate, currently proven refusable and stageable but never
+   seen landing.
+
+Then: pin the twin composite's camera (11, 12) as 07's now is, solve the twin's
+label selection once for both panels, and floor link alpha so the deepest
+filaments clear 1.02:1.
+
+## The cycle-14 agenda, in the Auditor's words
 ## The cycle-14 agenda, in the Auditor's words
 
 > What it still lacks is a gate that asks whether the shipped frame contains the
