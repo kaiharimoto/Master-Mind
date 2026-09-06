@@ -264,7 +264,14 @@ const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
           if (Math.hypot(q.x - x, q.y - y) < q.r + 6) { clear = false; break; }
         if (clear) for (const r of boxes)
           if (x > r.x0 - 4 && x < r.x1 + 4 && y > r.y0 - 4 && y < r.y1 + 4) { clear = false; break; }
-        if (clear) out.push({ id: `link@${out.length}`, x: x / dpr, y: y / dpr, r: 1.2 });
+        // AND INSIDE THE FRAME. On a close framing most of the far links leave
+        // the picture, and a sampler that scores an off-frame point as an
+        // invisible filament reports the framing as a rendering fault: artifact
+        // 06 measured 53 of 60 points "outside the frame". A point that is not
+        // in the picture is not a measurement of the picture.
+        const el = sc.renderer.domElement;
+        if (clear && x > 8 && y > 8 && x < el.width - 8 && y < el.height - 8)
+          out.push({ id: `link@${out.length}`, x: x / dpr, y: y / dpr, r: 1.2 });
       }
     }
     return out.slice(0, 60);
@@ -876,7 +883,7 @@ export default [
       return hi0;
     };
     const probeDist = await solveDist(0.35, 0.10);
-    let bestYaw = 0.35, bestPitch = 0.10, bestSep = -Infinity;
+    let bestYaw = 0.35, bestPitch = 0.10, bestSep = -Infinity, bestGates = null;
     for (let k = 0; k < 24 * 4; k++) {
       const y = ((k % 24) / 24) * Math.PI * 2;
       const pitch = [0.10, 0.20, 0.30, -0.06][Math.floor(k / 24)];
@@ -941,8 +948,13 @@ export default [
                   + (underBar === 0 ? 2000 : 0)
                   + (behind >= 3 ? 2000 : 0)
                   + behind * 2 + (sep.worst ?? 0) * 0.05;
-      if (sep.worst !== null && score > bestSep) { bestSep = score; bestYaw = y; bestPitch = pitch; }
+      if (sep.worst !== null && score > bestSep) {
+        bestSep = score; bestYaw = y; bestPitch = pitch;
+        bestGates = { separation: sep.worst >= 12, clearOfTheBar: underBar === 0,
+                      mapBehind: behind >= 3, underBar, behind, worstGapPx: sep.worst };
+      }
     }
+    console.log('    [06] vantage gates', JSON.stringify(bestGates));
     const hi = await solveDist(bestYaw, bestPitch);
     await POSE(page, { target: aim, yaw: bestYaw, pitch: bestPitch, dist: hi });
     await sleepFrames(page, 0, 3);

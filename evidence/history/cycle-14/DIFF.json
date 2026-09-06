@@ -1,0 +1,817 @@
+{
+  "cycle": 13,
+  "previousCycle": 13,
+  "previousCycleSource": "derived from the snapshot directory being diffed",
+  "capturedNow": 20,
+  "capturedPrev": 20,
+  "capturedPrevSource": "artifact files actually present in the previous snapshot",
+  "previousManifestSelfReport": {
+    "cycle": 13,
+    "captured": 20
+  },
+  "headerDisagreement": null,
+  "rowsVsCapturedPrev": "ok",
+  "notes": [
+    "05 05_hand_tracking.png: RECIPE CHANGED — capture script changed (d9db4435dc00e9d3 -> 6211b3e2b5a1cd91); demonstrates: unchanged — not a like-for-like recapture",
+    "06 06_holding_cluster.png: RECIPE CHANGED — capture script changed (8dd48b690de940ed -> 7b57d2816b8426b0); demonstrates: unchanged — not a like-for-like recapture",
+    "07 07_five_node_states.png: RECIPE CHANGED — capture script changed (dd265abdc8c01ca5 -> d20566e6d80c4370); demonstrates: unchanged — not a like-for-like recapture",
+    "08 08_placement_endstate.png: RECIPE CHANGED — capture script changed (c0d91001f279cf6c -> 72c14b8f02469da6); demonstrates: unchanged — not a like-for-like recapture",
+    "09 09_connect_edit.png: RECIPE CHANGED — capture script changed (307df49d193c5df3 -> 6e328e9bc52a8290); demonstrates: unchanged — not a like-for-like recapture",
+    "10 10_search_flyto_end.png: RECIPE CHANGED — capture script changed (fd63e3fef04b71f6 -> 4e38fdfef29cba10); demonstrates: unchanged — not a like-for-like recapture",
+    "14 14_finder_review.png: RECIPE CHANGED — capture script changed (6eef1bb7a5f4aa9b -> e1c6a167c2e30336); demonstrates: unchanged — not a like-for-like recapture",
+    "17 17_hand_vocabulary.mp4: RECIPE CHANGED — capture script changed (d38003b65a7d9754 -> acd89030378b14e5); demonstrates: unchanged — not a like-for-like recapture",
+    "12 12_sync_twin_after.png: output moved materially: ssim 0.910 is 0.080 below its 0.99 threshold — inspect",
+    "09 09_connect_edit.png: CLAIM REMOVED — everyOtherLabelHeldItsPlace; added bothEndsVisibleInBothPanels, editedColourAppearsInThePixels, editedThoughtVisibleInBothPanels, everyOtherLabelHeldItsPlaceOrYieldedToAnActedName — a machine-checked assertion that used to hold is no longer being made",
+    "05 05_hand_tracking.png: claims added — spanChangeVisibleInThePixels, spanMeasuredOverAFixedNodeSet",
+    "06 06_holding_cluster.png: claims added — placedMapDrawnInThePixels, placedMapVisibleBeyondTheBoundary",
+    "07 07_five_node_states.png: claims added — cameraPinned",
+    "08 08_placement_endstate.png: claims added — theDropIsVisibleInThePixels",
+    "10 10_search_flyto_end.png: claims added — railTookTheEmptierSide",
+    "14 14_finder_review.png: claims added — rejectionLeftNoTraceInThePixels",
+    "03 03_hero_ar_coldstart.png: ssim 0.9876 is below its 0.99 threshold — inspect",
+    "11 11_sync_twin_before.png: ssim 0.9421 is below its 0.99 threshold — inspect",
+    "19 19_capture_place_arc.mp4: ssim 0.8807 is below its 0.93 threshold — inspect",
+    "01 01_maps_home.png: BYTE-IDENTICAL to the previous cycle (sha 2374c44a2e20) — recaptured at 2026-09-06T14:00:27.109Z, so this is determinism, not a copy",
+    "15 15_settings_gestures.png: BYTE-IDENTICAL to the previous cycle (sha 28d7595c6d35) — recaptured at 2026-09-06T14:01:40.092Z, so this is determinism, not a copy"
+  ],
+  "rows": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "sha256": "2374c44a2e20",
+      "identicalBytes": true,
+      "capturedAt": "2026-09-06T14:00:27.109Z",
+      "ssim": 1,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 35662,
+          "meanLum": 0.5558,
+          "peakLum": 0.9991
+        },
+        "prev": {
+          "litPixels": 35662,
+          "meanLum": 0.5558,
+          "peakLum": 0.9991
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "sha256": "159fefa34907",
+      "ssim": 0.999888,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 108528,
+          "meanLum": 0.4538,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 108180,
+          "meanLum": 0.4531,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.002,
+        "litDelta": 0.003
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "sha256": "4abc8533429f",
+      "ssim": 0.987645,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 140411,
+          "meanLum": 0.4399,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 142283,
+          "meanLum": 0.4374,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.006,
+        "litDelta": 0.013
+      },
+      "onFrameChanged": [
+        "labelsShortened 7 -> 9"
+      ],
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "sha256": "32b3b79cb204",
+      "ssim": 0.999907,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 128746,
+          "meanLum": 0.4525,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 128467,
+          "meanLum": 0.452,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.001,
+        "litDelta": 0.002
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "status": "captured",
+      "threshold": 0.94,
+      "sha256": "9c4d7b4aee61",
+      "ssim": 0.836369,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 247871,
+          "meanLum": 0.4248,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 240276,
+          "meanLum": 0.4201,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.011,
+        "litDelta": 0.032
+      },
+      "claims": {
+        "added": [
+          "spanChangeVisibleInThePixels",
+          "spanMeasuredOverAFixedNodeSet"
+        ],
+        "removed": [],
+        "before": 9,
+        "after": 11
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (d9db4435dc00e9d3 -> 6211b3e2b5a1cd91); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "sha256": "3af5e0b04a6c",
+      "ssim": 0.915629,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 57076,
+          "meanLum": 0.4472,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 39517,
+          "meanLum": 0.3935,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.136,
+        "litDelta": 0.444
+      },
+      "subjectChanged": true,
+      "onFrameChanged": [
+        "labelsHidden 1 -> 14",
+        "unlabelledListed 1 -> 14"
+      ],
+      "claims": {
+        "added": [
+          "placedMapDrawnInThePixels",
+          "placedMapVisibleBeyondTheBoundary"
+        ],
+        "removed": [],
+        "before": 13,
+        "after": 15
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (8dd48b690de940ed -> 7b57d2816b8426b0); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "sha256": "e9e0d1ad384b",
+      "ssim": 0.982377,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 75088,
+          "meanLum": 0.4404,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 75374,
+          "meanLum": 0.4412,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.002,
+        "litDelta": 0.004
+      },
+      "claims": {
+        "added": [
+          "cameraPinned"
+        ],
+        "removed": [],
+        "before": 7,
+        "after": 8
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (dd265abdc8c01ca5 -> d20566e6d80c4370); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "sha256": "98c6df87cb6e",
+      "ssim": 0.899838,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 89224,
+          "meanLum": 0.4847,
+          "peakLum": 0.9982
+        },
+        "prev": {
+          "litPixels": 89932,
+          "meanLum": 0.4899,
+          "peakLum": 1
+        },
+        "peakDelta": 0.002,
+        "meanDelta": 0.011,
+        "litDelta": 0.008
+      },
+      "claims": {
+        "added": [
+          "theDropIsVisibleInThePixels"
+        ],
+        "removed": [],
+        "before": 6,
+        "after": 7
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (c0d91001f279cf6c -> 72c14b8f02469da6); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "sha256": "ba5d2662aff0",
+      "ssim": 0.910075,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 106217,
+          "meanLum": 0.5112,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 84043,
+          "meanLum": 0.5081,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.006,
+        "litDelta": 0.264
+      },
+      "subjectChanged": true,
+      "claims": {
+        "added": [
+          "bothEndsVisibleInBothPanels",
+          "editedColourAppearsInThePixels",
+          "editedThoughtVisibleInBothPanels",
+          "everyOtherLabelHeldItsPlaceOrYieldedToAnActedName"
+        ],
+        "removed": [
+          "everyOtherLabelHeldItsPlace"
+        ],
+        "before": 6,
+        "after": 9
+      },
+      "claimsRemoved": [
+        "everyOtherLabelHeldItsPlace"
+      ],
+      "substantiveClaimChange": true,
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (307df49d193c5df3 -> 6e328e9bc52a8290); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "sha256": "333246b1483d",
+      "ssim": 0.946839,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 80803,
+          "meanLum": 0.4838,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 78398,
+          "meanLum": 0.488,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.009,
+        "litDelta": 0.031
+      },
+      "claims": {
+        "added": [
+          "railTookTheEmptierSide"
+        ],
+        "removed": [],
+        "before": 12,
+        "after": 13
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (fd63e3fef04b71f6 -> 4e38fdfef29cba10); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "sha256": "9b17a23ff621",
+      "ssim": 0.942125,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 59369,
+          "meanLum": 0.4746,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 63891,
+          "meanLum": 0.4782,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.008,
+        "litDelta": 0.071
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "sha256": "70dc11114c9a",
+      "ssim": 0.909841,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 208812,
+          "meanLum": 0.4773,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 208537,
+          "meanLum": 0.4776,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.001,
+        "litDelta": 0.001
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.910 is 0.080 below its 0.99 threshold — inspect"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "sha256": "ef266820c930",
+      "ssim": 0.999993,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 105216,
+          "meanLum": 0.4682,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 105198,
+          "meanLum": 0.4682,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "sha256": "1c9fd9179f24",
+      "ssim": 0.995557,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 154003,
+          "meanLum": 0.4726,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 154069,
+          "meanLum": 0.4728,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "claims": {
+        "added": [
+          "rejectionLeftNoTraceInThePixels"
+        ],
+        "removed": [],
+        "before": 9,
+        "after": 10
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (6eef1bb7a5f4aa9b -> e1c6a167c2e30336); demonstrates: unchanged",
+      "recipeChanged": false,
+      "why": "recipe reworded, output unchanged",
+      "substantive": false
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "sha256": "28d7595c6d35",
+      "identicalBytes": true,
+      "capturedAt": "2026-09-06T14:01:40.092Z",
+      "ssim": 1,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 89782,
+          "meanLum": 0.4037,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 89782,
+          "meanLum": 0.4037,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "sha256": "572b22e9beec",
+      "ssim": 0.999609,
+      "seconds": {
+        "cur": 34,
+        "prev": 34
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1177997,
+        "prev": 1178166
+      },
+      "bitrateDelta": 0,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 276626,
+          "meanLum": 0.3519,
+          "peakLum": 0.99
+        },
+        "prev": {
+          "litPixels": 276485,
+          "meanLum": 0.352,
+          "peakLum": 0.99
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0.001
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.9,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "sha256": "9451d96b9a81",
+      "ssim": 0.793277,
+      "seconds": {
+        "cur": 41,
+        "prev": 41
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 11341682,
+        "prev": 12149883
+      },
+      "bitrateDelta": -0.067,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 1102522,
+          "meanLum": 0.3618,
+          "peakLum": 0.9813
+        },
+        "prev": {
+          "litPixels": 1083952,
+          "meanLum": 0.3625,
+          "peakLum": 0.9865
+        },
+        "peakDelta": 0.005,
+        "meanDelta": 0.002,
+        "litDelta": 0.017
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (d38003b65a7d9754 -> acd89030378b14e5); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "sha256": "2090e6d496e9",
+      "ssim": 0.951056,
+      "seconds": {
+        "cur": 13,
+        "prev": 13
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 3128148,
+        "prev": 2783534
+      },
+      "bitrateDelta": 0.124,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 589435,
+          "meanLum": 0.3696,
+          "peakLum": 0.958
+        },
+        "prev": {
+          "litPixels": 567487,
+          "meanLum": 0.3719,
+          "peakLum": 0.958
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.006,
+        "litDelta": 0.039
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "sha256": "3c6f1cc16d5a",
+      "ssim": 0.880739,
+      "seconds": {
+        "cur": 23,
+        "prev": 23
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 2240190,
+        "prev": 2083796
+      },
+      "bitrateDelta": 0.075,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 561670,
+          "meanLum": 0.3612,
+          "peakLum": 0.9591
+        },
+        "prev": {
+          "litPixels": 562012,
+          "meanLum": 0.364,
+          "peakLum": 0.958
+        },
+        "peakDelta": 0.001,
+        "meanDelta": 0.008,
+        "litDelta": 0.001
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "status": "captured",
+      "threshold": 0.95,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "sha256": "7796bacc0f24",
+      "ssim": 0.999709,
+      "seconds": {
+        "cur": 47,
+        "prev": 47
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1195267,
+        "prev": 1194621
+      },
+      "bitrateDelta": 0.001,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 487188,
+          "meanLum": 0.3807,
+          "peakLum": 0.9859
+        },
+        "prev": {
+          "litPixels": 486381,
+          "meanLum": 0.3803,
+          "peakLum": 0.9859
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.001,
+        "litDelta": 0.002
+      },
+      "appShaChanged": "afee2ffa14e2e205 -> 10c188b09545c35e",
+      "substantive": false
+    }
+  ],
+  "positions": {
+    "compared": true,
+    "moved": [],
+    "added": [],
+    "removed": [],
+    "identical": true,
+    "what": "the committed ledger after each capture wrote back — not a runtime drift measure; runtime stillness is evidenced by the idle windows in artifacts 16, 17, 19 and 20"
+  },
+  "summary": {
+    "perceptuallyUnchanged": 9,
+    "perceptuallyChanged": 11,
+    "bytesIdentical": 2,
+    "bytesChanged": 18,
+    "bytesIdenticalIds": [
+      "01",
+      "15"
+    ],
+    "new": 0,
+    "missing": 0,
+    "uncomparable": 0,
+    "total": 20,
+    "changedIds": [
+      "03",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "17",
+      "19"
+    ],
+    "missingIds": [],
+    "uncomparableIds": [],
+    "substantiveIds": [
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "12",
+      "17"
+    ],
+    "recipeChangedIds": [
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "14",
+      "17"
+    ],
+    "claimsChangedIds": [
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "14"
+    ],
+    "claimsRemovedIds": [
+      "09"
+    ],
+    "belowThresholdIds": [
+      "03",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "17",
+      "19"
+    ]
+  }
+}

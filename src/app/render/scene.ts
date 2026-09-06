@@ -568,6 +568,53 @@ export class Scene {
              emPx, bx0: x0, by0: y0, nodePx: sh0.nodePx };
   }
 
+  /**
+   * The rectangles every opaque overlay claims, in framebuffer pixels.
+   *
+   * Gathered once and used twice: as ground a label may not be placed on, and —
+   * since a mark hidden behind a panel is a mark a name cannot be attached to —
+   * as a reason not to draw that node's name at all.
+   */
+  private chromeBoxes(dpr: number): { i: number; x0: number; y0: number; x1: number; y1: number;
+                                      pri: number; z: number }[] {
+    const out: { i: number; x0: number; y0: number; x1: number; y1: number; pri: number; z: number }[] = [];
+    // EVERY OPAQUE OVERLAY, not the ones that happened to be noticed.
+    //
+    // This list grew one selector at a time as each overlay was caught sitting
+    // on a label — the editor, then the roster, then the hit breakdown, then
+    // the pin tag, then the reticle. The cycle-9 hero still had "Recalibrate
+    // the pH me…" disappearing under the gyro HUD, which was never in it. The
+    // rule is now stated as a rule: an element that draws an opaque box over
+    // the world reserves its rectangle, and the list is every such element.
+    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled',
+                       '#hitbreak', '#pinmark', '#reticle', '#argyro', '#gesture', '#lenstag',
+                       '#toast', '#tools', '#hidden', '#origin', '#grabmark', '#grabcand']) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e) continue;
+      // THE UNION, because a mark's NAME hangs outside its box. `#pinmark` is a
+      // small ring with an absolutely-positioned tag beside it, and
+      // `getBoundingClientRect` returns only the ring — so the arbiter reserved
+      // the ring and the tag was drawn over whatever label had been placed
+      // there. On artifact 04 the "Koji-kin sourcing" callout overpainted its
+      // neighbour so that only "…egg yolk" survived of "Koji and egg yolk".
+      const cr = e.getBoundingClientRect();
+      let rx0 = cr.left, ry0 = cr.top, rx1 = cr.right, ry1 = cr.bottom;
+      const cs = getComputedStyle(e);
+      if (cs.overflow === 'visible' && cs.overflowX === 'visible' && cs.overflowY === 'visible')
+        for (const c of Array.from(e.children)) {
+          const q = c.getBoundingClientRect();
+          if (q.width < 1 || q.height < 1) continue;
+          rx0 = Math.min(rx0, q.left); ry0 = Math.min(ry0, q.top);
+          rx1 = Math.max(rx1, q.right); ry1 = Math.max(ry1, q.bottom);
+        }
+      const r = new DOMRect(rx0, ry0, rx1 - rx0, ry1 - ry0);
+      if (r.width < 2 || r.height < 2) continue;
+      out.push({ i: -1, x0: r.left * dpr, y0: r.top * dpr,
+                  x1: r.right * dpr, y1: r.bottom * dpr, pri: -1, z: -1 });
+    }
+    return out;
+  }
+
   private deconflictLabels() {
     const doc = this.doc;
     if (!doc || !this.runMeta.length) return;
@@ -578,6 +625,18 @@ export class Scene {
     const em = 0.92;
 
     type Box = { i: number; x0: number; y0: number; x1: number; y1: number; pri: number; z: number };
+    // A NAME IS NOT DRAWN FOR A MARK THE CHROME IS SITTING ON.
+    //
+    // The rule that a name is never drawn without the thing it names has been
+    // in force since F-030, and it tested the frame's edges only. A mark behind
+    // the top bar or a panel is just as absent: artifact 06's vantage puts
+    // twelve placed markers under the 52 px bar, and one of them shipped a
+    // drawn label over a mark measuring 2.48:1 against a 2.5 floor — a name a
+    // reader can see, attached to a dot they cannot. Such a thought is not
+    // named on the canvas; it is counted as suppressed and listed in the
+    // recovery column, which is what that column is for.
+    const dprEarly = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    const chromeEarly = this.chromeBoxes(dprEarly);
     // A label may be re-anchored to a free side of its OWN node before it is
     // dimmed. Fading alone left dense districts as a pile of half-lit text;
     // moving the text to a clear side of the same node keeps it readable and
@@ -627,6 +686,10 @@ export class Scene {
       const el0 = this.renderer.domElement;
       const rr = Math.min(Math.max(meta.nodeSizeWorld * s.pxPerWorld, p.nodeMinPx), p.nodeMaxPx);
       if (s.x - rr < 0 || s.y - rr < 0 || s.x + rr > el0.width || s.y + rr > el0.height) {
+        this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0, nodePx: 0 }; continue;
+      }
+      if (chromeEarly.some(c => s.x + rr > c.x0 && s.x - rr < c.x1 &&
+                                s.y + rr > c.y0 && s.y - rr < c.y1)) {
         this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0, nodePx: 0 }; continue;
       }
       const emPx = Math.min(Math.max(em * s.pxPerWorld, p.textMinPx), p.textMaxPx);
@@ -714,40 +777,7 @@ export class Scene {
     // Panels are seeded into the reserved set before any label is placed, so
     // they win against everything.
     const dpr = this.renderer.domElement.width / Math.max(window.innerWidth, 1);
-    // EVERY OPAQUE OVERLAY, not the ones that happened to be noticed.
-    //
-    // This list grew one selector at a time as each overlay was caught sitting
-    // on a label — the editor, then the roster, then the hit breakdown, then
-    // the pin tag, then the reticle. The cycle-9 hero still had "Recalibrate
-    // the pH me…" disappearing under the gyro HUD, which was never in it. The
-    // rule is now stated as a rule: an element that draws an opaque box over
-    // the world reserves its rectangle, and the list is every such element.
-    for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled',
-                       '#hitbreak', '#pinmark', '#reticle', '#argyro', '#gesture', '#lenstag',
-                       '#toast', '#tools', '#hidden', '#origin', '#grabmark', '#grabcand']) {
-      const e = document.querySelector(sel) as HTMLElement | null;
-      if (!e) continue;
-      // THE UNION, because a mark's NAME hangs outside its box. `#pinmark` is a
-      // small ring with an absolutely-positioned tag beside it, and
-      // `getBoundingClientRect` returns only the ring — so the arbiter reserved
-      // the ring and the tag was drawn over whatever label had been placed
-      // there. On artifact 04 the "Koji-kin sourcing" callout overpainted its
-      // neighbour so that only "…egg yolk" survived of "Koji and egg yolk".
-      const cr = e.getBoundingClientRect();
-      let rx0 = cr.left, ry0 = cr.top, rx1 = cr.right, ry1 = cr.bottom;
-      const cs = getComputedStyle(e);
-      if (cs.overflow === 'visible' && cs.overflowX === 'visible' && cs.overflowY === 'visible')
-        for (const c of Array.from(e.children)) {
-          const q = c.getBoundingClientRect();
-          if (q.width < 1 || q.height < 1) continue;
-          rx0 = Math.min(rx0, q.left); ry0 = Math.min(ry0, q.top);
-          rx1 = Math.max(rx1, q.right); ry1 = Math.max(ry1, q.bottom);
-        }
-      const r = new DOMRect(rx0, ry0, rx1 - rx0, ry1 - ry0);
-      if (r.width < 2 || r.height < 2) continue;
-      panels.push({ i: -1, x0: r.left * dpr, y0: r.top * dpr,
-                    x1: r.right * dpr, y1: r.bottom * dpr, pri: -1, z: -1 });
-    }
+    panels.push(...chromeEarly);
     const discCover = (ownId: NodeId, x0: number, y0: number, x1: number, y1: number, area: number) => {
       let c = 0;
       for (const d of discs) {

@@ -6,10 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T16:39:39.523Z",
+  "lastRunAt": "2026-09-06T17:01:47.028Z",
   "lastRunCaptured": [
-    "02",
-    "04"
+    "06"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -19,7 +18,7 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.9,
+      "seconds": 3.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -82,17 +81,17 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bde6b0f3cd6905e1",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "listedCountsMatchTheModel": "b5bea41b6c62",
           "mapsAfterDelete": "ee189345aa72",
           "renameWentThroughThePrompt": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:00:27.109Z"
+      "fileMtime": "2026-09-06T16:40:13.767Z"
     },
     {
       "id": "02",
@@ -100,7 +99,7 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.3,
+      "seconds": 2.4,
       "status": "captured",
       "error": null,
       "check": {
@@ -224,6 +223,14 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyFilamentClearsTheGround",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -256,7 +263,7 @@
           ]
         },
         "cameraPinned": true,
-        "arbiterSeq": 5,
+        "arbiterSeq": 6,
         "labelsAudited": 70,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Carrot batons hold crunch",
@@ -1036,8 +1043,8 @@
         "everyReducedLabelClearsTheContrastFloor": true,
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 5,
-        "arbiterSeqAtAudit": 5,
+        "arbiterSeqAtShot": 6,
+        "arbiterSeqAtAudit": 6,
         "auditDescribesTheShippedFrame": true
       },
       "pageErrors": [],
@@ -1049,7 +1056,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "73b7deb0e7bd2172",
-        "appSha": "342f1c087e51a0af",
+        "appSha": "22b293298fb8cc2f",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -1064,13 +1071,14 @@
           "everyLabelStaysBesideItsNode": "b5bea41b6c62",
           "everyLabelUnambiguouslyBound": "b5bea41b6c62",
           "auditDescribesTheShippedFrame": "b5bea41b6c62",
-          "everyReducedLabelClearsTheContrastFloor": "b5bea41b6c62"
+          "everyReducedLabelClearsTheContrastFloor": "b5bea41b6c62",
+          "everyFilamentClearsTheGround": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T16:39:41.009Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T17:01:27.145Z"
     },
     {
       "id": "03",
@@ -1078,15 +1086,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3.4,
+      "seconds": 3.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 785880,
-        "sha256": "4abc8533429f5edb89f29ef0eeb7e072a39d886aea8e58c6bd6f854809b50664"
+        "bytes": 856750,
+        "sha256": "7ef06c14ed6b90e26a1899cea1bda9099cccef1d6ba41fca636a5c19e6e8b1fd"
       },
       "claims": {
         "ok": true,
@@ -1143,8 +1151,10 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 61,
-          "labelsShortened": 9,
+          "labelsHidden": 49,
+          "labelsShortened": 13,
+          "labelsSetSmaller": 10,
+          "smallestLabelPx": 12,
           "unlabelledListed": 0,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
@@ -1227,7 +1237,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "9fd1fb456beeaa7c",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "gyroDroveTheView": "b5bea41b6c62",
           "positionsUnchangedBetweenPanels": "b5bea41b6c62",
@@ -1236,10 +1246,10 @@
           "travelScaleDescribesTheDrawnPanel": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:00:32.372Z"
+      "fileMtime": "2026-09-06T16:40:19.430Z"
     },
     {
       "id": "04",
@@ -1247,7 +1257,7 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3,
+      "seconds": 2.7,
       "status": "captured",
       "error": null,
       "check": {
@@ -1412,7 +1422,7 @@
         ],
         "nodesOnScreen": 150,
         "allFiveStatesAtWholeMapDensity": true,
-        "arbiterSeq": 10,
+        "arbiterSeq": 9,
         "labelsAudited": 73,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Fido jars burp themselves",
@@ -2221,8 +2231,8 @@
         "everyReducedLabelClearsTheContrastFloor": true,
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 10,
-        "arbiterSeqAtAudit": 10,
+        "arbiterSeqAtShot": 9,
+        "arbiterSeqAtAudit": 9,
         "auditDescribesTheShippedFrame": true,
         "recencyByDistrict": {
           "violet": {
@@ -2349,8 +2359,8 @@
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T16:39:43.949Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T16:40:21.509Z"
     },
     {
       "id": "05",
@@ -2358,15 +2368,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 15.3,
+      "seconds": 15.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 611273,
-        "sha256": "9c4d7b4aee6138f6485cdd3476154f98a1170f10db72f109cb8b5f5b7e36633c"
+        "bytes": 617617,
+        "sha256": "a653498639bbe76bbaf09c78a51baca6b17968f98e99332a05c8a40c3ea63287"
       },
       "claims": {
         "ok": true,
@@ -2469,7 +2479,7 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 1.032,
+        "fan": 1.001,
         "confidence": 0.943,
         "distBefore": 441.69,
         "distAfter": 383,
@@ -2477,10 +2487,10 @@
         "headlineMatchesTheHud": true,
         "operationTookEffect": true,
         "namesBefore": {
-          "drawn": 18,
-          "compressed": 10,
-          "shortened": 1,
-          "inFull": 7,
+          "drawn": 21,
+          "compressed": 11,
+          "shortened": 0,
+          "inFull": 10,
           "typePx": 17.5,
           "cloudSpanPx": 340.7,
           "spanBasis": [
@@ -2639,10 +2649,10 @@
           "spanBasisMissing": 0
         },
         "namesAfter": {
-          "drawn": 19,
-          "compressed": 9,
-          "shortened": 2,
-          "inFull": 8,
+          "drawn": 25,
+          "compressed": 14,
+          "shortened": 1,
+          "inFull": 10,
           "typePx": 17.5,
           "cloudSpanPx": 379.2,
           "spanBasis": [
@@ -2800,10 +2810,10 @@
           "spanBasisCount": 150,
           "spanBasisMissing": 0
         },
-        "namesDrawnBefore": 18,
-        "namesDrawnAfter": 19,
-        "namesInFullBefore": 7,
-        "namesInFullAfter": 8,
+        "namesDrawnBefore": 21,
+        "namesDrawnAfter": 25,
+        "namesInFullBefore": 10,
+        "namesInFullAfter": 10,
         "viewDistanceRatio": 1.153,
         "spanBasisCount": 150,
         "spanBasisMissingAfter": 0,
@@ -2829,8 +2839,8 @@
         "typePxAfter": 17.5,
         "cloudSpanBefore": 340.7,
         "cloudSpanAfter": 379.2,
-        "hiddenChipBefore": "132 labels hidden · 1 shortened · 10 named by their opening word at this framing · listed at right",
-        "hiddenChipAfter": "131 labels hidden · 2 shortened · 9 named by their opening word at this framing · listed at right",
+        "hiddenChipBefore": "129 labels hidden · 11 named by their opening word · 7 set smaller to fit at this framing · listed at right",
+        "hiddenChipAfter": "125 labels hidden · 1 shortened · 14 named by their opening word · 10 set smaller to fit at this framing · listed at right",
         "chromePanels": 2,
         "chromeOverlappingPairs": 0,
         "chromeWorstOverlapPx": 0,
@@ -2845,7 +2855,7 @@
         "detectorAtShutter": {
           "pose": "spread",
           "present": true,
-          "conf": 0.947
+          "conf": 0.949
         },
         "confidenceBefore": 0.943,
         "detectorLiveInBothPanels": true,
@@ -2864,7 +2874,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6211b3e2b5a1cd91",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "operationTookEffect": "b5bea41b6c62",
           "declaredSynthetic": "b5bea41b6c62",
@@ -2879,10 +2889,10 @@
           "noNodeBuriedByChrome": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:00:49.961Z"
+      "fileMtime": "2026-09-06T16:40:37.260Z"
     },
     {
       "id": "06",
@@ -2897,8 +2907,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 190060,
-        "sha256": "3af5e0b04a6c6ccd153f43aae9d61dd61fd7ce4990346f937e3ed8d55a8f0207"
+        "bytes": 193138,
+        "sha256": "b13ea1e743115a87f535e3a0f1b8ccfd9e5cfc074502fd4d044cb827006cc9d9"
       },
       "claims": {
         "ok": true,
@@ -3026,7 +3036,7 @@
         ]
       },
       "result": {
-        "arbiterSeq": 141,
+        "arbiterSeq": 140,
         "labelsAudited": 15,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Recalibrate the pH meter",
@@ -3037,27 +3047,27 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 14,
+        "labelTightestPairGapPx": 5.87,
         "labelTightestPairOn": [
-          "Recalibrate the pH meter",
-          "Black garlic: 60C for 40 days"
+          "Vacuum bags for lacto",
+          "Silicone airlock lids"
         ],
         "noTwoDrawnLabelsOverlap": true,
         "labelsTruncated": 3,
         "labelsTruncatedOn": [
           "Vinegar from failed wine",
           "Label tape and a marker",
-          "Vacuum bags for lacto"
+          "Immersion circulator at 60C"
         ],
         "labelWorstDisplacementPx": 59.1,
-        "labelsMoreThan40pxFromTheirNode": 9,
+        "labelsMoreThan40pxFromTheirNode": 10,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
         "labelWorstReservedDisplacementPx": 59.1,
-        "labelWorstDisplacementEm": 2.46,
+        "labelWorstDisplacementEm": 2.59,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 2.15,
+        "labelWorstAmbiguityRatio": 3.6,
         "labelsAmbiguousWithoutALeader": 0,
         "labelsAmbiguousWithoutALeaderIds": [],
         "everyLabelUnambiguouslyBound": true,
@@ -3098,7 +3108,7 @@
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
-          "worstContrast": 2.56,
+          "worstContrast": 3.11,
           "invisibleIds": [],
           "weakest": [],
           "rows": [
@@ -3130,15 +3140,6 @@
               "contrast": 7.46
             },
             {
-              "id": "n2c7b63a710",
-              "x": 388,
-              "y": 116,
-              "r": 14.9,
-              "peak": 0.2916,
-              "ground": 0.0574,
-              "contrast": 3.18
-            },
-            {
               "id": "n380afc9e85",
               "x": 1176,
               "y": 472,
@@ -3166,15 +3167,6 @@
               "contrast": 6.84
             },
             {
-              "id": "n5630d9df9f",
-              "x": 1123,
-              "y": 61,
-              "r": 14.4,
-              "peak": 0.286,
-              "ground": 0.0815,
-              "contrast": 2.56
-            },
-            {
               "id": "n690b2d0ef8",
               "x": 311,
               "y": 118,
@@ -3193,6 +3185,15 @@
               "contrast": 3.12
             },
             {
+              "id": "n8c38c1d35f",
+              "x": 330,
+              "y": 110,
+              "r": 17.2,
+              "peak": 0.2922,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
               "id": "na2358b2b07",
               "x": 1051,
               "y": 614,
@@ -3200,6 +3201,15 @@
               "peak": 0.6805,
               "ground": 0.0574,
               "contrast": 6.8
+            },
+            {
+              "id": "naaabbd92cb",
+              "x": 237,
+              "y": 149,
+              "r": 15.6,
+              "peak": 0.2913,
+              "ground": 0.0574,
+              "contrast": 3.18
             },
             {
               "id": "nd960763431",
@@ -3239,10 +3249,55 @@
             }
           ]
         },
+        "filamentContrast": {
+          "checked": 60,
+          "worst": 1,
+          "below": 53,
+          "weakest": [
+            {
+              "id": "link@0",
+              "peak": null,
+              "ground": null,
+              "contrast": 0,
+              "why": "node projects outside the frame"
+            },
+            {
+              "id": "link@1",
+              "peak": null,
+              "ground": null,
+              "contrast": 0,
+              "why": "node projects outside the frame"
+            },
+            {
+              "id": "link@2",
+              "peak": null,
+              "ground": null,
+              "contrast": 0,
+              "why": "node projects outside the frame"
+            }
+          ]
+        },
+        "everyFilamentClearsTheGround": false,
+        "labelsSetSmaller": 1,
+        "reducedLabelInk": {
+          "checked": 1,
+          "worstContrast": 6.88,
+          "belowFloor": 0,
+          "weakest": [
+            {
+              "id": "naaabbd92cb",
+              "text": "Silicone airlock lids",
+              "peak": 0.689,
+              "ground": 0.0574,
+              "contrast": 6.88
+            }
+          ]
+        },
+        "everyReducedLabelClearsTheContrastFloor": true,
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 141,
-        "arbiterSeqAtAudit": 141,
+        "arbiterSeqAtShot": 140,
+        "arbiterSeqAtAudit": 140,
         "auditDescribesTheShippedFrame": true,
         "map": "map-fermentation",
         "nodes": 150,
@@ -3254,7 +3309,9 @@
         "onFrame": {
           "holdingBadge": 8,
           "labelsHidden": 14,
-          "labelsShortened": 0,
+          "labelsShortened": 1,
+          "labelsSetSmaller": 1,
+          "smallestLabelPx": 16.6,
           "unlabelledListed": 14,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
@@ -3398,8 +3455,8 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "7b57d2816b8426b0",
-        "appSha": "10c188b09545c35e",
+        "fnSha": "2b05b8c869fbf385",
+        "appSha": "22b293298fb8cc2f",
         "claimShas": {
           "holdingRingFillsFrame": "b5bea41b6c62",
           "everyHeldNodeInFrame": "b5bea41b6c62",
@@ -3418,10 +3475,10 @@
           "auditDescribesTheShippedFrame": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:00:59.528Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T17:01:55.993Z"
     },
     {
       "id": "07",
@@ -3429,15 +3486,15 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 1.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 185820,
-        "sha256": "e9e0d1ad384b588f12d74c56f8a038bd5a0e02d63750159290b8b989e118af67"
+        "bytes": 185049,
+        "sha256": "e655476f3529e00e044094690defe93da4648a3e182aa4d25c48f59b799db4ca"
       },
       "claims": {
         "ok": true,
@@ -3616,7 +3673,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "d20566e6d80c4370",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "ok": "b5bea41b6c62",
           "ladderMonotonic": "b5bea41b6c62",
@@ -3628,10 +3685,10 @@
           "cameraPinned": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:01.556Z"
+      "fileMtime": "2026-09-06T16:40:49.105Z"
     },
     {
       "id": "08",
@@ -3639,15 +3696,15 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.1,
+      "seconds": 2.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 229161,
-        "sha256": "a59339315e7cac8a6250f016d9c703f41a25ee49eabcfad8825fc5c17c4ff6ea"
+        "bytes": 226164,
+        "sha256": "d3636041091f301e7c01d5543237e586ede47d8938829954a8bc1f1a8f246abd"
       },
       "claims": {
         "ok": true,
@@ -3781,9 +3838,9 @@
           "x": 390,
           "y": 510,
           "r": 14.4,
-          "peak": 0.1019,
+          "peak": 0.1145,
           "ground": 0.0574,
-          "contrast": 1.41
+          "contrast": 1.53
         },
         "destinationSampleAfter": {
           "id": "sec77dd4720",
@@ -3806,7 +3863,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6472298acdcaf27f",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "placed": "b5bea41b6c62",
           "stableAfterDrop": "b5bea41b6c62",
@@ -3818,10 +3875,10 @@
           "noNodeBuriedByChrome": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T15:01:41.147Z"
+      "fileMtime": "2026-09-06T16:40:51.242Z"
     },
     {
       "id": "09",
@@ -3829,15 +3886,15 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.4,
+      "seconds": 3.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 273773,
-        "sha256": "ba5d2662aff073e0eec4838ff13c815973650c10c6ab5eb3870a98968567670b"
+        "bytes": 275934,
+        "sha256": "a60c4876bd8e7e74de74bb663960dd1002d03f63d639f5095129d2f73444c94b"
       },
       "claims": {
         "ok": true,
@@ -4084,7 +4141,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6e328e9bc52a8290",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "connectedByThisCapture": "b5bea41b6c62",
           "linkedBefore": "fcbcf165908d",
@@ -4098,10 +4155,10 @@
           "editedColourAppearsInThePixels": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T15:01:45.260Z"
+      "fileMtime": "2026-09-06T16:40:55.047Z"
     },
     {
       "id": "10",
@@ -4116,8 +4173,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 193173,
-        "sha256": "3c57f38f6d7d271c7470f438f54656cd4d5f85e38d35fc2f3d75535d867c7020"
+        "bytes": 190810,
+        "sha256": "2f07410537f4ca003785f7f323fe643347d1828a03d5afc8b713fc4c0e7c7156"
       },
       "claims": {
         "ok": true,
@@ -4406,9 +4463,9 @@
               "x": 724,
               "y": 762,
               "r": 66,
-              "peak": 0.8436,
+              "peak": 0.8511,
               "ground": 0.0574,
-              "contrast": 8.32
+              "contrast": 8.39
             },
             {
               "id": "ne4fde466fe",
@@ -4458,7 +4515,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "4e38fdfef29cba10",
-        "appSha": "103a74c62f8bcd2a",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -4478,7 +4535,7 @@
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T16:22:21.209Z"
+      "fileMtime": "2026-09-06T16:41:00.485Z"
     },
     {
       "id": "11",
@@ -4493,8 +4550,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 171957,
-        "sha256": "0af1761326a44150a29083b110411a11be386fff91b25b116eacdfb48142e00d"
+        "bytes": 172052,
+        "sha256": "3fd5f12106a50d463032a104ef27052c53417e652593ba10e76c30ca324320fa"
       },
       "claims": {
         "ok": true,
@@ -4554,7 +4611,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 26953,
+            "serverPid": 30459,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -4566,7 +4623,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 26953,
+            "serverPid": 30459,
             "actor": "android-twin",
             "status": "live"
           }
@@ -4608,7 +4665,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "861f6cca2f545723",
-        "appSha": "70a8d3dc760bb00f",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
@@ -4620,7 +4677,7 @@
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T16:38:03.841Z"
+      "fileMtime": "2026-09-06T16:41:09.658Z"
     },
     {
       "id": "12",
@@ -4635,8 +4692,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 684750,
-        "sha256": "703ef5b7a2c2d45f340389ddf2dae4d5d8df40c0e4163955ff97207545aacda0"
+        "bytes": 690548,
+        "sha256": "c967a6a0efefd55160ad825a22c429477b55edc2a0d745cf093b6d0bf2e1277f"
       },
       "claims": {
         "ok": true,
@@ -4822,7 +4879,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 26953,
+            "serverPid": 30459,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -4834,7 +4891,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 26953,
+            "serverPid": 30459,
             "actor": "android-twin",
             "status": "live"
           }
@@ -4854,8 +4911,8 @@
             "shaPrinted": "4ad560a8a2",
             "shaAfterRaster": "4ad560a8a2",
             "worstDisplacedContrast": 3.23,
-            "changedPixels": 36376,
-            "changedFraction": 3.508,
+            "changedPixels": 36778,
+            "changedFraction": 3.547,
             "changedBox": {
               "x0": 246,
               "y0": 104,
@@ -4868,9 +4925,9 @@
               "x1": 492,
               "y1": 669
             },
-            "changedSampled": 568,
+            "changedSampled": 574,
             "changedInsideDistrict": 100,
-            "changedInsideDistrictPct": 17.6,
+            "changedInsideDistrictPct": 17.4,
             "lightArrivedAtNewPositions": 15,
             "lightLeftOldPositions": 7,
             "membersThatDidBoth": 5,
@@ -4883,9 +4940,9 @@
               50
             ],
             "travelAgreementPx": 0.7,
-            "matchAtMeasured": 0.793,
-            "matchIfItHadNotMoved": 0.237,
-            "matchSamples": 338
+            "matchAtMeasured": 0.788,
+            "matchIfItHadNotMoved": 0.235,
+            "matchSamples": 340
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4905,8 +4962,8 @@
             "shaPrinted": "4ad560a8a2",
             "shaAfterRaster": "4ad560a8a2",
             "worstDisplacedContrast": 3.23,
-            "changedPixels": 36376,
-            "changedFraction": 3.508,
+            "changedPixels": 36778,
+            "changedFraction": 3.547,
             "changedBox": {
               "x0": 246,
               "y0": 104,
@@ -4919,9 +4976,9 @@
               "x1": 492,
               "y1": 669
             },
-            "changedSampled": 568,
+            "changedSampled": 574,
             "changedInsideDistrict": 100,
-            "changedInsideDistrictPct": 17.6,
+            "changedInsideDistrictPct": 17.4,
             "lightArrivedAtNewPositions": 15,
             "lightLeftOldPositions": 7,
             "membersThatDidBoth": 5,
@@ -4934,9 +4991,9 @@
               50
             ],
             "travelAgreementPx": 0.7,
-            "matchAtMeasured": 0.793,
-            "matchIfItHadNotMoved": 0.237,
-            "matchSamples": 338
+            "matchAtMeasured": 0.788,
+            "matchIfItHadNotMoved": 0.235,
+            "matchSamples": 340
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4949,8 +5006,8 @@
           "shaPrinted": "4ad560a8a2",
           "shaAfterRaster": "4ad560a8a2",
           "worstDisplacedContrast": 3.23,
-          "changedPixels": 36376,
-          "changedFraction": 3.508,
+          "changedPixels": 36778,
+          "changedFraction": 3.547,
           "changedBox": {
             "x0": 246,
             "y0": 104,
@@ -4963,9 +5020,9 @@
             "x1": 492,
             "y1": 669
           },
-          "changedSampled": 568,
+          "changedSampled": 574,
           "changedInsideDistrict": 100,
-          "changedInsideDistrictPct": 17.6,
+          "changedInsideDistrictPct": 17.4,
           "lightArrivedAtNewPositions": 15,
           "lightLeftOldPositions": 7,
           "membersThatDidBoth": 5,
@@ -4978,9 +5035,9 @@
             50
           ],
           "travelAgreementPx": 0.7,
-          "matchAtMeasured": 0.793,
-          "matchIfItHadNotMoved": 0.237,
-          "matchSamples": 338
+          "matchAtMeasured": 0.788,
+          "matchIfItHadNotMoved": 0.235,
+          "matchSamples": 340
         },
         "printedShaMatchesRenderedState": true,
         "clusterDisplacementVisibleInPixels": true,
@@ -5064,7 +5121,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "936d2e118cf8cc23",
-        "appSha": "70a8d3dc760bb00f",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
@@ -5089,7 +5146,7 @@
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T16:38:12.642Z"
+      "fileMtime": "2026-09-06T16:41:18.440Z"
     },
     {
       "id": "13",
@@ -5097,15 +5154,15 @@
       "title": "Finder prompt export",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.4,
+      "seconds": 1.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 273926,
-        "sha256": "ef266820c930ba167ac11c34f1d6ce30889d9e44faeab96d321897f40dca5bc1"
+        "bytes": 278527,
+        "sha256": "86e5f09fbbdf7c926f4a29488baa270358bb215adc38dcc7fab3f120f59a1469"
       },
       "claims": {
         "ok": true,
@@ -5161,7 +5218,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "904c8c79130e761a",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "hasPositions": "b5bea41b6c62",
           "hasInstructions": "b5bea41b6c62",
@@ -5169,10 +5226,10 @@
           "noLabelUnderThePanel": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:33.192Z"
+      "fileMtime": "2026-09-06T16:41:19.997Z"
     },
     {
       "id": "14",
@@ -5180,15 +5237,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.9,
+      "seconds": 3.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 391232,
-        "sha256": "1c9fd9179f24e8f693b7c8f33ec8ef89a828fd8895d8b760e895e3887badb6bc"
+        "bytes": 392889,
+        "sha256": "814529e3ca314bab640b26fc237fb6970be606c6882127f9acf762408488c393"
       },
       "claims": {
         "ok": true,
@@ -5384,7 +5441,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "e1c6a167c2e30336",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "allThreeKinds": "b5bea41b6c62",
           "rejectionLeftNoTrace": "b5bea41b6c62",
@@ -5398,10 +5455,10 @@
           "detailHeadingsFitTheirColumns": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:37.118Z"
+      "fileMtime": "2026-09-06T16:41:23.473Z"
     },
     {
       "id": "15",
@@ -5454,15 +5511,15 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8891521182f0f526",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "referenceMatchesTheRuntime": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:40.092Z"
+      "fileMtime": "2026-09-06T16:41:26.465Z"
     },
     {
       "id": "16",
@@ -5470,15 +5527,15 @@
       "title": "Touch gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 30s",
-      "seconds": 102.9,
+      "seconds": 100.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1177997,
-        "sha256": "572b22e9beecb6aa1c77ab71321d8bfbbd5e7a6b8354abfaa6a30fc0f9d230c1",
+        "bytes": 1201095,
+        "sha256": "6df00c9fba0de22703e776c8740ed0eaf0ae550b6db162c153628b9d4fc22c83",
         "seconds": 34,
         "fps": 30,
         "frames": 1020
@@ -5540,7 +5597,7 @@
           "gyro"
         ],
         "count": 7,
-        "quickAddedNode": "nmt1gy5gb1mte8",
+        "quickAddedNode": "nmt1gy4xp1mte8",
         "deviceViewport": [
           1280,
           1440
@@ -5573,7 +5630,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "6fd8acbcaabc26b4",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "tapSelected": "b5bea41b6c62",
           "doubleTapConnected": "b5bea41b6c62",
@@ -5582,10 +5639,10 @@
           "marginReferenceFitsItsColumn": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:03:21.429Z"
+      "fileMtime": "2026-09-06T16:43:05.514Z"
     },
     {
       "id": "17",
@@ -5593,15 +5650,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 555,
+      "seconds": 551.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 11341682,
-        "sha256": "9451d96b9a8129bee91cb4fe8a1d32fd592932963c15918afd2a207247f39480",
+        "bytes": 13322167,
+        "sha256": "d8ca6a6afaafc8b956a31cbf2628b6ac0adadff1d6bb18c414bc4906db85f733",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -5683,7 +5740,7 @@
           "gather"
         ],
         "count": 4,
-        "samples": 2086,
+        "samples": 2095,
         "poseGrabs": [
           {
             "cluster": "Safety and pH",
@@ -5692,16 +5749,16 @@
               "fist"
             ],
             "centroidBefore": [
-              0.083,
-              -2.334,
-              16.642
+              5.168,
+              -3.628,
+              15.288
             ],
             "centroidAfter": [
-              3.189,
-              -7.568,
-              16.566
+              6.178,
+              -9.218,
+              15.92
             ],
-            "travelled": 6.0872,
+            "travelled": 5.7162,
             "maxMemberDrift": 0,
             "frames": [
               33,
@@ -5719,23 +5776,23 @@
               "fist"
             ],
             "centroidBefore": [
-              -18.892,
-              -14.649,
-              9.534
+              -20.157,
+              -17.341,
+              10.38
             ],
             "centroidAfter": [
-              -17.96,
-              -15.646,
-              9.414
+              -15.437,
+              -18.26,
+              9.075
             ],
-            "travelled": 1.3692,
+            "travelled": 4.9824,
             "maxMemberDrift": 0,
             "frames": [
-              38,
+              37,
               46
             ],
             "seconds": [
-              1.27,
+              1.23,
               1.53
             ]
           },
@@ -5746,23 +5803,77 @@
               "fist"
             ],
             "centroidBefore": [
-              -14.762,
-              -14.719,
-              8.268
+              -15.654,
+              -19.154,
+              9.293
             ],
             "centroidAfter": [
-              -5.911,
-              -18.04,
-              6.092
+              -12.086,
+              -19.801,
+              8.299
             ],
-            "travelled": 9.7011,
+            "travelled": 3.7598,
             "maxMemberDrift": 0,
             "frames": [
               48,
-              66
+              50
             ],
             "seconds": [
               1.6,
+              1.67
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -12.983,
+              -21.97,
+              8.943
+            ],
+            "centroidAfter": [
+              -7.959,
+              -25.959,
+              8.063
+            ],
+            "travelled": 6.4751,
+            "maxMemberDrift": 0,
+            "frames": [
+              52,
+              56
+            ],
+            "seconds": [
+              1.73,
+              1.87
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.565,
+              -24.329,
+              6.737
+            ],
+            "centroidAfter": [
+              -1.133,
+              -25.461,
+              5.867
+            ],
+            "travelled": 3.7171,
+            "maxMemberDrift": 0,
+            "frames": [
+              58,
+              66
+            ],
+            "seconds": [
+              1.93,
               2.2
             ]
           },
@@ -5773,375 +5884,24 @@
               "fist"
             ],
             "centroidBefore": [
-              3.189,
-              -7.568,
-              16.566
+              6.178,
+              -9.218,
+              15.92
             ],
             "centroidAfter": [
-              3.189,
-              -7.568,
-              16.566
+              14.116,
+              -7.869,
+              13.237
             ],
-            "travelled": 0,
+            "travelled": 8.4876,
             "maxMemberDrift": 0,
             "frames": [
               68,
-              68
+              70
             ],
             "seconds": [
               2.27,
-              2.27
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              4.871,
-              -7.633,
-              16.057
-            ],
-            "centroidAfter": [
-              4.871,
-              -7.633,
-              16.057
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              71,
-              71
-            ],
-            "seconds": [
-              2.37,
-              2.37
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -21.091,
-              0.968,
-              -6.123
-            ],
-            "centroidAfter": [
-              -13.325,
-              -5.991,
-              -7.35
-            ],
-            "travelled": 10.4992,
-            "maxMemberDrift": 0,
-            "frames": [
-              199,
-              200
-            ],
-            "seconds": [
-              6.63,
-              6.67
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -1.305,
-              -20.001,
-              4.998
-            ],
-            "centroidAfter": [
-              -1.637,
-              -21.093,
-              5.285
-            ],
-            "travelled": 1.177,
-            "maxMemberDrift": 0,
-            "frames": [
-              202,
-              203
-            ],
-            "seconds": [
-              6.73,
-              6.77
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -17.703,
-              -5.718,
-              -6.042
-            ],
-            "centroidAfter": [
-              -16.623,
-              -7.661,
-              -6.048
-            ],
-            "travelled": 2.2227,
-            "maxMemberDrift": 0,
-            "frames": [
-              204,
-              207
-            ],
-            "seconds": [
-              6.8,
-              6.9
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -2.754,
-              -20.545,
-              5.538
-            ],
-            "centroidAfter": [
-              2.269,
-              -22.108,
-              4.248
-            ],
-            "travelled": 5.4157,
-            "maxMemberDrift": 0,
-            "frames": [
-              208,
-              218
-            ],
-            "seconds": [
-              6.93,
-              7.27
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -11.767,
-              -7.134,
-              -7.639
-            ],
-            "centroidAfter": [
-              -9.425,
-              -8.593,
-              -8.117
-            ],
-            "travelled": 2.8006,
-            "maxMemberDrift": 0,
-            "frames": [
-              219,
-              221
-            ],
-            "seconds": [
-              7.3,
-              7.37
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              4.931,
-              -7.45,
-              16.007
-            ],
-            "centroidAfter": [
-              10.924,
-              -8.239,
-              14.287
-            ],
-            "travelled": 6.2849,
-            "maxMemberDrift": 0,
-            "frames": [
-              223,
-              232
-            ],
-            "seconds": [
-              7.43,
-              7.73
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -6.925,
-              -14.968,
-              -7.813
-            ],
-            "centroidAfter": [
-              -4.252,
-              -18.636,
-              -8.021
-            ],
-            "travelled": 4.543,
-            "maxMemberDrift": 0,
-            "frames": [
-              364,
-              365
-            ],
-            "seconds": [
-              12.13,
-              12.17
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -4.683,
-              -19.751,
-              -7.699
-            ],
-            "centroidAfter": [
-              -3.069,
-              -22.113,
-              -7.799
-            ],
-            "travelled": 2.8623,
-            "maxMemberDrift": 0,
-            "frames": [
-              376,
-              380
-            ],
-            "seconds": [
-              12.53,
-              12.67
-            ]
-          },
-          {
-            "cluster": "Microbiology",
-            "members": 18,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -2.668,
-              -22.864,
-              -7.796
-            ],
-            "centroidAfter": [
-              1.261,
-              -25.467,
-              -8.572
-            ],
-            "travelled": 4.7763,
-            "maxMemberDrift": 0,
-            "frames": [
-              382,
-              390
-            ],
-            "seconds": [
-              12.73,
-              13
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              5.008,
-              -23.737,
-              3.676
-            ],
-            "centroidAfter": [
-              8.11,
-              -23.268,
-              2.638
-            ],
-            "travelled": 3.304,
-            "maxMemberDrift": 0,
-            "frames": [
-              392,
-              397
-            ],
-            "seconds": [
-              13.07,
-              13.23
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              10.924,
-              -8.239,
-              14.287
-            ],
-            "centroidAfter": [
-              10.924,
-              -8.239,
-              14.287
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              402,
-              402
-            ],
-            "seconds": [
-              13.4,
-              13.4
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              12.556,
-              -9.303,
-              13.962
-            ],
-            "centroidAfter": [
-              12.556,
-              -9.303,
-              13.962
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              530,
-              530
-            ],
-            "seconds": [
-              17.67,
-              17.67
+              2.33
             ]
           },
           {
@@ -6156,46 +5916,100 @@
               -6.601
             ],
             "centroidAfter": [
-              -2.63,
-              -25.633,
-              -7.167
+              -4.887,
+              -24.849,
+              -6.601
             ],
-            "travelled": 2.455,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              554,
-              565
+              201,
+              201
             ],
             "seconds": [
-              18.47,
-              18.83
+              6.7,
+              6.7
             ]
           },
           {
-            "cluster": "Safety and pH",
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              2.903,
+              -23.675,
+              4.317
+            ],
+            "centroidAfter": [
+              11.705,
+              -23.353,
+              1.539
+            ],
+            "travelled": 9.2356,
+            "maxMemberDrift": 0,
+            "frames": [
+              224,
+              237
+            ],
+            "seconds": [
+              7.47,
+              7.9
+            ]
+          },
+          {
+            "cluster": "Equipment",
             "members": 12,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              12.556,
-              -9.303,
-              13.962
+              -2.333,
+              -24.124,
+              -7.513
             ],
             "centroidAfter": [
-              9.507,
-              -10.464,
-              15.101
+              -0.804,
+              -20.998,
+              -8.515
             ],
-            "travelled": 3.4553,
+            "travelled": 3.621,
             "maxMemberDrift": 0,
             "frames": [
-              695,
-              696
+              240,
+              241
             ],
             "seconds": [
-              23.17,
-              23.2
+              8,
+              8.03
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              11.327,
+              -20.147,
+              1.115
+            ],
+            "centroidAfter": [
+              11.327,
+              -20.147,
+              1.115
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              410,
+              410
+            ],
+            "seconds": [
+              13.67,
+              13.67
             ]
           },
           {
@@ -6205,44 +6019,233 @@
               "fist"
             ],
             "centroidBefore": [
-              0.512,
-              -24.96,
-              -8.426
+              -28.802,
+              6.654,
+              -4.699
             ],
             "centroidAfter": [
-              6.646,
-              -23.883,
-              -10.505
+              -20.565,
+              -5.921,
+              -5.123
             ],
-            "travelled": 6.5651,
+            "travelled": 15.0381,
+            "maxMemberDrift": 0,
+            "frames": [
+              544,
+              546
+            ],
+            "seconds": [
+              18.13,
+              18.2
+            ]
+          },
+          {
+            "cluster": "Microbiology",
+            "members": 18,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -20.447,
+              -7.133,
+              -4.954
+            ],
+            "centroidAfter": [
+              -2.357,
+              -11.612,
+              -9.794
+            ],
+            "travelled": 19.2542,
+            "maxMemberDrift": 0,
+            "frames": [
+              549,
+              578
+            ],
+            "seconds": [
+              18.3,
+              19.27
+            ]
+          },
+          {
+            "cluster": "Microbiology",
+            "members": 18,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.817,
+              -12.309,
+              -11.895
+            ],
+            "centroidAfter": [
+              4.817,
+              -12.309,
+              -11.895
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              583,
+              583
+            ],
+            "seconds": [
+              19.43,
+              19.43
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -0.734,
+              -21.344,
+              -8.478
+            ],
+            "centroidAfter": [
+              -0.734,
+              -21.344,
+              -8.478
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              713,
+              713
+            ],
+            "seconds": [
+              23.77,
+              23.77
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -6.389,
+              -19.8,
+              -6.989
+            ],
+            "centroidAfter": [
+              -5.076,
+              -20.411,
+              -7.292
+            ],
+            "travelled": 1.4797,
+            "maxMemberDrift": 0,
+            "frames": [
+              729,
+              731
+            ],
+            "seconds": [
+              24.3,
+              24.37
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.455,
+              -18.412,
+              -7.822
+            ],
+            "centroidAfter": [
+              -3.484,
+              -20.781,
+              -7.722
+            ],
+            "travelled": 2.5615,
             "maxMemberDrift": 0,
             "frames": [
               733,
-              735
+              734
             ],
             "seconds": [
               24.43,
-              24.5
+              24.47
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -5.003,
+              -21.244,
+              -7.174
+            ],
+            "centroidAfter": [
+              2.663,
+              -20.551,
+              -9.662
+            ],
+            "travelled": 8.0891,
+            "maxMemberDrift": 0,
+            "frames": [
+              736,
+              748
+            ],
+            "seconds": [
+              24.53,
+              24.93
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              21.078,
+              -6.626,
+              10.873
+            ],
+            "centroidAfter": [
+              21.078,
+              -6.626,
+              10.873
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              752,
+              752
+            ],
+            "seconds": [
+              25.07,
+              25.07
             ]
           }
         ],
-        "poseGrabCount": 20,
+        "poseGrabCount": 18,
         "poseGrabbedClusters": [
           "Safety and pH",
           "Lacto-vegetables",
-          "Microbiology",
-          "Equipment"
+          "Equipment",
+          "Microbiology"
         ],
         "poseGrabLargest": 20,
-        "poseGrabMaxTravel": 10.4992,
+        "poseGrabMaxTravel": 19.2542,
         "captionFramesShowing": 1124,
-        "captionFramesMarkedHeld": 105,
+        "captionFramesMarkedHeld": 108,
         "captionFramesOutrunningTheDetector": 0,
         "captionOutrunExamples": [],
         "captionNeverOutrunsTheDetector": true,
         "undoStackEmptiedOnCamera": true,
         "undoDepthAtEnd": 0,
-        "undoDepthAtTailStart": 22,
+        "undoDepthAtTailStart": 26,
         "positionsNotReturned": [],
         "undoActsDroppedByTheCap": 0,
         "mapReturnedToItsStartingLayout": true,
@@ -6256,15 +6259,15 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          1.744,
-          -0.047,
-          -3.12
+          1.268,
+          -0.39,
+          -2.915
         ],
-        "clusterCentroidTravelled": 18.1817,
+        "clusterCentroidTravelled": 18.8022,
         "clusterMaxMemberDrift": 0,
         "clusterLedgerBeforeOnPeer": "5144cc62a503",
-        "clusterLedgerAfterOnPeer": "526785cccd2e",
-        "clusterLedgerAfterHere": "526785cccd2e",
+        "clusterLedgerAfterOnPeer": "a1290218bfb8",
+        "clusterLedgerAfterHere": "a1290218bfb8",
         "clusterMoveReachedTheHeadlessPeer": true,
         "clusterMovedByMouse": true,
         "clusterInternalArrangementPreserved": true,
@@ -6282,7 +6285,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "acd89030378b14e5",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "clusterMovedByPose": "b5bea41b6c62",
           "clusterArrangementPreservedByPose": "b5bea41b6c62",
@@ -6294,10 +6297,10 @@
           "count": "99e5481824a9"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:12:34.468Z"
+      "fileMtime": "2026-09-06T16:52:14.506Z"
     },
     {
       "id": "18",
@@ -6305,15 +6308,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 71.5,
+      "seconds": 73.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 3128148,
-        "sha256": "2090e6d496e9aef3311661671c55e4e393af8a5304303a42b86f6df70cb99f3c",
+        "bytes": 3240127,
+        "sha256": "826759933adee4101b7b5d53fbebee8bbbf4525990c0678781dce3e1887dd3ed",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -6378,7 +6381,7 @@
         "labelAuditsAcrossTake": 26,
         "labelWorstAuditFrame": {
           "f": 0,
-          "checked": 66,
+          "checked": 76,
           "gap": 0,
           "off": 0,
           "gapOn": {
@@ -6414,7 +6417,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "a60024ab92924687",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "steppedToASecondHit": "b5bea41b6c62",
           "severalHitsMatched": "b5bea41b6c62",
@@ -6422,10 +6425,10 @@
           "everyLabelInsideTheFrameThroughout": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:13:48.531Z"
+      "fileMtime": "2026-09-06T16:53:30.273Z"
     },
     {
       "id": "19",
@@ -6440,8 +6443,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2240190,
-        "sha256": "3c6f1cc16d5af8c412853b474753ab5e4ab460fe91e6f4da7b28a3e283540ed0",
+        "bytes": 2342455,
+        "sha256": "4f668a019d7a009531594ec3abb3abd6a3d83082275c7cb5e62b3f39a98c0b1e",
         "seconds": 23,
         "fps": 30,
         "frames": 690
@@ -6551,7 +6554,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8f6ace6323401f42",
-        "appSha": "10c188b09545c35e",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "created": "b5bea41b6c62",
           "placed": "b5bea41b6c62",
@@ -6561,10 +6564,10 @@
           "positionSurvivedTheWholeLoop": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:15:53.667Z"
+      "fileMtime": "2026-09-06T16:55:35.527Z"
     },
     {
       "id": "20",
@@ -6572,15 +6575,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 196,
+      "seconds": 198.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1222339,
-        "sha256": "e6ed3500b0e47dd493d2edf4a34ef4cde9dff913f7643c4f1978ce6b9f3e6369",
+        "bytes": 1230690,
+        "sha256": "cd2dca680a75d9a442f6773c6d7e155b4a3376336e85d37cea121f1a701a1d81",
         "seconds": 49,
         "fps": 30,
         "frames": 1470
@@ -6858,7 +6861,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "94057b86c7fab52c",
-        "appSha": "70a8d3dc760bb00f",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "rejectionLeftNoTrace": "b5bea41b6c62",
           "allThreeKindsAccepted": "b5bea41b6c62",
@@ -6876,7 +6879,7 @@
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T16:36:30.169Z"
+      "fileMtime": "2026-09-06T16:58:54.967Z"
     }
   ],
   "supersededRuns": [
@@ -6900,74 +6903,17 @@
       ]
     }
   ],
-  "staleFromEarlierCycles": [
-    {
-      "id": "01",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "03",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "05",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "06",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "07",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "08",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "09",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "13",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "14",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "15",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "16",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "17",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "18",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "19",
-      "capturedInCycle": 13
-    }
-  ],
-  "allCapturedInThisCycle": false,
-  "finishedAt": "2026-09-06T16:39:46.315Z",
+  "staleFromEarlierCycles": [],
+  "allCapturedInThisCycle": true,
+  "finishedAt": "2026-09-06T17:01:58.735Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 830721,
-    "sha256": "342f1c087e51a0af93fe39da2e43f68761399c8fd7ca6ba8f7ce420a92142745",
-    "appSha": "342f1c087e51a0af",
-    "gitHead": "aa8dbfede9c6",
-    "gitHeadAt": "2026-09-06T16:38:15+00:00",
+    "bytes": 830987,
+    "sha256": "22b293298fb8cc2f02b6bea3e115ec86c9d4db55eb8df9e562840c0fdb5cfcd4",
+    "appSha": "22b293298fb8cc2f",
+    "gitHead": "2170a64524b1",
+    "gitHeadAt": "2026-09-06T16:40:00+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,
