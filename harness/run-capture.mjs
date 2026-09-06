@@ -32,7 +32,18 @@ const OUTDIR = resolve(ROOT, arg('--out', 'evidence'));
  * read out of the scene and written down; a map with no entry falls back to the
  * solve and says so on the console, so the pin is never silently absent.
  */
-const TWIN_PIN = {};
+const TWIN_PIN = {
+  // Pinned at cycle 15, at the values the solve produced for this map — read
+  // out of the scene after the fit, not chosen. Before this the fit ran every
+  // cycle, so any change to marker size or label metrics moved the camera: the
+  // cycle-14 Auditor measured distance 56.5 -> 62.0 between cycles with every
+  // marker sliding 5-13 px, and had to fit its own perspective camera to the
+  // drawn markers and reproduce the committed seeds at 0.22 px RMS before it
+  // could say no node had moved. Pinned, the cross-cycle diff on the twin pair
+  // says it outright.
+  'map-talk': { yaw: 0.34, pitch: 0.16, dist: 53.416374,
+                target: [-0.15, -3.35, 1.75] },
+};
 // WHICH CYCLE THIS SET BELONGS TO.
 //
 // The flag first; then `evidence/CYCLE`, written by cycle.mjs before the
@@ -734,6 +745,7 @@ async function runDriver(d) {
                   TWIN_PIN[driver.map] ? '(pinned, see TWIN_PIN)' : '(no pin for this map)');
       const frozen = TWIN_PIN[driver.map] ?? solved;
       const freeze = async (p) => { await POSE(p.page, frozen); await sleepFrames(p.page, 0, 2); };
+      const cameraPinned = !!TWIN_PIN[driver.map];
       for (const p of [w, a]) await freeze(p);
       // And every node must be inside the frame in BOTH halves — an artifact
       // that proves "no node was dropped" cannot have a node off the edge.
@@ -1314,6 +1326,7 @@ async function runDriver(d) {
       after.eachPanelNamesItsRasteriser = !!provAfter.w.gl && !!provAfter.a.gl &&
         provAfter.w.gl !== 'unavailable' && provAfter.a.gl !== 'unavailable';
       after.cameraFrozen = frozen;
+      after.cameraPinned = cameraPinned;
       after.everyNodeInFrame = true; // asserted above; the capture throws otherwise
       after.movedNodeCoords = { id: moveId, before: posBefore, after: posAfter };
       after.nodesUnderChrome = { windows: coveredW, android: coveredA };
@@ -1325,6 +1338,8 @@ async function runDriver(d) {
       after.bigMapShownOnBothSurfaces = !!(bigTwin && bigTwin.shown);
       after.bigMapLedgersIdentical = !!(bigTwin && bigTwin.identical);
       after.bigMapNodeCount = bigTwin ? bigTwin.nodes.windows : 0;
+      before.cameraFrozen = frozen;
+      before.cameraPinned = cameraPinned;
       twinCache = { before, after };
       return before;
     },

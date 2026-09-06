@@ -801,7 +801,10 @@ export default [
   // prints the sockets, the runtimes and the rasterisers; these are the claims
   // that make those printed words checkable, and until cycle 12 only artifact
   // 12 carried them.
-  requires: { positionsIdenticalAcrossSurfaces: true, twoDistinctSockets: true,
+  requires: {
+              // The twin camera is a literal constant now, so a marker that
+              // moves between cycles moved for a reason this record cannot hide.
+              cameraPinned: true, positionsIdenticalAcrossSurfaces: true, twoDistinctSockets: true,
               panelRuntimesDiffer: true, eachPanelNamesItsRasteriser: true },
   demonstrates: 'twin composite BEFORE: Windows and Android on one map, identical frozen camera, each panel naming the process that drew it', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — before',
@@ -812,7 +815,10 @@ export default [
   id: '12', file: '12_sync_twin_after.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { positionsIdenticalAcrossSurfaces: true, positionEditPropagated: true, onlyTheDraggedNodeMoved: true,
+  requires: {
+              // The twin camera is a literal constant now, so a marker that
+              // moves between cycles moved for a reason this record cannot hide.
+              cameraPinned: true, positionsIdenticalAcrossSurfaces: true, positionEditPropagated: true, onlyTheDraggedNodeMoved: true,
               everyOtherPositionUnchanged: true, noNodeDropped: true, editPropagated: true,
               concurrentConflictKeptBoth: true, bothSurfacesAgreeOnNode: true, twoDistinctSockets: true,
               // The panels' map regions are near-identical in pixels, so the
