@@ -186,14 +186,25 @@ tr.map:hover{background:var(--panel)}
    thought's own district colour. Fixed width whatever the count, so it is a
    stable occluder for the label arbiter rather than one that resizes in
    response to its own effect. */
+/* AN OPAQUE GROUND, not a transparent overlay. The roster was drawn straight
+   over the live map: on artifact 05 its rows sat on top of azure district nodes
+   and their filaments, and its own colour bullets are the same size and shape
+   as the map's dots, so the two channels were confusable — and "UI surfaces
+   matte and minimal" was not being honoured by the one surface that lists what
+   the map is not showing. It is matte and opaque now, and the arbiter already
+   reserves its rectangle, so no label runs beneath it either. */
 #unlabelled{position:fixed;right:0;top:96px;bottom:64px;width:300px;z-index:22;display:none;
   padding:10px 14px 10px 16px;border-left:1px solid var(--line);pointer-events:none;
+  background:var(--panel);
   font-size:11px;line-height:1.62;letter-spacing:.2px;color:var(--ink-faint);overflow:hidden}
 #unlabelled.show{display:block}
 #unlabelled h4{margin:0 0 7px;font-size:11px;font-weight:600;letter-spacing:.4px;
   color:var(--ink-dim);text-transform:none}
 #unlabelled li{list-style:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#unlabelled i{display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:7px;
+/* A short bar, not a dot: the bullets were the same size and shape as node
+   markers, so a reader scanning the column could take a list row for a thing in
+   the world. Same hue, different form. */
+#unlabelled i{display:inline-block;width:9px;height:3px;border-radius:1px;margin-right:7px;
   vertical-align:middle}
 /* Leaders for held thoughts. In the holding ring the dots are close together
    and the names radiate outward, so a label can end up nearer a neighbour's

@@ -77,7 +77,17 @@ const labelAudit = async (page) => {
            labelsTruncatedOn: a.truncatedText,
            labelWorstDisplacementPx: a.worstDisplacementPx,
            labelWorstDisplacementOn: a.dispText,
-           labelsFarFromTheirNode: a.farFromNode,
+           // Informational, and NAMED for what it measures. A flat 40 px is far
+           // beside 12 px type and adjacent beside 24 px type, so this counter
+           // read as contradicting everyLabelStaysBesideItsNode whenever the
+           // type was large. The em figure beside it is the one the rule is
+           // stated in and the one the claim is taken from.
+           labelsMoreThan40pxFromTheirNode: a.farFromNode,
+           markersBuriedByOtherLabels: a.markersBuriedByOtherLabels,
+           worstBuriedFraction: a.worstBuriedFraction,
+           // A label may sit beside its own node and dead-centre on a
+           // neighbour's. The two claims above cannot see that; this can.
+           noDrawnLabelBuriesAnotherMarker: a.checked > 0 && a.markersBuriedByOtherLabels === 0,
            labelWorstReservedDisplacementPx: a.worstReservedDisplacementPx,
            labelWorstDisplacementEm: a.worstDisplacementEm,
            // Beside its node, measured in the label's own type size so the
@@ -492,6 +502,7 @@ export default [
   id: '04', file: '04_mind_expansion.png', kind: 'png',
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
               everyLabelInsideTheFrame: true, recencyChannelExercised: true,
+              allFiveStatesAtWholeMapDensity: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
               everyLabelStaysBesideItsNode: true, auditDescribesTheShippedFrame: true },
   demonstrates: 'mind-expansion lens, the whole map and the holding cluster on screen at once', minW: 1920, minH: 1080,
@@ -505,8 +516,49 @@ export default [
     // fitAll, so the whole map and the holding ring are in frame and clear of
     // the pose bar — and stay exactly there in every future cycle.
     await POSE(page, PIN['04']);
+    // ALL FIVE STATES AT WHOLE-BRAIN DENSITY. Artifact 07 proves the ladder,
+    // but on eleven nodes at reading distance; the cycle-9 Art Director's C14
+    // is that "legible at a glance from a whole-brain overview with 100+ nodes
+    // on screen" was therefore untested for connected, selected and search hit
+    // — the three that only appear when something is going on. A query and a
+    // selection are run here, on the 150-node map, at the pinned camera, so the
+    // frame this artifact is about carries the states its own brief names.
+    await page.fill('[data-t=search]', 'koji');
+    await page.press('[data-t=search]', 'Enter');
+    await sleepFrames(page, 0, 2);
+    const selId = await page.evaluate(() => window.mm.hits[0] ?? null);
+    if (selId) await page.evaluate(i => window.mm.scene.setSelection(i), selId);
+    await POSE(page, PIN['04']);
+    await sleepFrames(page, 0, 2);
+    const statesHere = await page.evaluate(() => {
+      const el = window.mm.scene.renderer.domElement;
+      const d = window.mm.store.doc;
+      const on = new Set(window.mm.scene.screenPositions()
+        .filter(q => q.x > 0 && q.y > 0 && q.x < el.width && q.y < el.height).map(q => q.id));
+      const hits = new Set(window.mm.hits);
+      const sel = window.mm.scene.getSelection();
+      const linked = new Set();
+      for (const l of Object.values(d.links))
+        if (l.a === sel || l.b === sel) { linked.add(l.a); linked.add(l.b); }
+      const seen = new Set();
+      for (const id of on) {
+        const n = d.nodes[id];
+        if (!n) continue;
+        if (id === sel) seen.add('selected');
+        else if (hits.has(id)) seen.add('searchHit');
+        else if (!n.placed) seen.add('unplaced');
+        else if (linked.has(id)) seen.add('connected');
+        else seen.add('plain');
+      }
+      return { seen: [...seen].sort(), onScreen: on.size };
+    });
     const seq04 = await stillShot(H, page, cdp, H.out(this.file));
     return { ...await H.modelStats(page), camera: PIN['04'], cameraPinned: true,
+             statesOnScreen: statesHere.seen, nodesOnScreen: statesHere.onScreen,
+             // The brief for this artifact is the whole map at once and
+             // legible; the five states are part of what has to be legible in
+             // it, not only in the 11-node close-up.
+             allFiveStatesAtWholeMapDensity: statesHere.seen.length === 5 && statesHere.onScreen >= 100,
              ...(await labelsAndMarkers(H, page, this.file, seq04)), ...(await recencySpan(page)) };
   },
 },

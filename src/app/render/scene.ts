@@ -1004,6 +1004,7 @@ export class Scene {
     overlappingPairs: number; worstPairOverlapPx: number; worstPair: [string, string] | null;
     tightestPairGapPx: number | null; tightestPair: [string, string] | null;
     truncated: number; truncatedIds: string[]; seq: number;
+    markersBuriedByOtherLabels: number; worstBuriedFraction: number;
     worstDisplacementPx: number; worstDisplacement: string | null;
     farFromNode: number; farFromNodeIds: string[]; worstReservedDisplacementPx: number;
     worstDisplacementEm: number;
@@ -1111,6 +1112,38 @@ export class Scene {
                             x0: Number(drawn.x0.toFixed(2)), y0: Number(drawn.y0.toFixed(2)),
                             x1: Number(drawn.x1.toFixed(2)), y1: Number(drawn.y1.toFixed(2)) });
     }
+    // AND WHETHER ANY DRAWN LABEL BURIES SOMEBODY ELSE'S MARK.
+    //
+    // `everyDrawnLabelHasAVisibleMarker` and `everyLabelStaysBesideItsNode` are
+    // both about a label and ITS OWN node, so both are true while a label sits
+    // dead-centre on a neighbour's disc — which is what the cycle-9 Auditor
+    // measured on artifact 04, two markers losing 84 % and 100 % of their
+    // pixels to glyphs from other nodes' captions. On a lens whose brief is the
+    // whole map legible at once, a node vanishing under another node's name is
+    // precisely what those claims read as excluding and do not.
+    //
+    // The arbiter already treats other nodes' discs as a scoring PREFERENCE
+    // rather than occupancy, deliberately — demoting every label that grazes a
+    // dot would silence the dense districts. So this is not a placement rule,
+    // it is a measurement of what that preference costs, reported per frame.
+    let buried = 0, worstBury = 0;
+    for (const bx of drawnBoxes) {
+      for (const d of this.lastScreen) {
+        const [id, q] = d;
+        if (id === bx.id) continue;
+        const r = q.r;
+        const nx = Math.min(Math.max(q.x, bx.x0), bx.x1);
+        const ny = Math.min(Math.max(q.y, bx.y0), bx.y1);
+        if (Math.hypot(q.x - nx, q.y - ny) >= r) continue;
+        // Fraction of the mark's own area the box covers, approximated by the
+        // overlap of the box with the disc's bounding square.
+        const ox = Math.min(bx.x1, q.x + r) - Math.max(bx.x0, q.x - r);
+        const oy = Math.min(bx.y1, q.y + r) - Math.max(bx.y0, q.y - r);
+        const frac = Math.max(0, ox) * Math.max(0, oy) / Math.max(1, 4 * r * r);
+        if (frac > 0.30) { buried++; if (frac > worstBury) worstBury = frac; }
+      }
+    }
+
     // Pairwise, on the DRAWN boxes — n is at most a few hundred.
     //
     // Overlap is not the only way two names become one. The critic read
@@ -1144,6 +1177,7 @@ export class Scene {
              overlappingPairs: pairs, worstPairOverlapPx: Number(worstArea.toFixed(1)), worstPair,
              tightestPairGapPx: Number.isFinite(tightest) ? Number(tightest.toFixed(2)) : null, tightestPair,
              truncated: truncatedIds.length, truncatedIds, anchors,
+             markersBuriedByOtherLabels: buried, worstBuriedFraction: Number(worstBury.toFixed(3)),
              worstDisplacementPx: Number(worstDisp.toFixed(1)), worstDisplacement: worstDispId,
              farFromNode: farIds.length, farFromNodeIds: farIds.slice(0, 40),
              worstReservedDisplacementPx: Number(worstResDisp.toFixed(1)),

@@ -897,7 +897,12 @@ export class App {
       document.body.appendChild(col);
     }
     const ids = this.scene.suppressedIds;
-    const show = this.lens === 'expansion' && ids.length > 0 &&
+    // THE CANVAS LENS GETS IT TOO. The recovery column existed on mind
+    // expansion only, so the same map at the same loss offered a way back to
+    // the hidden names in one lens and nothing at all in the other — and the
+    // canvas lens is where the cap-and-drop ruling hides the most. Same loss,
+    // same recovery.
+    const show = (this.lens === 'expansion' || this.lens === 'canvas') && ids.length > 0 &&
                  !this.panelOpen() && !this.rightPanelOpen();
     col.className = show ? 'show' : '';
     if (!show) { col.innerHTML = ''; return; }
@@ -1255,7 +1260,7 @@ export class App {
     n.innerHTML = `<h3 style="margin:0 0 8px;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-dim)">Node states</h3>
       <table>${rows.map(([a, b, c]) => `<tr><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td class="num">${esc(c)}</td></tr>`).join('')}</table>
       <div class="note">Brightness rises down this list; every state also carries its own ring, so the two read together.</div>
-      <div class="note"><b>Colour</b> names the district. <b>Chroma</b> names age: muted = settled, full chroma = recently touched — so the frontier of a map reads as its most saturated region.</div>
+      <div class="note"><b>Colour</b> names the district. <b>Chroma</b> names age: muted = settled, full chroma = recently touched — so <b>within a district</b>, its frontier reads as its most saturated region. Saturation is not comparable between districts: a hue's own gamut sets its ceiling.</div>
       <div class="row"><button data-t="states-close">Close</button></div>`;
     document.body.appendChild(n);
     this.clearOfPanels(this.selected ?? undefined);

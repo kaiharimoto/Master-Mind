@@ -281,7 +281,17 @@ export default [
              labelsTruncatedOn: audit.truncatedText,
              labelWorstDisplacementPx: audit.worstDisplacementPx,
              labelWorstDisplacementOn: audit.dispText,
-             labelsFarFromTheirNode: audit.farFromNode,
+             // Informational, and NAMED for what it measures. A flat 40 px is far
+             // beside 12 px type and adjacent beside 24 px type, so this counter
+             // read as contradicting everyLabelStaysBesideItsNode whenever the
+             // type was large. The em figure beside it is the one the rule is
+             // stated in and the one the claim is taken from.
+             labelsMoreThan40pxFromTheirNode: audit.farFromNode,
+             markersBuriedByOtherLabels: audit.markersBuriedByOtherLabels,
+             worstBuriedFraction: audit.worstBuriedFraction,
+             // A label may sit beside its own node and dead-centre on a
+             // neighbour's. The two claims above cannot see that; this can.
+             noDrawnLabelBuriesAnotherMarker: audit.checked > 0 && audit.markersBuriedByOtherLabels === 0,
              labelWorstReservedDisplacementPx: audit.worstReservedDisplacementPx,
              labelWorstDisplacementEm: audit.worstDisplacementEm,
              // Beside its node, measured in the label's own type size so the
