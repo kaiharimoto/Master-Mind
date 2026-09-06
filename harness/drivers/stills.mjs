@@ -1137,9 +1137,20 @@ export default [
   requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true,
               editorWroteToTheModel: true, recencyMatchesModel: true,
               // Only the link and the editor changed — the names included.
-              // Stated as: held its place, or yielded the space one of the two
-              // acted names now occupies, which is this capture's own doing and
-              // is measured as a collision rather than assumed.
+              // BOTH FORMS ARE ASSERTED, strict first.
+              //
+              // Cycle 14 replaced the strict claim with the broad one, and its
+              // Auditor was right to call that the only claim removal in the
+              // set: "a machine-checked assertion that held is no longer being
+              // made", on the property this mission calls sacred. The strict
+              // form was still measuring true when it was dropped, which is the
+              // worst moment to drop it. It is back, and the broader form —
+              // held its place, or yielded the space one of the two acted names
+              // now occupies, measured as a box collision rather than assumed —
+              // stands beside it rather than instead of it. If a future
+              // reframing makes the strict one fail, that failure is a finding
+              // to record, not a claim to widen.
+              everyOtherLabelHeldItsPlace: true,
               everyOtherLabelHeldItsPlaceOrYieldedToAnActedName: true,
               // And the thought whose colour and text the header claims changed
               // is IN both panels, clear of every panel — not merely left of

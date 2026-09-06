@@ -26,7 +26,23 @@ const arg = (name, dflt) => {
 };
 const ONLY = (arg('--only', '') || '').split(',').filter(Boolean);
 const OUTDIR = resolve(ROOT, arg('--out', 'evidence'));
-const CYCLE = arg('--cycle', '0');
+// WHICH CYCLE THIS SET BELONGS TO.
+//
+// The flag first; then `evidence/CYCLE`, written by cycle.mjs before the
+// capture runs; and only then the previous manifest. That last fallback is
+// right for a `--only` recapture inside a cycle and wrong for the first run of
+// a new one — cycle 14 was captured without a flag and stamped itself 13 all
+// the way into the frozen set's own address, which its Auditor found.
+const CYCLE = (() => {
+  const flag = arg('--cycle', null);
+  if (flag) return flag;
+  const f = resolve(OUTDIR, 'CYCLE');
+  if (existsSync(f)) {
+    const n = readFileSync(f, 'utf8').trim();
+    if (n && !Number.isNaN(Number(n))) return n;
+  }
+  return '0';
+})();
 const TMP = resolve(ROOT, '.capture-tmp');
 
 // A capture run that produced every artifact can still exit non-zero — a promise

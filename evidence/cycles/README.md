@@ -80,3 +80,37 @@ open:
   incident above, by a different route.
 - Re-freezing an existing `cycles/cycle-N` requires `--refreeze` and refuses
   otherwise, naming how many artifacts the set it is replacing had captured.
+
+## cycle-14 records itself as cycle 13, and is left that way on purpose
+
+The frozen `cycles/cycle-14/` set is internally mislabelled. `MANIFEST.json`
+reads `"cycle": 13`, every artifact reads `"capturedInCycle": 13`, and
+`DIFF.json` reads `"cycle": 13, "previousCycle": 13` — a record stating on its
+face that it diffed a cycle against itself. The cycle-14 Auditor found it and
+scored it a major finding; its verdict is in
+`evidence/critics/auditor-cycle-14.md`.
+
+The cause is procedural. `run-capture.mjs` inherits the previous manifest's
+cycle number when it is not told one, which is right for a `--only` recapture
+inside a cycle and wrong for the first run of a new one. Cycle 14 was captured
+by running the capture directly and then frozen with `cycle.mjs 14
+--skip-capture`, which named the directory and wrote the ledger but did not
+restamp the records inside it.
+
+**The frozen files are not edited to correct it.** A frozen set is what the
+critics read, and three verdicts were written against these bytes; rewriting
+them now would make the ledger disagree with the review, which is a worse fault
+than the one it fixes. The correction lives here, in the critic's verdict, and
+in `report.md`.
+
+Three machine checks were added so it cannot recur:
+
+- The cycle number is written to `evidence/CYCLE` by `cycle.mjs` **before** the
+  capture runs, and `run-capture.mjs` reads it when no `--cycle` flag is given —
+  so a standalone capture during cycle N stamps N.
+- `cycle.mjs` refuses to freeze a working set whose `MANIFEST.cycle` does not
+  match the cycle it was invoked with, and lists any artifact carried over from
+  an earlier cycle.
+- `diff-evidence.mjs` records `cycleAdvanced` and a `cycleDisagreement` line
+  whenever a set claims a cycle that does not follow the one it is diffed
+  against.

@@ -63,6 +63,21 @@ if (!skipCapture && existsSync(join(EV, 'MANIFEST.json')) && existsSync(historyP
   console.log(`archived the working set to evidence/history/cycle-${cycle - 1}`);
 }
 
+// 1b. THE CYCLE NUMBER IS WRITTEN DOWN BEFORE ANYTHING IS CAPTURED.
+//
+// `run-capture.mjs` inherits the previous manifest's cycle when it is not told
+// one, which is right for a `--only` recapture inside a cycle and wrong for the
+// first run of a new one. Cycle 14 was captured by running the capture directly
+// and frozen by running this with --skip-capture, so the directory advanced to
+// cycle-14 while every record inside it kept saying 13 — the manifest, all
+// twenty `capturedInCycle` fields, and a DIFF header reading `cycle 13 ·
+// previousCycle 13`. Its Auditor found it and was right to call it a major.
+//
+// The number now lives in a file the capture reads, written here before the
+// capture runs, so a standalone `run-capture.mjs` during cycle N stamps N.
+writeFileSync(join(EV, 'CYCLE'), `${cycle}\n`);
+console.log(`working set marked as cycle ${cycle} (evidence/CYCLE)`);
+
 // 2. Recapture the whole fixed set.
 if (!skipCapture) {
   rmSync(resolve(ROOT, '.capture-tmp'), { recursive: true, force: true });
@@ -151,6 +166,24 @@ const diff = await diffEvidence(EV, prevDir);
 writeFileSync(join(EV, 'DIFF.json'), JSON.stringify(diff, null, 2));
 console.log(`diff vs cycle-${cycle - 1} (${prevDir === frozenPrev ? 'frozen set' : 'working snapshot — no frozen set found'}): ${JSON.stringify(diff.summary)}`);
 console.log(`positions: ${diff.positions.compared ? (diff.positions.identical ? 'IDENTICAL' : `${diff.positions.moved.length} MOVED`) : 'no previous set'}`);
+
+// 4b. AND THE FREEZE REFUSES A SET THAT DOES NOT KNOW WHICH CYCLE IT IS.
+//
+// The guard is here as well as in the differ because this is the step that
+// names the directory: freezing a set that calls itself cycle 13 into
+// `cycles/cycle-14` is how the records and their own address came apart.
+{
+  const man = JSON.parse(readFileSync(join(EV, 'MANIFEST.json'), 'utf8'));
+  if (Number(man.cycle) !== cycle) {
+    console.error(`REFUSING TO FREEZE: the working set describes itself as cycle ${man.cycle}, ` +
+                  `and this is cycle ${cycle}. Recapture with --cycle ${cycle} (or run this ` +
+                  'without --skip-capture) so the records and the directory agree.');
+    process.exit(2);
+  }
+  const stale = (man.artifacts ?? []).filter(a => a.capturedInCycle !== cycle);
+  if (stale.length)
+    console.log(`carried over from an earlier cycle: ${stale.map(a => `${a.id}@${a.capturedInCycle}`).join(', ')}`);
+}
 
 // 5. Freeze the set the critics read.
 //

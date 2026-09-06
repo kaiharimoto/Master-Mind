@@ -6,9 +6,10 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T14:52:23.806Z",
+  "lastRunAt": "2026-09-06T15:01:38.904Z",
   "lastRunCaptured": [
-    "08"
+    "08",
+    "09"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -3416,7 +3417,7 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.8,
+      "seconds": 3.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -3598,7 +3599,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T14:52:25.820Z"
+      "fileMtime": "2026-09-06T15:01:41.147Z"
     },
     {
       "id": "09",
@@ -3606,7 +3607,7 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.2,
+      "seconds": 3.4,
       "status": "captured",
       "error": null,
       "check": {
@@ -3653,6 +3654,14 @@
           },
           {
             "claim": "recencyMatchesModel",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyOtherLabelHeldItsPlace",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -3860,6 +3869,7 @@
           "linkedAfter": "b5bea41b6c62",
           "editorWroteToTheModel": "b5bea41b6c62",
           "recencyMatchesModel": "b5bea41b6c62",
+          "everyOtherLabelHeldItsPlace": "b5bea41b6c62",
           "everyOtherLabelHeldItsPlaceOrYieldedToAnActedName": "b5bea41b6c62",
           "editedThoughtVisibleInBothPanels": "b5bea41b6c62",
           "bothEndsVisibleInBothPanels": "b5bea41b6c62",
@@ -3868,8 +3878,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:07.532Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T15:01:45.260Z"
     },
     {
       "id": "10",
@@ -6570,15 +6580,15 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T14:52:28.126Z",
+  "finishedAt": "2026-09-06T15:01:46.867Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 826994,
     "sha256": "10c188b09545c35e81cb410984e9f463e024ef3e937857bc5964d72314b08313",
     "appSha": "10c188b09545c35e",
-    "gitHead": "38ad54324b74",
-    "gitHeadAt": "2026-09-06T14:33:30+00:00",
+    "gitHead": "221fe405f879",
+    "gitHeadAt": "2026-09-06T14:59:39+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,

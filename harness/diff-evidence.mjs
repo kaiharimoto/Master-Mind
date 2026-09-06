@@ -420,6 +420,23 @@ export async function diffEvidence(curDir, prevDir) {
       `${prevManifest.captured ?? '—'} captured, but the directory being diffed is cycle ` +
       `${previousCycle} holding ${prevFilesOnDisk} artifact files; the derived values are used`
     : null;
+  // A SET THAT DOES NOT ADVANCE ITS OWN CYCLE NUMBER IS A BROKEN RECORD.
+  //
+  // Cycle 14 shipped a frozen set whose MANIFEST.cycle read 13, whose every
+  // artifact read capturedInCycle 13, and whose DIFF read `cycle 13 ·
+  // previousCycle 13` — a record asserting on its face that it diffed a cycle
+  // against itself. Its Auditor found it. The cause was procedural (a capture
+  // run that was never told the number, and a freeze that named the directory
+  // without restamping the records inside it), and the fix for a procedural
+  // fault is a machine check.
+  header.cycleAdvanced = cur.cycle != null && previousCycle != null
+    ? cur.cycle > previousCycle : null;
+  header.cycleDisagreement = header.cycleAdvanced === false
+    ? `this set calls itself cycle ${cur.cycle} and is being diffed against cycle ` +
+      `${previousCycle}: a cycle cannot follow itself. The working manifest was not ` +
+      `stamped with this cycle's number — capture with --cycle N, or freeze with ` +
+      `cycle.mjs which now stamps it.`
+    : null;
   header.rowsVsCapturedPrev = rows.filter(r => r.verdict !== 'new').length !== prevFilesOnDisk
     ? `MISMATCH: ${rows.filter(r => r.verdict !== 'new').length} comparable rows against ` +
       `${prevFilesOnDisk} previous files`
@@ -526,6 +543,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   for (const r of out.rows) console.log(`  ${r.id}  ${String(r.verdict).padEnd(12)} ssim ${r.ssim === undefined ? '—' : r.ssim?.toFixed(4)} (>= ${r.threshold})` +
     (r.whatChanged ? `\n        ${r.substantive ? 'SUBSTANTIVE — ' : ''}${r.whatChanged}` : ''));
   if (out.headerDisagreement) console.log(`header: ${out.headerDisagreement}`);
+  if (out.cycleDisagreement) console.error(`CYCLE: ${out.cycleDisagreement}`);
   if (out.rowsVsCapturedPrev !== 'ok') console.log(`rows: ${out.rowsVsCapturedPrev}`);
   console.log(`positions ${out.positions.compared ? (out.positions.identical ? 'IDENTICAL' : `${out.positions.moved.length} moved`) : 'not compared'}`);
   console.log(JSON.stringify(out.summary));
