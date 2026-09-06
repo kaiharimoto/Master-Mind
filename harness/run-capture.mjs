@@ -844,6 +844,18 @@ async function runDriver(d) {
         panelRuntimes: { windows: prov.w.runtime, android: prov.a.runtime },
         panelRasterisers: { windows: prov.w.gl, android: prov.a.gl },
         nodeCount: { windows: Object.keys(pw0).length, android: Object.keys(pa0).length },
+        // THE SAME PROVENANCE CLAIMS AS 12, on the artifact that needs them
+        // most. The cycle-11 Auditor's m5: 11 is a hard-gate artifact whose
+        // two panels are pixel-identical, it PRINTS all of this provenance on
+        // the frame, and it carried exactly one claim — so the one honest way
+        // to read those identical canvases as two processes agreeing rather
+        // than one render pasted twice was asserted nowhere.
+        twoDistinctSockets: prov.w.socket !== prov.a.socket &&
+                            Number.isFinite(prov.w.socket) && Number.isFinite(prov.a.socket),
+        panelRuntimesDiffer: !!prov.w.runtime && !!prov.a.runtime &&
+          (prov.w.runtime !== prov.a.runtime || prov.w.platform !== prov.a.platform),
+        eachPanelNamesItsRasteriser: !!prov.w.gl && !!prov.a.gl &&
+          prov.w.gl !== 'unavailable' && prov.a.gl !== 'unavailable',
       };
       const movedOnly = (before0, after0) => {
         const ks = new Set([...Object.keys(before0), ...Object.keys(after0)]);
@@ -975,7 +987,20 @@ function checkClaims(d, result) {
     let pass;
     if (typeof want === 'function') pass = !!want(got);
     else pass = got === want;
-    claims.push({ claim: key, expected: typeof want === 'function' ? '(predicate)' : want, actual: got, pass });
+    // THE ACCEPTANCE RULE IS FINGERPRINTED, NOT ONLY ITS NAME.
+    //
+    // The cycle-11 Auditor's M2: artifacts 02 and 06 each gained a
+    // machine-checked claim while their recipe fingerprints stayed
+    // byte-identical, and the cross-cycle claim diff compares names only — so a
+    // claim WEAKENED rather than renamed would leave no trace at all, and for a
+    // predicate reporting a bare `true` the expected/actual/pass triple proves
+    // nothing. The rule's own source is hashed here and diffed across cycles.
+    const sha = createHash('sha256')
+      .update(typeof want === 'function' ? String(want) : JSON.stringify(want) ?? 'undefined')
+      .digest('hex').slice(0, 12);
+    claims.push({ claim: key, expected: typeof want === 'function' ? '(predicate)' : want, actual: got, pass,
+                  rule: typeof want === 'function' ? String(want).replace(/\s+/g, ' ').slice(0, 120) : String(want),
+                  ruleSha: sha });
     if (!pass) failed.push(`${key} = ${JSON.stringify(got)}`);
   }
   return { ok: !failed.length, claims, why: failed.length ? `declared claim(s) not met: ${failed.join('; ')}` : undefined };
@@ -1050,7 +1075,16 @@ for (const d of list) {
                             surface: d.surface ?? null, lens: d.lens ?? null,
                             // Not the declared surface — the runtime that ran.
                             runtimes: runtimes ?? null,
-                            fnSha: createHash('sha256').update(String(d.run)).digest('hex').slice(0, 16) },
+                            fnSha: createHash('sha256').update(String(d.run)).digest('hex').slice(0, 16),
+                            // The claim predicates live partly in the app
+                            // bundle, outside the capture script the fnSha
+                            // covers. Recording it per artifact makes "same
+                            // recipe, different judge" visible in the diff
+                            // instead of leaving a reader to notice the build
+                            // moved.
+                            appSha: BUILD.sha256.slice(0, 16),
+                            // Every declared claim's acceptance rule, hashed.
+                            claimShas: Object.fromEntries(claims.claims.map(c => [c.claim, c.ruleSha])) },
                   // WHICH CYCLE THIS FILE CAME FROM. capturedInThisRun answers a
                   // narrower question — a cycle is several runs, since a single
                   // artifact is often recaptured while its driver is worked on —

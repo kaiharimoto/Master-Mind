@@ -8,6 +8,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, statSync, readdirSy
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /**
@@ -145,6 +146,18 @@ export async function diffEvidence(curDir, prevDir) {
         ? 'contact sheet, 20 frames spanning the take'
         : 'the take itself, full duration at 480 px wide';
     }
+    // BYTE-IDENTITY, MEASURED FROM THE FILES. Recorded as its own condition
+    // rather than left to show up as SSIM 1.000, which an artifact that merely
+    // changed imperceptibly also produces.
+    {
+      const ha = createHash('sha256').update(readFileSync(A)).digest('hex');
+      const hb = createHash('sha256').update(readFileSync(B)).digest('hex');
+      row.sha256 = ha.slice(0, 12);
+      if (ha === hb) {
+        row.identicalBytes = true;
+        row.capturedAt = a.fileMtime ?? a.capturedAt ?? null;
+      }
+    }
     row.ssim = a.kind === 'mp4' ? await ssimVideos(B, A) : await ssimImages(B, A);
     if (a.kind === 'mp4') {
       const [pa, pb] = [await probe(A), await probe(B)];
@@ -226,6 +239,32 @@ export async function diffEvidence(curDir, prevDir) {
           row.substantiveClaimChange = true;
         }
       }
+      // A CLAIM CAN BE WEAKENED WITHOUT BEING RENAMED, and the name diff above
+      // cannot see that. The cycle-11 Auditor's M2: for a predicate reporting a
+      // bare `true`, the expected/actual/pass triple proves nothing about the
+      // predicate, so a rule quietly relaxed from `n >= 4` to `n >= 1` would
+      // leave no trace anywhere in this file. Each claim's acceptance rule is
+      // hashed at capture time; the hashes are compared here, and a rule that
+      // changed on a claim that kept its name is reported with both texts.
+      const rules = (x) => Object.fromEntries((x?.claims?.claims ?? [])
+        .filter(c => c.ruleSha).map(c => [c.claim, { sha: c.ruleSha, text: c.rule }]));
+      const pRules = rules(prevById.get(a.id)), cRules = rules(a);
+      const changedRules = Object.keys(cRules)
+        .filter(k => pRules[k] && pRules[k].sha !== cRules[k].sha)
+        .map(k => ({ claim: k, before: pRules[k].text, after: cRules[k].text }));
+      if (changedRules.length) {
+        row.claimRulesChanged = changedRules;
+        row.substantiveClaimChange = true;
+      } else if (!Object.keys(pRules).length && Object.keys(cRules).length) {
+        // Said out loud rather than left to look like agreement: the previous
+        // set predates rule fingerprinting, so nothing here can rule out a
+        // weakened rule for this cycle's comparison.
+        row.claimRulesUncomparable = 'the previous set carries no claim-rule fingerprints';
+      }
+      // The judge can move without the recipe moving: the predicates that
+      // PRODUCE these values live partly in the app bundle.
+      const pa = prevById.get(a.id)?.recipe?.appSha, ca = a.recipe?.appSha;
+      if (pa && ca && pa !== ca) row.appShaChanged = `${pa} -> ${ca}`;
     }
     // A similarity number cannot distinguish a re-framing from a bug fix from a
     // change to what the artifact demonstrates. The recipe fingerprint can, so
@@ -343,7 +382,7 @@ export async function diffEvidence(curDir, prevDir) {
                   // deliver it. The runtime evidence is in the pixels: the idle
                   // windows in the video artifacts, where that critic measured
                   // no marker moving more than 0.14 px.
-                  what: 'the seed ledger as each capture left it — not a runtime drift measure; ' +
+                  what: 'the committed ledger after each capture wrote back — not a runtime drift measure; ' +
                         'runtime stillness is evidenced by the idle windows in artifacts 16, 17, 19 and 20' };
   }
 
@@ -392,6 +431,20 @@ export async function diffEvidence(curDir, prevDir) {
   // know which. Said here rather than left to be inferred from the rows.
   const fallback = rows.filter(r => r.ssimMethod && r.ssimMethod.startsWith('the take'));
   const notes = [];
+  // A CHANGED RECIPE OUTRANKS EVERY OTHER NOTE. It means the artifact is not a
+  // like-for-like recapture, which is the most audit-relevant fact this file
+  // can carry — and in cycle 11 the two artifacts whose capture script actually
+  // changed got no top-level line at all, so a reader scanning `notes` saw
+  // "claims added" and "below threshold" and had to reach into `rows` to learn
+  // the recipes had moved. The cycle-11 Auditor's m2.
+  for (const r of rows.filter(r => r.recipeFingerprintChanged))
+    notes.push(`${r.id} ${r.file}: RECIPE CHANGED — ${r.whatChanged ?? 'capture script fingerprint moved'}` +
+               ` — not a like-for-like recapture`);
+  // A WEAKENED RULE IS AS REPORTABLE AS A DELETED CLAIM.
+  for (const r of rows.filter(r => r.claimRulesChanged?.length))
+    for (const c of r.claimRulesChanged)
+      notes.push(`${r.id} ${r.file}: CLAIM RULE CHANGED — ${c.claim}: "${c.before}" -> "${c.after}"` +
+                 ` — the name is the same and what it accepts is not`);
   // The prose the summary carries. It was empty in cycle 8 while two artifacts
   // had moved materially, so nothing wrote the change up and only the numbers
   // said it.
@@ -415,6 +468,14 @@ export async function diffEvidence(curDir, prevDir) {
     notes.push(`${r.id} ${r.file}: ssim ${r.ssim.toFixed(4)} is below its ${r.threshold} threshold` +
                `${r.subjectChanged ? ' and the lit subject moved' : ''} — inspect`);
   }
+  // BYTE-IDENTITY IS A CONDITION, NOT AN ABSENCE. Artifacts 01 and 15 were
+  // byte-identical to the previous cycle and DIFF recorded them as "unchanged"
+  // with nothing said, so nothing in the frozen set distinguished a
+  // deterministic recapture from a copied file — the cycle-11 Auditor's m4. The
+  // recapture timestamp that settles it is named in the note.
+  for (const r of rows.filter(r => r.identicalBytes))
+    notes.push(`${r.id} ${r.file}: BYTE-IDENTICAL to the previous cycle (sha ${r.sha256 ?? '—'})` +
+               `${r.capturedAt ? ` — recaptured at ${r.capturedAt}, so this is determinism, not a copy` : ''}`);
   if (fallback.length) notes.push(
     `${fallback.length} video(s) compared as takes rather than through their contact sheets ` +
     `(${fallback.map(r => r.id).join(', ')}) — the sheets changed shape this cycle. The thresholds in ` +

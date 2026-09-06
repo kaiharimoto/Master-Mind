@@ -184,6 +184,53 @@ export function wrapCaption(text, cellW, size = 13, maxLines = 5) {
            overlong: lines.filter(l => l.length > perLine).length };
 }
 
+/**
+ * THE DRAWN WIDTH OF A STRING, MEASURED RATHER THAN ESTIMATED.
+ *
+ * `wrapCaption` folds captions on a character-count estimate, which is fine for
+ * a body line that can take another row — but a composite's HEADLINE cannot
+ * wrap, and nothing checked it at all: the cycle-11 Auditor read artifact 14
+ * shipping "Detail x1.1 of app pixels - the pan|" running into the neighbouring
+ * column, while the claim named for that fault, `detailRowInsideFrame`, tested
+ * containment in the FRAME and so could not see it.
+ *
+ * Each string is rendered once, by ffmpeg, through the same font file at the
+ * same size that will draw it into the composite, and the ink extent is read
+ * off the raster. Not a per-character table, not a bold-weight fudge factor —
+ * the actual pixels the actual drawtext produces.
+ */
+export async function inkWidths(texts, { font, size }) {
+  if (!texts.length) return [];
+  // Even dimensions: ffmpeg's gray raster rounds an odd height down and the
+  // last row of text would be read out of a buffer that no longer holds it.
+  const W = 6000, ROW = 2 * Math.ceil(size * 1.1), H = ROW * texts.length;
+  const esc = (t) => String(t).replace(/[\\:']/g, m => '\\' + m);
+  const chain = [`color=c=black:s=${W}x${H}:d=1`,
+    ...texts.map((t, i) => `drawtext=fontfile=${font}:text='${esc(t || ' ')}':x=0:` +
+      `y=${i * ROW + Math.round(size * 0.4)}:fontsize=${size}:fontcolor=white`)].join(',');
+  const raw = await new Promise((res, rej) => {
+    let err = '';
+    const p = spawn('ffmpeg', ['-v', 'error', '-f', 'lavfi', '-i', chain,
+      '-frames:v', '1', '-pix_fmt', 'gray', '-f', 'rawvideo', '-'],
+      { stdio: ['ignore', 'pipe', 'pipe'] });
+    const bufs = [];
+    p.stdout.on('data', d => bufs.push(d));
+    p.stderr.on('data', d => err += d);
+    p.on('close', c => c === 0 ? res(Buffer.concat(bufs)) : rej(new Error(`inkWidths: ${err.slice(-400)}`)));
+  });
+  if (raw.length < W * H) throw new Error(`inkWidths: short raster ${raw.length} of ${W * H}`);
+  return texts.map((_, i) => {
+    let max = 0;
+    for (let y = i * ROW; y < (i + 1) * ROW; y++) {
+      const base = y * W;
+      for (let x = W - 1; x > max; x--) if (raw[base + x] > 24) { max = x; break; }
+    }
+    return max + 1;
+  });
+}
+
+const HEAD_FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
+
 export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, sublabels2 = null, sublabels3 = null, width = 1920, height = 1080 } = {}) {
   const n = inputs.length;
   const cellW = mode === 'h' ? Math.floor(width / n) : width;
@@ -209,7 +256,7 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
             `pad=${cellW}:${cellH}:(ow-iw)/2:${strip}:color=0x120E0B`;
     const esc = (t) => String(t).replace(/[\\:']/g, m => '\\' + m);
     if (labels && labels[i]) {
-      f += `,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:` +
+      f += `,drawtext=fontfile=${HEAD_FONT}:` +
            `text='${esc(labels[i])}':x=20:y=10:fontsize=23:fontcolor=0xEFE6D8`;
     }
     // A second line for provenance: which process rendered this panel, over
@@ -242,6 +289,18 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
         throw new Error(`compose: caption for panel ${i} does not fit ` +
                         `(${w.dropped} line(s) dropped, ${w.overlong} overlong): ${String(src).slice(0, 90)}…`);
     }
+  }
+  // AND NEITHER MAY THE HEADLINE RUN INTO THE NEXT COLUMN. It sits at x=20 in
+  // a cell of cellW, so it has cellW - 20 less a right margin to live in, and
+  // until cycle 12 nothing measured it at all.
+  if (labels) {
+    const texts = labels.map(l => l ?? '');
+    const widths = await inkWidths(texts, { font: HEAD_FONT, size: 23 });
+    const room = cellW - 20 - 14;
+    const over = widths.map((w, i) => ({ i, w, text: texts[i] })).filter(r => r.w > room && r.text);
+    if (over.length)
+      throw new Error(`compose: headline for panel ${over[0].i} is ${over[0].w} px wide with ` +
+                      `${room} px of column: "${over[0].text}"`);
   }
   args.push('-filter_complex', chain, '-map', '[out]', '-frames:v', '1', out);
   await new Promise((res, rej) => {

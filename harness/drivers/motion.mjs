@@ -2,7 +2,7 @@
 import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, touch, sleepFrames, orient } from './util.mjs';
 import { createHash } from 'node:crypto';
 import { ORDER as REPLIES } from '../fixtures/replies.mjs';
-import { wrapCaption } from '../capture.mjs';
+import { wrapCaption, inkWidths } from '../capture.mjs';
 
 /** Turn a list of {at, fn} into an onFrame callback for record(). */
 const script = (steps) => {
@@ -358,8 +358,14 @@ export default [
   id: '11', file: '11_sync_twin_before.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { positionsIdenticalAcrossSurfaces: true },
-  demonstrates: 'twin composite BEFORE: Windows and Android on one map, identical frozen camera', minW: 1920, minH: 1080,
+  // A hard-gate artifact whose two panels are pixel-identical asserts more than
+  // that they match: it asserts that two processes produced them. The frame
+  // prints the sockets, the runtimes and the rasterisers; these are the claims
+  // that make those printed words checkable, and until cycle 12 only artifact
+  // 12 carried them.
+  requires: { positionsIdenticalAcrossSurfaces: true, twoDistinctSockets: true,
+              panelRuntimesDiffer: true, eachPanelNamesItsRasteriser: true },
+  demonstrates: 'twin composite BEFORE: Windows and Android on one map, identical frozen camera, each panel naming the process that drew it', minW: 1920, minH: 1080,
   surface: 'twin', map: 'map-talk', title: 'Twin composite — before',
   pairWith: '12',
   async run(H) { return H.twin(this, 'before'); },
@@ -399,7 +405,7 @@ export default [
   requires: { allThreeKinds: true, rejectionLeftNoTrace: true, rejectedIsGone: true,
               acceptanceLanded: true, cameraFrozenAcrossPanels: true,
               rejectedPairUnjoined: true, detailExceedsPanelScale: true,
-              detailRowInsideFrame: true },
+              detailRowInsideFrame: true, detailHeadingsFitTheirColumns: true },
   demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
   async run(H) {
@@ -675,6 +681,10 @@ export default [
     // equality that could not fail — while glyph descenders were being cut.
     const FOOT = 12;
     const panelH = rects.map(r => Math.round(Math.min(CELL / r.w, (BOT - realStrip - FOOT) / r.h) * r.h));
+    const detailHeads = [`Detail ×${magsOfApp[0]} app px — the panel`,
+                         `Detail ×${magsOfApp[1]} — the pair, before`,
+                         `Detail ×${magsOfApp[2]} — accepted: joined`,
+                         `Detail ×${magsOfApp[3]} — rejected: still apart`];
     await H.compose(cuts, rowB, { mode: 'h', width: 1920, height: BOT,
       // THE HEADLINE IS THE RATIO TO THE APP'S OWN PIXELS.
       //
@@ -685,11 +695,18 @@ export default [
       // looking at 0.77 of the source tells them the opposite of the truth
       // about what they can trust in it. The panel ratio stays as the second
       // number, which is what it always was.
-      labels: [`Detail ×${magsOfApp[0]} of app pixels — the panel`,
-               `Detail ×${magsOfApp[1]} — the pair, before`,
-               `Detail ×${magsOfApp[2]} — accepted: joined`,
-               `Detail ×${magsOfApp[3]} — rejected: still apart`],
+      // MEASURED, NOT ESTIMATED: "Detail ×1.1 of app pixels — the panel" draws
+      // 480 px of ink into a 446 px column and shipped for two cycles reading
+      // "— the pan|". `compose` now measures every headline through the font
+      // that will draw it and refuses one that does not fit, so this is short
+      // enough to be a headline; "of app pixels" is said in full in the caption
+      // below it, where a line can wrap.
+      labels: detailHeads,
       sublabels: caps });
+    // Measured from the SAME array that was drawn — one copy, so the check and
+    // the picture cannot drift apart the way two hand-kept lists always do.
+    const headInk = await inkWidths(detailHeads,
+      { font: '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', size: 23 });
     await H.stack([rowA, rowB], H.out(this.file));
     const posAfter = await SCREEN();
     const remaining = await page.evaluate(() => window.mm.suggestions.map(s => s.kind));
@@ -708,6 +725,17 @@ export default [
              // Strictly inside, with a margin — not merely not-past-the-edge.
              detailRowBottomMarginPx: 1080 - (TOP + realStrip + Math.max(...panelH)),
              detailRowInsideFrame: TOP + realStrip + Math.max(...panelH) <= 1080 - 8,
+             // AND INSIDE ITS OWN COLUMN, which is a different question.
+             // `detailRowInsideFrame` tests the bottom edge, so it passed in
+             // cycles 10 and 11 on a frame whose first heading visibly ran into
+             // the neighbouring column. The headline widths are measured
+             // through the font and size that draw them, against the room each
+             // column actually has; `compose` refuses the frame outright if one
+             // does not fit, and this records the margins that decided it.
+             detailHeadingInkPx: headInk,
+             detailHeadingRoomPx: 1920 / 4 - 34,
+             detailHeadingWorstOverhangPx: Math.max(...headInk.map(w => w - (1920 / 4 - 34))),
+             detailHeadingsFitTheirColumns: headInk.every(w => w <= 1920 / 4 - 34),
              detailNodesFound: (accBox ? accBox.n : 0) + (rejBox ? rejBox.n : 0),
              acceptedId: acceptedSug && acceptedSug.id, acceptedNodes: acceptedSug && acceptedSug.nodes,
              rejectedKind: rejectedSug && rejectedSug.kind, rejectedNodes: rejectedSug && rejectedSug.nodes,
