@@ -1419,6 +1419,85 @@ renderer actually drew**, and reported 23 unleadered on artifact 02 where the
 frame had lines on all of them. The drawn set is reported back to the scene, so
 the claim is measured against the frame instead of against intent.
 
+## Cycle 12 — findings from the work itself, before any critic saw it
+
+Cycle 12's first capture run failed **five of twenty**. Every failure was a
+finding, and three of them were instruments that could not fail for the reason
+they existed — the fault this build keeps rediscovering.
+
+**F-035 — three pixel tests for one district move, and the first two had no
+power.** Artifact 12 asserts that a twenty-thought district moved and that the
+position hash printed on the frame describes the frame. The first test looked
+for a lit marker at each member's *pre-move* projection and found twenty of
+twenty: in a district whose members stand fifteen pixels apart and are nine
+pixels across, a **neighbour** is standing where the cluster used to be. The
+second required nearly all changed pixels to lie on the district's own ground
+and measured 26.5 % — which is not the move's fault at all, because displacing
+twenty nodes makes the label arbiter re-solve and names shift across the whole
+frame. The third asked, per member, whether light arrived at the new position
+and left the old one: eight of twenty, because a rigid translation shorter than
+the district's own extent lands most members on their neighbours' old ground.
+
+The question a rigid translation actually answers is **where the region went**.
+The district's box is lifted out of a frame taken before the move at the same
+frozen camera and slid over the shipped frame: it matches best at **(45, 49) px,
+within 0.8 px of the (44.3, 49.3) the ledger claims**, out of a ±107 px search.
+Two faults inside that search had to be fixed first — absolute-difference
+scoring preferred *"it did not move"* on a field full of other lit nodes, and
+the lattice stepped from `-reach` so `(0, 0)` was never evaluated: a search that
+could not return the null answer.
+
+**F-036 — the move-closer pose buys nothing the label layer can show, and that
+is the finding.** The cycle-11 Audience asked for a dolly that visibly buys
+legibility "or the pose isn't worth the gesture". Measured four ways it does
+not: not more names (58 → 55), not more names written out in full (16 → 12),
+not larger type (17.5 px at both distances, because at whole-map framing on a
+150-node map every label is already at the size floor). Raising the pose's gain
+from 1.5 % to 3.5 % per step — a real improvement, kept — took the dolly from
+1.15× to 1.38× and changed none of it. Three claims were written and withdrawn
+before the true one: the frame may not *promise* legibility it cannot deliver,
+so both panels are asserted to carry no "move closer to read them", and every
+number is printed beside them. **A limitation recorded is worth more than a
+threshold tuned until it passes.**
+
+**F-037 — an apostrophe cannot be escaped inside a single-quoted ffmpeg
+argument.** Wrong since the first composite, invisible until a caption first
+contained the word "district's", and then it took down an entire capture with a
+wall of filter syntax. `\'` is invalid there and the shell idiom `'\''` renders
+as nothing; the typographic right quote needs no escaping and the font has it.
+
+**F-038 — a declared dependency that nothing enforced.** `--only 12` produced an
+artifact with every claim `undefined` and no error to read, because artifact 12
+is the second half of a twin sequence whose first half leaves the state it
+photographs. `pairWith` had declared that since cycle 3. The selector honours it
+now and says when it widens.
+
+**F-039 — re-running a cycle number overwrote the previous cycle's archive.**
+`history/cycle-N` was rewritten on every run of cycle N+1, so a cycle that
+needed a second run — which cycle 12 did — would copy its working set over the
+snapshot of the cycle before. That is the cycle-7 overwrite incident by a
+different door. A history directory is written once per cycle number now, and
+re-freezing an existing set requires `--refreeze` and names what it replaces.
+Both are disclosed in `evidence/cycles/README.md`.
+
+**F-040 — a caption that outran the detector, and an audit that outran the
+frame.** Artifact 17's operation caption asserted a pose while the hand panel in
+the same frame read `conf 0.00`. The app fix was right; the audit written to
+check it was not, and reported 35 further disagreements the frames did not
+contain — it read the caption's state from the DOM and the detector's pose from
+`hands.frame`, but the detector runs *between* renders, so it compared a
+decision made at render time against a state read afterwards. The app now writes
+down what the caption claimed and what it claimed it against, together, at the
+moment it drew them.
+
+**F-041 — an undo stack that emptied without giving the map back.** Artifact 17
+ends by clicking Undo until nothing is left to undo, and claims the map returns
+to its starting layout bit-for-bit. It did not, and the claim caught it: a hand
+grab is released by the hand *leaving*, which never happens if tracking is
+switched off mid-hold, and the mouse drag that followed called `beginMove()` and
+replaced the pending group — losing the last fist's coordinates. `beginMove()`
+closes an open group first, and switching tracking off releases the grab.
+
 ## Cycle 11 — 84.5, and category 03 falls for the first time
 
 Cycle 11 captured 20 of 20. **It scored 84.5 — 22 + 21 + 16 + 13 + 8 + 4.5 —
