@@ -398,6 +398,33 @@ tier — capped so it can never promote a plain node past a search hit — so a
 thought that joins six others is named ahead of a leaf. That was the second half
 of the same critic's correction.
 
+### Amendment, cycle 13 — two critics ruled opposite ways on the stub, and the reconciliation is the same one that admitted it
+
+The cycle-11 Art Director asked for the compressed identity and scored the
+category at its minimum without it. The cycle-12 Audience, looking at the result,
+judged three-character stubs — "Bed…", "Amy…", "Fil…" — to be *"ink without a
+thought"*, noted that the total of unreadable labels was essentially unchanged
+from the cycle before, and asked for a minimum useful truncation: at least one
+whole word, or drop the label to the list.
+
+Both are right about what they looked at, and neither is overruled here. The
+Art Director owns this call under §04 and the tier stays; the Audience's
+substance is answered by making the stub carry more:
+
+**Decision.** A compressed identity carries a **whole word wherever one fits**.
+The length is the longer of the uniqueness floor and the first word boundary at
+or below `STUB_MAX + 4`. Uniqueness still governs the floor, so nothing becomes
+ambiguous by growing. Measured on the 150-node map at canvas framing: **27
+stubs instead of 35, every one of them carrying a word** — "Bed depth…",
+"Kombucha…", "Solera…", "Koji on…" — and 65 names drawn against 34 before the
+tier existed. The badge stops calling them first letters, because they are not
+that any more.
+
+What is conceded to the Audience and not fixed: at whole-map framing on a
+150-node map the count of thoughts a frame cannot name is still 85 of 150. The
+tier moved a large number of them from *unnamed* to *identified*, and it did not
+move the wall.
+
 ## D-013 · Node hues render at one reference lightness  · cycle 3 · SETTLED
 
 D-006 declares a luminance ladder — plain 0.50, connected 0.72, unplaced 0.86,

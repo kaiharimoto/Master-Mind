@@ -4,6 +4,24 @@ import { createHash } from 'node:crypto';
 import { ORDER as REPLIES } from '../fixtures/replies.mjs';
 import { wrapCaption, inkWidths } from '../capture.mjs';
 
+/**
+ * The chrome audit AT A PANEL'S OWN SHUTTER, combined across a composite.
+ *
+ * A composite's panels are separate moments, so asking the live page once at
+ * the end says nothing about the frames that shipped. Sampled beside each shot
+ * and merged: the worst overlap across the panels, and every off-frame badge.
+ */
+const chromeAt = (page) => page.evaluate(() => window.mm.chromeAudit());
+const mergeChrome = (list) => ({
+  chromePanels: list.length,
+  chromeOverlappingPairs: list.reduce((t, c) => t + c.overlapping, 0),
+  chromeWorstOverlapPx: Math.max(0, ...list.map(c => c.worstOverlapPx)),
+  chromeOverlaps: list.flatMap(c => c.pairs).slice(0, 8),
+  chromeOffFrame: list.flatMap(c => c.offFrame),
+  noTwoChromePanelsOverlap: list.every(c => c.noTwoChromePanelsOverlap),
+  everyChromeBadgeInsideTheFrame: list.every(c => c.everyChromeBadgeInsideTheFrame),
+});
+
 /** Turn a list of {at, fn} into an onFrame callback for record(). */
 const script = (steps) => {
   const byFrame = new Map();
@@ -27,7 +45,10 @@ export default [
               chipPromisesNoLegibilityItCannotDeliver: true,
               // The still titled "Hand tracking live" shows a live detection in
               // both of its panels, or it is a failed capture.
-              detectorLiveInBothPanels: true },
+              detectorLiveInBothPanels: true,
+              // The undo chip was painted over "dist 126.9" in the webcam
+              // readout — the frame covering one of its own measurements.
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true },
   demonstrates: 'Windows hand tracking: an open-palm move-closer shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
@@ -93,6 +114,7 @@ export default [
     });
     const countBefore = await nameCount();
     const chipBefore = await chipText();
+    const chrome05 = [await chromeAt(page)];
     const namedBefore = countBefore.drawn;
     const before = await H.tmpShot(page, cdp, '05a', 800);
 
@@ -143,6 +165,7 @@ export default [
     }
     const countAfter = await nameCount();
     const chipAfter = await chipText();
+    chrome05.push(await chromeAt(page));
     const namedAfter = countAfter.drawn;
     const after = await H.tmpShot(page, cdp, '05b', 800 + (held + 1) * 33.3);
     // READ OFF THE FRAME, not from the model after it. The headline was taking
@@ -258,6 +281,7 @@ export default [
              // and this asserts, on both panels, that no such promise is on the
              // frame. Every number above is printed beside it.
              hiddenChipBefore: chipBefore, hiddenChipAfter: chipAfter,
+             ...mergeChrome(chrome05),
              detectorAtShutter: { pose: shot05.pose, present: shot05.present,
                                   conf: +Number(shot05.conf ?? 0).toFixed(3) },
              confidenceBefore: +Number(f.confidence ?? 0).toFixed(3),
@@ -275,7 +299,13 @@ export default [
   id: '08', file: '08_placement_endstate.png', kind: 'png',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { placed: true, stableAfterDrop: true, cameraFrozenAcrossPanels: true },
+  // The frame's whole job is to be read, and in cycle 12 the framing notice was
+  // drawn across the very chip naming the thought it is about — clipping the
+  // last letter of "Steal the parking-lot bit" and the top of its ring. Asked
+  // of BOTH panels at their own shutters, because a composite's panels are
+  // separate moments and the live page at the end describes neither.
+  requires: { placed: true, stableAfterDrop: true, cameraFrozenAcrossPanels: true,
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true },
   demonstrates: 'placement before/after under one frozen camera: one node leaves holding for a permanent position and every other node projects to the same point', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Placement end-state',
   async run(H) {
@@ -317,6 +347,8 @@ export default [
       window.mm.scene.screenPositions().filter(p => p.id !== skip)
         .map(p => [p.id, +p.x.toFixed(2), +p.y.toFixed(2)])), id);
     const othersBefore = await OTHERS();
+    const chrome08 = [];
+    chrome08.push(await chromeAt(page));
     const a = await H.tmpShot(page, cdp, '08a');
 
     const from = await SCREEN_OF(page, id);
@@ -339,6 +371,7 @@ export default [
     if (!landed || landed.x > edLeft - 60)
       throw new Error(`08: the dropped node landed under the editor panel (x ${landed && landed.x} vs panel ${edLeft})`);
     const othersAfter = await OTHERS();
+    chrome08.push(await chromeAt(page));
     const b = await H.tmpShot(page, cdp, '08b');
     await H.compose([a, b], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
       labels: [`Before — unplaced, waiting in holding (${beforeCount})`,
@@ -350,6 +383,7 @@ export default [
     await sleepFrames(page, 0, 30);
     const settled = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
     return { node: 'Steal the parking-lot bit', beforeCount, afterCount,
+             ...mergeChrome(chrome08),
              placed: await page.evaluate(i => window.mm.store.doc.nodes[i].placed, id),
              beforePos, afterPos, stableAfterDrop: JSON.stringify(afterPos) === JSON.stringify(settled),
              cameraFrozenAcrossPanels: othersBefore === othersAfter };
