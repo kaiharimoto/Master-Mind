@@ -119,6 +119,23 @@ const labelAudit = async (page) => {
  * artifact is a payload, not evidence. What survives into the manifest is the
  * count that failed and the worst few, by id and contrast.
  */
+/**
+ * NO PIECE OF CHROME SITS ON ANOTHER, AND NONE OF IT IS OUTSIDE THE PICTURE.
+ *
+ * Read off the shipped DOM by the app's own audit. This existed as three
+ * separate per-element rules and a critic found a fourth violation each cycle;
+ * it is one question asked of every opaque overlay now, and every artifact that
+ * carries chrome declares it.
+ */
+const chrome = async (page) => {
+  const c = await page.evaluate(() => window.mm.chromeAudit());
+  return { chromeChecked: c.checked, chromeOverlappingPairs: c.overlapping,
+           chromeWorstOverlapPx: c.worstOverlapPx, chromeOverlaps: c.pairs,
+           chromeOffFrame: c.offFrame,
+           noTwoChromePanelsOverlap: c.noTwoChromePanelsOverlap,
+           everyChromeBadgeInsideTheFrame: c.everyChromeBadgeInsideTheFrame };
+};
+
 const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
   const a = await labelAudit(page);
   const anchors = a.labelAnchors ?? [];
@@ -174,7 +191,7 @@ const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
                   JSON.stringify([byId.get(row.id).x, byId.get(row.id).y, byId.get(row.id).r]), row.text);
   }
   const m = await H.sampleDiscs(H.out(file), anchors);
-  return { ...a, markerContrast: m,
+  return { ...a, ...(await chrome(page)), markerContrast: m,
            labelsWithoutVisibleMarker: m.invisible ?? null,
            everyDrawnLabelHasAVisibleMarker: m.checked > 0 && m.invisible === 0,
            // THE AUDIT AND THE IMAGE MUST BE THE SAME FRAME.
@@ -335,6 +352,11 @@ export default [
 {
   id: '02', file: '02_canvas_large_map.png', kind: 'png',
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
+              // Three cycles running a critic found one overlay sitting on
+              // another, each fixed where it was found and the next appearing
+              // somewhere else. Asked of every opaque overlay now, on every
+              // artifact that carries chrome.
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
               everyLabelInsideTheFrame: true,
               // The cycle-8 Auditor called 02 a regression: +85.5 % label ink,
               // three unreadable overprinted pairs where cycle 7 had none, and
@@ -538,6 +560,11 @@ export default [
 {
   id: '04', file: '04_mind_expansion.png', kind: 'png',
   requires: { cameraPinned: true, nodes: (n) => n === 150, labelArbiterAgreesWithDraw: true,
+              // Three cycles running a critic found one overlay sitting on
+              // another, each fixed where it was found and the next appearing
+              // somewhere else. Asked of every opaque overlay now, on every
+              // artifact that carries chrome.
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
               everyLabelInsideTheFrame: true, recencyChannelExercised: true,
               allFiveStatesAtWholeMapDensity: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
@@ -604,6 +631,11 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
+              // Three cycles running a critic found one overlay sitting on
+              // another, each fixed where it was found and the next appearing
+              // somewhere else. Asked of every opaque overlay now, on every
+              // artifact that carries chrome.
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
               countMatchesMarkers: true, everyHeldLabelAttributable: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
               everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true,
@@ -787,8 +819,15 @@ export default [
   // It was gated on the framebuffer measure alone, which is the space the
   // palette is solved in — so the gate could not fail for the reason the
   // cycle-8 Art Director's measurement raised. Both are required now.
+  // AND THE REFERENCE FRAME FOR THE STATE VOCABULARY IS THE CLEANEST IN THE SET.
+  // The cycle-11 Art Director read a clipped, unreadable fragment sitting ten
+  // pixels above the legend's top edge — the search breakdown, whose own
+  // placement rule assumed panels open on the right while this frame's legend
+  // opens on the left. In the same frame the labels-hidden badge had been
+  // pushed to x = -76 by the same wrong rule.
   requires: { ok: true, ladderMonotonic: true, ladderStepsClearScatter: true,
-              ladderMonotonicInRelLuminance: true, ladderStepsClearScatterInRelLuminance: true },
+              ladderMonotonicInRelLuminance: true, ladderStepsClearScatterInRelLuminance: true,
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true },
   demonstrates: 'the five node states side by side with the legend, with the luminance ladder measured off the shipped frame', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Five node states staged',
   async run(H) {
@@ -870,7 +909,7 @@ export default [
     };
     const L = ladder(v => v.luma), R = ladder(v => v.relLuminance);
     const rung = L.rung, spread = L.spread, steps = L.steps, present = L.present;
-    return { statesInFrame: [...seen].sort(), byNode: states,
+    return { statesInFrame: [...seen].sort(), byNode: states, ...(await chrome(page)),
              // Named for what it is: Rec.709 weights on the encoded framebuffer
              // bytes. It is NOT relative luminance and is no longer called that.
              measuredRungsLuma709: rung, withinRungSpreadLuma709: spread, rungStepsLuma709: steps,

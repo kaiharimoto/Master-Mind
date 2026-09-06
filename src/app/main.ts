@@ -697,20 +697,22 @@ export class App {
     // ANCHORED UNDER THE SEARCH BOX, and kept clear of whatever panel is open.
     // Pinned to the top right it was drawn underneath the editor — which the
     // flight opens, every time, because flying to a hit selects it — so the
-    // breakdown existed and no reader could see it. It is measured into place
-    // instead: under the input it explains, shifted left of any open panel.
+    // breakdown existed and no reader could see it. It is measured into place:
+    // under the input it explains, then through the one placement rule, which
+    // knows a panel can open on either side. Its own copy of that rule assumed
+    // the right and left this chip ten pixels above the node-states legend on
+    // artifact 07, reading as a clipped fragment.
     const box = document.getElementById('search')?.getBoundingClientRect();
     if (box) {
+      chip.style.right = ''; chip.style.left = '';
       chip.style.top = `${Math.round(box.bottom + 8)}px`;
-      const w = chip.getBoundingClientRect().width;
-      let right = window.innerWidth - box.right;
-      for (const sel of ['#editor', '#finder', '#states']) {
-        const e = document.querySelector(sel) as HTMLElement | null;
-        if (!e) continue;
-        const r = e.getBoundingClientRect();
-        if (r.width > 2 && r.height > 2) right = Math.max(right, window.innerWidth - r.left + 10);
+      const blockers = this.badgeBlockers();
+      const o = document.getElementById('origin');
+      if (o && getComputedStyle(o).display !== 'none' && o.textContent) {
+        const r = o.getBoundingClientRect();
+        if (r.width > 2 && r.height > 2) blockers.push(r);
       }
-      chip.style.right = `${Math.round(Math.min(right, Math.max(8, window.innerWidth - w - 8)))}px`;
+      this.placeBadge(chip, blockers);
     }
   }
 
@@ -969,6 +971,112 @@ export class App {
    * place clear of another; saying how many, and that zooming recovers them,
    * turns a silent omission into a stated one.
    */
+
+  /**
+   * WHERE A SMALL CHROME BADGE GOES WHEN SOMETHING IS ALREADY THERE.
+   *
+   * Two badges — the labels-hidden count and the search breakdown — each carried
+   * their own copy of the rule "shift left of any open panel", and the rule was
+   * wrong in the same way in both: it assumed panels open on the RIGHT. On
+   * artifact 07 the node-states legend opens on the LEFT at x = 12, so the shift
+   * computed an inset of 1916 px and put the labels-hidden badge at
+   * **x = -76** — the statement of what the frame is withholding, itself almost
+   * entirely outside the frame. In the same frame the search breakdown sat ten
+   * pixels above the legend's top edge and was read by the cycle-11 Art
+   * Director as a clipped, unreadable fragment.
+   *
+   * One rule, in one place, tried in order and always clamped into the picture:
+   * the natural place; else shifted clear horizontally, but only if that lands
+   * it inside the frame; else dropped below whatever it hit. A badge that
+   * cannot be read is worth less than a badge in an unexpected corner.
+   */
+  private placeBadge(e: HTMLElement, blockers: DOMRect[]) {
+    const W = window.innerWidth, H = window.innerHeight, M = 8;
+    const r = e.getBoundingClientRect();
+    const w = r.width, h = r.height;
+    const hits = (x: number, y: number) => blockers.filter(b =>
+      x < b.right + M && x + w > b.left - M && y < b.bottom + M && y + h > b.top - M);
+    let x = r.left, y = r.top;
+    let clash = hits(x, y);
+    if (clash.length) {
+      // Clear it horizontally, to whichever side has room.
+      const leftOf = Math.min(...clash.map(b => b.left)) - M - w;
+      const rightOf = Math.max(...clash.map(b => b.right)) + M;
+      const tryX = leftOf >= M ? leftOf : rightOf + w <= W - M ? rightOf : null;
+      if (tryX !== null && !hits(tryX, y).length) x = tryX;
+      else y = Math.max(...clash.map(b => b.bottom)) + M;
+    }
+    x = Math.min(Math.max(x, M), Math.max(M, W - w - M));
+    y = Math.min(Math.max(y, M), Math.max(M, H - h - M));
+    e.style.left = `${Math.round(x)}px`;
+    e.style.right = 'auto';
+    e.style.top = `${Math.round(y)}px`;
+    blockers.push(new DOMRect(x, y, w, h));
+  }
+
+  /**
+   * EVERY OPAQUE OVERLAY, MEASURED AGAINST EVERY OTHER ONE.
+   *
+   * Three cycles running, a critic found one piece of chrome sitting on
+   * another: the search readout under the labels-hidden badge in cycle 10, the
+   * recovery column's count line under the same badge in cycle 11, and the
+   * search breakdown protruding above the node-states legend as an unreadable
+   * fragment. Each was fixed where it was found, and the next one appeared
+   * somewhere else, because the rule lived in the element rather than in a
+   * check. This asks the shipped DOM the general question, so an artifact can
+   * declare it and a capture can fail on it.
+   *
+   * Reports overlapping pairs with the area, and anything with text that is not
+   * wholly inside the frame — the labels-hidden badge was at x = -76.
+   */
+  chromeAudit() {
+    const SEL = ['#top', '#states', '#editor', '#finder', '#hands', '#tools', '#unlabelled',
+                 '#hidden', '#hitbreak', '#origin', '#lenstag', '#toast', '#gesture',
+                 '#argyro', '#reticle', '#pinmark', '#grabmark', '#grabcand'];
+    const boxes: { id: string; x0: number; y0: number; x1: number; y1: number }[] = [];
+    for (const sel of SEL) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e) continue;
+      const st = getComputedStyle(e);
+      if (st.display === 'none' || st.visibility === 'hidden' || Number(st.opacity) < 0.05) continue;
+      if (!(e.textContent || '').trim()) continue;
+      const r = e.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) continue;
+      boxes.push({ id: sel, x0: r.left, y0: r.top, x1: r.right, y1: r.bottom });
+    }
+    const W = window.innerWidth, H = window.innerHeight;
+    const offFrame = boxes.filter(b => b.x0 < -0.5 || b.y0 < -0.5 || b.x1 > W + 0.5 || b.y1 > H + 0.5)
+      .map(b => ({ id: b.id, x: Math.round(b.x0), y: Math.round(b.y0),
+                   past: Math.round(Math.max(-b.x0, -b.y0, b.x1 - W, b.y1 - H)) }));
+    const pairs: { a: string; b: string; areaPx: number }[] = [];
+    for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i], b = boxes[j];
+      // The pin and grab marks are drawn ON the map, at their node, and the
+      // reticle sits at the frame's centre by definition. They are excluded
+      // from each other and from nothing else.
+      const w = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0);
+      const h = Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0);
+      if (w > 0.5 && h > 0.5) pairs.push({ a: a.id, b: b.id, areaPx: Math.round(w * h) });
+    }
+    pairs.sort((x, y) => y.areaPx - x.areaPx);
+    return { checked: boxes.length, overlapping: pairs.length, worstOverlapPx: pairs[0]?.areaPx ?? 0,
+             pairs: pairs.slice(0, 8), offFrame,
+             noTwoChromePanelsOverlap: pairs.length === 0,
+             everyChromeBadgeInsideTheFrame: offFrame.length === 0 };
+  }
+
+  /** The panels a badge must not sit on: they are the frame's subject. */
+  private badgeBlockers(): DOMRect[] {
+    const out: DOMRect[] = [];
+    for (const sel of ['#top', '#states', '#editor', '#finder', '#hands', '#tools', '#unlabelled']) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e || getComputedStyle(e).display === 'none') continue;
+      const r = e.getBoundingClientRect();
+      if (r.width > 2 && r.height > 2) out.push(r);
+    }
+    return out;
+  }
+
   private renderHidden() {
     let chip = document.getElementById('hidden');
     if (!chip) {
@@ -1018,32 +1126,18 @@ export class App {
     // frame is busiest. It is placed instead: right-inset past any open side
     // panel, and dropped below the seed banner rather than across it.
     if (chip.className === 'show') {
-      chip.style.top = ''; chip.style.right = '';
-      const own = chip.getBoundingClientRect();
-      let right = 12;
-      for (const sel of ['#editor', '#finder', '#states', '#hands']) {
-        const e = document.querySelector(sel) as HTMLElement | null;
-        if (!e) continue;
-        const r = e.getBoundingClientRect();
-        if (r.width > 2 && r.height > 2 && r.top < own.bottom && r.bottom > own.top)
-          right = Math.max(right, window.innerWidth - r.left + 8);
-      }
-      chip.style.right = `${Math.round(right)}px`;
-      // BELOW ANYTHING THAT IS ALREADY THERE, and the search readout outranks
-      // this chip. Making this one always visible in cycle 9 fixed its being
-      // hidden and created a worse fault: it landed on top of the hit
-      // breakdown, leaving 8 % of "19 hits · 6 in the text · 13 in the label" on
-      // artifact 04. Of the two, the one that says how many thoughts matched is
-      // the more informative, so it keeps the corner and this drops below it.
-      let top = 0;
+      // ONE RULE, IN ONE PLACE. This badge and the search breakdown each used to
+      // carry their own "shift left of any open panel", which put this one at
+      // x = -76 the moment a panel opened on the left. See placeBadge().
+      chip.style.top = ''; chip.style.right = ''; chip.style.left = '';
+      const blockers = this.badgeBlockers();
       for (const sel of ['#origin', '#hitbreak']) {
         const e = document.getElementById(sel.slice(1));
         if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
         const r = e.getBoundingClientRect();
-        const now = chip.getBoundingClientRect();
-        if (r.right + 8 > now.left && r.left < now.right) top = Math.max(top, r.bottom + 8);
+        if (r.width > 2 && r.height > 2) blockers.push(r);
       }
-      chip.style.top = top ? `${Math.round(top)}px` : '';
+      this.placeBadge(chip, blockers);
     }
     this.renderUnlabelled();
     this.renderLeaders();
