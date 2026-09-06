@@ -150,10 +150,29 @@ export const DEPTH_SHARE = 0.35;
 /** The ground the lowest rung fades toward; nothing is drawn below it. */
 const LUM_GROUND = 0.10;
 const LUM_ORDER: NodeState[] = ['plain', 'connected', 'unplaced', 'searchHit', 'selected'];
+/**
+ * THE LOWEST RUNG HAS THE LEAST ROOM AND GETS THE SMALLEST SHARE.
+ *
+ * Every state fades by DEPTH_SHARE of the gap down to the state below it — and
+ * for the plain state the thing below is the GROUND, so the same fraction costs
+ * it far more of its visibility than it costs any other rung. With the depth
+ * ramp fitted to the scene (see fitDepthFade) that stopped being theoretical:
+ * a far plain marker on artifact 06 measured 2.32:1 against a 2.5:1 floor, and
+ * a mark below that floor has stopped being a mark.
+ *
+ * Solved rather than guessed: at that framing an UNFADED plain marker measures
+ * 2.66:1, so the whole headroom between the lowest rung and the visibility
+ * floor is about a sixth of a stop. The plain state can afford a share of about
+ * 0.12 and no more, and pretending otherwise buys a gradient nobody can see at
+ * the cost of marks nobody can see either. Every rung above keeps the full
+ * share, where there is room for it — and those are the marks a reader is
+ * actually looking at, so that is where the depth reads.
+ */
+const FADE_SHARE: number[] = [0.12, DEPTH_SHARE, DEPTH_SHARE, DEPTH_SHARE, DEPTH_SHARE];
 export const STATE_FADE_FLOOR: number[] = LUM_ORDER.map((st, i) => {
   const lum = STATE_LUM[st];
   const below = i === 0 ? LUM_GROUND : STATE_LUM[LUM_ORDER[i - 1]];
-  return (lum - DEPTH_SHARE * (lum - below)) / lum;
+  return (lum - FADE_SHARE[i] * (lum - below)) / lum;
 });
 
 /**

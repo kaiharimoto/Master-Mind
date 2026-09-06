@@ -671,6 +671,9 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
+              // The map is visible BEYOND the boundary, or the frame does not
+              // show what it says it shows.
+              placedMapVisibleBeyondTheBoundary: true,
               // Three cycles running a critic found one overlay sitting on
               // another, each fixed where it was found and the next appearing
               // somewhere else. Asked of every opaque overlay now, on every
@@ -761,11 +764,42 @@ export default [
       }
       return { worst: Number.isFinite(worst) ? +worst.toFixed(1) : null, pair, n: pts.length };
     });
-    const probeDist = h.radius * 3.2;
-    let bestYaw = 0.35, bestSep = -Infinity;
-    for (let k = 0; k < 24; k++) {
-      const y = (k / 24) * Math.PI * 2;
-      await POSE(page, { target: aim, yaw: y, pitch: 0.10, dist: probeDist });
+    // THE PITCH IS SOLVED TOO, not fixed at 0.10.
+    //
+    // Two conditions have to hold at once now — every marker clear of the top
+    // bar, and enough of the placed map behind the boundary to show that
+    // holding is inside it — and at a fixed pitch no yaw satisfies both: the
+    // solve either put a marker at y=37 under the bar or found a vantage with
+    // nothing behind the cluster at all. Tilting the vantage moves the map into
+    // the lower band of the frame while the cluster stays centred, which is
+    // exactly the freedom the search was missing. Nothing moves but the camera.
+    const TARGET = 0.66;
+    // THE PROBE RUNS AT THE DISTANCE THE SHOT IS TAKEN AT.
+    //
+    // It ran at 3.2 ring radii while the frame is taken at whatever distance
+    // makes the ring fill two thirds of the height — much closer — so the
+    // search was choosing a vantage by counting placed nodes in a view that is
+    // not the one shot. It reported plenty of map behind the cluster and the
+    // shipped frame had none. The ring is near enough spherical that its
+    // projected height barely depends on the angle, so the distance is solved
+    // once here and every vantage is then scored at it.
+    const solveDist = async (yaw, pitch) => {
+      let lo0 = h.radius * 1.2, hi0 = h.radius * 8;
+      for (let i = 0; i < 18; i++) {
+        const mid = (lo0 + hi0) / 2;
+        await POSE(page, { target: aim, yaw, pitch, dist: mid });
+        await sleepFrames(page, 0, 1);
+        const f = await ringHeightFrac();
+        if (f === null || f > TARGET) lo0 = mid; else hi0 = mid;
+      }
+      return hi0;
+    };
+    const probeDist = await solveDist(0.35, 0.10);
+    let bestYaw = 0.35, bestPitch = 0.10, bestSep = -Infinity;
+    for (let k = 0; k < 24 * 4; k++) {
+      const y = ((k % 24) / 24) * Math.PI * 2;
+      const pitch = [0.10, 0.20, 0.30, -0.06][Math.floor(k / 24)];
+      await POSE(page, { target: aim, yaw: y, pitch, dist: probeDist });
       await sleepFrames(page, 0, 1);
       const sep = await heldSeparation();
       // AND HOW MUCH MAP IS BEHIND IT. The districts lie in one direction from
@@ -797,22 +831,52 @@ export default [
         return window.mm.scene.screenPositions()
           .filter(q => q.y / dpr - Math.max(q.r / dpr, 3) < h2 + 8 && q.y / dpr > -40).length;
       });
-      const score = (sep.worst !== null && sep.worst >= 12 ? 1000 : 0)
-                  - underBar * 60 + behind + (sep.worst ?? 0) * 0.05;
-      if (sep.worst !== null && score > bestSep) { bestSep = score; bestYaw = y; }
+      // HOLDING LIVES IN THE MAP, AND THE FRAME HAS TO SHOW THAT. Penalising
+      // markers under the top bar was right and it re-solved the vantage onto
+      // one where the cluster floats in empty black: the cycle-13 Audience
+      // found no placed node, district or filament anywhere in shot, so the one
+      // thing this artifact establishes — that a waiting thought is waiting
+      // INSIDE the same space — was unsupported by its own pixels. A framing
+      // solved against one constraint will happily break another that nothing
+      // is asserting, so the map behind the cluster is now asserted too: a
+      // vantage showing none of it cannot win, whatever else it scores.
+      // The two hard conditions are GATES, not weights, because a weight can be
+      // outbid: giving the map-behind bonus 400 let a vantage with a marker
+      // under the top bar win by 340, and the visibility probe duly failed that
+      // marker at 2.45 against its 2.5 floor. Separation and clearance both
+      // gate; the map behind is the tie-break among vantages that pass both.
+      // THREE GATES OF EQUAL STANDING, and the map behind is one of them.
+      //
+      // Making clearance a gate worth 2000 while the map behind was a 400-point
+      // bonus meant a vantage looking away from the map — nothing near the top
+      // edge because nothing is there at all — beat every vantage that shows
+      // it. Measured directly, twelve placed thoughts and thirteen filaments
+      // ARE in frame at this distance from a good angle, so the composition was
+      // never the problem and did not need changing: the scoring was. Each
+      // condition the frame has to satisfy is worth the same, so the search
+      // finds a vantage that satisfies all three where one exists, and the
+      // amount of map behind only breaks ties among those.
+      const score = (sep.worst !== null && sep.worst >= 12 ? 2000 : 0)
+                  + (underBar === 0 ? 2000 : 0)
+                  + (behind >= 3 ? 2000 : 0)
+                  + behind * 2 + (sep.worst ?? 0) * 0.05;
+      if (sep.worst !== null && score > bestSep) { bestSep = score; bestYaw = y; bestPitch = pitch; }
     }
-    const TARGET = 0.66;
-    let lo = h.radius * 1.2, hi = h.radius * 8;
-    for (let i = 0; i < 22; i++) {
-      const mid = (lo + hi) / 2;
-      await POSE(page, { target: aim, yaw: bestYaw, pitch: 0.10, dist: mid });
-      await sleepFrames(page, 0, 1);
-      const f = await ringHeightFrac();
-      if (f === null || f > TARGET) lo = mid; else hi = mid;
-    }
-    await POSE(page, { target: aim, yaw: bestYaw, pitch: 0.10, dist: hi });
+    const hi = await solveDist(bestYaw, bestPitch);
+    await POSE(page, { target: aim, yaw: bestYaw, pitch: bestPitch, dist: hi });
     await sleepFrames(page, 0, 3);
     const sep = await heldSeparation();
+    // Counted on the frame that ships: placed thoughts in view, and filaments
+    // between them, beyond the dotted boundary.
+    const placedInView = await page.evaluate(() => {
+      const sc = window.mm.scene, el = sc.renderer.domElement, d = window.mm.store.doc;
+      const inFrame = sc.screenPositions()
+        .filter(q => q.x > 0 && q.y > 0 && q.x < el.width && q.y < el.height);
+      const placed = inFrame.filter(q => (d.nodes[q.id] || {}).placed);
+      const ids = new Set(placed.map(q => q.id));
+      const links = Object.values(d.links).filter(l => ids.has(l.a) && ids.has(l.b)).length;
+      return { placed: placed.length, districts: new Set(placed.map(q => d.nodes[q.id].label)).size, links };
+    });
     const seq06 = await stillShot(H, page, cdp, H.out(this.file));
     const st = await H.modelStats(page);
     const frac = await ringHeightFrac();
@@ -858,6 +922,12 @@ export default [
              // Every waiting thought is its own dot: the tightest pair of held
              // markers clears both their radii by at least four pixels.
              everyHeldMarkerCountable: sep.worst !== null && sep.worst >= 4,
+             placedNodesInView: placedInView.placed,
+             districtsInView: placedInView.districts,
+             filamentsInView: placedInView.links,
+             // The boundary is drawn INSIDE the map, and the frame shows it.
+             placedMapVisibleBeyondTheBoundary:
+               placedInView.placed >= 3 && placedInView.links >= 1,
              cameraDistance: +hi.toFixed(3), ringHeightFraction: +Number(frac ?? 0).toFixed(3),
              heldNodes: held,
              // The ring is the subject: it has to be the thing the frame is of.
@@ -869,6 +939,7 @@ export default [
              // can pin to the wrong dot is worse than one that is not drawn.
              everyHeldLabelAttributable: attribution.length > 0 &&
                attribution.every(r => r.nearestIsOwn || r.hasLeader),
+             holdingRingHeightFraction: frac,
              holdingRingFillsFrame: (frac ?? 0) >= 0.55,
              everyHeldNodeInFrame: held.inFrame === held.held,
              // The badge counts what the frame shows, not what the driver hopes.
@@ -1002,7 +1073,12 @@ export default [
   requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true,
               editorWroteToTheModel: true, recencyMatchesModel: true,
               // Only the link and the editor changed — the names included.
-              everyOtherLabelHeldItsPlace: true },
+              everyOtherLabelHeldItsPlace: true,
+              // And the thought whose colour and text the header claims changed
+              // is IN both panels, clear of every panel — not merely left of
+              // the editor, which is what the framing loop used to test while
+              // the recovery column sat in the other rail.
+              editedThoughtVisibleInBothPanels: true },
   demonstrates: 'connect and edit before/after: a new filament created between two named nodes', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Connect and edit',
   async run(H) {
@@ -1024,12 +1100,24 @@ export default [
       await page.evaluate(({ a, b, margin }) => window.mm.frameNodes([a, b], margin), { a, b, margin });
       await sleepFrames(page, 0, 3);
       framed = await page.evaluate(({ a, b }) => {
-        const ed = document.getElementById('editor');
-        const lim = ed ? ed.getBoundingClientRect().left - 10 : window.innerWidth;
+        // CLEAR OF EVERY PANEL, not only of the editor. The recovery column
+        // takes the LEFT rail whenever the editor holds the right one, which is
+        // exactly this artifact's state — so a node could satisfy "left of the
+        // editor" and still be behind 440 px of list. The cycle-13 Audience
+        // found the edited node cropped out of the after panel under a header
+        // still claiming its colour had changed. The app's own occlusion
+        // inventory answers this; nothing here needs its own copy of it.
+        const buried = new Set(window.mm.nodesUnderChrome());
         const s = window.mm.scene.screenPositions();
-        const ok = (i) => { const q = s.find(p => p.id === i);
-          return !!q && q.x > 12 && q.x < lim && q.y > 60 && q.y < window.innerHeight - 40; };
-        return { a: ok(a), b: ok(b), lim };
+        const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+        const ok = (i) => {
+          const q = s.find(p => p.id === i);
+          if (!q || buried.has(i)) return false;
+          const x = q.x / dpr, y = q.y / dpr, r = Math.max(q.r / dpr, 6);
+          return x - r > 12 && x + r < window.innerWidth - 12 &&
+                 y - r > 60 && y + r < window.innerHeight - 40;
+        };
+        return { a: ok(a), b: ok(b) };
       }, { a, b });
       if (framed.a && framed.b) break;
     }
@@ -1038,6 +1126,21 @@ export default [
     const linkedBefore = await page.evaluate(({ a, b }) => Object.values(window.mm.store.doc.links)
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a, b });
     const before = await H.tmpShot(page, cdp, '09a');
+    // THE EDITED THOUGHT IS IN BOTH PANELS, checked at each shot rather than
+    // hoped for by the framing loop. The header asserts a colour change; if the
+    // node carrying that colour is not in the picture, the header is a claim
+    // about something outside the frame.
+    const editedVisible = [];
+    const seesEdited = () => page.evaluate((i) => {
+      const buried = new Set(window.mm.nodesUnderChrome());
+      const q = window.mm.scene.screenPositions().find(p2 => p2.id === i);
+      if (!q || buried.has(i)) return false;
+      const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const x = q.x / dpr, y = q.y / dpr, r = Math.max(q.r / dpr, 6);
+      return x - r > 12 && x + r < window.innerWidth - 12 &&
+             y - r > 60 && y + r < window.innerHeight - 40;
+    }, b);
+    editedVisible.push(await seesEdited());
     // WHERE EVERY NAME SAT, relative to the node it names. This composite's
     // whole claim is that between the panels only the link and the editor
     // changed; the cycle-9 Audience found a label moving 115 px and
@@ -1077,6 +1180,7 @@ export default [
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     await sleepFrames(page, 0, 3);
     const after = await H.tmpShot(page, cdp, '09b');
+    editedVisible.push(await seesEdited());
     const placedAfter = await placements();
     // THE TWO NODES THIS CAPTURE ACTED ON ARE EXPECTED TO MOVE. The edited
     // node's text got longer, so its box is a different size; and the node at
@@ -1124,6 +1228,8 @@ export default [
       return { shown, when, pct, ok: shown.includes(when) && shown.includes(`${pct}%`) };
     });
     return { between: [A, B], linkedBefore, linkedAfter, connectedByThisCapture: !linkedBefore && linkedAfter,
+             editedThoughtVisible: editedVisible,
+             editedThoughtVisibleInBothPanels: editedVisible.length === 2 && editedVisible.every(Boolean),
              labelsInBothPanels: bothPanels, labelsThatShifted: shifted.length,
              labelsThatShiftedOn: shifted.slice(0, 8),
              labelPlacementsBefore: placedBefore, labelPlacementsAfter: placedAfter,
