@@ -354,7 +354,7 @@ export default [
   // capture rather than a record with a false flag inside it.
   requires: { allThreeKinds: true, rejectionLeftNoTrace: true, rejectedIsGone: true,
               acceptanceLanded: true, cameraFrozenAcrossPanels: true,
-              rejectedPairUnjoined: true, detailIsMagnified: true,
+              rejectedPairUnjoined: true, detailExceedsPanelScale: true,
               detailRowInsideFrame: true },
   demonstrates: 'the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Finder review',
@@ -472,7 +472,13 @@ export default [
     // the rejected pair still apart. The top row draws each 1280 px frame into
     // a 640 px panel, which turns the finder card — the artifact's actual
     // subject — into grey mush; the panel had to be read somewhere.
-    const TOP = 616, BOT = 1080 - TOP, CELL = Math.floor(1920 / 4);
+    // 596, not 616. detailRowInsideFrame passed because the row ended at
+    // EXACTLY 1080 — flush against the edge is not inside it, and the cycle-9
+    // Auditor measured 212 non-background pixels surviving in rows 1075-1079
+    // with "Demo:" severed mid-label. Twenty pixels back gives the bottom
+    // captions their descenders and turns the claim from an equality that is
+    // true by a hair into one with room in it.
+    const TOP = 596, BOT = 1080 - TOP, CELL = Math.floor(1920 / 4);
     // The CARD and the rejection log, not the whole panel. The panel is 800 px
     // tall and the detail cell is 382, so cropping all of it would put the
     // subject BELOW the top row's own scale — a detail that is a reduction, the
@@ -608,7 +614,12 @@ export default [
     const caps = capFor(accRect, rejRect, panRect).map((c, i) =>
       `${c} · ×${mags[i]} of the panel above`);
     const realStrip = stripFor(caps);
-    const panelH = rects.map(r => Math.round(Math.min(CELL / r.w, (BOT - realStrip) / r.h) * r.h));
+    // The margin has to be taken out of the panel height, not hoped for: the
+    // panels were sized to fill exactly (BOT - realStrip), so the row's bottom
+    // landed on the frame edge by construction and detailRowInsideFrame was an
+    // equality that could not fail — while glyph descenders were being cut.
+    const FOOT = 12;
+    const panelH = rects.map(r => Math.round(Math.min(CELL / r.w, (BOT - realStrip - FOOT) / r.h) * r.h));
     await H.compose(cuts, rowB, { mode: 'h', width: 1920, height: BOT,
       // THE HEADLINE IS THE RATIO TO THE APP'S OWN PIXELS.
       //
@@ -619,7 +630,7 @@ export default [
       // looking at 0.77 of the source tells them the opposite of the truth
       // about what they can trust in it. The panel ratio stays as the second
       // number, which is what it always was.
-      labels: [`Detail ×${magsOfApp[0]} of the app’s pixels — the panel`,
+      labels: [`Detail ×${magsOfApp[0]} of app pixels — the panel`,
                `Detail ×${magsOfApp[1]} — the pair, before`,
                `Detail ×${magsOfApp[2]} — accepted: joined`,
                `Detail ×${magsOfApp[3]} — rejected: still apart`],
@@ -639,7 +650,9 @@ export default [
              detailRowBottomPx: TOP + realStrip + Math.max(...panelH),
              // Every detail panel must END inside the frame. Cycle 7 shipped
              // this artifact with ink in its last row and glyphs bisected.
-             detailRowInsideFrame: TOP + realStrip + Math.max(...panelH) <= 1080,
+             // Strictly inside, with a margin — not merely not-past-the-edge.
+             detailRowBottomMarginPx: 1080 - (TOP + realStrip + Math.max(...panelH)),
+             detailRowInsideFrame: TOP + realStrip + Math.max(...panelH) <= 1080 - 8,
              detailNodesFound: (accBox ? accBox.n : 0) + (rejBox ? rejBox.n : 0),
              acceptedId: acceptedSug && acceptedSug.id, acceptedNodes: acceptedSug && acceptedSug.nodes,
              rejectedKind: rejectedSug && rejectedSug.kind, rejectedNodes: rejectedSug && rejectedSug.nodes,
@@ -657,8 +670,16 @@ export default [
              // conveniently placed suggestion instead, would be arranging the
              // take to suit the frame. The bar is restated with its reason and
              // every panel prints its own magnification. See report.md F-022.
-             detailIsMagnified: mags.every(m => m > 1),
-             detailMagnificationFloor: Math.min(...mags),
+             // NAMED FOR WHAT IT TESTS. `detailIsMagnified` was evaluated on the
+             // ratio to the miniature panel above, so it passed on a crop
+             // headed "x0.68" — three of four details are shown SMALLER than
+             // the app's own pixels, and the one carrying the strongest claim
+             // in category 06 was the smallest. The claim is the panel ratio,
+             // so it says panel; the app-pixel ratio is reported beside it and
+             // is what the headline prints.
+             detailExceedsPanelScale: mags.every(m => m > 1),
+             detailMagnificationOfPanelFloor: Math.min(...mags),
+             detailMagnificationOfAppPixelsFloor: Math.min(...magsOfApp),
              // The three panels are only comparable if the camera did not move
              // between them: a filament that appears could otherwise be a
              // reframing rather than an accepted suggestion.

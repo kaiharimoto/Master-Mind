@@ -473,8 +473,9 @@ export default [
       sublabels2: [
         'cold first launch from the committed seed · the app’s own deviceorientation listener moves the vantage; nothing writes the camera',
         shift === null ? 'anchor not resolved'
-          : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px across the frame ` +
-            `(${shiftXY[0]}, ${shiftXY[1]}) while its stored position did not change`,
+          : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px in the device’s own ` +
+            `1280×1440 frame (${shiftXY[0]}, ${shiftXY[1]}) while its stored position did not change ` +
+            `— these panels are that frame composited, so measured on this image it reads ~5 % lower`,
       ] });
 
     const st = await H.modelStats(page);
@@ -767,6 +768,16 @@ export default [
     // Framing resets the target, so clear the panels AFTER it, not before.
     await page.evaluate(() => window.mm.clearOfPanels());
     await sleepFrames(page, 0, 3);
+    await page.evaluate(() => {
+      // C10: the seed banner sits at the same corner as the legend and was
+      // showing ten pixels of glyph tops behind it — unreadable, and the wrong
+      // first impression on the one frame whose whole job is at-a-glance
+      // clarity. It is not this artifact's subject; it stands down for the shot
+      // rather than being layered over.
+      const o = document.getElementById('origin'); if (o) o.className = '';
+      const t = document.getElementById('toast'); if (t) t.className = '';
+    });
+    await sleepFrames(page, 0, 2);
     await H.shot(page, cdp, H.out(this.file), 1600);   // mid-pulse for the unplaced state
     const states = await page.evaluate(() => {
       const mm = window.mm, d = mm.store.doc;
