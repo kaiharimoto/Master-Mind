@@ -910,6 +910,7 @@ export class App {
       // The control states what it would put back, or that there is nothing.
       const u = document.querySelector('[data-t=tool-undo]') as HTMLButtonElement | null;
       const m = this.store.undoableMove;
+      this.renderUndoRow();
       if (u) {
         u.disabled = !m;
         u.textContent = m ? `Undo: ${m.what}` : 'Nothing to undo';
@@ -1569,7 +1570,15 @@ export class App {
       <h2>Hand poses — Windows, mind expansion</h2>
       <table data-t="hand-reference"><thead><tr><th>Pose</th><th>How</th><th>Operation</th><th>Mouse equivalent</th></tr></thead><tbody>
       ${HAND_VOCAB.map(g => `<tr><td><b>${esc(g.name)}</b></td><td>${esc(g.how)}</td><td>${esc(g.operation)}</td><td>${esc(g.mouse)}</td></tr>`).join('')}
-      </tbody></table>`;
+      </tbody></table>
+      <h2>Putting a move back</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="chip">Undo move · <b>Ctrl+Z</b></span>
+        <span class="chip" data-t="undo-depth">—</span>
+        <span class="note">Moves only, and only your own explicit ones: a drag, a closed-fist grab, a
+        placement out of holding. Each act goes back as one, to the exact coordinates it started from.
+        Text, colours, labels and connections are not undoable — and nothing here ever tidies a layout.</span>
+      </div>`;
     document.body.appendChild(o);
     $('[data-t=settings-close]', o).addEventListener('click', () => this.closeOverlays());
     $('[data-t=hand-toggle]', o).addEventListener('click', () => this.toggleHands(!this.handsOn));
@@ -1577,6 +1586,19 @@ export class App {
     this.renderActivity();
     this.reflowSessionChips();
     this.renderHandPanel();
+    this.renderUndoRow();
+  }
+
+  /** What the reference table says is undoable, kept level with what is. */
+  private renderUndoRow() {
+    const o = document.getElementById('settings');
+    if (!o) return;
+    const c = o.querySelector('[data-t=undo-depth]');
+    if (!c) return;
+    const m = this.store.undoableMove;
+    c.textContent = m
+      ? `${this.store.undoDepth} move${this.store.undoDepth === 1 ? '' : 's'} can be put back — next: ${m.what}`
+      : 'no move has been made on this map';
   }
 
   private renderSyncStatus() {
