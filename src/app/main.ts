@@ -389,13 +389,37 @@ export class App {
   }
   pinned: NodeId | null = null;
 
+  /**
+   * THE LABEL LAYER DOES NOT RE-FLOW WHILE YOU EDIT.
+   *
+   * One owner for the set of thoughts the chrome is naming, because it had two
+   * callers replacing each other's answer. It also now includes the thought
+   * that is OPEN IN THE EDITOR — the cycle-11 Audience found artifact 09's
+   * label layer re-flowing between its panels, `Sweet vs savoury paths` hidden
+   * in Before and drawn in After, purely because the edited node's own label
+   * grew to two lines and took different ground. Positions are sacred and held;
+   * labels are what a reader navigates by, and they were not.
+   *
+   * A thought open in the editor has its name in the Text field and on the tag,
+   * so its canvas run stands down — and a name that is not in the layer cannot
+   * push anything else out of it. Editing a thought's words can no longer move
+   * another thought's name.
+   */
+  private updateNamedByChrome() {
+    const ids: NodeId[] = [];
+    if (this.aimedAt) ids.push(this.aimedAt);
+    if (this.selected && document.getElementById('editor')) ids.push(this.selected);
+    this.scene.setNamedByChrome(ids);
+  }
+
   private renderReticle() {
     let r = document.getElementById('reticle');
     if (this.lens !== 'ar') {
       r?.remove();
       // Leaving the aimed node in the named-by-chrome set would keep its label
       // suppressed on a lens that has no reticle to name it.
-      if (this.aimedAt) { this.aimedAt = null; this.scene.setNamedByChrome([]); }
+      if (this.aimedAt) { this.aimedAt = null; }
+      this.updateNamedByChrome();
       return;
     }
     if (!r) {
@@ -429,7 +453,7 @@ export class App {
     // The readout NAMES this node, so its canvas label stands down — the same
     // rule the pin tag follows. Drawing both put the reticle's chip straight
     // across the label it duplicates in the cycle-9 hero.
-    this.scene.setNamedByChrome(aimed ? [aimed] : []);
+    this.updateNamedByChrome();
     const label = $('[data-t=reticle-node]', r);
     r.classList.toggle('on', on);
     label.textContent = n
@@ -985,7 +1009,8 @@ export class App {
   private renderGrab() {
     let el0 = document.getElementById('grabmark');
     const g = this.handGrab;
-    if (!g || !g.ids.length) { el0?.remove(); return; }
+    if (!g || !g.ids.length) { el0?.remove(); this.renderGrabCandidate(); return; }
+    this.renderGrabCandidate();
     if (!el0) {
       el0 = el('div', { id: 'grabmark', 'data-t': 'grab-mark' });
       el0.innerHTML = '<div class="ring"></div><div class="tag" data-t="grab-name"></div>';
@@ -1009,6 +1034,57 @@ export class App {
     const label = this.store.doc.nodes[g.ids[0]]?.label ?? '';
     $('[data-t=grab-name]', el0).textContent =
       `holding ${g.ids.length} thought${g.ids.length === 1 ? '' : 's'}${label ? ` · ${label}` : ''}`;
+  }
+
+  /**
+   * WHAT A FIST WOULD TAKE, BEFORE IT TAKES IT.
+   *
+   * The vocabulary says the closed fist grabs the NEAREST cluster, and until
+   * cycle 12 the frame gave a viewer no way to know which one that was: the
+   * target was revealed only once the amber box had landed on it, so every
+   * grab in artifact 17 read as arbitrary. The cycle-11 Audience asked for a
+   * candidate outline while the hand is tracked, and they are right that it is
+   * the difference between an operation you aim and an operation that happens
+   * to you.
+   *
+   * It is the SAME pick the fist itself runs — same screen point, same radius,
+   * same clusterOf — so the cue cannot promise a district the pose would not
+   * take. Faint, dashed and unlabelled: it is a candidate, not a state, and it
+   * disappears the instant a grab is live and the real mark takes over.
+   */
+  private renderGrabCandidate() {
+    let el0 = document.getElementById('grabcand');
+    const f = this.hands.frame;
+    const live = this.hands.enabled && f.present && !this.handGrab;
+    if (!live) { el0?.remove(); return; }
+    const c = this.scene.renderer.domElement;
+    const sx = (1 - f.x) * c.width, sy = f.y * c.height;
+    const id = this.scene.pick(sx, sy, 70);
+    const ids = id ? this.controls.clusterOf(id) : [];
+    if (!ids.length) { el0?.remove(); return; }
+    if (!el0) {
+      el0 = el('div', { id: 'grabcand', 'data-t': 'grab-candidate' });
+      el0.innerHTML = '<div class="ring"></div><div class="tag" data-t="grab-candidate-name"></div>';
+      document.body.appendChild(el0);
+    }
+    const dpr = c.width / Math.max(window.innerWidth, 1);
+    const want = new Set(ids);
+    const pts = this.scene.screenPositions().filter(q => want.has(q.id));
+    if (!pts.length) { el0.className = ''; return; }
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const q of pts) {
+      x0 = Math.min(x0, q.x - q.r); x1 = Math.max(x1, q.x + q.r);
+      y0 = Math.min(y0, q.y - q.r); y1 = Math.max(y1, q.y + q.r);
+    }
+    const pad = 14;
+    el0.className = 'on';
+    el0.style.left = `${Math.round(x0 / dpr - pad)}px`;
+    el0.style.top = `${Math.round(y0 / dpr - pad)}px`;
+    el0.style.width = `${Math.round((x1 - x0) / dpr + pad * 2)}px`;
+    el0.style.height = `${Math.round((y1 - y0) / dpr + pad * 2)}px`;
+    const label = this.store.doc.nodes[ids[0]]?.label ?? '';
+    $('[data-t=grab-candidate-name]', el0).textContent =
+      `a fist takes ${ids.length} thought${ids.length === 1 ? '' : 's'}${label ? ` · ${label}` : ''}`;
   }
 
   /**

@@ -245,6 +245,17 @@ tr.map:hover{background:var(--panel)}
 #grabmark .tag{position:absolute;left:50%;top:-10px;transform:translate(-50%,-100%);
   white-space:nowrap;font-size:11px;color:#1A1206;background:var(--hot);
   border-radius:4px;padding:2px 8px;font-weight:600}
+/* THE CANDIDATE, NOT THE STATE. Faint enough that it never competes with the
+   amber grab mark that replaces it, and clearly the same family so a viewer
+   reads the one turning into the other. Glow is reserved for meaning: this
+   carries none, so it is a thin dashed edge and nothing else. */
+#grabcand{position:fixed;z-index:19;display:none;pointer-events:none}
+#grabcand.on{display:block}
+#grabcand .ring{position:absolute;inset:0;border:1px dashed rgba(198,150,74,0.45);
+  border-radius:14px}
+#grabcand .tag{position:absolute;left:50%;top:-8px;transform:translate(-50%,-100%);
+  white-space:nowrap;font-size:11px;color:var(--ink-dim);background:rgba(14,12,10,0.82);
+  border:1px solid rgba(198,150,74,0.35);border-radius:4px;padding:1px 7px}
 #pinmark{position:fixed;z-index:20;display:none;pointer-events:none}
 #pinmark.on{display:block}
 #pinmark .ring{position:absolute;inset:0;border:2px solid var(--hot);border-radius:50%;

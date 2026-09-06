@@ -231,6 +231,36 @@ export async function inkWidths(texts, { font, size }) {
 
 const HEAD_FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
 
+/** The wrapped caption lines each panel will carry. */
+function captionLines({ n, cellW, sublabels, sublabels2, sublabels3 }) {
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const a = sublabels && sublabels[i] ? wrapCaption(sublabels[i], cellW).lines : [];
+    const b = sublabels2 && sublabels2[i] ? wrapCaption(sublabels2[i], cellW).lines : [];
+    const c = sublabels3 && sublabels3[i] ? wrapCaption(sublabels3[i], cellW).lines : [];
+    out.push([...a, ...b, ...c]);
+  }
+  return out;
+}
+
+/**
+ * The height of the caption strip above each panel — and therefore, since the
+ * panel is fitted into what remains, THE SCALE THE SOURCE FRAME IS DRAWN AT.
+ *
+ * Exported because a driver that states a pixel measurement taken in the app's
+ * own frame has to be able to say what that measurement reads as ON THE IMAGE.
+ * Artifact 03 said "measured on this image it reads ~5 % lower"; the cycle-11
+ * Audience measured 254 px against a stated 271 and called the 6 % gap out, and
+ * they were right to — a frame whose whole falsifiable claim is one number
+ * cannot round the conversion. Same function that lays the strip out, so the
+ * stated scale is the scale that was used.
+ */
+export function stripHeight({ n, cellW, labels, sublabels, sublabels2, sublabels3 }) {
+  const lines = captionLines({ n, cellW, sublabels, sublabels2, sublabels3 });
+  const maxCap = Math.max(0, ...lines.map(l => l.length));
+  return labels ? 34 + maxCap * 21 + (maxCap ? 6 : 12) : 0;
+}
+
 export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, sublabels2 = null, sublabels3 = null, width = 1920, height = 1080 } = {}) {
   const n = inputs.length;
   const cellW = mode === 'h' ? Math.floor(width / n) : width;
@@ -241,15 +271,8 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
   // the panel is meant to show.
   // How many caption lines the tallest panel needs, so the strip is sized to
   // hold every clause rather than the clauses being sized to fit the strip.
-  const capLines = [];
-  for (let i = 0; i < n; i++) {
-    const a = sublabels && sublabels[i] ? wrapCaption(sublabels[i], cellW).lines : [];
-    const b = sublabels2 && sublabels2[i] ? wrapCaption(sublabels2[i], cellW).lines : [];
-    const c = sublabels3 && sublabels3[i] ? wrapCaption(sublabels3[i], cellW).lines : [];
-    capLines.push([...a, ...b, ...c]);
-  }
-  const maxCap = Math.max(0, ...capLines.map(l => l.length));
-  const strip = labels ? 34 + maxCap * 21 + (maxCap ? 6 : 12) : 0;
+  const capLines = captionLines({ n, cellW, sublabels, sublabels2, sublabels3 });
+  const strip = stripHeight({ n, cellW, labels, sublabels, sublabels2, sublabels3 });
   const parts = [];
   for (let i = 0; i < n; i++) {
     let f = `[${i}:v]scale=${cellW}:${cellH - strip}:force_original_aspect_ratio=decrease,` +

@@ -1,6 +1,7 @@
 // Still-image artifacts. Every driver here is the executable form of the
 // recipe in docs/capture/<id>.md.
 import { POSE, FRAME_ALL, SELECT, NODE_ID, SCREEN_OF, orient, sleepFrames, touch } from './util.mjs';
+import { stripHeight } from '../capture.mjs';
 
 /**
  * Frozen cameras for the two continuous regression instruments.
@@ -364,7 +365,12 @@ export default [
   surface: 'android', map: 'map-fermentation', title: 'Hero — AR projection, cold start',
   coldStart: true,
   requires: { gyroDroveTheView: true, positionsUnchangedBetweenPanels: true, headingChanged: (d) => d > 25,
-              anchorNamedInBothPanels: true },
+              anchorNamedInBothPanels: true,
+              // The one falsifiable number on the frame is stated in the app's
+              // own pixels; a reader measures the image. Both are printed, and
+              // the scale that converts them is the scale the panel was drawn
+              // at, not an approximation beside it.
+              travelScaleDescribesTheDrawnPanel: true },
   async run(H) {
     // Cold start: the sync service's live data directory is wiped before this
     // driver runs, so the map is read fresh from the committed seed fixture.
@@ -472,21 +478,45 @@ export default [
       ? Math.round(Math.hypot(B.anchor.x - A.anchor.x, B.anchor.y - A.anchor.y)) : null;
     const shiftXY = A.anchor && B.anchor
       ? [Math.round(B.anchor.x - A.anchor.x), Math.round(B.anchor.y - A.anchor.y)] : null;
+    // THE CONVERSION IS COMPUTED, NOT ROUNDED. The caption said the composited
+    // panels read "~5 % lower"; the cycle-11 Audience measured the anchor rings
+    // 254 px apart against a stated 271 — a 6.3 % gap — and a frame whose whole
+    // falsifiable claim is one number cannot leave a reader to discover that
+    // the two scales disagree. The panel scale is taken from the same function
+    // that lays the strip out, so what is printed is what was drawn, and BOTH
+    // numbers are stated: the app's own, and what a ruler on this image gives.
+    const layout = { n: 2, cellW: 1280, labels: true,
+                     sublabels: [cap(A), cap(B)], sublabels2: null, sublabels3: null };
+    const captions2 = [
+      'cold first launch from the committed seed · the app’s own deviceorientation listener moves the vantage; nothing writes the camera',
+      'PLACEHOLDER',
+    ];
+    // The strip depends on the captions, and the caption depends on the strip.
+    // Solved by laying out with the longest form of the second caption first,
+    // so the number that goes in cannot make the strip taller than the one it
+    // was computed from.
+    const probeStrip = stripHeight({ ...layout, sublabels2: captions2 });
+    const panelScale = (1440 - probeStrip) / 1440;
+    const onImage = shift === null ? null : Math.round(shift * panelScale);
+    captions2[1] = shift === null ? 'anchor not resolved'
+      : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px in the device’s own ` +
+        `1280×1440 frame (${shiftXY[0]}, ${shiftXY[1]}) while its stored position did not change ` +
+        `— these panels draw that frame at ×${panelScale.toFixed(3)}, so a ruler on this image gives ${onImage} px`;
+    const finalStrip = stripHeight({ ...layout, sublabels2: captions2 });
     await H.compose([A.file, B.file], H.out(this.file), { mode: 'h', width: 2560, height: 1440,
       labels: [`Gyroscopic vantage — device held at heading ${hdg(A.gyro)}°`,
                `Turned to heading ${hdg(B.gyro)}° — every node position unchanged`],
       sublabels: [cap(A), cap(B)],
-      sublabels2: [
-        'cold first launch from the committed seed · the app’s own deviceorientation listener moves the vantage; nothing writes the camera',
-        shift === null ? 'anchor not resolved'
-          : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px in the device’s own ` +
-            `1280×1440 frame (${shiftXY[0]}, ${shiftXY[1]}) while its stored position did not change ` +
-            `— these panels are that frame composited, so measured on this image it reads ~5 % lower`,
-      ] });
+      sublabels2: captions2 });
 
     const st = await H.modelStats(page);
     const same = JSON.stringify(A.positions) === JSON.stringify(B.positions);
     return { ...st,
+             anchorTravelAppPx: shift, anchorTravelXY: shiftXY,
+             panelScale: +panelScale.toFixed(4), anchorTravelOnImagePx: onImage,
+             // The strip the caption was measured against is the strip that was
+             // drawn, or the printed scale describes a layout that did not ship.
+             travelScaleDescribesTheDrawnPanel: finalStrip === probeStrip,
              panels: [{ sent: A.sent, received: A.received, pose: A.pose, anchor: A.anchor },
                       { sent: B.sent, received: B.received, pose: B.pose, anchor: B.anchor }],
              poseBefore,
