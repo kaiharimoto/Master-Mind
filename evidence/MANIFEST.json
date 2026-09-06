@@ -6,28 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T14:00:24.347Z",
+  "lastRunAt": "2026-09-06T14:52:23.806Z",
   "lastRunCaptured": [
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20"
+    "08"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -109,7 +90,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:00:27.109Z"
     },
     {
@@ -966,7 +947,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:00:28.776Z"
     },
     {
@@ -1135,7 +1116,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:00:32.372Z"
     },
     {
@@ -2145,7 +2126,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:00:34.428Z"
     },
     {
@@ -2677,7 +2658,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:00:49.961Z"
     },
     {
@@ -3216,7 +3197,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:00:59.528Z"
     },
     {
@@ -3426,7 +3407,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:01.556Z"
     },
     {
@@ -3435,15 +3416,15 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.6,
+      "seconds": 2.8,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 197616,
-        "sha256": "98c6df87cb6eace5cf323957dabf26d4831c1e5b7f26be9a5d635298f6d5de24"
+        "bytes": 229161,
+        "sha256": "a59339315e7cac8a6250f016d9c703f41a25ee49eabcfad8825fc5c17c4ff6ea"
       },
       "claims": {
         "ok": true,
@@ -3474,6 +3455,14 @@
           },
           {
             "claim": "theDropIsVisibleInThePixels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "droppedAmongThePlacedGraph",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -3528,30 +3517,55 @@
           3.869
         ],
         "afterPos": [
-          2.0215593738561672,
-          -14.357950856663557,
-          4.393055158234333
+          -3.6122550507721947,
+          -1.7877226471080991,
+          4.435952426655646
         ],
         "stableAfterDrop": true,
         "dropTarget": {
-          "x": 510,
-          "y": 790,
-          "score": 890.8633976421492,
-          "clearance": 105.6
+          "x": 390,
+          "y": 510,
+          "score": -38.7717111083755,
+          "clearance": 34.3,
+          "nearestPlacedPx": 34.3,
+          "nearestPlaced": "s480af97d09",
+          "neighbours": [
+            {
+              "text": "Slide budget: 12",
+              "px": 34
+            },
+            {
+              "text": "Opening: where did you park?",
+              "px": 118
+            }
+          ]
         },
+        "dropNeighbours": [
+          {
+            "text": "Slide budget: 12",
+            "px": 34
+          },
+          {
+            "text": "Opening: where did you park?",
+            "px": 118
+          }
+        ],
+        "dropClearancePx": 34.3,
+        "dropNearestPlacedPx": 34.3,
+        "droppedAmongThePlacedGraph": true,
         "destinationSampleBefore": {
           "id": "sec77dd4720",
-          "x": 510,
-          "y": 790,
+          "x": 390,
+          "y": 510,
           "r": 14.4,
-          "peak": 0.0574,
+          "peak": 0.1019,
           "ground": 0.0574,
-          "contrast": 1
+          "contrast": 1.41
         },
         "destinationSampleAfter": {
           "id": "sec77dd4720",
-          "x": 510,
-          "y": 790,
+          "x": 390,
+          "y": 510,
           "r": 14.4,
           "peak": 0.8018,
           "ground": 0.0574,
@@ -3568,13 +3582,14 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "72c14b8f02469da6",
+        "fnSha": "6472298acdcaf27f",
         "appSha": "10c188b09545c35e",
         "claimShas": {
           "placed": "b5bea41b6c62",
           "stableAfterDrop": "b5bea41b6c62",
           "cameraFrozenAcrossPanels": "b5bea41b6c62",
           "theDropIsVisibleInThePixels": "b5bea41b6c62",
+          "droppedAmongThePlacedGraph": "b5bea41b6c62",
           "noTwoChromePanelsOverlap": "b5bea41b6c62",
           "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
           "noNodeBuriedByChrome": "b5bea41b6c62"
@@ -3583,7 +3598,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T14:01:03.700Z"
+      "fileMtime": "2026-09-06T14:52:25.820Z"
     },
     {
       "id": "09",
@@ -3853,7 +3868,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:07.532Z"
     },
     {
@@ -4212,7 +4227,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:13.012Z"
     },
     {
@@ -4334,7 +4349,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:22.555Z"
     },
     {
@@ -4793,7 +4808,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:31.504Z"
     },
     {
@@ -4876,7 +4891,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:33.192Z"
     },
     {
@@ -5105,7 +5120,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:37.118Z"
     },
     {
@@ -5166,7 +5181,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:01:40.092Z"
     },
     {
@@ -5289,7 +5304,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:03:21.429Z"
     },
     {
@@ -6001,7 +6016,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:12:34.468Z"
     },
     {
@@ -6129,7 +6144,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:13:48.531Z"
     },
     {
@@ -6268,7 +6283,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:15:53.667Z"
     },
     {
@@ -6528,7 +6543,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T14:19:03.942Z"
     }
   ],
@@ -6555,16 +6570,16 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T14:19:08.003Z",
+  "finishedAt": "2026-09-06T14:52:28.126Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 826994,
     "sha256": "10c188b09545c35e81cb410984e9f463e024ef3e937857bc5964d72314b08313",
     "appSha": "10c188b09545c35e",
-    "gitHead": "1ac6265551ff",
-    "gitHeadAt": "2026-09-06T14:00:07+00:00",
-    "treeDirtyAtCapture": false
+    "gitHead": "38ad54324b74",
+    "gitHeadAt": "2026-09-06T14:33:30+00:00",
+    "treeDirtyAtCapture": true
   },
   "captured": 20,
   "total": 20

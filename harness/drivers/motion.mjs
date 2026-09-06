@@ -411,6 +411,11 @@ export default [
   requires: { placed: true, stableAfterDrop: true, cameraFrozenAcrossPanels: true,
               // And the move the caption names is IN the two panels.
               theDropIsVisibleInThePixels: true,
+              // AND IT LANDS SOMEWHERE, not merely outside holding. The
+              // cycle-14 Audience found it dropped into blank canvas by a search
+              // that maximised clearance; the emptiest place on a map is the
+              // void, and a placement is a decision about where.
+              droppedAmongThePlacedGraph: true,
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
               // A thought a reader cannot see is a thought the frame is not
               // showing, whatever the model says. The cycle-12 Auditor found
@@ -468,28 +473,38 @@ export default [
       const e = document.getElementById('editor');
       return e ? e.getBoundingClientRect().left : window.innerWidth;
     });
-    // WHERE TO DROP IT: SOMEWHERE A READER CAN SEE IT LAND.
+    // WHERE TO DROP IT: A PLACE, NOT AN EMPTY SPOT.
     //
     // The destination was a fixed offset — 200 px right, 330 px up — and it put
-    // the mark 10 px from another thought's mark, so the after panel shows two
+    // the mark 10 px from another thought's mark, so the after panel showed two
     // overlapping dots where the whole point is that THIS one is now here. The
-    // first pixel readback of this drop duly failed: the destination was
-    // already lit in the before panel, by the neighbour. The spot is searched
-    // instead: on a 10 px lattice, inside the band the chrome leaves, as far
-    // from every other mark as it can be while staying near enough that the
-    // drag reads as one gesture. Deterministic — same map, same camera, same
+    // pixel readback of the drop caught it: the destination was already lit in
+    // the before panel, by the neighbour.
+    //
+    // The first fix searched for the spot with the MOST clearance, and that was
+    // the wrong objective on a map: the emptiest place is the void. The
+    // cycle-14 Audience found the node landing just outside the holding ring in
+    // blank canvas — "the destination reads as 'just outside the waiting area',
+    // not as a chosen home" — which weakens the one verb this artifact exists to
+    // prove. Placing a thought is choosing WHERE it belongs, so the clearance is
+    // a floor and the objective is adjacency: among the candidates that keep the
+    // mark its own dot and clear of every name and panel, take the one NEAREST
+    // an already-placed thought. Deterministic — same map, same camera, same
     // answer every cycle.
-    const to = await page.evaluate(({ skip, edLeft: lim, fx, fy }) => {
-      const sc = window.mm.scene;
+    const CLEAR_PX = 34;
+    const to = await page.evaluate(({ skip, edLeft: lim, fx, fy, clear }) => {
+      const sc = window.mm.scene, doc = window.mm.store.doc;
       const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
-      const pts = sc.screenPositions().filter(p2 => p2.id !== skip)
-        .map(q => [q.x / dpr, q.y / dpr]);
+      const marks = sc.screenPositions().filter(p2 => p2.id !== skip)
+        .map(q => ({ id: q.id, x: q.x / dpr, y: q.y / dpr, placed: !!(doc.nodes[q.id] || {}).placed }));
+      const pts = marks.map(m => [m.x, m.y]);
+      const placed = marks.filter(m => m.placed);
       // Chrome AND the names already drawn. Clearance from other markers alone
       // put the drop on top of a label: the before panel measured peak 0.906 at
       // the destination, brighter than the mark that lands there. A spot with a
       // name already in it is not an empty spot.
       const boxes = (window.mm.chromeAudit().boxes ?? []).slice();
-      for (const [, r] of window.mm.scene.labelRects) {
+      for (const [, r] of sc.labelRects) {
         if (r.alpha <= 0.02) continue;
         boxes.push({ x0: r.x0 / dpr, y0: r.y0 / dpr, x1: r.x1 / dpr, y1: r.y1 / dpr });
       }
@@ -499,13 +514,31 @@ export default [
           if (boxes.some(b => x > b.x0 - 30 && x < b.x1 + 30 && y > b.y0 - 30 && y < b.y1 + 30)) continue;
           let d = Infinity;
           for (const [px, py] of pts) { const q = Math.hypot(x - px, y - py); if (q < d) d = q; }
-          // Clearance is the point, up to a distance past which more is no
-          // better; the drag length only breaks ties among equally clear spots.
-          const score = Math.min(d, 90) * 10 - Math.hypot(x - fx, y - fy) * 0.1;
-          if (!best || score > best.score) best = { x, y, score, clearance: +d.toFixed(1) };
+          if (d < clear) continue;
+          let near = Infinity, nearId = null;
+          for (const m of placed) {
+            const q = Math.hypot(x - m.x, y - m.y);
+            if (q < near) { near = q; nearId = m.id; }
+          }
+          if (!Number.isFinite(near)) continue;
+          // Nearest to the placed graph wins; the drag length only breaks ties.
+          const score = -near - Math.hypot(x - fx, y - fy) * 0.02;
+          if (!best || score > best.score)
+            best = { x, y, score, clearance: +d.toFixed(1),
+                     nearestPlacedPx: +near.toFixed(1), nearestPlaced: nearId };
         }
+      if (best) {
+        // The two placed thoughts it lands beside, named on the frame, so the
+        // drop reads as a decision about where rather than as an exit from
+        // holding.
+        best.neighbours = placed
+          .map(m => ({ id: m.id, d: Math.hypot(best.x - m.x, best.y - m.y),
+                       text: (doc.nodes[m.id] || {}).text }))
+          .sort((a, b2) => a.d - b2.d).slice(0, 2)
+          .map(n => ({ text: n.text, px: +n.d.toFixed(0) }));
+      }
       return best;
-    }, { skip: id, edLeft, fx: from.x, fy: from.y });
+    }, { skip: id, edLeft, fx: from.x, fy: from.y, clear: CLEAR_PX });
     if (!to) throw new Error('08: no clear spot to drop the node into');
     await page.mouse.move(from.x, from.y);
     await page.mouse.down();
@@ -523,7 +556,14 @@ export default [
     chrome08.push(await chromeAt(page));
     await H.compose([a, b], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
       labels: [`Before — unplaced, waiting in holding (${beforeCount})`,
-               `After — dropped, and it stays there (holding ${beforeCount - 1})`] });
+               `After — dropped, and it stays there (holding ${beforeCount - 1})`],
+      // WHERE it landed, named. A placement is a decision about where a thought
+      // belongs, and a frame that shows only the counter going down proves the
+      // mechanism while saying nothing about the choice.
+      sublabels: ['', to.neighbours && to.neighbours.length
+        ? `it now sits beside ${to.neighbours.map(n => `“${n.text}” (${n.px} px)`).join(' and ')}` +
+          `, ${to.clearance} px clear of the nearest mark`
+        : `placed, ${to.clearance} px clear of the nearest mark`] });
 
     // THE MOVE, READ OUT OF THE TWO FILES.
     //
@@ -551,7 +591,12 @@ export default [
              ...mergeChrome(chrome08),
              placed: await page.evaluate(i => window.mm.store.doc.nodes[i].placed, id),
              beforePos, afterPos, stableAfterDrop: JSON.stringify(afterPos) === JSON.stringify(settled),
-             dropTarget: to,
+             dropTarget: to, dropNeighbours: to.neighbours ?? null,
+             dropClearancePx: to.clearance, dropNearestPlacedPx: to.nearestPlacedPx,
+             // The thought lands among the map, not in the void: its own dot,
+             // and a placed neighbour within reach of it.
+             droppedAmongThePlacedGraph: to.nearestPlacedPx !== undefined &&
+               to.nearestPlacedPx <= 180 && to.clearance >= 30,
              destinationSampleBefore: destBefore?.rows?.[0] ?? null,
              destinationSampleAfter: destAfter?.rows?.[0] ?? null,
              // Nothing there before, a mark there after — in the pixels of the
