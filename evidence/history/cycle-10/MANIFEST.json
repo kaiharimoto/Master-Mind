@@ -1,12 +1,12 @@
 {
-  "cycle": 11,
+  "cycle": 10,
   "seed": {
     "epoch": 1787227200000,
     "rng": 1296913221,
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T05:52:54.615Z",
+  "lastRunAt": "2026-09-06T04:20:10.737Z",
   "lastRunCaptured": [
     "01",
     "02",
@@ -36,7 +36,7 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.2,
+      "seconds": 3.1,
       "status": "captured",
       "error": null,
       "check": {
@@ -94,10 +94,10 @@
         ],
         "fnSha": "e97c2524c7397c53"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:52:57.630Z"
+      "fileMtime": "2026-09-06T04:20:13.671Z"
     },
     {
       "id": "02",
@@ -105,15 +105,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.2,
+      "seconds": 2.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 310540,
-        "sha256": "5bf8858d9d55830daa24a0b082edd507bf8ca6d52d15b45ec331f97932f640f0"
+        "bytes": 300525,
+        "sha256": "25621d0f9b51cb7b22872b345b737d0fe7b9cec5eb0cbb6ed22391927750cfda"
       },
       "claims": {
         "ok": true,
@@ -161,12 +161,6 @@
             "pass": true
           },
           {
-            "claim": "everyLabelUnambiguouslyBound",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
             "claim": "auditDescribesTheShippedFrame",
             "expected": true,
             "actual": true,
@@ -186,7 +180,7 @@
           "holdingBadge": 8,
           "labelsHidden": 109,
           "labelsShortened": 16,
-          "unlabelledListed": 37,
+          "unlabelledListed": 48,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
         },
@@ -201,7 +195,7 @@
           ]
         },
         "cameraPinned": true,
-        "arbiterSeq": 6,
+        "arbiterSeq": 5,
         "labelsAudited": 41,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Mesophilic vs thermophilic",
@@ -245,14 +239,11 @@
         "labelWorstReservedDisplacementPx": 36.3,
         "labelWorstDisplacementEm": 2.59,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 3.73,
-        "labelsAmbiguousWithoutALeader": 0,
-        "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
           "checked": 41,
           "sampled": 41,
           "offFrame": 0,
-          "threshold": 2.5,
+          "threshold": 1.45,
           "invisible": 0,
           "worstContrast": 3,
           "invisibleIds": [],
@@ -260,8 +251,8 @@
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 6,
-        "arbiterSeqAtAudit": 6,
+        "arbiterSeqAtShot": 5,
+        "arbiterSeqAtAudit": 5,
         "auditDescribesTheShippedFrame": true
       },
       "pageErrors": [],
@@ -274,10 +265,10 @@
         ],
         "fnSha": "73b7deb0e7bd2172"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:52:59.562Z"
+      "fileMtime": "2026-09-06T04:20:15.458Z"
     },
     {
       "id": "03",
@@ -292,8 +283,8 @@
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 809390,
-        "sha256": "07daf5624a8dce99c4e4a7857d2d2d6575e9da763496479cc42bf9f7a9b6da01"
+        "bytes": 775754,
+        "sha256": "93ef01bdbbe47ddf94802033647674d0115cf2050d65c81d6cfc46c173225219"
       },
       "claims": {
         "ok": true,
@@ -401,7 +392,7 @@
       },
       "pageErrors": [],
       "recipe": {
-        "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations — framed on a placed district, so the holding ring is at the frame edge rather than whole",
+        "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations",
         "surface": "android",
         "lens": null,
         "runtimes": [
@@ -409,10 +400,10 @@
         ],
         "fnSha": "e7fe41560af4b8c2"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:03.199Z"
+      "fileMtime": "2026-09-06T04:20:19.091Z"
     },
     {
       "id": "04",
@@ -420,15 +411,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.2,
+      "seconds": 2.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 326936,
-        "sha256": "5890fd4f81be90d32678b86d5c70b33193e1260be63e460e0fff4f758b71acbd"
+        "bytes": 277311,
+        "sha256": "14052c2a54e0265fd5b74b1057d3326e397b7d28f7483c7b596ba42b0b2290e1"
       },
       "claims": {
         "ok": true,
@@ -507,7 +498,7 @@
           "holdingBadge": 8,
           "labelsHidden": 105,
           "labelsShortened": 16,
-          "unlabelledListed": 20,
+          "unlabelledListed": 0,
           "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
           "mapName": "Fermentation notebook"
         },
@@ -531,7 +522,7 @@
         ],
         "nodesOnScreen": 150,
         "allFiveStatesAtWholeMapDensity": true,
-        "arbiterSeq": 11,
+        "arbiterSeq": 9,
         "labelsAudited": 45,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Fido jars burp themselves",
@@ -575,14 +566,11 @@
         "labelWorstReservedDisplacementPx": 36.3,
         "labelWorstDisplacementEm": 2.63,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 3.3,
-        "labelsAmbiguousWithoutALeader": 0,
-        "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
           "checked": 45,
           "sampled": 45,
           "offFrame": 0,
-          "threshold": 2.5,
+          "threshold": 1.45,
           "invisible": 0,
           "worstContrast": 3.16,
           "invisibleIds": [],
@@ -590,8 +578,8 @@
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 11,
-        "arbiterSeqAtAudit": 11,
+        "arbiterSeqAtShot": 9,
+        "arbiterSeqAtAudit": 9,
         "auditDescribesTheShippedFrame": true,
         "recencyByDistrict": {
           "violet": {
@@ -699,10 +687,10 @@
         ],
         "fnSha": "bac9916dd5a965ca"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:06.198Z"
+      "fileMtime": "2026-09-06T04:20:21.318Z"
     },
     {
       "id": "05",
@@ -717,8 +705,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 834353,
-        "sha256": "0c6fcc3de514f04cc28c21617f0285882f42d3374ceeb582176172e039ad993f"
+        "bytes": 769551,
+        "sha256": "431111cb0c542527c261f15204527c202e1de637bd095e55cbf746aa9560a3ba"
       },
       "claims": {
         "ok": true,
@@ -757,8 +745,8 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 1.03,
-        "confidence": 0.952,
+        "fan": 1.053,
+        "confidence": 0.949,
         "distBefore": 148.41,
         "distAfter": 129.5,
         "distAfterReadFromTheFrame": true,
@@ -779,10 +767,10 @@
         ],
         "fnSha": "bfbd59fe83cedb03"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:23.465Z"
+      "fileMtime": "2026-09-06T04:20:38.575Z"
     },
     {
       "id": "06",
@@ -790,15 +778,15 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 5,
+      "seconds": 5.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 180322,
-        "sha256": "b63d40a641f8c7aa896aa7805496ef55ba89d3296619c9d9057f139f2d0f5af5"
+        "bytes": 175978,
+        "sha256": "e782388df1a273d157e6b13abc5abc30c60f29594fc7afed32c90aee84a8ac20"
       },
       "claims": {
         "ok": true,
@@ -852,12 +840,6 @@
             "pass": true
           },
           {
-            "claim": "everyLabelUnambiguouslyBound",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
             "claim": "auditDescribesTheShippedFrame",
             "expected": true,
             "actual": true,
@@ -895,14 +877,11 @@
         "labelWorstReservedDisplacementPx": 51.1,
         "labelWorstDisplacementEm": 2.13,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 2.3,
-        "labelsAmbiguousWithoutALeader": 0,
-        "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
           "checked": 12,
           "sampled": 12,
           "offFrame": 0,
-          "threshold": 2.5,
+          "threshold": 1.45,
           "invisible": 0,
           "worstContrast": 3.25,
           "invisibleIds": [],
@@ -1024,10 +1003,10 @@
         ],
         "fnSha": "c3c27bb00aca3d71"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:28.322Z"
+      "fileMtime": "2026-09-06T04:20:43.634Z"
     },
     {
       "id": "07",
@@ -1035,15 +1014,15 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.6,
+      "seconds": 1.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 184356,
-        "sha256": "5befa39c8a91e9310c42facb70c791269e8936179ae375e9d8179ab3ff7f9237"
+        "bytes": 184269,
+        "sha256": "655821cba11a193ea502708fd84a4b70ee042446a7713900b2c72aed59727b2b"
       },
       "claims": {
         "ok": true,
@@ -1161,10 +1140,10 @@
         ],
         "fnSha": "6e5e6422b8ed0a2a"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:29.898Z"
+      "fileMtime": "2026-09-06T04:20:45.186Z"
     },
     {
       "id": "08",
@@ -1179,8 +1158,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 205491,
-        "sha256": "515564010224b2fc796b14e820b95c72cd6762f6c24fcf4648b45329c2744223"
+        "bytes": 187011,
+        "sha256": "1bf2db65375d0694d4d3f436ab23d49ae08f67373c2b02d9f25adb4c793fcf91"
       },
       "claims": {
         "ok": true,
@@ -1233,10 +1212,10 @@
         ],
         "fnSha": "44bb27a07e81dc26"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:32.017Z"
+      "fileMtime": "2026-09-06T04:20:47.327Z"
     },
     {
       "id": "09",
@@ -1244,15 +1223,15 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.5,
+      "seconds": 2.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 264878,
-        "sha256": "5cb25f9b5847b24c829bcaef1ebb75ada57e8f8941e2a394227b4345e427409e"
+        "bytes": 240074,
+        "sha256": "a5d79b481f939661d93a1836d64f5ad1d62e9304bc299ceaed6e62c09e76760c"
       },
       "claims": {
         "ok": true,
@@ -1386,10 +1365,10 @@
         ],
         "fnSha": "307df49d193c5df3"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:34.901Z"
+      "fileMtime": "2026-09-06T04:20:50.578Z"
     },
     {
       "id": "10",
@@ -1397,15 +1376,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 6.8,
+      "seconds": 5.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 198705,
-        "sha256": "ae21ca70a01ce7bf5e826773b83e421158c68edb9e3b156101af6fa6ed3b356c"
+        "bytes": 179560,
+        "sha256": "fe502f71eaa4732f44c969c88fe030e581ece42e40120964339006eff3e78324"
       },
       "claims": {
         "ok": true,
@@ -1465,19 +1444,7 @@
             "pass": true
           },
           {
-            "claim": "everyLabelUnambiguouslyBound",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
             "claim": "searchMatchReasonShown",
-            "expected": true,
-            "actual": true,
-            "pass": true
-          },
-          {
-            "claim": "searchMatchReasonUnoccluded",
             "expected": true,
             "actual": true,
             "pass": true
@@ -1490,18 +1457,7 @@
         "hits": 19,
         "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
         "hitsMatchedOnLabel": 13,
-        "searchBreakdownOcclusion": {
-          "ok": true,
-          "coveredFraction": 0,
-          "coveredBy": null,
-          "rect": [
-            1144,
-            46,
-            289
-          ]
-        },
         "searchMatchReasonShown": true,
-        "searchMatchReasonUnoccluded": true,
         "labelsAudited": 13,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Sweet vs savoury paths",
@@ -1523,21 +1479,18 @@
           "Amylase plus protease"
         ],
         "labelWorstDisplacementPx": 58.2,
-        "labelsMoreThan40pxFromTheirNode": 11,
+        "labelsMoreThan40pxFromTheirNode": 10,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
         "labelWorstReservedDisplacementPx": 58.2,
         "labelWorstDisplacementEm": 2.42,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 3.18,
-        "labelsAmbiguousWithoutALeader": 0,
-        "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
           "checked": 13,
           "sampled": 13,
           "offFrame": 0,
-          "threshold": 2.5,
+          "threshold": 1.45,
           "invisible": 0,
           "worstContrast": 3.25,
           "invisibleIds": [],
@@ -1579,12 +1532,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "ef4340f5a9e4398f"
+        "fnSha": "491ed807d1cf3a88"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:41.470Z"
+      "fileMtime": "2026-09-06T04:20:56.078Z"
     },
     {
       "id": "11",
@@ -1592,15 +1545,15 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 15.1,
+      "seconds": 15.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 200233,
-        "sha256": "5306565d03c556fbeeb71ab0d4778c2ae5c8e2ecaf333a853925339a729702d7"
+        "bytes": 170205,
+        "sha256": "cdcc20deed865ba39edc86333add7e3a7f1dee8c50edfedfb24b683830efa695"
       },
       "claims": {
         "ok": true,
@@ -1626,7 +1579,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 27531,
+            "serverPid": 29846,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -1638,7 +1591,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 27531,
+            "serverPid": 29846,
             "actor": "android-twin",
             "status": "live"
           }
@@ -1667,10 +1620,10 @@
         ],
         "fnSha": "861f6cca2f545723"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:52.251Z"
+      "fileMtime": "2026-09-06T04:21:07.601Z"
     },
     {
       "id": "12",
@@ -1685,8 +1638,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 821930,
-        "sha256": "9ead855d164d72ab0c35d91576b02dec44f6c9dce86b56ef20a14b9498be596f"
+        "bytes": 736091,
+        "sha256": "e96cef192b22f4f7be0b8ac305c348d0cccb4720e86d4d1dbd8c8593f2d5436c"
       },
       "claims": {
         "ok": true,
@@ -1818,7 +1771,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 27531,
+            "serverPid": 29846,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -1830,7 +1783,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 27531,
+            "serverPid": 29846,
             "actor": "android-twin",
             "status": "live"
           }
@@ -1893,8 +1846,8 @@
             "android": 150
           },
           "sha": {
-            "windows": "d05073a5ff",
-            "android": "d05073a5ff"
+            "windows": "2e0c939c6c",
+            "android": "2e0c939c6c"
           },
           "identical": true,
           "shown": true,
@@ -1924,10 +1877,10 @@
         ],
         "fnSha": "936d2e118cf8cc23"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:56.815Z"
+      "fileMtime": "2026-09-06T04:21:12.197Z"
     },
     {
       "id": "13",
@@ -1935,15 +1888,15 @@
       "title": "Finder prompt export",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.4,
+      "seconds": 1.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 262974,
-        "sha256": "501a553418a213f2e43f5f459dd37fce0cc65a694d03c38e042dd9d9f106ee8d"
+        "bytes": 262904,
+        "sha256": "6eb37e2301763740384ba31334e847a55f85cf2bcb8b80aa5d73465808090ff7"
       },
       "claims": {
         "ok": true,
@@ -1992,10 +1945,10 @@
         ],
         "fnSha": "904c8c79130e761a"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:53:58.550Z"
+      "fileMtime": "2026-09-06T04:21:13.698Z"
     },
     {
       "id": "14",
@@ -2003,15 +1956,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3,
+      "seconds": 3.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 388122,
-        "sha256": "049768378558f359df67e4a5687ecf3daff5050c803619a81e8966b104a661e2"
+        "bytes": 368927,
+        "sha256": "cfde153c77387d832d716afe97602f69ceaaf2c53951459a4ae35b7eddd01145"
       },
       "claims": {
         "ok": true,
@@ -2086,8 +2039,8 @@
           {
             "x": 14,
             "y": 442,
-            "w": 482,
-            "h": 404
+            "w": 436,
+            "h": 366
           },
           {
             "x": 506,
@@ -2109,13 +2062,13 @@
           }
         ],
         "detailMagnificationsOfThePanel": [
-          1.99,
+          2.2,
           1.9,
           1.9,
           1.26
         ],
         "detailMagnificationsOfAppPixels": [
-          1,
+          1.1,
           0.95,
           0.95,
           0.63
@@ -2159,12 +2112,12 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "fef3cb770ce05bd0"
+        "fnSha": "67637281bbe5a5e0"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:54:01.541Z"
+      "fileMtime": "2026-09-06T04:21:16.816Z"
     },
     {
       "id": "15",
@@ -2172,7 +2125,7 @@
       "title": "Settings and gesture reference",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 4,
+      "seconds": 3.6,
       "status": "captured",
       "error": null,
       "check": {
@@ -2216,10 +2169,10 @@
         ],
         "fnSha": "8891521182f0f526"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:54:05.282Z"
+      "fileMtime": "2026-09-06T04:21:20.202Z"
     },
     {
       "id": "16",
@@ -2227,15 +2180,15 @@
       "title": "Touch gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 30s",
-      "seconds": 109.3,
+      "seconds": 108.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1830894,
-        "sha256": "d5497a322a2b9bc00bb695ef554af76c07f754626edbd54ca5d43168f7346413",
+        "bytes": 1770993,
+        "sha256": "44e5e55ac7e4b359891ad4ff7248a79e4bafa16907d1cd1208d5283e5daada2b",
         "seconds": 34,
         "fps": 30,
         "frames": 1020
@@ -2275,7 +2228,7 @@
           "gyro"
         ],
         "count": 7,
-        "quickAddedNode": "nmt1gy6of1mte8",
+        "quickAddedNode": "nmt1gy5zn1mte8",
         "tapSelected": true,
         "doubleTapConnected": true,
         "dragPlacedIt": true,
@@ -2300,10 +2253,10 @@
         ],
         "fnSha": "cd01c1b5a2319bda"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T05:55:52.727Z"
+      "fileMtime": "2026-09-06T04:23:06.415Z"
     },
     {
       "id": "17",
@@ -2311,15 +2264,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 527.7,
+      "seconds": 449.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 6622457,
-        "sha256": "410f8d5a6194bd2cbf5c2f2fd18b720ff00b006345ec541dbfde33bb1c52bffa",
+        "bytes": 5606539,
+        "sha256": "53d9ba759f1dbe0ebcfff2f176f9dca75c82c5ccf2c6760b20c66f01cd7a1396",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -2350,12 +2303,12 @@
       "result": {
         "posesRecognised": [
           "spread",
-          "fist",
           "two",
+          "fist",
           "gather"
         ],
         "count": 4,
-        "samples": 1559,
+        "samples": 1413,
         "clusterGrabbed": "Koji",
         "clusterMembers": 16,
         "clusterCentroidBefore": [
@@ -2364,15 +2317,15 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          2.432,
-          0.445,
-          -3.416
+          2.284,
+          0.286,
+          -3.343
         ],
-        "clusterCentroidTravelled": 17.2866,
+        "clusterCentroidTravelled": 17.508,
         "clusterMaxMemberDrift": 0,
         "clusterLedgerBeforeOnPeer": "5144cc62a503",
-        "clusterLedgerAfterOnPeer": "54cd53fd73f3",
-        "clusterLedgerAfterHere": "54cd53fd73f3",
+        "clusterLedgerAfterOnPeer": "7720fe60c994",
+        "clusterLedgerAfterHere": "7720fe60c994",
         "clusterMovePropagatedToTheOtherSurface": true,
         "clusterMoved": true,
         "clusterInternalArrangementPreserved": true,
@@ -2391,10 +2344,10 @@
         ],
         "fnSha": "269d3aff2a2dd9b9"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T06:04:39.338Z"
+      "fileMtime": "2026-09-06T04:30:34.986Z"
     },
     {
       "id": "18",
@@ -2402,15 +2355,15 @@
       "title": "Search fly-to in motion",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 10s",
-      "seconds": 78.8,
+      "seconds": 75.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2903148,
-        "sha256": "0e6caf31ea688b4d9988d79b44fc87c82b2b8b61784d17043715dfb6758b297b",
+        "bytes": 2576881,
+        "sha256": "324496fc174b4d1d6619a1ccd20410b7899c31783d35cff55bf62663133cc895",
         "seconds": 13,
         "fps": 30,
         "frames": 390
@@ -2504,10 +2457,10 @@
         ],
         "fnSha": "a60024ab92924687"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T06:06:00.323Z"
+      "fileMtime": "2026-09-06T04:31:52.555Z"
     },
     {
       "id": "19",
@@ -2515,15 +2468,15 @@
       "title": "Capture, place, connect, refind",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 15s",
-      "seconds": 137.5,
+      "seconds": 119.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 2037766,
-        "sha256": "ab8c422ca55adf0abc76b8b9008f8e85afc07fb53908130836695ea198b3f60d",
+        "bytes": 1724397,
+        "sha256": "46d01d4f9cb896a0163bd850bb8fa3e99eab69ec3db8e3c5faef64f49b07a677",
         "seconds": 23,
         "fps": 30,
         "frames": 690
@@ -2622,10 +2575,10 @@
         ],
         "fnSha": "8f6ace6323401f42"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T06:08:15.320Z"
+      "fileMtime": "2026-09-06T04:33:49.664Z"
     },
     {
       "id": "20",
@@ -2633,15 +2586,15 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 90.9,
+      "seconds": 92.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 647178,
-        "sha256": "e286bf1a4a45839ab145c2f61049bcb877825f005cec0c50be43a385261b7559",
+        "bytes": 636707,
+        "sha256": "da4b663582f5310cb198a37430f4aba0ef5ab01a0591a5fe6a778e573ee82e4e",
         "seconds": 30,
         "fps": 30,
         "frames": 900
@@ -2775,20 +2728,20 @@
         ],
         "fnSha": "dd8867f00542f2cc"
       },
-      "capturedInCycle": 11,
+      "capturedInCycle": 10,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T06:09:48.175Z"
+      "fileMtime": "2026-09-06T04:35:24.052Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T06:09:51.882Z",
+  "finishedAt": "2026-09-06T04:35:28.015Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 805784,
-    "sha256": "e6ed98b70084daba1fb3660fb28fae8533ee48d9cf8136f049ba4b8b8645b5ec"
+    "bytes": 802198,
+    "sha256": "3e825182c75528fd9258f1489d7ecc38f5c3b48bb5b8ae711fb76362e494acde"
   },
   "captured": 20,
   "total": 20
