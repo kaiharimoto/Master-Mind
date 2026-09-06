@@ -12,8 +12,8 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 | Phase | review |
 | Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
 | Review cycle | **9 complete.** All three critics dispatched strictly sequentially, all three verdicts written verbatim. **Category 04 failed its minimum**; two blocking findings, root cause narrowed but not closed |
-| Rubric score | **85.5 / 100** at cycle 9 — 22 + 22 + 17 + **12** + 8 + 4.5. **Category 04 is BELOW its minimum of 13**, so a hard gate fails and the cycle does not exit. Not regression-free |
-| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 (cycles 1–9) |
+| Rubric score | **82.0 / 100** at cycle 10 — 21 + 20 + 17 + **12** + 8 + 4. **Category 04 below its minimum of 13 for the second cycle running.** Cycle 10 is a REGRESSION against cycle 9, and three of its four Audience findings were caused by cycle 9's own fixes |
+| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 (cycles 1–10) |
 | Artifacts captured | **20 of 20, all as defined**, in every frozen cycle |
 | Positions | **identical for eight consecutive cycles**, compared as model values |
 | Exit condition | total ≥ 90, both hard gates, two consecutive regression-free cycles — or the 15-cycle cap with a final report listing every unmet gate |
