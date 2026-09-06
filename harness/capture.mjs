@@ -227,7 +227,7 @@ export async function inkWidths(texts, { font, size }) {
   // Even dimensions: ffmpeg's gray raster rounds an odd height down and the
   // last row of text would be read out of a buffer that no longer holds it.
   const W = 6000, ROW = 2 * Math.ceil(size * 1.1), H = ROW * texts.length;
-  const esc = (t) => String(t).replace(/[\\:']/g, m => '\\' + m);
+  const esc = (t) => String(t).replace(/[\\:]/g, m => '\\' + m).replace(/'/g, '\u2019');
   const chain = [`color=c=black:s=${W}x${H}:d=1`,
     ...texts.map((t, i) => `drawtext=fontfile=${font}:text='${esc(t || ' ')}':x=0:` +
       `y=${i * ROW + Math.round(size * 0.4)}:fontsize=${size}:fontcolor=white`)].join(',');
@@ -300,7 +300,15 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
   for (let i = 0; i < n; i++) {
     let f = `[${i}:v]scale=${cellW}:${cellH - strip}:force_original_aspect_ratio=decrease,` +
             `pad=${cellW}:${cellH}:(ow-iw)/2:${strip}:color=0x120E0B`;
-    const esc = (t) => String(t).replace(/[\\:']/g, m => '\\' + m);
+    // AN APOSTROPHE CANNOT BE ESCAPED INSIDE A SINGLE-QUOTED FFMPEG ARGUMENT.
+    // `\'` is invalid there, and the shell idiom `'\''` renders as nothing.
+    // This has been wrong since the first composite and only surfaced when a
+    // caption first contained the word "district's": ffmpeg rejected the whole
+    // filter graph and the capture failed with a wall of filter syntax. The
+    // typographic right quote needs no escaping, the font has it, and the rest
+    // of this build's prose already uses it. Backslash and colon still take a
+    // plain backslash.
+    const esc = (t) => String(t).replace(/[\\:]/g, m => '\\' + m).replace(/'/g, '\u2019');
     if (labels && labels[i]) {
       f += `,drawtext=fontfile=${HEAD_FONT}:` +
            `text='${esc(labels[i])}':x=20:y=10:fontsize=23:fontcolor=0xEFE6D8`;

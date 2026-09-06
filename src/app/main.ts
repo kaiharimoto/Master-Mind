@@ -790,8 +790,18 @@ export class App {
     if (pose === 'spread' || pose === 'gather') {
       if (throttled) return;
       this.lastHandOp = now;
-      this.controls.zoom(pose === 'spread' ? (byMouse ? 1 / 1.12 : 0.985)
-                                           : (byMouse ? 1.12 : 1.015));
+      // THE GESTURE HAS TO BE WORTH MAKING. A held open palm moved the vantage
+      // 1.5 % per quarter-second — about 1.15x over the three seconds a pose is
+      // actually held — and the cycle-11 Audience's judgement was the right one:
+      // "a 10 % dolly should visibly buy legibility, or the pose isn't worth the
+      // gesture". At that gain the change in what the frame can name is smaller
+      // than the label arbiter's own frame-to-frame jitter, so the operation
+      // could not be seen to do anything. 3.5 % per step is about 1.5x over the
+      // same hold, which is a move a viewer reads as a move. The two directions
+      // are matched, so a held gather undoes a held spread at the same rate;
+      // they were 1.5 % in and 1.5 % out, which is not the same rate.
+      this.controls.zoom(pose === 'spread' ? (byMouse ? 1 / 1.12 : 0.965)
+                                           : (byMouse ? 1.12 : 1 / 0.965));
     } else if (pose === 'two') {
       const c = this.scene.renderer.domElement;
       const sx = f ? (1 - f.x) * c.width : c.width / 2, sy = f ? f.y * c.height : c.height / 2;

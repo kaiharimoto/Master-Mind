@@ -43,7 +43,17 @@ const run = (args) => {
 //    Archiving into prevDir was fine while prevDir WAS history/; once prevDir
 //    became the frozen directory it meant copying evidence/cycles/ into a
 //    subdirectory of itself, which is where cycle 8's first run stopped.
-if (!skipCapture && existsSync(join(EV, 'MANIFEST.json'))) {
+// A HISTORY DIRECTORY IS WRITTEN ONCE. Re-running a cycle number — which a
+// cycle whose first run failed artifacts legitimately needs to do — would
+// otherwise copy the CURRENT working set over the archive of the PREVIOUS
+// cycle, destroying the snapshot it is named for. That is the cycle-7 overwrite
+// incident this repository already discloses, with a different door into it.
+// The frozen set is protected the same way: re-freezing an existing cycle takes
+// an explicit --refreeze, and says so on the way past.
+if (!skipCapture && existsSync(join(EV, 'MANIFEST.json')) && existsSync(historyPrev)) {
+  console.log(`evidence/history/cycle-${cycle - 1} already exists — NOT overwriting it; ` +
+              'the working set is archived once per cycle number');
+} else if (!skipCapture && existsSync(join(EV, 'MANIFEST.json'))) {
   mkdirSync(historyPrev, { recursive: true });
   for (const f of readdirSync(EV)) {
     if (['history', 'coldstart', 'critic-briefs', 'sheets', 'cycles', 'critics'].includes(f)) continue;
@@ -150,6 +160,18 @@ console.log(`positions: ${diff.positions.compared ? (diff.positions.identical ? 
 // briefs point THERE — so the builder can keep working without moving the
 // ground under a review.
 const frozen = resolve(EV, `cycles/cycle-${cycle}`);
+const refreeze = process.argv.includes('--refreeze');
+if (existsSync(join(frozen, 'MANIFEST.json')) && !refreeze) {
+  console.error(`evidence/cycles/cycle-${cycle} is already frozen. Re-freezing replaces a set a ` +
+                'critic may already have read. Pass --refreeze if that is what you mean, and ' +
+                'record why in evidence/cycles/README.md.');
+  process.exit(2);
+}
+if (existsSync(join(frozen, 'MANIFEST.json')) && refreeze) {
+  const was = JSON.parse(readFileSync(join(frozen, 'MANIFEST.json'), 'utf8'));
+  console.log(`REFREEZING cycle-${cycle}: replacing a frozen set that had ` +
+              `${was.captured}/${was.total} captured as defined`);
+}
 rmSync(frozen, { recursive: true, force: true });
 mkdirSync(frozen, { recursive: true });
 for (const f of readdirSync(EV)) {

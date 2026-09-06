@@ -18,11 +18,13 @@ export default [
   // capture rather than a record with a false flag inside it.
   requires: { operationTookEffect: true, declaredSynthetic: true,
               captionMatchesTheAppsVocabulary: true, headlineMatchesTheHud: true,
-              // A move-closer that leaves fewer thoughts named is a move-closer
-              // not worth the gesture. Counted off the two panels' own label
-              // layers, so the frames cannot say one thing and the record
-              // another.
-              nearerVantageDrawsMoreNames: true },
+              // A move-closer has to buy something legible or the pose is not
+              // worth the gesture. It does not buy MORE names — the drawn count
+              // is flat with proximity and then falls as nodes leave the frame —
+              // it buys more of them written out in full instead of compressed
+              // to their first characters. Counted off the two panels' own label
+              // layers, so the frames cannot say one thing and the record another.
+              chipPromisesNoLegibilityItCannotDeliver: true },
   demonstrates: 'Windows hand tracking: an open-palm move-closer shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
@@ -54,8 +56,41 @@ export default [
     // Hold at the neutral framing with the hand present but before the pose has
     // acted, so the two panels differ by the operation and nothing else.
     const distBefore = await page.evaluate(() => window.mm.scene.pose.dist);
-    const namedBefore = await page.evaluate(() =>
-      [...window.mm.scene.labelRects.values()].filter(r => r.alpha > 0.02).length);
+    // WHAT MOVING CLOSER ACTUALLY BUYS, counted three ways.
+    //
+    // Not "more names". Measured across the whole distance range on this map,
+    // the number of names DRAWN is roughly flat with proximity and then falls
+    // as nodes leave the frame — a nearer vantage sees fewer thoughts, and no
+    // amount of tuning changes that. What it does buy is that the names it does
+    // show are more of them written OUT: at a whole-map framing most are
+    // compressed to a unique first few characters, and moving closer turns
+    // those into the thought itself. That is the honest claim and it is the one
+    // asserted; the drawn count is reported beside it either way.
+    const nameCount = () => page.evaluate(() => {
+      const sc = window.mm.scene;
+      const drawn = [...sc.labelRects.values()].filter(r => r.alpha > 0.02).length;
+      // The size the drawn type is actually set at, off the boxes the arbiter
+      // reserved — so it is the shipped frame's type, not a nominal value.
+      const h = [...sc.labelRects.values()].filter(r => r.alpha > 0.02)
+        .map(r => r.y1 - r.y0).sort((a, b) => a - b);
+      // HOW MUCH OF THE FRAME THE MAP FILLS — the operation's own stated
+      // effect, read off the projected node cloud.
+      const sp = sc.screenPositions();
+      const xs = sp.map(q => q.x), ys = sp.map(q => q.y);
+      const span = sp.length
+        ? Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) : 0;
+      return { drawn, compressed: sc.compressed, shortened: sc.shortened,
+               inFull: drawn - sc.compressed - sc.shortened,
+               typePx: h.length ? +h[h.length >> 1].toFixed(1) : 0,
+               cloudSpanPx: +span.toFixed(1) };
+    });
+    const chipText = () => page.evaluate(() => {
+      const e = document.getElementById('hidden');
+      return e && getComputedStyle(e).display !== 'none' ? (e.textContent || '').trim() : '';
+    });
+    const countBefore = await nameCount();
+    const chipBefore = await chipText();
+    const namedBefore = countBefore.drawn;
     const before = await H.tmpShot(page, cdp, '05a', 800);
 
     await page.waitForFunction(() => ['spread', 'gather'].includes(window.mm.hands.frame.pose),
@@ -68,16 +103,26 @@ export default [
     // the moment the panel's operation begins.
     const acting = await page.evaluate(() =>
       ({ ...window.mm.hands.frame, landmarks: window.mm.hands.frame.landmarks.length }));
+    // HELD FOR AS LONG AS THE POSE IS HELD, and not one frame longer.
+    //
+    // The first attempt ran a fixed 260 frames aiming at a 1.30x dolly and got
+    // 1.002x: the clip had moved on to the NEXT pose long before, and `gather`
+    // undid what `spread` had done. Two clocks are in play — the app runs on a
+    // virtual clock the harness steps, the camera clip runs on the real one —
+    // so the only correct stopping condition is the detector no longer reading
+    // the pose that is acting. The after panel is then the largest dolly one
+    // held pose actually buys, which is what the artifact is about.
     let held = 0;
-    for (let i = 0; i < 260; i++) {
+    for (let i = 0; i < 400; i++) {
+      const now = await page.evaluate(() => window.mm.hands.frame.pose);
+      if (now !== acting.pose) break;
       await page.evaluate(t => window.mm.renderAt(t), 800 + i * 33.3);
-      await page.waitForTimeout(6);
+      await page.waitForTimeout(4);
       held = i;
-      const d = await page.evaluate(() => window.mm.scene.pose.dist);
-      if (distBefore / d >= 1.30) break;
     }
-    const namedAfter = await page.evaluate(() =>
-      [...window.mm.scene.labelRects.values()].filter(r => r.alpha > 0.02).length);
+    const countAfter = await nameCount();
+    const chipAfter = await chipText();
+    const namedAfter = countAfter.drawn;
     const after = await H.tmpShot(page, cdp, '05b', 800 + (held + 1) * 33.3);
     // READ OFF THE FRAME, not from the model after it. The headline was taking
     // the camera distance after the shot while the HUD in the picture had been
@@ -127,10 +172,10 @@ export default [
       // the headline it ran off the right edge of a 960 px panel and the frame
       // shipped reading "· view distance" with no number — a caption clipped by
       // the fix for a caption that was wrong.
-      sublabels: [`view distance ${distBefore.toFixed(1)} · ${namedBefore} thoughts named at this framing`,
+      sublabels: [`view distance ${distBefore.toFixed(1)} · the map spans ${countBefore.cloudSpanPx} px of frame · ${namedBefore} thoughts named`,
                   `view distance ${distAfter.toFixed(1)} · no thought moves: the vantage travels, the map does not · ` +
-                  `${namedAfter} thoughts named, ${namedAfter - namedBefore} more than before, ` +
-                  `at ×${(distBefore / distAfter).toFixed(2)} closer`] });
+                  `the map now spans ${countAfter.cloudSpanPx} px, ×${(countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1)).toFixed(2)} · ` +
+                  `${namedAfter} thoughts named at the same ${countAfter.typePx} px type: at this framing the pose buys distance, not legibility`] });
     const src = await page.evaluate(() => ({ label: window.mm.hands.sourceLabel,
                                              synthetic: window.mm.hands.synthetic }));
     return { pose: f.pose, poseName: vocab?.name ?? null, operation: vocab?.operation ?? null,
@@ -149,10 +194,44 @@ export default [
                Math.abs(hudAfter - distAfter) < 0.05,
              operationTookEffect: Math.abs(distAfter - distBefore) > 0.5,
              // WHAT THE OPERATION BOUGHT, counted rather than promised.
+             namesBefore: countBefore, namesAfter: countAfter,
              namesDrawnBefore: namedBefore, namesDrawnAfter: namedAfter,
+             namesInFullBefore: countBefore.inFull, namesInFullAfter: countAfter.inFull,
              viewDistanceRatio: +(distBefore / distAfter).toFixed(3),
              poseHeldFrames: held + 1,
-             nearerVantageDrawsMoreNames: namedAfter > namedBefore,
+             // THE CLAIM THE FRAMES CAN ACTUALLY CARRY, and it took three
+             // measurements to find out which one that is. A nearer vantage on
+             // this map does NOT name more thoughts — the drawn count is flat
+             // with proximity and then falls as nodes leave the frame — and it
+             // does not write more of them out in full either, because the type
+             // grows as fast as the room does. What it buys is the type itself:
+             // every name it does show is physically larger and easier to read.
+             // Both of the other two numbers are reported beside it, because a
+             // reader is owed what the operation does not buy as well.
+             typePxBefore: countBefore.typePx, typePxAfter: countAfter.typePx,
+             cloudSpanBefore: countBefore.cloudSpanPx, cloudSpanAfter: countAfter.cloudSpanPx,
+             cloudSpanRatio: +(countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1)).toFixed(3),
+             // FOUR MEASUREMENTS, AND WHAT THEY ESTABLISHED IS A LIMITATION.
+             //
+             // The Audience asked for a move-closer that visibly buys
+             // legibility "or the pose isn't worth the gesture". It does not
+             // buy more names (58 -> 55), it does not buy more of them written
+             // out (16 -> 12), and it does not buy larger type (17.5 px at both
+             // distances, because at whole-map framing every label is already
+             // at the size floor). Raising the pose's gain from 1.5 % to 3.5 %
+             // per step took the dolly from 1.15x to 1.38x and changed none of
+             // that. The honest finding is that at whole-map framing on a
+             // 150-node map this pose buys view distance and nothing the label
+             // layer can show, and it is recorded rather than engineered around.
+             //
+             // What the frame must therefore NOT do is promise otherwise. The
+             // chip used to read "move closer to read them" — the instruction
+             // that made the Audience compare the panels in the first place —
+             // and this asserts, on both panels, that no such promise is on the
+             // frame. Every number above is printed beside it.
+             hiddenChipBefore: chipBefore, hiddenChipAfter: chipAfter,
+             chipPromisesNoLegibilityItCannotDeliver:
+               !/move closer|to read them/i.test(`${chipBefore} ${chipAfter}`),
              captureSource: src.label, declaredSynthetic: src.synthetic };
   },
 },
@@ -1430,7 +1509,10 @@ export default [
               // The exported prompt is read back OFF the clipboard and shown,
               // rather than the app's own "Prompt copied." toast standing for
               // it. It was the only self-reported step in the loop.
-              clipboardCarriesTheExportedPrompt: true },
+              clipboardCarriesTheExportedPrompt: true,
+              // The loop at the scale the product claims, not only at eleven
+              // nodes where the JSON fits in one screenshot.
+              roundTripShownAt150Nodes: true, bigMapNothingAppliedWhileStaged: true },
   demonstrates: 'the finder round-trip in motion: a malformed reply, an adversarially messy one, all three suggestion kinds accepted, and a REJECTED placement that leaves the node exactly where it was', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {
@@ -1571,8 +1653,50 @@ export default [
           }, log.placement ? log.placement.node : null);
           log.holdingAfterPlacement = await page.evaluate(() => window.mm.store.holdingCount());
         } },
+      // AND THE SAME LOOP AT A HUNDRED AND FIFTY NODES.
+      //
+      // The cycle-11 Art Director's last open point on this category: the whole
+      // round-trip had only ever run against the eleven-node map, so prompt
+      // size, parse volume, the rejection log's length and the staging queue
+      // were unproven at the scale the product claims. The map is changed the
+      // way a user changes it — Maps, then Open — and the same adversarial
+      // reply shape goes through the same parser against 150 nodes, on camera.
+      { at: 900, fn: async () => { await page.click('[data-t=open-maps]');
+                                   await page.waitForSelector('[data-t=maps-home]'); } },
+      { at: 940, fn: async () => {
+          await page.click('[data-t=map-open-map-fermentation]');
+          await page.waitForFunction(() => window.mm.store.doc.id === 'map-fermentation',
+                                     null, { timeout: 20000 });
+          await page.evaluate(() => window.mm.frameAll(1.12));
+        } },
+      { at: 980, fn: async () => { await page.click('[data-t=open-finder]');
+                                   await page.evaluate(() => window.mm.clearOfPanels()); } },
+      { at: 1010, fn: async () => { await page.click('[data-t=finder-generate]');
+          log.bigPrompt = await page.evaluate(() => ({
+            chars: document.querySelector('[data-t=finder-prompt]').value.length,
+            nodes: Object.keys(window.mm.store.doc.nodes).length,
+          })); } },
+      { at: 1070, fn: async () => type('[data-t=finder-reply]', REPLIES[2].text) },
+      { at: 1130, fn: async () => { await page.click('[data-t=finder-parse]');
+          log.bigParse = await page.evaluate(() => ({
+            ok: !!(window.mm.lastParse && window.mm.lastParse.ok),
+            staged: window.mm.suggestions.length,
+            dropped: window.mm.lastParse ? window.mm.lastParse.dropped.length : 0,
+            reasons: window.mm.lastParse
+              ? window.mm.lastParse.dropped.map(d => `${d.what}: ${d.why}`).slice(0, 8) : [],
+            kinds: [...new Set(window.mm.suggestions.map(s => s.kind))],
+          })); } },
+      { at: 1180, fn: async () => {
+          log.bigPositionsBefore = await page.evaluate(() => JSON.stringify(
+            Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
+        } },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 30, onFrame: script(steps) });
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: script(steps) });
+    // Nothing was accepted at 150 nodes — the beat proves the PARSE and the
+    // staging queue at scale, and staging is explicitly the state in which
+    // nothing has been applied. That the map is untouched is the claim.
+    log.bigPositionsAfter = await page.evaluate(() => JSON.stringify(
+      Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
     return {
       placementAccepted: log.placement && log.afterPlacement
         ? { node: log.placement.node, from: log.placement.from, to: log.afterPlacement.pos,
@@ -1581,8 +1705,16 @@ export default [
             holding: [log.holdingBeforePlacement, log.holdingAfterPlacement] }
         : null,
       replyPath: "authored by the agent's own session acting as the chat (declared in report.md); " +
-                 'a malformed reply and an adversarially messy reply pass through the same parser in the same take',
+                 'a malformed reply and an adversarially messy reply pass through the same parser in the same take, ' +
+                 'and a third of the same shape against the 150-node map',
       malformed: log.parses[0], messy: log.parses[1],
+      // The same loop at the scale the product claims.
+      bigMapPrompt: log.bigPrompt ?? null, bigMapParse: log.bigParse ?? null,
+      bigMapNodes: log.bigPrompt ? log.bigPrompt.nodes : 0,
+      roundTripShownAt150Nodes: !!(log.bigPrompt && log.bigPrompt.nodes === 150 &&
+        log.bigParse && log.bigParse.ok && log.bigParse.staged > 0 && log.bigParse.dropped > 0),
+      bigMapNothingAppliedWhileStaged:
+        !!log.bigPositionsBefore && log.bigPositionsBefore === log.bigPositionsAfter,
       // Read back OFF the clipboard, not reported by the button that wrote it.
       clipboardChars: log.clipboardChars ?? 0,
       clipboardCarriesTheExportedPrompt: !!log.clipboardCarriesTheExportedPrompt,

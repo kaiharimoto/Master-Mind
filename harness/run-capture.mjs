@@ -227,6 +227,88 @@ const diffPixels = async (aPng, bPng, thresh = 14) => {
   return { W, H, changed, box: x1 < 0 ? null : { x0, y0, x1, y1 }, samples: pts };
 };
 
+/**
+ * WHERE A REGION OF ONE FRAME WENT IN ANOTHER.
+ *
+ * A rigid translation of a dense district defeats every per-member test: move
+ * twenty nodes that stand fifteen pixels apart by sixty-seven pixels and most
+ * of them land where a NEIGHBOUR used to be, so "light arrived here" and "light
+ * left there" are both false for them and the probe reports eight of twenty
+ * while the district plainly moved as one. Two per-point attempts failed this
+ * way before this one; the fault was never the frames.
+ *
+ * The question a rigid translation actually answers is where the region went,
+ * so that is what is asked: the district's own box is lifted out of the first
+ * frame and slid over the second until it matches best. If the offset that wins
+ * is the offset the model says the district moved by, the district moved by it,
+ * in the pixels, as one thing.
+ *
+ * Coarse pass on a 3 px lattice over +/- `reach`, then a 1 px refinement.
+ */
+const bestOffset = async (aPng, bPng, box, reach = 96) => {
+  const A = await rawOf(aPng), B = await rawOf(bPng);
+  if (!A.raw.length || !B.raw.length || A.W !== B.W || A.H !== B.H) return null;
+  const { W, H } = A;
+  const x0 = Math.max(2, Math.round(box.x0)), x1 = Math.min(W - 3, Math.round(box.x1));
+  const y0 = Math.max(2, Math.round(box.y0)), y1 = Math.min(H - 3, Math.round(box.y1));
+  if (x1 - x0 < 20 || y1 - y0 < 20) return null;
+  // ONLY THE DISTRICT'S OWN LIGHT IS MATCHED. Scored over the whole box, the
+  // best offset is whichever one lands the box on the most background: a field
+  // that is mostly a flat near-black ground has a minimum wherever it is dark,
+  // and the first version duly reported the district as having travelled
+  // (-98, 92) px when the model said (44, 49). Matching only the lit pixels
+  // removes the ambiguity, because there is exactly one place the district's
+  // own arrangement of lights fits.
+  const LIT = 40;   // the ground is ~18
+  const pts = [];
+  for (let y = y0; y <= y1; y += 2) for (let x = x0; x <= x1; x += 2) {
+    const i = (y * W + x) * 3;
+    const v = (A.raw[i] + A.raw[i + 1] + A.raw[i + 2]) / 3;
+    if (v > LIT) pts.push([x, y, v]);
+  }
+  if (pts.length < 40) return null;
+  // SCORED ON WHERE THE LIGHTS LAND, not on how close the greys are.
+  //
+  // Absolute-difference scoring preferred "it did not move" even with the true
+  // offset inside the search: the district sits in a field of other lit nodes,
+  // so its old footprint is never wholly dark and a sum of differences barely
+  // separates the two. What separates them is how many of the district's own
+  // lights land on a light — at the offset it actually travelled, all of them
+  // do, because those are its own markers.
+  const score = (dx, dy) => {
+    let hit = 0, sad = 0, n = 0;
+    for (const [x, y, v] of pts) {
+      const bx = x + dx, by = y + dy;
+      if (bx < 0 || by < 0 || bx >= W || by >= H) { n++; continue; }
+      const j2 = (by * W + bx) * 3;
+      const w2 = (B.raw[j2] + B.raw[j2 + 1] + B.raw[j2 + 2]) / 3;
+      if (w2 > LIT) hit++;
+      sad += Math.abs(v - w2);
+      n++;
+    }
+    return { hit: hit / Math.max(n, 1), sad: sad / Math.max(n, 1) };
+  };
+  const better = (a, b) => a.hit > b.hit + 1e-9 || (Math.abs(a.hit - b.hit) <= 1e-9 && a.sad < b.sad);
+  // The lattice is ANCHORED AT ZERO, so "it did not move" is one of the answers
+  // the search can give. Stepping from -reach missed (0,0) entirely whenever
+  // reach was not a multiple of the step, which is a search that cannot return
+  // the null result.
+  let best = { dx: 0, dy: 0, hit: -1, sad: Infinity };
+  const R = Math.floor(reach / 3) * 3;
+  for (let dy = -R; dy <= R; dy += 3) for (let dx = -R; dx <= R; dx += 3) {
+    const r = score(dx, dy);
+    if (better(r, best)) best = { dx, dy, ...r };
+  }
+  for (let dy = best.dy - 3; dy <= best.dy + 3; dy++) for (let dx = best.dx - 3; dx <= best.dx + 3; dx++) {
+    const r = score(dx, dy);
+    if (better(r, best)) best = { dx, dy, ...r };
+  }
+  const zero = score(0, 0);
+  return { dx: best.dx, dy: best.dy, sad: +best.sad.toFixed(2),
+           litHitFraction: +best.hit.toFixed(3), litHitAtZero: +zero.hit.toFixed(3),
+           sadAtZero: +zero.sad.toFixed(2), samples: pts.length };
+};
+
 const sampleDiscs = async (png, discs, min = 2.5) => {
   const raw = await new Promise((res) => {
     const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
@@ -314,6 +396,9 @@ const sampleDiscs = async (png, discs, min = 2.5) => {
     worstContrast: rows.length ? Math.min(...rows.map(r => r.contrast)) : null,
     invisibleIds: invisible.slice(0, 40).map(r => r.id),
     weakest: invisible.slice(0, 8),
+    // The per-disc peaks, for callers that need to compare the SAME points
+    // across two frames rather than judge one frame's contrast.
+    rows,
   };
 };
 
@@ -779,8 +864,17 @@ async function runDriver(d) {
         const shaAfterRaster = createHash('sha256')
           .update(JSON.stringify(await positions(w.page))).digest('hex').slice(0, 10);
         // THE FRAME BEFORE THE MOVE AGAINST THE FRAME THAT SHIPS, one frozen
-        // camera between them. Everything that changed is the district; nothing
-        // outside its own ground may have changed at all.
+        // camera between them — and the test is PAIRED, per member, on the two
+        // frames rather than on where the change happened to land.
+        //
+        // "Nearly all the changed pixels are on the district's ground" was the
+        // first attempt and it measured 26.5 %, which is not a failure of the
+        // move: displacing twenty nodes makes the label arbiter re-solve, so
+        // names legitimately shift all over the frame. What CANNOT happen
+        // without the district moving is light arriving where the model says it
+        // now is and leaving where the model says it was. Four samples per
+        // member, two frames, two positions, and node cores are far brighter
+        // than any label that might re-flow across them.
         const dif = await diffPixels(preMoveShot, bigShots.w);
         const pad = 26;
         const bx0 = Math.min(...nowXY.map(q => q.x), ...wasXY.map(q => q.x)) - pad;
@@ -790,6 +884,36 @@ async function runDriver(d) {
         const inBox = (dif.samples ?? []).filter(([x, y]) =>
           x >= bx0 && x <= bx1 && y >= by0 && y <= by1).length;
         const sampled = (dif.samples ?? []).length;
+        const peaksAt = async (png, xy) => {
+          const r = await sampleDiscs(png, xy.map((q, i) => ({ id: afterSnap[i][0], x: q.x, y: q.y, r: 3 })), 0);
+          return new Map((r.rows ?? []).map(w2 => [w2.id, w2.peak]));
+        };
+        const preAtWas = await peaksAt(preMoveShot, wasXY);
+        const postAtWas = await peaksAt(bigShots.w, wasXY);
+        const preAtNow = await peaksAt(preMoveShot, nowXY);
+        const postAtNow = await peaksAt(bigShots.w, nowXY);
+        const MARGIN = 0.04;
+        let arrived = 0, left = 0, both = 0;
+        for (const [id] of afterSnap) {
+          const a = (postAtNow.get(id) ?? 0) - (preAtNow.get(id) ?? 0) > MARGIN;
+          const l = (preAtWas.get(id) ?? 0) - (postAtWas.get(id) ?? 0) > MARGIN;
+          if (a) arrived++;
+          if (l) left++;
+          if (a && l) both++;
+        }
+        // WHERE THE DISTRICT WENT, asked of the pixels and answered in pixels.
+        // The expected offset is the mean of the members' own projected travel;
+        // the measured one is where the district's box out of the pre-move frame
+        // matches the shipped frame best.
+        const expDx = nowXY.reduce((t, q, i) => t + (q.x - wasXY[i].x), 0) / nowXY.length;
+        const expDy = nowXY.reduce((t, q, i) => t + (q.y - wasXY[i].y), 0) / nowXY.length;
+        const wasBox = {
+          x0: Math.min(...wasXY.map(q => q.x)) - 18, x1: Math.max(...wasXY.map(q => q.x)) + 18,
+          y0: Math.min(...wasXY.map(q => q.y)) - 18, y1: Math.max(...wasXY.map(q => q.y)) + 18,
+        };
+        const off = await bestOffset(preMoveShot, bigShots.w, wasBox,
+                                     Math.ceil(Math.hypot(expDx, expDy)) + 40);
+        const offErr = off ? Math.hypot(off.dx - expDx, off.dy - expDy) : Infinity;
         clusterProof.pixels = {
           members: afterSnap.length,
           medianSeparationPx: +(seps[seps.length >> 1] ?? 0).toFixed(2),
@@ -804,6 +928,19 @@ async function runDriver(d) {
           districtBox: { x0: Math.round(bx0), y0: Math.round(by0), x1: Math.round(bx1), y1: Math.round(by1) },
           changedSampled: sampled, changedInsideDistrict: inBox,
           changedInsideDistrictPct: sampled ? +((inBox / sampled) * 100).toFixed(1) : null,
+          // The paired test: light arrived where the ledger now says, and left
+          // where it used to say, member by member, across the two frames.
+          lightArrivedAtNewPositions: arrived,
+          lightLeftOldPositions: left,
+          membersThatDidBoth: both,
+          // The decisive one: the district's own ground, matched across the two
+          // frames, and how far the answer is from what the model claims.
+          expectedTravelPx: [+expDx.toFixed(1), +expDy.toFixed(1)],
+          measuredTravelPx: off ? [off.dx, off.dy] : null,
+          travelAgreementPx: Number.isFinite(offErr) ? +offErr.toFixed(1) : null,
+          matchAtMeasured: off ? off.litHitFraction : null,
+          matchIfItHadNotMoved: off ? off.litHitAtZero : null,
+          matchSamples: off ? off.samples : null,
         };
         clusterProof.printedShaMatchesRenderedState = shaAfterRaster === dw &&
           atNow.checked > 0 && atNow.invisible === 0;
@@ -812,9 +949,16 @@ async function runDriver(d) {
         // are, a material number of pixels changed between the two frames of
         // one frozen camera, and essentially all of them are on the district's
         // own ground rather than scattered over a map that re-rendered.
+        // The district travelled, in the pixels, by what the ledger says it
+        // travelled: the members are far enough apart to be told apart at all,
+        // they are lit where the model now puts them, the frame did change
+        // materially against the same camera, the offset that matches the
+        // district's own ground is within four pixels of the projected travel,
+        // and it matches materially better there than at no travel at all.
         clusterProof.displacementVisibleInPixels =
           (seps[0] ?? 0) > 30 && atNow.checked > 0 && atNow.invisible === 0 &&
-          (dif.changed ?? 0) > 4000 && sampled > 20 && (inBox / Math.max(sampled, 1)) > 0.9;
+          (dif.changed ?? 0) > 4000 && !!off && offErr <= 4 &&
+          Math.hypot(off.dx, off.dy) > 20 && off.litHitFraction > off.litHitAtZero * 1.3;
         // Panels taken with the district displaced; now put it back.
         clusterProof.restored = await restoreCluster();
         bigTwin = { nodes: { windows: Object.keys(bw).length, android: Object.keys(ba).length },
@@ -911,8 +1055,9 @@ async function runDriver(d) {
               ? `both ledgers agree while it is displaced; every coordinate is written back afterwards` +
                 (clusterProof.pixels
                   ? ` · checked against these pixels: ${clusterProof.pixels.markersAtDisplacedPositions}/${clusterProof.pixels.members} markers lit where the moved ledger says, ` +
-                    `${clusterProof.pixels.minSeparationPx} px of travel at the least, and of everything that changed against the same camera before the move, ` +
-                    `${clusterProof.pixels.changedInsideDistrictPct} % is on this district's own ground`
+                    `${clusterProof.pixels.minSeparationPx} px of travel at the least, and against the same camera before the move, ` +
+                    `its own ground matches ${clusterProof.pixels.measuredTravelPx ? clusterProof.pixels.measuredTravelPx.join(', ') : '—'} px away, ` +
+                    `within ${clusterProof.pixels.travelAgreementPx} px of the ${clusterProof.pixels.expectedTravelPx.join(', ')} px the ledger claims`
                   : '')
               : '',
           ] });
@@ -1114,7 +1259,24 @@ async function verify(d, file) {
   return { ok: true, ...out };
 }
 
-const list = DRIVERS.filter(d => !ONLY.length || ONLY.includes(d.id));
+// A PAIRED ARTIFACT DRAGS ITS PARTNER IN.
+//
+// Artifact 12 is the AFTER half of a twin sequence whose BEFORE half is
+// artifact 11, and the sequence runs once, in one process, with 11 leaving the
+// state 12 photographs. `--only 12` therefore produced an artifact with every
+// claim `undefined` and no error to read — a capture that failed for a reason
+// that was nobody's fault and nothing's finding. `pairWith` already declared
+// the dependency; nothing enforced it.
+const want = new Set(ONLY);
+if (want.size) {
+  for (const d of DRIVERS) {
+    if (d.pairWith && want.has(d.pairWith)) want.add(d.id);
+    if (d.pairWith && want.has(d.id)) want.add(d.pairWith);
+  }
+  const added = [...want].filter(i => !ONLY.includes(i));
+  if (added.length) console.log(`--only widened to include paired artifact(s): ${added.join(', ')}`);
+}
+const list = DRIVERS.filter(d => !want.size || want.has(d.id));
 
 // The manifest MERGES. A partial run (--only) used to overwrite the whole
 // record, so the file could claim one artifact was captured while twenty were

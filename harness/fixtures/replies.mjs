@@ -43,7 +43,49 @@ export const MESSY = `Absolutely — here's what I'd suggest.
 
 Those should tighten the middle of the talk. Want me to go deeper on the`;
 
+/**
+ * 3 — the same adversarial shape at 150 nodes.
+ *
+ * The cycle-11 Art Director's last open point on the finder category: the whole
+ * round-trip had only ever been run against the eleven-node map, "leaving
+ * prompt size, parse volume, staging behaviour and the rejection log unproven
+ * at the scale the product actually claims". This reply is written against the
+ * fermentation notebook and carries every failure the messy reply carries —
+ * a self-link, an already-existing pair, a node that does not exist, a
+ * placement of an already-placed thought, a malformed coordinate — plus the
+ * volume: nine connections, two groupings, three placements.
+ */
+export const BIG_MESSY = `Right — I read the whole map. Here's what stands out.
+
+\`\`\`json
+{
+  connections: [
+    { a: 'Lactobacillus plantarum', b: 'pH 4.6 is the line', why: 'the organism is why the line is where it is', },
+    { a: "Acetobacter aceti", b: 'Acetobacter needs air', why: 'the same fact stated twice, worth joining' },
+    { a: 'Aspergillus oryzae', b: "Rice koji: polish to 70 %", why: 'organism and substrate' },
+    { a: 'Wild yeast capture', b: 'Stiff levain vs liquid', why: 'both are about what you caught' },
+    { a: 'Calibrate the meter', b: 'Recalibrate the pH meter', why: 'the note and the task' },
+    { a: 'Mother formation', b: 'Mother formation', why: 'self link, should be dropped' },
+    { "a": "Strips lie above pH 4", "b": "pH 4.6 is the line", "why": "may already be joined" },
+    { a: 'Saccharomyces cerevisiae', b: 'not-a-real-node-id', why: 'bogus' },
+    { a: "Botulism needs low acid", b: "Garlic in oil: never", why: 'the rule and its worst case' },
+  ],
+  groupings: [
+    { name: 'Acidity', nodes: ['pH 4.6 is the line', 'Acidity titration', 'Strips lie above pH 4'] },
+    { name: '', nodes: ['Mother formation'] },
+  ],
+  placements: [
+    { node: 'Sour cherry kvass', pos: [12.5, -3.25, 7.0], why: 'near the vinegar work' },
+    { node: 'Lactobacillus plantarum', pos: [0, 0, 0], why: 'already placed — must not move' },
+    { node: 'Nixtamal plus koji', pos: ['maybe', None, 2], why: 'not three numbers' },
+  ],
+}
+\`\`\`
+
+That should be enough to be going on with — happy to go deeper on the`;
+
 export const ORDER = [
   { label: 'a malformed reply — prose, no JSON', text: MALFORMED, expectOk: false },
   { label: 'a messy real-world reply — fences, comments, single quotes, bad ids', text: MESSY, expectOk: true },
+  { label: 'the same adversarial shape against the 150-node map', text: BIG_MESSY, expectOk: true },
 ];
