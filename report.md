@@ -1419,6 +1419,78 @@ renderer actually drew**, and reported 23 unleadered on artifact 02 where the
 frame had lines on all of them. The drawn set is reported back to the scene, so
 the claim is measured against the frame instead of against intent.
 
+## Cycle 11 — 84.5, and category 03 falls for the first time
+
+Cycle 11 captured 20 of 20. **It scored 84.5 — 22 + 21 + 16 + 13 + 8 + 4.5 —
+against cycle 10's 82.0.** Category 04, the gate that had failed for two cycles
+running, recovers to its minimum of 13. Category 03, which had held at the line,
+falls to 16 against a minimum of 17, and the Auditor declares the cycle not
+regression-free.
+
+| category | 9 | 10 | 11 | min |
+|---|---:|---:|---:|---:|
+| 01 core workflow | 22 | 21 | 22 | 20 |
+| 02 landmarks live | 21 | 20 | 21 | 20 |
+| 03 one model, sacred positions | 18 | 17 | **16** | 17 |
+| 04 evidence and report integrity | 12 | 12 | 13 | 13 |
+| 05 quality compliance | 8 | 8 | 8 | 8 |
+| 06 finder round-trip | 4.5 | 4 | 4.5 | 4 |
+| **total** | **85.5** | **82.0** | **84.5** | 90 |
+
+**The blocking finding is the same shape as every other serious finding in this
+build, and it is worth naming again: an instrument agreeing with itself.**
+Artifact 12's bottom row prints a 150-node position hash and two sentences about
+a displaced district. Every claim that artifact carried compared *the model
+against the model* — so the hash could be taken at one instant and the canvas
+rastered at another and nothing on the artifact could tell. The Auditor
+reproduced the app's hashing scheme from `positions.json` alone, got a different
+value, and measured the district's markers within 0.67 px of where they were the
+cycle before.
+
+The fix is not a better hash. It is a comparison the error cannot move: the
+ledger is re-read *after* the raster and must still hash to the printed value;
+every member of the district is projected under the camera the shot was taken
+with and a lit marker must be found at each; and the same members are projected
+from the pre-move snapshot, where markers must **not** be found. Only the third
+has power — the first two both pass on an un-displaced frame.
+
+**The other lesson of cycle 11 is that a claim can be weakened without being
+removed.** Artifacts 02 and 06 each gained a machine-checked claim while their
+recipe fingerprints stayed byte-identical, because the fingerprint covers the
+capture script and the predicates live partly in the app bundle. And the
+cross-cycle claim diff compared *names*: a rule relaxed from `n >= 4` to
+`n >= 1` would have left no trace anywhere in the evidence. Every claim's
+acceptance rule is now hashed at capture time and the hashes are diffed, with
+both texts printed when one moves.
+
+### What the critics found, and what was done
+
+| # | finding | response |
+|---|---|---|
+| B1 | Auditor · a12 · the printed `pos sha` does not describe its own pixels | **Fixed at the instrument.** Three checks on the shot itself: sha re-read after the raster, markers found at the displaced projection, markers **absent** at the pre-move projection. `printedShaMatchesRenderedState` and `clusterDisplacementVisibleInPixels` are declared, and the measured counts are printed on the frame. |
+| M1 | Auditor · a04 · the selection chip buried three of nineteen search hits, 0.62 → 0.19–0.27 relative luminance | **Fixed.** The tag was pinned below its ring unconditionally. It now picks between eight placements scored by how many node markers its own rectangle would cover, off-frame counted as worse than crowded, default below-centre winning ties. |
+| M3 | Auditor · a08, a12 · "4 thoughts without room for a label" counted one whose text was 30 px away in a chip | **Fixed.** `namedElsewhere()` gathers every layer that prints a thought's text — tag, reticle, editor field — and the badge and the recovery column both read `unnamedOnScreen()`. `tagNames()` is the one place that decides what the tag names. |
+| M2 | Auditor · evidence · the fingerprint does not cover the claim predicates; the claim diff is name-only | **Fixed.** Per-claim rule hashes at capture time, diffed across cycles with both texts; the app bundle's sha recorded per artifact. |
+| m1 | Auditor · a05, a12 · the recovery column's count line sat behind the labels-hidden badge | **Fixed, and generalised.** The column clears every rail occupant that overlaps it, not only the editor. |
+| m2, m3, m4 | Auditor · DIFF · no note for a changed recipe; `positions.what` overstated; byte-identity unreported | **Fixed.** A changed recipe now gets the top-ranked note; byte-identity is its own note with the recapture timestamp; the ledger is called what it is. |
+| m5 | Auditor · a11 carries one claim; `detailRowInsideFrame` tests the frame, not the column | **Fixed both.** 11 gains 12's provenance claims. Headline widths are now **measured** — rendered through the same font file at the same size that draws them — and "Detail ×1.1 of app pixels — the panel" is 480 px of ink in a 446 px column. `compose` refuses a headline that does not fit; it had been checking the captions and never the headline. |
+| A1 | Audience · a17 · the cluster ledger measures the alt-drag, not the fist | **Fixed, and the record says more than the finding did.** Per-pose windows: the fist opens **eleven** of them across **three** districts — Lacto-vegetables at 20 members, Safety and pH at 12, Equipment at 12 — travelling up to 12.29 units with a maximum member drift of exactly zero. `clusterMovedByPose` is separate from `clusterMovedByMouse` and both are required. |
+| A2 | Audience · a05 · "move closer" made *fewer* labels readable, 113 hidden → 118 | **Partly fixed, and the measurement is in the record.** Swept across view distance on the 150-node map the drawn count climbs with proximity — 28 names at 193 units, 39 at 116 — but not monotonically: the greedy arbiter jitters by about three names and a 1.15× dolly is inside that jitter. The badge stops instructing ("move closer to read them") and states the framing. |
+| A3 | Audience · a17 · the caption asserts a pose while the HUD reads `conf 0.00` | **Fixed.** A hand-pose caption whose pose the detector is not currently reading is drawn dashed and dimmed and says "last pose, held". Every shipped frame is counted; `captionNeverOutrunsTheDetector` is required. |
+| A4 | Audience · a17 · `clusterMovePropagatedToTheOtherSurface` asserted on a single-surface take | **Fixed.** Dropped from the claims in cycle 10 but left standing in the result. It measures a second client with rendering stopped, and is named for that. |
+| A5 | Audience · a17 · no pre-grab targeting cue | **Fixed.** A faint dashed candidate outline while the hand is tracked, running the *same* pick the fist runs. |
+| A6 | Audience · a17 · four grabs accumulate; the take ends messier than it began | **Fixed with a feature the build was missing.** A bounded stack of moves — and only moves — with the original vectors written back through `commit`, so undo crosses surfaces and returns a float exactly where it was. Artifact 17 ends by clicking the same Undo control a user has until the stack is empty, and claims `mapReturnedToItsStartingLayout` bit-for-bit. |
+| A8 | Audience · a09 · the label layer re-flows on an edit | **Fixed.** A thought open in the editor has its name in the Text field and on the tag, so its canvas run stands down — and a name not in the layer cannot push another out of it. |
+| A9 | Audience · a03 · stated 271 px travel measures 254 px on the image | **Fixed.** The panel scale now comes from the same function that lays the caption strip out, both numbers are printed, and the capture fails if the strip the scale was computed against is not the strip that was drawn. |
+
+Still open going into cycle 12, and carried as the cycle's agenda: the Art
+Director's **78 % of on-screen nodes unlabelled at whole-brain zoom**, which is
+the one headline gap the build is honest about and has not solved; secondary
+caption text at 3.17:1 against a 4.5:1 target; the holding ring degenerating
+into pale slabs at close range in artifact 19; artifact 07's legend sitting on
+a toast; the finder round-trip never run at 150 nodes; the clipboard never
+shown; and artifact 16's device shape disagreeing with artifact 03's.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
