@@ -7,6 +7,11 @@ export const CSS = `
   --hot:#FFB020; --bad:#FF6B4A; --ok:#2FD0C0;
 }
 *{box-sizing:border-box}
+/* Overflow scrollbars are chrome the app does not own and does not want in a
+   frame: artifact 01 carried a 50x3px scrollbar thumb in each of its three
+   composited panels. Hidden everywhere; the panels that scroll still scroll. */
+*::-webkit-scrollbar{width:0;height:0}
+*{scrollbar-width:none}
 html,body{margin:0;height:100%;background:var(--ground);overflow:hidden;
   font:13px/1.45 "DejaVu Sans",system-ui,sans-serif;color:var(--ink);
   -webkit-font-smoothing:antialiased}

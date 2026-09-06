@@ -1419,11 +1419,15 @@ export class App {
         // trailing text.
         const d = [...this.lastParse.dropped]
           .sort((a, b) => (/placed/.test(b.why) ? 1 : 0) - (/placed/.test(a.why) ? 1 : 0));
-        const shown = d.slice(0, 4);
+        // EVERY REJECTION, not four of them. The log is the strongest safety
+        // evidence in the build — it is where "placed positions are not the
+        // finder's to change" stops being a promise and becomes a refusal — and
+        // it was truncating at four with a "+2 more" that had no expansion
+        // control in frame, so the two most interesting drops of an
+        // adversarially messy reply were the ones a reader could not see.
         return `<div class="rejected" data-t="finder-dropped">` +
           `<h5>${d.length} entr${d.length === 1 ? 'y' : 'ies'} rejected</h5>` +
-          shown.map(x => `<div class="r"><b>${esc(x.what)}</b> <span>${esc(x.why)}</span></div>`).join('') +
-          (d.length > 4 ? `<div class="r more">+${d.length - 4} more</div>` : '') +
+          d.map(x => `<div class="r"><b>${esc(x.what)}</b> <span>${esc(x.why)}</span></div>`).join('') +
           `</div>`;
       })() : ''}
       ${this.suggestions.length ? `

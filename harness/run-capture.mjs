@@ -283,7 +283,11 @@ const modelStats = (page) => page.evaluate(() => {
     // would have reported 44 labels hidden on a frame that hides none.
     labelsHidden: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+labels?\s+hidden/); return m ? Number(m[1]) : 0; })(),
     labelsShortened: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+shortened/); return m ? Number(m[1]) : 0; })(),
-    unlabelledListed: document.querySelectorAll('#unlabelled li').length,
+    // Counted from the rendered rows, excluding the overflow line — it was one
+    // more than the frame showed, because the "…and N more" line is an <li> too
+    // and a count of thoughts should not include the line that says how many
+    // are missing.
+    unlabelledListed: document.querySelectorAll('#unlabelled li:not(.more)').length,
     // Read from the chrome, so a frame cannot claim a match breakdown it does
     // not print. Null when the chip is not up, which is itself the finding if
     // the artifact is about search.
@@ -497,7 +501,15 @@ async function runDriver(d) {
         sublabels: [provLine(prov.w, winSource === 'windows-binary-under-wine' ? 'wine · the built binary' : 'FALLBACK — NOT the built binary'),
                     provLine(prov.a, 'android device profile · touch')],
         sublabels2: [`${ledger(pw0)} · ${agree ? 'same ledger both sockets' : 'LEDGERS DIFFER'}`,
-                     `${ledger(pa0)} · ${agree ? 'same ledger both sockets' : 'LEDGERS DIFFER'}`] });
+                     `${ledger(pa0)} · ${agree ? 'same ledger both sockets' : 'LEDGERS DIFFER'}`],
+        // POSITIONS are identical; LABEL SELECTION is not, and saying so is
+        // better than letting "node-for-node identical" read as a promise the
+        // text layer does not keep. The two panels are two processes running
+        // one arbiter over one model, and which names it can fit is decided
+        // per process — 8 of 48 label runs differ between them. The markers do
+        // not: the canvas regions are identical to the byte.
+        sublabels3: ['node positions identical to the byte · label selection is solved per surface, so which names fit can differ',
+                     'node positions identical to the byte · label selection is solved per surface, so which names fit can differ'] });
 
       // The edit is made on Android, through the ordinary editor.
       const id = await NODE_ID(a.page, 'Demo: search fly-to');
@@ -537,8 +549,16 @@ async function runDriver(d) {
       await a.page.waitForFunction(i => window.mm.store.doc.nodes[i].label === 'demo', id, { timeout: 20000 });
       // Both editors are left open on the node that was MOVED, so the two
       // coordinate readouts can be compared in the frame itself.
-      await w.page.evaluate(i => window.mm.select(i), moveId);
-      await a.page.evaluate(i => window.mm.select(i), moveId);
+      // THE EDITOR OPENS ON THE CONFLICTED NODE, not the dragged one.
+      //
+      // The header asserts that Android retexted and recoloured a node while
+      // Windows relabelled it and both were kept, and the frame proved only the
+      // recolour: the node's own label rendered shortened and the open editor
+      // was on a different node entirely. The retext and the relabel are text
+      // fields, so the panel that shows text fields has to be on the node they
+      // belong to. `id` is the conflicted node; `moveId` is the dragged one.
+      await w.page.evaluate(i => window.mm.select(i), id);
+      await a.page.evaluate(i => window.mm.select(i), id);
       // Selecting pans the view to clear the panel. The frozen camera is put
       // back afterwards, so the AFTER half superposes on the BEFORE half and a
       // reader can check by eye that only the dragged node moved.

@@ -4460,6 +4460,11 @@ ${JSON.stringify(s)}`}function Fw(t){let n=[...[...t.matchAll(/```(?:json|JSON|j
   --hot:#FFB020; --bad:#FF6B4A; --ok:#2FD0C0;
 }
 *{box-sizing:border-box}
+/* Overflow scrollbars are chrome the app does not own and does not want in a
+   frame: artifact 01 carried a 50x3px scrollbar thumb in each of its three
+   composited panels. Hidden everywhere; the panels that scroll still scroll. */
+*::-webkit-scrollbar{width:0;height:0}
+*{scrollbar-width:none}
 html,body{margin:0;height:100%;background:var(--ground);overflow:hidden;
   font:13px/1.45 "DejaVu Sans",system-ui,sans-serif;color:var(--ink);
   -webkit-font-smoothing:antialiased}
@@ -4802,7 +4807,7 @@ tr.map:hover{background:var(--panel)}
       <div class="row"><button data-t="finder-parse">Parse reply</button></div>
       <div class="tail">
       ${this.lastParse&&!this.lastParse.ok?`<div class="err" data-t="finder-error">${dt(this.lastParse.error??"parse failed")}</div>`:""}
-      ${this.lastParse?.dropped.length?(()=>{let o=[...this.lastParse.dropped].sort((c,u)=>(/placed/.test(u.why)?1:0)-(/placed/.test(c.why)?1:0)),l=o.slice(0,4);return`<div class="rejected" data-t="finder-dropped"><h5>${o.length} entr${o.length===1?"y":"ies"} rejected</h5>`+l.map(c=>`<div class="r"><b>${dt(c.what)}</b> <span>${dt(c.why)}</span></div>`).join("")+(o.length>4?`<div class="r more">+${o.length-4} more</div>`:"")+"</div>"})():""}
+      ${this.lastParse?.dropped.length?(()=>{let o=[...this.lastParse.dropped].sort((l,c)=>(/placed/.test(c.why)?1:0)-(/placed/.test(l.why)?1:0));return`<div class="rejected" data-t="finder-dropped"><h5>${o.length} entr${o.length===1?"y":"ies"} rejected</h5>`+o.map(l=>`<div class="r"><b>${dt(l.what)}</b> <span>${dt(l.why)}</span></div>`).join("")+"</div>"})():""}
       ${this.suggestions.length?`
         <div class="note" data-t="finder-progress">Suggestion ${this.sugIndex+1} of ${this.suggestions.length} \xB7 nothing is applied until you accept</div>
         ${n?`<div class="sug" data-t="finder-current">

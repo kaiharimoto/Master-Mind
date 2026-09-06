@@ -359,7 +359,7 @@ export default [
 },
 {
   id: '03', file: '03_hero_ar_coldstart.png', kind: 'png',
-  demonstrates: 'AR lens hero on Android at cold first launch, one map at two device orientations',
+  demonstrates: 'AR lens hero on Android at cold first launch, one map at two device orientations — framed on a placed district, so the holding ring is at the frame edge rather than whole',
   minW: 2560, minH: 1440,
   surface: 'android', map: 'map-fermentation', title: 'Hero — AR projection, cold start',
   coldStart: true,
