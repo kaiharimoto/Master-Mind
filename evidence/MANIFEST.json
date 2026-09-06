@@ -6,9 +6,10 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T16:33:16.486Z",
+  "lastRunAt": "2026-09-06T16:39:39.523Z",
   "lastRunCaptured": [
-    "20"
+    "02",
+    "04"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -99,15 +100,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.2,
+      "seconds": 2.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 418369,
-        "sha256": "7958c79f7c83e5bf0808bf7d8d77d249a3401825aceec3f9798621b95eb03ab8"
+        "bytes": 416388,
+        "sha256": "0b2d4a6f3b7e5ec84e01a00b065c4f64eb35bb39ba654b687f6a7c123e0338fc"
       },
       "claims": {
         "ok": true,
@@ -215,6 +216,14 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyReducedLabelClearsTheContrastFloor",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -247,7 +256,7 @@
           ]
         },
         "cameraPinned": true,
-        "arbiterSeq": 6,
+        "arbiterSeq": 5,
         "labelsAudited": 70,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Carrot batons hold crunch",
@@ -981,18 +990,25 @@
             }
           ]
         },
+        "filamentContrast": {
+          "checked": 38,
+          "worst": 1.41,
+          "below": 0,
+          "weakest": []
+        },
+        "everyFilamentClearsTheGround": true,
         "labelsSetSmaller": 8,
         "reducedLabelInk": {
           "checked": 8,
-          "worstContrast": 4.08,
+          "worstContrast": 4.18,
           "belowFloor": 0,
           "weakest": [
             {
               "id": "n704f284dfe",
               "text": "Muslin vs cheesecloth",
-              "peak": 0.3879,
+              "peak": 0.3994,
               "ground": 0.0574,
-              "contrast": 4.08
+              "contrast": 4.18
             },
             {
               "id": "n9e05705d26",
@@ -1020,8 +1036,8 @@
         "everyReducedLabelClearsTheContrastFloor": true,
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 6,
-        "arbiterSeqAtAudit": 6,
+        "arbiterSeqAtShot": 5,
+        "arbiterSeqAtAudit": 5,
         "auditDescribesTheShippedFrame": true
       },
       "pageErrors": [],
@@ -1033,7 +1049,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "73b7deb0e7bd2172",
-        "appSha": "70a8d3dc760bb00f",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -1047,13 +1063,14 @@
           "everyDrawnLabelHasAVisibleMarker": "b5bea41b6c62",
           "everyLabelStaysBesideItsNode": "b5bea41b6c62",
           "everyLabelUnambiguouslyBound": "b5bea41b6c62",
-          "auditDescribesTheShippedFrame": "b5bea41b6c62"
+          "auditDescribesTheShippedFrame": "b5bea41b6c62",
+          "everyReducedLabelClearsTheContrastFloor": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T16:23:42.405Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T16:39:41.009Z"
     },
     {
       "id": "03",
@@ -1230,15 +1247,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.5,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 447575,
-        "sha256": "71aca9b9085471089afe41e4096c95a67419cc7468274784850e7eb911cd8937"
+        "bytes": 445082,
+        "sha256": "9e95c99229d7c1aab6d55debd62134c2eae9d12d2fd7b866abe999cfdde13445"
       },
       "claims": {
         "ok": true,
@@ -1395,7 +1412,7 @@
         ],
         "nodesOnScreen": 150,
         "allFiveStatesAtWholeMapDensity": true,
-        "arbiterSeq": 9,
+        "arbiterSeq": 10,
         "labelsAudited": 73,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Fido jars burp themselves",
@@ -1513,18 +1530,18 @@
               "x": 1379,
               "y": 309,
               "r": 14.4,
-              "peak": 0.3128,
+              "peak": 0.4281,
               "ground": 0.0574,
-              "contrast": 3.38
+              "contrast": 4.45
             },
             {
               "id": "n191b9e1952",
               "x": 1324,
               "y": 274,
               "r": 14.4,
-              "peak": 0.5249,
+              "peak": 0.5257,
               "ground": 0.0574,
-              "contrast": 5.35
+              "contrast": 5.36
             },
             {
               "id": "n1aba7a1979",
@@ -1594,9 +1611,9 @@
               "x": 1094,
               "y": 172,
               "r": 14.4,
-              "peak": 0.3055,
+              "peak": 0.4214,
               "ground": 0.0574,
-              "contrast": 3.31
+              "contrast": 4.39
             },
             {
               "id": "n28b9263cd2",
@@ -1621,9 +1638,9 @@
               "x": 1324,
               "y": 341,
               "r": 14.4,
-              "peak": 0.7315,
+              "peak": 0.7343,
               "ground": 0.0574,
-              "contrast": 7.28
+              "contrast": 7.3
             },
             {
               "id": "n344b78a9bd",
@@ -1693,9 +1710,9 @@
               "x": 1342,
               "y": 342,
               "r": 14.4,
-              "peak": 0.3052,
+              "peak": 0.4329,
               "ground": 0.0574,
-              "contrast": 3.31
+              "contrast": 4.5
             },
             {
               "id": "n4163afee7d",
@@ -1720,9 +1737,9 @@
               "x": 1029,
               "y": 145,
               "r": 14.4,
-              "peak": 0.2974,
+              "peak": 0.4203,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 4.38
             },
             {
               "id": "n49831ccd16",
@@ -1783,9 +1800,9 @@
               "x": 705,
               "y": 395,
               "r": 14.4,
-              "peak": 0.2887,
+              "peak": 0.4203,
               "ground": 0.0574,
-              "contrast": 3.15
+              "contrast": 4.38
             },
             {
               "id": "n5b46c6f107",
@@ -1855,9 +1872,9 @@
               "x": 1316,
               "y": 347,
               "r": 14.4,
-              "peak": 0.3245,
+              "peak": 0.4407,
               "ground": 0.0574,
-              "contrast": 3.49
+              "contrast": 4.57
             },
             {
               "id": "n70b3c5270b",
@@ -2035,18 +2052,18 @@
               "x": 1014,
               "y": 160,
               "r": 14.4,
-              "peak": 0.2974,
+              "peak": 0.4203,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 4.38
             },
             {
               "id": "nd682eed70b",
               "x": 942,
               "y": 191,
               "r": 14.4,
-              "peak": 0.282,
+              "peak": 0.4088,
               "ground": 0.0574,
-              "contrast": 3.09
+              "contrast": 4.27
             },
             {
               "id": "nd960763431",
@@ -2116,9 +2133,9 @@
               "x": 990,
               "y": 256,
               "r": 14.4,
-              "peak": 0.4281,
+              "peak": 0.548,
               "ground": 0.0574,
-              "contrast": 4.45
+              "contrast": 5.57
             },
             {
               "id": "nf53f4946cf",
@@ -2143,9 +2160,9 @@
               "x": 685,
               "y": 424,
               "r": 14.4,
-              "peak": 0.3035,
+              "peak": 0.4077,
               "ground": 0.0574,
-              "contrast": 3.29
+              "contrast": 4.26
             },
             {
               "id": "nfb7073c20e",
@@ -2158,19 +2175,19 @@
             }
           ]
         },
+        "filamentContrast": {
+          "checked": 51,
+          "worst": 1.41,
+          "below": 0,
+          "weakest": []
+        },
+        "everyFilamentClearsTheGround": true,
         "labelsSetSmaller": 12,
         "reducedLabelInk": {
           "checked": 12,
-          "worstContrast": 4.25,
+          "worstContrast": 4.29,
           "belowFloor": 0,
           "weakest": [
-            {
-              "id": "nd0fcb15eb1",
-              "text": "The Sourdough Journey",
-              "peak": 0.4067,
-              "ground": 0.0574,
-              "contrast": 4.25
-            },
             {
               "id": "n9fa75db8ff",
               "text": "Phage collapse in dairy",
@@ -2179,11 +2196,11 @@
               "contrast": 4.29
             },
             {
-              "id": "n704f284dfe",
-              "text": "Muslin vs cheesecloth",
-              "peak": 0.4758,
+              "id": "nd0fcb15eb1",
+              "text": "The Sourdough Journey",
+              "peak": 0.482,
               "ground": 0.0574,
-              "contrast": 4.9
+              "contrast": 4.95
             },
             {
               "id": "n59e1cde627",
@@ -2191,14 +2208,21 @@
               "peak": 0.4898,
               "ground": 0.0574,
               "contrast": 5.03
+            },
+            {
+              "id": "n83224a5de3",
+              "text": "Shio koji",
+              "peak": 0.4938,
+              "ground": 0.0574,
+              "contrast": 5.06
             }
           ]
         },
         "everyReducedLabelClearsTheContrastFloor": true,
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 9,
-        "arbiterSeqAtAudit": 9,
+        "arbiterSeqAtShot": 10,
+        "arbiterSeqAtAudit": 10,
         "auditDescribesTheShippedFrame": true,
         "recencyByDistrict": {
           "violet": {
@@ -2305,7 +2329,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bac9916dd5a965ca",
-        "appSha": "70a8d3dc760bb00f",
+        "appSha": "342f1c087e51a0af",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -2325,8 +2349,8 @@
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T16:23:44.857Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T16:39:43.949Z"
     },
     {
       "id": "05",
@@ -4462,19 +4486,27 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 18.2,
+      "seconds": 17.7,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 160462,
-        "sha256": "9b17a23ff6218785939c2f18a20b74a723bc313a4106eb13f3b6e7ec99ec52f6"
+        "bytes": 171957,
+        "sha256": "0af1761326a44150a29083b110411a11be386fff91b25b116eacdfb48142e00d"
       },
       "claims": {
         "ok": true,
         "claims": [
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
           {
             "claim": "positionsIdenticalAcrossSurfaces",
             "expected": true,
@@ -4522,7 +4554,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 3132,
+            "serverPid": 26953,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -4534,7 +4566,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 3132,
+            "serverPid": 26953,
             "actor": "android-twin",
             "status": "live"
           }
@@ -4553,7 +4585,18 @@
         },
         "twoDistinctSockets": true,
         "panelRuntimesDiffer": true,
-        "eachPanelNamesItsRasteriser": true
+        "eachPanelNamesItsRasteriser": true,
+        "cameraFrozen": {
+          "yaw": 0.34,
+          "pitch": 0.16,
+          "dist": 53.416374,
+          "target": [
+            -0.15,
+            -3.35,
+            1.75
+          ]
+        },
+        "cameraPinned": true
       },
       "pageErrors": [],
       "recipe": {
@@ -4565,18 +4608,19 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "861f6cca2f545723",
-        "appSha": "10c188b09545c35e",
+        "appSha": "70a8d3dc760bb00f",
         "claimShas": {
+          "cameraPinned": "b5bea41b6c62",
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "twoDistinctSockets": "b5bea41b6c62",
           "panelRuntimesDiffer": "b5bea41b6c62",
           "eachPanelNamesItsRasteriser": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:22.555Z"
+      "fileMtime": "2026-09-06T16:38:03.841Z"
     },
     {
       "id": "12",
@@ -4591,12 +4635,20 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 713179,
-        "sha256": "70dc11114c9a6defdf19275ea373c85d2506aa36116f3547c56762ff05cbb5de"
+        "bytes": 684750,
+        "sha256": "703ef5b7a2c2d45f340389ddf2dae4d5d8df40c0e4163955ff97207545aacda0"
       },
       "claims": {
         "ok": true,
         "claims": [
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
           {
             "claim": "positionsIdenticalAcrossSurfaces",
             "expected": true,
@@ -4744,9 +4796,9 @@
           -3.1
         ],
         "movedTo": [
-          6.116878400441507,
-          2.6079610471651486,
-          -8.604055796387364
+          6.224564307906366,
+          2.1243814491797086,
+          -8.559369775579569
         ],
         "positionEditPropagated": true,
         "onlyTheDraggedNodeMoved": true,
@@ -4770,7 +4822,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 3132,
+            "serverPid": 26953,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -4782,7 +4834,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 3132,
+            "serverPid": 26953,
             "actor": "android-twin",
             "status": "live"
           }
@@ -4802,13 +4854,13 @@
             "shaPrinted": "4ad560a8a2",
             "shaAfterRaster": "4ad560a8a2",
             "worstDisplacedContrast": 3.23,
-            "changedPixels": 36803,
-            "changedFraction": 3.55,
+            "changedPixels": 36376,
+            "changedFraction": 3.508,
             "changedBox": {
-              "x0": 219,
+              "x0": 246,
               "y0": 104,
               "x1": 846,
-              "y1": 990
+              "y1": 979
             },
             "districtBox": {
               "x0": 327,
@@ -4816,12 +4868,12 @@
               "x1": 492,
               "y1": 669
             },
-            "changedSampled": 575,
-            "changedInsideDistrict": 112,
-            "changedInsideDistrictPct": 19.5,
-            "lightArrivedAtNewPositions": 18,
+            "changedSampled": 568,
+            "changedInsideDistrict": 100,
+            "changedInsideDistrictPct": 17.6,
+            "lightArrivedAtNewPositions": 15,
             "lightLeftOldPositions": 7,
-            "membersThatDidBoth": 7,
+            "membersThatDidBoth": 5,
             "expectedTravelPx": [
               51.5,
               50.4
@@ -4831,9 +4883,9 @@
               50
             ],
             "travelAgreementPx": 0.7,
-            "matchAtMeasured": 0.763,
-            "matchIfItHadNotMoved": 0.231,
-            "matchSamples": 350
+            "matchAtMeasured": 0.793,
+            "matchIfItHadNotMoved": 0.237,
+            "matchSamples": 338
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4853,13 +4905,13 @@
             "shaPrinted": "4ad560a8a2",
             "shaAfterRaster": "4ad560a8a2",
             "worstDisplacedContrast": 3.23,
-            "changedPixels": 36803,
-            "changedFraction": 3.55,
+            "changedPixels": 36376,
+            "changedFraction": 3.508,
             "changedBox": {
-              "x0": 219,
+              "x0": 246,
               "y0": 104,
               "x1": 846,
-              "y1": 990
+              "y1": 979
             },
             "districtBox": {
               "x0": 327,
@@ -4867,12 +4919,12 @@
               "x1": 492,
               "y1": 669
             },
-            "changedSampled": 575,
-            "changedInsideDistrict": 112,
-            "changedInsideDistrictPct": 19.5,
-            "lightArrivedAtNewPositions": 18,
+            "changedSampled": 568,
+            "changedInsideDistrict": 100,
+            "changedInsideDistrictPct": 17.6,
+            "lightArrivedAtNewPositions": 15,
             "lightLeftOldPositions": 7,
-            "membersThatDidBoth": 7,
+            "membersThatDidBoth": 5,
             "expectedTravelPx": [
               51.5,
               50.4
@@ -4882,9 +4934,9 @@
               50
             ],
             "travelAgreementPx": 0.7,
-            "matchAtMeasured": 0.763,
-            "matchIfItHadNotMoved": 0.231,
-            "matchSamples": 350
+            "matchAtMeasured": 0.793,
+            "matchIfItHadNotMoved": 0.237,
+            "matchSamples": 338
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4897,13 +4949,13 @@
           "shaPrinted": "4ad560a8a2",
           "shaAfterRaster": "4ad560a8a2",
           "worstDisplacedContrast": 3.23,
-          "changedPixels": 36803,
-          "changedFraction": 3.55,
+          "changedPixels": 36376,
+          "changedFraction": 3.508,
           "changedBox": {
-            "x0": 219,
+            "x0": 246,
             "y0": 104,
             "x1": 846,
-            "y1": 990
+            "y1": 979
           },
           "districtBox": {
             "x0": 327,
@@ -4911,12 +4963,12 @@
             "x1": 492,
             "y1": 669
           },
-          "changedSampled": 575,
-          "changedInsideDistrict": 112,
-          "changedInsideDistrictPct": 19.5,
-          "lightArrivedAtNewPositions": 18,
+          "changedSampled": 568,
+          "changedInsideDistrict": 100,
+          "changedInsideDistrictPct": 17.6,
+          "lightArrivedAtNewPositions": 15,
           "lightLeftOldPositions": 7,
-          "membersThatDidBoth": 7,
+          "membersThatDidBoth": 5,
           "expectedTravelPx": [
             51.5,
             50.4
@@ -4926,9 +4978,9 @@
             50
           ],
           "travelAgreementPx": 0.7,
-          "matchAtMeasured": 0.763,
-          "matchIfItHadNotMoved": 0.231,
-          "matchSamples": 350
+          "matchAtMeasured": 0.793,
+          "matchIfItHadNotMoved": 0.237,
+          "matchSamples": 338
         },
         "printedShaMatchesRenderedState": true,
         "clusterDisplacementVisibleInPixels": true,
@@ -4949,13 +5001,14 @@
         "cameraFrozen": {
           "yaw": 0.34,
           "pitch": 0.16,
-          "dist": 57.93577841423163,
+          "dist": 53.416374,
           "target": [
-            -0.15000000000000036,
-            -3.3499999999999996,
-            1.7499999999999998
+            -0.15,
+            -3.35,
+            1.75
           ]
         },
+        "cameraPinned": true,
         "everyNodeInFrame": true,
         "movedNodeCoords": {
           "id": "s480af97d09",
@@ -4965,9 +5018,9 @@
             -3.1
           ],
           "after": [
-            6.116878400441507,
-            2.6079610471651486,
-            -8.604055796387364
+            6.224564307906366,
+            2.1243814491797086,
+            -8.559369775579569
           ]
         },
         "nodesUnderChrome": {
@@ -5011,8 +5064,9 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "936d2e118cf8cc23",
-        "appSha": "10c188b09545c35e",
+        "appSha": "70a8d3dc760bb00f",
         "claimShas": {
+          "cameraPinned": "b5bea41b6c62",
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "positionEditPropagated": "b5bea41b6c62",
           "onlyTheDraggedNodeMoved": "b5bea41b6c62",
@@ -5032,10 +5086,10 @@
           "everyNodeUnoccludedByChrome": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:31.504Z"
+      "fileMtime": "2026-09-06T16:38:12.642Z"
     },
     {
       "id": "13",
@@ -6821,7 +6875,7 @@
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T16:36:30.169Z"
     }
   ],
@@ -6876,14 +6930,6 @@
       "capturedInCycle": 13
     },
     {
-      "id": "11",
-      "capturedInCycle": 13
-    },
-    {
-      "id": "12",
-      "capturedInCycle": 13
-    },
-    {
       "id": "13",
       "capturedInCycle": 13
     },
@@ -6913,15 +6959,15 @@
     }
   ],
   "allCapturedInThisCycle": false,
-  "finishedAt": "2026-09-06T16:36:34.143Z",
+  "finishedAt": "2026-09-06T16:39:46.315Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 830012,
-    "sha256": "70a8d3dc760bb00f67d82c0f75acd2997404d443f95d45e9b94a7f03b3d68a29",
-    "appSha": "70a8d3dc760bb00f",
-    "gitHead": "cac96819f395",
-    "gitHeadAt": "2026-09-06T16:29:32+00:00",
+    "bytes": 830721,
+    "sha256": "342f1c087e51a0af93fe39da2e43f68761399c8fd7ca6ba8f7ce420a92142745",
+    "appSha": "342f1c087e51a0af",
+    "gitHead": "aa8dbfede9c6",
+    "gitHeadAt": "2026-09-06T16:38:15+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,

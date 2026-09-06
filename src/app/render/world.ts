@@ -485,7 +485,16 @@ void main() {
   // 1.06:1 — so the map's connections were present in the data and absent from
   // the render. The floor is set from the contrast the ground demands: at 0.40
   // of its rest alpha a filament blends to about (44,38,33), roughly 1.35:1.
-  vAlpha = aAlpha * mix(1.0, 0.40, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
+  // AND THE FLOOR IS SET FROM WHAT THE PIXELS MEASURE, NOT FROM WHAT THE ALPHA
+  // IMPLIES. 0.40 was derived from the blend a filament WOULD reach at that
+  // alpha, and both the cycle-13 and cycle-14 Art Directors measured the result
+  // at whole-brain framing: 1.12:1 and 1.02:1 against the ground, where the
+  // arithmetic predicted about 1.35:1. The arithmetic ignored coverage — a one
+  // pixel line at a fractional position lights two pixels at about half weight
+  // each, so the ink a reader sees is half the ink the alpha describes. The
+  // floor is raised to compensate for that halving; the measurement on the
+  // shipped frame is the check, and artifact 02 now carries it as a claim.
+  vAlpha = aAlpha * mix(1.0, 0.78, clamp((dist - uFadeStart) / (uFadeEnd - uFadeStart), 0.0, 1.0));
   gl_Position = projectionMatrix * mv;
 }`;
 const LINE_FRAG = /* glsl */`

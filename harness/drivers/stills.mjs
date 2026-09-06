@@ -235,7 +235,48 @@ const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
     }).filter(Boolean);
   });
   const ink = reduced.length ? await H.inkContrast(H.out(file), reduced) : { checked: 0 };
+  // THE FILAMENTS, MEASURED WHERE THEY ARE DRAWN.
+  //
+  // Two Art Directors measured the connections at whole-brain framing and got
+  // 1.12:1 and 1.02:1 against the ground — present in the data, absent from the
+  // render — while the shader's own arithmetic predicted 1.35:1. Nothing here
+  // was looking, so the fix could not be checked. These are points taken along
+  // the farthest links, clear of every marker and every drawn name, sampled out
+  // of the written file.
+  const linkPts = await page.evaluate(() => {
+    const sc = window.mm.scene, d = window.mm.store.doc;
+    const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    const scr = new Map(sc.screenPositions().map(q => [q.id, q]));
+    const boxes = [...sc.labelRects.values()].filter(r => r.alpha > 0.02);
+    const links = Object.values(d.links)
+      .map(l => ({ l, a: scr.get(l.a), b: scr.get(l.b) }))
+      .filter(x => x.a && x.b)
+      .sort((x, y) => (y.a.z + y.b.z) - (x.a.z + x.b.z))     // farthest first
+      .slice(0, 40);
+    const out = [];
+    for (const { a, b } of links) {
+      for (const t of [0.28, 0.4, 0.5, 0.6, 0.72]) {
+        const x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t;
+        // Clear of every marker and every drawn label, or the sample measures
+        // something that is not a filament.
+        let clear = true;
+        for (const q of scr.values())
+          if (Math.hypot(q.x - x, q.y - y) < q.r + 6) { clear = false; break; }
+        if (clear) for (const r of boxes)
+          if (x > r.x0 - 4 && x < r.x1 + 4 && y > r.y0 - 4 && y < r.y1 + 4) { clear = false; break; }
+        if (clear) out.push({ id: `link@${out.length}`, x: x / dpr, y: y / dpr, r: 1.2 });
+      }
+    }
+    return out.slice(0, 60);
+  });
+  const fil = linkPts.length ? await H.sampleDiscs(H.out(file), linkPts, 1.15) : { checked: 0 };
   return { ...a, ...(await chrome(page)), markerContrast: m,
+           filamentContrast: { checked: fil.checked, worst: fil.worstContrast,
+                               below: fil.invisible, weakest: (fil.weakest ?? []).slice(0, 3) },
+           // A connection a reader cannot see is a connection the frame is not
+           // showing. 1.15:1 is the floor the Art Director named.
+           everyFilamentClearsTheGround:
+             (fil.checked ?? 0) === 0 || fil.invisible === 0,
            labelsSetSmaller: reduced.length,
            reducedLabelInk: ink,
            // A name drawn smaller is still a name a reader can read, or the
@@ -422,7 +463,11 @@ export default [
               everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true, auditDescribesTheShippedFrame: true,
               // A name drawn one size down is still a name a reader can read,
               // measured as ink in the written file against the 3:1 floor.
-              everyReducedLabelClearsTheContrastFloor: true },
+              everyReducedLabelClearsTheContrastFloor: true,
+              // And the connections are visible where they are drawn: two Art
+              // Directors measured them at 1.12:1 and 1.02:1 against the ground
+              // at this framing while nothing in the harness was looking.
+              everyFilamentClearsTheGround: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
