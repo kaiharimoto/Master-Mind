@@ -236,7 +236,12 @@ export class Scene {
       // as disjoint landed on top of each other: 'Barley miso, 18 months'
       // overprinted by 'Amazake' in cycle 7's artifact 10. Same class as F-015,
       // in the one case F-015 did not cover.
-      const labelSize = st === 'searchHit' ? size * 1.9 : size;
+      // The clearance a search hit's label must keep: its own mark including the
+      // tick span, which is now 2.10 core radii rather than 3.30 (see the node
+      // fragment shader). The multiplier tracks the shader; when the ticks were
+      // pulled in and this was not, the labels stayed pushed out for a
+      // decoration that no longer reached them.
+      const labelSize = st === 'searchHit' ? size * 1.25 : size;
       this.runMeta.push({ id: n.id, pinned: n.id === this.pinned || this.namedByChrome.has(n.id),
                           // HELD THOUGHTS ARE NAMED FIRST. They are few, they
                           // are the subject of two artifacts, and a waiting
@@ -629,7 +634,16 @@ export class Scene {
         const ellW = span.ellipsisWidthEm * sh.emPx;
         for (let wi = span.wordEnds.length - 1; wi >= 0; wi--) {
           const k = span.wordEnds[wi];
-          if (k < 3 || k >= glyphs.length) continue;
+          // A STUB MUST STILL NAME SOMETHING. Cycle 9 shipped "Log…", "Salt…",
+          // "Cold…", "Rice…" — sixteen of artifact 02's thirty-six truncations
+          // kept six characters or fewer, and "Rice…" (Rice vinegar base) was
+          // indistinguishable from a prefix of "Rice koji: polish…" drawn in
+          // the same frame. A four-character stub costs the same ink and the
+          // same collision budget as a full name and returns almost nothing, so
+          // below the floor the label is not shortened at all — it takes its
+          // chances on being placed whole, and is hidden and listed if it
+          // cannot be. The Art Director's C3, and its own suggested floor.
+          if (k < 10 || k >= glyphs.length) continue;
           widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * sh.emPx + ellW, 6), vis: k });
           if (widths.length >= 4) break;
         }

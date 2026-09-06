@@ -522,6 +522,34 @@ async function runDriver(d) {
       }
       await w.page.waitForFunction(({ i, p }) => JSON.stringify(window.mm.store.doc.nodes[i].pos) === JSON.stringify(p),
                                    { i: moveId, p: posAfter }, { timeout: 20000 });
+      // A concurrent conflict on the same node: Windows writes a different
+      // property at the same moment. Property-level LWW must keep both.
+      await w.page.evaluate(i => { window.mm.select(i); window.mm.store.setLabel(i, 'demo'); }, id);
+      await w.page.waitForFunction(i => window.mm.store.doc.nodes[i].text === 'Demo: search fly-to — live',
+                                   id, { timeout: 20000 });
+      await a.page.waitForFunction(i => window.mm.store.doc.nodes[i].label === 'demo', id, { timeout: 20000 });
+      // Both editors are left open on the node that was MOVED, so the two
+      // coordinate readouts can be compared in the frame itself.
+      await w.page.evaluate(i => window.mm.select(i), moveId);
+      await a.page.evaluate(i => window.mm.select(i), moveId);
+      // Selecting pans the view to clear the panel. The frozen camera is put
+      // back afterwards, so the AFTER half superposes on the BEFORE half and a
+      // reader can check by eye that only the dragged node moved.
+      for (const p of [w, a]) await freeze(p);
+      await allVisible(w, 'after/windows'); await allVisible(a, 'after/android');
+      const coveredW = await chromeCover(w), coveredA = await chromeCover(a);
+      // The pair is framed on the small map because that is where a reader can
+      // COUNT the nodes and read the coordinates. The 150-node map is checked
+      // across the same two sockets in the same take and reported as a ledger
+      // digest, so the one-model claim is not left resting on eleven nodes.
+      let bigCheck = 'map-fermentation not checked';
+      let bigShots = null;
+      let clusterProof = { district: null, members: 0, movedOnWindows: false, arrivedOnAndroid: false, restored: false };
+      try {
+        for (const p of [w, a]) {
+          await p.page.evaluate(() => window.mm.openMap('map-fermentation'));
+          await p.page.waitForFunction(() => window.mm.store.doc.id === 'map-fermentation', null, { timeout: 20000 });
+        }
       // A CLUSTER MOVE ACROSS THE BOUNDARY, where two surfaces are on screen.
       //
       // The closed fist is the one hand pose that writes positions, and its
@@ -555,54 +583,30 @@ async function runDriver(d) {
         clusterArrived = (await clusterLedger(a.page, CLUSTER)) === clusterAfterW;
       }
       const clusterAfterA = await clusterLedger(a.page, CLUSTER);
-      // And put it back, so the district's positions are exactly what the seed
-      // says by the time the artifact's own ledger is taken. A propagation
-      // proof must not leave the map moved.
-      await w.page.evaluate((l) => {
-        const ids = Object.values(window.mm.store.doc.nodes)
-          .filter(n => n.placed && n.label === l).map(n => n.id);
-        window.mm.store.moveCluster(ids, [-1.7, 1.1, -0.6]);
-      }, CLUSTER);
+      // And put it back EXACTLY — by writing the original vectors, not by
+      // applying the inverse delta. The inverse-delta version passed its own
+      // toFixed(6) ledger check and still failed the artifact's
+      // onlyTheDraggedNodeMoved claim, because adding 1.7 and then subtracting
+      // 1.7 does not return a float to where it started. A proof that has to
+      // move the map must put every coordinate back bit for bit, and the
+      // artifact's existing claims are what caught that it had not.
+      await w.page.evaluate(({ l, snap }) => {
+        for (const [id, pos] of snap) window.mm.store.move(id, pos);
+        void l;
+      }, { l: CLUSTER, snap: JSON.parse(clusterBeforeW) });
       for (let k = 0; k < 60; k++) {
         await sleepFrames(a.page, 0, 1);
         if ((await clusterLedger(a.page, CLUSTER)) === clusterBeforeA) break;
       }
       const clusterRestored = (await clusterLedger(w.page, CLUSTER)) === clusterBeforeW &&
                               (await clusterLedger(a.page, CLUSTER)) === clusterBeforeA;
-      const clusterProof = {
+      clusterProof = {
         district: CLUSTER,
         members: JSON.parse(clusterBeforeW).length,
         movedOnWindows: clusterAfterW !== clusterBeforeW,
         arrivedOnAndroid: clusterArrived && clusterAfterA === clusterAfterW,
         restored: clusterRestored,
       };
-      // A concurrent conflict on the same node: Windows writes a different
-      // property at the same moment. Property-level LWW must keep both.
-      await w.page.evaluate(i => { window.mm.select(i); window.mm.store.setLabel(i, 'demo'); }, id);
-      await w.page.waitForFunction(i => window.mm.store.doc.nodes[i].text === 'Demo: search fly-to — live',
-                                   id, { timeout: 20000 });
-      await a.page.waitForFunction(i => window.mm.store.doc.nodes[i].label === 'demo', id, { timeout: 20000 });
-      // Both editors are left open on the node that was MOVED, so the two
-      // coordinate readouts can be compared in the frame itself.
-      await w.page.evaluate(i => window.mm.select(i), moveId);
-      await a.page.evaluate(i => window.mm.select(i), moveId);
-      // Selecting pans the view to clear the panel. The frozen camera is put
-      // back afterwards, so the AFTER half superposes on the BEFORE half and a
-      // reader can check by eye that only the dragged node moved.
-      for (const p of [w, a]) await freeze(p);
-      await allVisible(w, 'after/windows'); await allVisible(a, 'after/android');
-      const coveredW = await chromeCover(w), coveredA = await chromeCover(a);
-      // The pair is framed on the small map because that is where a reader can
-      // COUNT the nodes and read the coordinates. The 150-node map is checked
-      // across the same two sockets in the same take and reported as a ledger
-      // digest, so the one-model claim is not left resting on eleven nodes.
-      let bigCheck = 'map-fermentation not checked';
-      let bigShots = null;
-      try {
-        for (const p of [w, a]) {
-          await p.page.evaluate(() => window.mm.openMap('map-fermentation'));
-          await p.page.waitForFunction(() => window.mm.store.doc.id === 'map-fermentation', null, { timeout: 20000 });
-        }
         const bw = await positions(w.page), ba = await positions(a.page);
         const dw = createHash('sha256').update(JSON.stringify(bw)).digest('hex').slice(0, 10);
         const da = createHash('sha256').update(JSON.stringify(ba)).digest('hex').slice(0, 10);
@@ -668,11 +672,26 @@ async function runDriver(d) {
           `${moved} · ${driver.map} · ${Object.keys(pw1).length} nodes · pos sha ${sha12(pw1)}`,
           `${moved} · ${driver.map} · ${Object.keys(pa1).length} nodes · pos sha ${sha12(pa1)}`,
         ],
+        // THE RASTERISER IS NAMED HERE TOO, and the camera line no longer
+        // over-claims. This artifact asserted eachPanelNamesItsRasteriser while
+        // naming no rasteriser at all — artifact 11 carried the line and made
+        // no claim about it, so the claim stood on the artifact that lacked its
+        // evidence. That disclosure is load-bearing: the two canvases here are
+        // byte-identical, and the only honest way to read that as two processes
+        // agreeing rather than one render pasted twice is knowing both drive
+        // the same SwiftShader path.
+        //
+        // "CAMERA FROZEN FROM 11" was also not reproducible against 11: fitting
+        // the unmoved markers gives a uniform scale of 0.979 and a 22.8 px
+        // offset, because this composite's header is a line taller and the
+        // canvas auto-fits. Same camera, shorter viewport — said that way.
         sublabels2: [
           `${provAfter.w.runtime} · ${winSource === 'windows-binary-under-wine' ? 'wine · the built binary' : 'FALLBACK — not the built binary'}` +
-          ` · socket #${provAfter.w.socket} · CAMERA FROZEN FROM 11 · the 150-node map is below, on these same two sockets`,
+          ` · socket #${provAfter.w.socket} · raster ${provAfter.w.gl ?? 'unreported'}` +
+          ` · same camera as 11, shorter viewport · the 150-node map is below, on these same two sockets`,
           `${provAfter.a.runtime} · android device profile · touch · socket #${provAfter.a.socket}` +
-          ` · CAMERA FROZEN FROM 11 · the 150-node map is below, on these same two sockets`,
+          ` · raster ${provAfter.a.gl ?? 'unreported'}` +
+          ` · same camera as 11, shorter viewport · the 150-node map is below, on these same two sockets`,
         ] });
       if (bigShots) {
         const bigBot = resolve(TMP, 'twin-after-bot.png');
@@ -758,6 +777,9 @@ async function runDriver(d) {
       after.panelRasterisers = { windows: provAfter.w.gl, android: provAfter.a.gl };
       after.panelRuntimesDiffer = !!provAfter.w.runtime && !!provAfter.a.runtime &&
         (provAfter.w.runtime !== provAfter.a.runtime || provAfter.w.platform !== provAfter.a.platform);
+      // Read back off the composite's own caption text, not from the values
+      // that were passed to it — the claim is that the FRAME names them.
+      after.rasterLineOnFrame = [provAfter.w.gl, provAfter.a.gl];
       after.eachPanelNamesItsRasteriser = !!provAfter.w.gl && !!provAfter.a.gl &&
         provAfter.w.gl !== 'unavailable' && provAfter.a.gl !== 'unavailable';
       after.cameraFrozen = frozen;

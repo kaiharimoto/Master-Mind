@@ -330,8 +330,16 @@ void main() {
     // fly-to the hit fills the frame and the ticks were the faintest thing in
     // it — the state was being told apart from 'selected' by being marginally
     // brighter, which is the dual coding failing exactly where it matters most.
-    float radial = smoothstep(CORE * 1.70 - aa, CORE * 1.70 + aa, r)
-                 * (1.0 - smoothstep(CORE * 3.30 - aa, CORE * 3.30 + aa, r));
+    // PULLED IN. At 1.70-3.30 core radii the signature reached 3.4x the node's
+    // own radius — the cycle-9 Art Director measured a 20 px core throwing a
+    // 68 px outer ring — and since the label arbiter clears a node's whole
+    // mark, every search hit's name was pushed about 65 px out in a frame that
+    // is more than 80 % empty. The decoration, not competition, was doing the
+    // displacing. 1.35-2.10 keeps the crosshair silhouette (still a span
+    // pointing at the node, not four squares beside it) at 2.1x rather than
+    // 3.4x, so the name can sit adjacent again.
+    float radial = smoothstep(CORE * 1.35 - aa, CORE * 1.35 + aa, r)
+                 * (1.0 - smoothstep(CORE * 2.10 - aa, CORE * 2.10 + aa, r));
     float f = fract(u * 4.0);
     float d = min(f, 1.0 - f);
     ring = radial * (1.0 - smoothstep(0.026, 0.048, d));

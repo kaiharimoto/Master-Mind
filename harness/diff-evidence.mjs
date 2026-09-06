@@ -208,7 +208,16 @@ export async function diffEvidence(curDir, prevDir) {
         notes.push(`demonstrates: "${pr.demonstrates ?? '—'}" -> "${cr.demonstrates ?? '—'}"`);
       if (pr.surface !== cr.surface) notes.push(`surface: ${pr.surface ?? '—'} -> ${cr.surface ?? '—'}`);
       if (pr.lens !== cr.lens) notes.push(`lens: ${pr.lens ?? '—'} -> ${cr.lens ?? '—'}`);
-      if (pr.fnSha !== cr.fnSha) notes.push(`capture script changed (${pr.fnSha} -> ${cr.fnSha})`);
+      if (pr.fnSha !== cr.fnSha) {
+        notes.push(`capture script changed (${pr.fnSha} -> ${cr.fnSha})`);
+        // THE FINGERPRINT CHANGED, AND THAT IS WHAT THIS RECORDS. It used to be
+        // reported only when the output had also moved, so cycle 9 rewrote
+        // eleven capture functions and named nine — omitting 07 and 15, and 15
+        // is the one byte-identical artifact in the whole set, which is exactly
+        // the combination an auditor most needs surfaced. Whether the output
+        // moved is a separate question with its own field.
+        row.recipeFingerprintChanged = true;
+      }
       if (notes.length) notes.push(`demonstrates now: "${cr.demonstrates ?? '—'}"`);
       if (notes.length) {
         row.whatChanged = notes.join('; ');
@@ -362,7 +371,7 @@ export async function diffEvidence(curDir, prevDir) {
                changedIds: changed, missingIds: missing,
                uncomparableIds: rows.filter(r => r.verdict === 'uncomparable').map(r => r.id),
                substantiveIds: rows.filter(r => r.substantive).map(r => r.id),
-               recipeChangedIds: rows.filter(r => r.recipeChanged).map(r => r.id) },
+               recipeChangedIds: rows.filter(r => r.recipeFingerprintChanged).map(r => r.id) },
   };
 }
 
