@@ -1736,6 +1736,74 @@ of work.
 | Art Director minor · a20 | a freshly generated prompt above a rejection log naming another map's nodes, for ~1.5 s | **Open** |
 | Art Director minor · a14 | audit chips clipped mid-word at the detail-row crop boundaries | **Open** |
 
+## Cycle 14 — findings from the work itself, before any critic saw it
+
+Cycle 14's agenda was the Auditor's closing line: *a gate that asks whether the
+shipped frame contains the thing its caption is about.* Five artifacts gained
+one, and **four of the five failed on their first run.** Every failure was real.
+
+**F-042 — an undo tail that scheduled a constant where the take produces a
+variable.** Artifact 17 ends by clicking Undo until the map is back, and the
+tail clicked exactly **26** times: exactly the number of move groups the take
+made when the tail was written. That number is not a constant. A hand grab
+begins and ends on whichever frame the detector reads the fist on, and the
+detector runs against the clip asynchronously, so the act count varies between
+runs — measured at **34** on the run that exposed it. Under the load of a full
+twenty-artifact run the take made more acts than the tail had beats and the
+capture recorded `mapReturnedToItsStartingLayout: false`; re-run alone it
+passed. **That is the worse of the two outcomes.** An intermittent claim is one
+nobody can trust, and a capture that passes when run alone and fails in the set
+is exactly the shape of evidence that cannot be reproduced by a reader. The tail
+runs 48 beats to the end of the take now, so it has room for however many acts
+the take actually made; the claim is unchanged and just as strict.
+
+**The limit this exposes is recorded rather than smoothed over.** The take's
+frames are deterministic — a virtual clock, a pinned epoch, a seeded PRNG — but
+the *pose segmentation inside them* is not: where one grab ends and the next
+begins moves by a frame or two between runs. The positions ledger returns to its
+starting values in both cases, and `poseGrabs` reports every window it found, so
+the artifact's claims are per-run measurements of a take whose boundaries can
+shift. `docs/capture/17.md` says so.
+
+**F-043 — an occlusion exemption used to answer a question it was not written
+for.** Artifact 09's `editedThoughtVisibleInBothPanels` asked
+`nodesUnderChrome()`, which exempts a thought whose name the chrome itself
+prints — a correct exemption for *"is this thought recoverable"* and the wrong
+one for *"is this thought's colour visible"*. The edited node sat under 250 px
+of recovery column, listed by it, and therefore cleared. The pixel gate found it
+on its first run: **zero teal in a panel captioned for a colour change.**
+`coveredByChrome()` asks the narrower question with nothing forgiven.
+
+**F-044 — a claim named for one thought and measured on another.** The same
+artifact's visibility claim checked the *far end* of the new filament, not the
+node whose colour and text the header names. Both are checked now, by name.
+
+**F-045 — a drop aimed at a constant.** Artifact 08's destination was a fixed
+offset from the node's starting point — 200 px right, 330 px up. It put the mark
+**10 px** from a neighbour's, and when that was fixed by searching for
+clearance, inside the node's own payload chip. Both were invisible until the
+pixel readback asked whether anything was already lit there. The spot is
+searched now: clear of every other mark, of the chrome, and of every drawn name.
+Finding the second of those needed `chromeAudit()` to actually return its
+inventory — the driver was reading `.boxes` off a summary that never carried it,
+so the chrome exclusion had been silently empty.
+
+**F-046 — chrome forgiven as it is, not as it was.** Artifact 14's "the
+rejection changed nothing" pixel diff excluded the panels that are supposed to
+change, measured *after* the rejection. The finder panel is one card shorter
+then, so its footer line's old position — the line naming what is still queued —
+fell outside the exclusion and read as **5590 px** of map change. The exclusion
+is the union of both moments. Before that it was wrong in a second way:
+`getBoundingClientRect` does not include the footer at all, which is the same
+overflow lesson the badge solver learned in cycle 12.
+
+**What the five gates measure now.** 06: 17 placed markers lit in the written
+file and 3292 chromatic pixels on the canvas. 09: teal 0 before, 410 after, in
+the same window in both panel files. 05: 150 of 150 markers lit in each panel,
+pixel span ratio 1.113 against a projection ratio of 1.113. 08: destination
+contrast 1.00 before, 7.93 after. 14: **zero** pixels differ across the
+rejection, inside the canvas and outside the chrome measured at both moments.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:

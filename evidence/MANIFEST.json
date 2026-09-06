@@ -6,28 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T13:20:14.864Z",
+  "lastRunAt": "2026-09-06T13:49:56.371Z",
   "lastRunCaptured": [
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20"
+    "17"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -109,7 +90,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:17.732Z"
     },
     {
@@ -966,7 +947,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:19.256Z"
     },
     {
@@ -1135,7 +1116,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:22.874Z"
     },
     {
@@ -2145,7 +2126,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:24.980Z"
     },
     {
@@ -2677,7 +2658,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:40.320Z"
     },
     {
@@ -3216,7 +3197,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:49.888Z"
     },
     {
@@ -3426,7 +3407,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:51.984Z"
     },
     {
@@ -3582,7 +3563,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:54.196Z"
     },
     {
@@ -3853,7 +3834,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:20:57.947Z"
     },
     {
@@ -4212,7 +4193,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:21:03.468Z"
     },
     {
@@ -4334,7 +4315,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:21:14.839Z"
     },
     {
@@ -4793,7 +4774,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:21:23.708Z"
     },
     {
@@ -4876,7 +4857,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:21:25.388Z"
     },
     {
@@ -5105,7 +5086,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:21:28.994Z"
     },
     {
@@ -5166,7 +5147,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:21:32.444Z"
     },
     {
@@ -5289,7 +5270,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:23:13.866Z"
     },
     {
@@ -5298,21 +5279,21 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 552.3,
-      "status": "claim-not-met",
+      "seconds": 545.9,
+      "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 12398078,
-        "sha256": "2d3cad79db7a6f42fc588e4d210be2fd95005e3364366858a41922c300462f01",
+        "bytes": 12314523,
+        "sha256": "0ddd75923beccd091c3d466842f6dfcb3c46e2e3c6643135050e6bbaa1db1793",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
       },
       "claims": {
-        "ok": false,
+        "ok": true,
         "claims": [
           {
             "claim": "clusterMovedByPose",
@@ -5341,16 +5322,16 @@
           {
             "claim": "mapReturnedToItsStartingLayout",
             "expected": true,
-            "actual": false,
-            "pass": false,
+            "actual": true,
+            "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
           },
           {
             "claim": "undoStackEmptiedOnCamera",
             "expected": true,
-            "actual": false,
-            "pass": false,
+            "actual": true,
+            "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
           },
@@ -5378,8 +5359,7 @@
             "rule": "(n) => n >= 4",
             "ruleSha": "99e5481824a9"
           }
-        ],
-        "why": "declared claim(s) not met: mapReturnedToItsStartingLayout = false; undoStackEmptiedOnCamera = false"
+        ]
       },
       "result": {
         "posesRecognised": [
@@ -5389,8 +5369,143 @@
           "gather"
         ],
         "count": 4,
-        "samples": 2122,
+        "samples": 2086,
         "poseGrabs": [
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -2.562,
+              -0.107,
+              17.085
+            ],
+            "centroidAfter": [
+              -2.571,
+              -4.025,
+              17.749
+            ],
+            "travelled": 3.9738,
+            "maxMemberDrift": 0,
+            "frames": [
+              31,
+              33
+            ],
+            "seconds": [
+              1.03,
+              1.1
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -6.246,
+              -4.871,
+              19.029
+            ],
+            "centroidAfter": [
+              -2.926,
+              -6.569,
+              18.289
+            ],
+            "travelled": 3.8024,
+            "maxMemberDrift": 0,
+            "frames": [
+              35,
+              43
+            ],
+            "seconds": [
+              1.17,
+              1.43
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -1.639,
+              -8.88,
+              18.281
+            ],
+            "centroidAfter": [
+              -1.639,
+              -8.88,
+              18.281
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              45,
+              45
+            ],
+            "seconds": [
+              1.5,
+              1.5
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              2.139,
+              -10.904,
+              17.454
+            ],
+            "centroidAfter": [
+              2.139,
+              -10.904,
+              17.454
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              47,
+              47
+            ],
+            "seconds": [
+              1.57,
+              1.57
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              2.163,
+              -11.691,
+              17.58
+            ],
+            "centroidAfter": [
+              4.166,
+              -11.909,
+              16.997
+            ],
+            "travelled": 2.0981,
+            "maxMemberDrift": 0,
+            "frames": [
+              49,
+              53
+            ],
+            "seconds": [
+              1.63,
+              1.77
+            ]
+          },
           {
             "cluster": "Lacto-vegetables",
             "members": 20,
@@ -5403,100 +5518,19 @@
               9.995
             ],
             "centroidAfter": [
-              -20.09,
-              -14.669,
-              9.908
+              -21.813,
+              -13.515,
+              10.246
             ],
-            "travelled": 0.7542,
+            "travelled": 1.36,
             "maxMemberDrift": 0,
             "frames": [
-              35,
-              37
+              54,
+              55
             ],
             "seconds": [
-              1.17,
-              1.23
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -19.144,
-              -15.243,
-              9.713
-            ],
-            "centroidAfter": [
-              -9,
-              -18.113,
-              7.06
-            ],
-            "travelled": 10.8706,
-            "maxMemberDrift": 0,
-            "frames": [
-              39,
-              54
-            ],
-            "seconds": [
-              1.3,
-              1.8
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -7.161,
-              -16.897,
-              6.285
-            ],
-            "centroidAfter": [
-              -2.462,
-              -15.328,
-              4.566
-            ],
-            "travelled": 5.2441,
-            "maxMemberDrift": 0,
-            "frames": [
-              57,
-              65
-            ],
-            "seconds": [
-              1.9,
-              2.17
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -2.462,
-              -15.328,
-              4.566
-            ],
-            "centroidAfter": [
-              -2.462,
-              -15.328,
-              4.566
-            ],
-            "travelled": 0,
-            "maxMemberDrift": 0,
-            "frames": [
-              69,
-              69
-            ],
-            "seconds": [
-              2.3,
-              2.3
+              1.8,
+              1.83
             ]
           },
           {
@@ -5506,16 +5540,124 @@
               "fist"
             ],
             "centroidBefore": [
-              -5.439,
-              3.05,
-              17.441
+              5.419,
+              -14.195,
+              16.995
             ],
             "centroidAfter": [
-              -3.721,
-              -1.929,
-              17.751
+              5.419,
+              -14.195,
+              16.995
             ],
-            "travelled": 5.2763,
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              57,
+              57
+            ],
+            "seconds": [
+              1.9,
+              1.9
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              7.28,
+              -13.79,
+              16.351
+            ],
+            "centroidAfter": [
+              7.28,
+              -13.79,
+              16.351
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              59,
+              59
+            ],
+            "seconds": [
+              1.97,
+              1.97
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -18.486,
+              -13.657,
+              9.241
+            ],
+            "centroidAfter": [
+              -15.786,
+              -14.758,
+              8.592
+            ],
+            "travelled": 2.9871,
+            "maxMemberDrift": 0,
+            "frames": [
+              61,
+              65
+            ],
+            "seconds": [
+              2.03,
+              2.17
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              7.339,
+              -14.448,
+              16.444
+            ],
+            "centroidAfter": [
+              7.339,
+              -14.448,
+              16.444
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              70,
+              70
+            ],
+            "seconds": [
+              2.33,
+              2.33
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -11.282,
+              -14.601,
+              7.172
+            ],
+            "centroidAfter": [
+              -7.072,
+              -24.197,
+              7.491
+            ],
+            "travelled": 10.4832,
             "maxMemberDrift": 0,
             "frames": [
               194,
@@ -5527,84 +5669,30 @@
             ]
           },
           {
-            "cluster": "Safety and pH",
-            "members": 12,
+            "cluster": "Lacto-vegetables",
+            "members": 20,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -4.644,
-              -5.588,
-              18.655
+              -6.592,
+              -24.413,
+              7.379
             ],
             "centroidAfter": [
-              -4.438,
-              -6.534,
-              18.75
+              -5.745,
+              -25.947,
+              7.376
             ],
-            "travelled": 0.9727,
+            "travelled": 1.7518,
             "maxMemberDrift": 0,
             "frames": [
               198,
-              199
+              203
             ],
             "seconds": [
               6.6,
-              6.63
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -3.484,
-              -6.078,
-              18.379
-            ],
-            "centroidAfter": [
-              -2.028,
-              -7.605,
-              18.186
-            ],
-            "travelled": 2.1186,
-            "maxMemberDrift": 0,
-            "frames": [
-              201,
-              206
-            ],
-            "seconds": [
-              6.7,
-              6.87
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              0.608,
-              -8.222,
-              17.475
-            ],
-            "centroidAfter": [
-              7.141,
-              -9.273,
-              15.631
-            ],
-            "travelled": 6.8698,
-            "maxMemberDrift": 0,
-            "frames": [
-              208,
-              226
-            ],
-            "seconds": [
-              6.93,
-              7.53
+              6.77
             ]
           },
           {
@@ -5614,24 +5702,78 @@
               "fist"
             ],
             "centroidBefore": [
-              -0.425,
-              -12.807,
-              3.51
+              -4.756,
+              -25.739,
+              7.035
             ],
             "centroidAfter": [
-              -0.425,
-              -12.807,
-              3.51
+              -2.64,
+              -27.748,
+              6.72
             ],
-            "travelled": 0,
+            "travelled": 2.9344,
             "maxMemberDrift": 0,
             "frames": [
-              228,
-              228
+              205,
+              211
             ],
             "seconds": [
-              7.6,
-              7.6
+              6.83,
+              7.03
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -2.433,
+              -28.039,
+              6.705
+            ],
+            "centroidAfter": [
+              -1.188,
+              -27.91,
+              6.298
+            ],
+            "travelled": 1.3164,
+            "maxMemberDrift": 0,
+            "frames": [
+              215,
+              216
+            ],
+            "seconds": [
+              7.17,
+              7.2
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -0.262,
+              -28.045,
+              6.034
+            ],
+            "centroidAfter": [
+              -0.044,
+              -28.031,
+              5.964
+            ],
+            "travelled": 0.2293,
+            "maxMemberDrift": 0,
+            "frames": [
+              221,
+              223
+            ],
+            "seconds": [
+              7.37,
+              7.43
             ]
           },
           {
@@ -5641,394 +5783,398 @@
               "fist"
             ],
             "centroidBefore": [
-              8.867,
-              -11.041,
-              15.396
+              8.735,
+              -16.302,
+              16.326
             ],
             "centroidAfter": [
-              8.867,
-              -11.041,
-              15.396
+              9.967,
+              -16.643,
+              16.002
             ],
-            "travelled": 0,
+            "travelled": 1.3179,
+            "maxMemberDrift": 0,
+            "frames": [
+              225,
+              229
+            ],
+            "seconds": [
+              7.5,
+              7.63
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              1.77,
+              -23.915,
+              -8.818
+            ],
+            "centroidAfter": [
+              3.521,
+              -23.347,
+              -9.455
+            ],
+            "travelled": 1.9478,
             "maxMemberDrift": 0,
             "frames": [
               232,
-              232
+              233
             ],
             "seconds": [
               7.73,
-              7.73
+              7.77
             ]
           },
           {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
+            "cluster": "Microbiology",
+            "members": 18,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -0.425,
-              -12.807,
-              3.51
+              -26.482,
+              2.69,
+              -4.747
             ],
             "centroidAfter": [
-              4.953,
-              -20.361,
-              3.123
+              -15.631,
+              -7.483,
+              -6.385
             ],
-            "travelled": 9.2802,
+            "travelled": 14.9634,
             "maxMemberDrift": 0,
             "frames": [
-              359,
-              360
+              363,
+              365
             ],
             "seconds": [
-              11.97,
-              12
+              12.1,
+              12.17
             ]
           },
           {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
+            "cluster": "Microbiology",
+            "members": 18,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -1.409,
-              -19.949,
-              5.021
+              -18.79,
+              -3.748,
+              -6.039
             ],
             "centroidAfter": [
-              0.976,
-              -19.843,
-              4.266
+              -18.79,
+              -3.748,
+              -6.039
             ],
-            "travelled": 2.5042,
+            "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              365,
-              368
+              367,
+              367
             ],
             "seconds": [
-              12.17,
-              12.27
+              12.23,
+              12.23
             ]
           },
           {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
+            "cluster": "Microbiology",
+            "members": 18,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              1.745,
-              -21.17,
-              4.252
+              -17.194,
+              -7.062,
+              -5.972
             ],
             "centroidAfter": [
-              3.451,
-              -21.239,
-              3.736
+              -8.678,
+              -9.063,
+              -8.269
             ],
-            "travelled": 1.7832,
+            "travelled": 9.0445,
             "maxMemberDrift": 0,
             "frames": [
-              370,
-              373
+              369,
+              389
             ],
             "seconds": [
-              12.33,
-              12.43
+              12.3,
+              12.97
             ]
           },
           {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
+            "cluster": "Microbiology",
+            "members": 18,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              3.164,
-              -21.085,
-              3.799
+              -5.312,
+              -10.881,
+              -9.003
             ],
             "centroidAfter": [
-              4.994,
-              -22.724,
-              3.509
+              -4.436,
+              -9.66,
+              -9.48
             ],
-            "travelled": 2.4741,
+            "travelled": 1.5756,
             "maxMemberDrift": 0,
             "frames": [
-              376,
-              382
-            ],
-            "seconds": [
-              12.53,
-              12.73
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              5.182,
-              -22.552,
-              3.422
-            ],
-            "centroidAfter": [
-              6.583,
-              -22.065,
-              2.907
-            ],
-            "travelled": 1.5697,
-            "maxMemberDrift": 0,
-            "frames": [
-              384,
-              392
-            ],
-            "seconds": [
-              12.8,
-              13.07
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              11.293,
-              -12.169,
-              14.836
-            ],
-            "centroidAfter": [
-              11.496,
-              -9.896,
-              14.39
-            ],
-            "travelled": 2.3252,
-            "maxMemberDrift": 0,
-            "frames": [
-              395,
+              391,
               396
             ],
             "seconds": [
-              13.17,
+              13.03,
               13.2
             ]
           },
           {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              3.422,
+              -26.402,
+              4.617
+            ],
+            "centroidAfter": [
+              3.422,
+              -26.402,
+              4.617
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              398,
+              398
+            ],
+            "seconds": [
+              13.27,
+              13.27
+            ]
+          },
+          {
+            "cluster": "Microbiology",
+            "members": 18,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -0.146,
+              -9.949,
+              -10.758
+            ],
+            "centroidAfter": [
+              -0.146,
+              -9.949,
+              -10.758
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              403,
+              403
+            ],
+            "seconds": [
+              13.43,
+              13.43
+            ]
+          },
+          {
+            "cluster": "Microbiology",
+            "members": 18,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              0.278,
+              -10.169,
+              -10.852
+            ],
+            "centroidAfter": [
+              4.225,
+              -14.56,
+              -11.332
+            ],
+            "travelled": 5.9229,
+            "maxMemberDrift": 0,
+            "frames": [
+              532,
+              534
+            ],
+            "seconds": [
+              17.73,
+              17.8
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              0.191,
+              -26.623,
+              5.654
+            ],
+            "centroidAfter": [
+              2.558,
+              -26.769,
+              4.946
+            ],
+            "travelled": 2.4754,
+            "maxMemberDrift": 0,
+            "frames": [
+              559,
+              569
+            ],
+            "seconds": [
+              18.63,
+              18.97
+            ]
+          },
+          {
             "cluster": "Safety and pH",
             "members": 12,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              11.18,
-              -8.997,
-              14.335
+              13.352,
+              -15.423,
+              14.749
             ],
             "centroidAfter": [
-              11.18,
-              -8.997,
-              14.335
+              13.835,
+              -13.027,
+              14.195
+            ],
+            "travelled": 2.506,
+            "maxMemberDrift": 0,
+            "frames": [
+              572,
+              573
+            ],
+            "seconds": [
+              19.07,
+              19.1
+            ]
+          },
+          {
+            "cluster": "Microbiology",
+            "members": 18,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              0.332,
+              -15.766,
+              -9.923
+            ],
+            "centroidAfter": [
+              3.46,
+              -17.772,
+              -10.552
+            ],
+            "travelled": 3.7686,
+            "maxMemberDrift": 0,
+            "frames": [
+              703,
+              704
+            ],
+            "seconds": [
+              23.43,
+              23.47
+            ]
+          },
+          {
+            "cluster": "Microbiology",
+            "members": 18,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              3.46,
+              -17.772,
+              -10.552
+            ],
+            "centroidAfter": [
+              3.46,
+              -17.772,
+              -10.552
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              525,
-              525
+              742,
+              742
             ],
             "seconds": [
-              17.5,
-              17.5
+              24.73,
+              24.73
             ]
           },
           {
-            "cluster": "Equipment",
-            "members": 12,
+            "cluster": "Microbiology",
+            "members": 18,
             "poses": [
               "fist"
             ],
             "centroidBefore": [
-              -5.217,
-              -24.57,
-              -6.546
+              5.879,
+              -18.302,
+              -11.211
             ],
             "centroidAfter": [
-              -5.001,
-              -24.641,
-              -6.601
-            ],
-            "travelled": 0.2342,
-            "maxMemberDrift": 0,
-            "frames": [
-              548,
-              549
-            ],
-            "seconds": [
-              18.27,
-              18.3
-            ]
-          },
-          {
-            "cluster": "Equipment",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -4.029,
-              -24.55,
-              -6.917
-            ],
-            "centroidAfter": [
-              -2.433,
-              -25.202,
-              -7.3
-            ],
-            "travelled": 1.7658,
-            "maxMemberDrift": 0,
-            "frames": [
-              553,
-              559
-            ],
-            "seconds": [
-              18.43,
-              18.63
-            ]
-          },
-          {
-            "cluster": "Safety and pH",
-            "members": 12,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              16.534,
-              -10.499,
-              12.933
-            ],
-            "centroidAfter": [
-              20.334,
-              -6.836,
-              11.139
-            ],
-            "travelled": 5.5745,
-            "maxMemberDrift": 0,
-            "frames": [
-              562,
-              564
-            ],
-            "seconds": [
-              18.73,
-              18.8
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              4.37,
-              -17.598,
-              2.836
-            ],
-            "centroidAfter": [
-              -3.042,
-              -21.32,
-              5.758
-            ],
-            "travelled": 8.7936,
-            "maxMemberDrift": 0,
-            "frames": [
-              695,
-              696
-            ],
-            "seconds": [
-              23.17,
-              23.2
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -0.829,
-              -24.939,
-              5.685
-            ],
-            "centroidAfter": [
-              -0.829,
-              -24.939,
-              5.685
+              5.879,
+              -18.302,
+              -11.211
             ],
             "travelled": 0,
             "maxMemberDrift": 0,
             "frames": [
-              705,
-              705
+              747,
+              747
             ],
             "seconds": [
-              23.5,
-              23.5
-            ]
-          },
-          {
-            "cluster": "Lacto-vegetables",
-            "members": 20,
-            "poses": [
-              "fist"
-            ],
-            "centroidBefore": [
-              -1.626,
-              -24.516,
-              5.86
-            ],
-            "centroidAfter": [
-              4.146,
-              -25.499,
-              4.24
-            ],
-            "travelled": 6.0745,
-            "maxMemberDrift": 0,
-            "frames": [
-              712,
-              728
-            ],
-            "seconds": [
-              23.73,
-              24.27
+              24.9,
+              24.9
             ]
           }
         ],
-        "poseGrabCount": 23,
+        "poseGrabCount": 29,
         "poseGrabbedClusters": [
-          "Lacto-vegetables",
           "Safety and pH",
-          "Equipment"
+          "Lacto-vegetables",
+          "Equipment",
+          "Microbiology"
         ],
         "poseGrabLargest": 20,
-        "poseGrabMaxTravel": 10.8706,
+        "poseGrabMaxTravel": 14.9634,
         "captionFramesShowing": 1124,
-        "captionFramesMarkedHeld": 98,
+        "captionFramesMarkedHeld": 97,
         "captionFramesOutrunningTheDetector": 0,
         "captionOutrunExamples": [],
         "captionNeverOutrunsTheDetector": true,
-        "undoStackEmptiedOnCamera": false,
+        "undoStackEmptiedOnCamera": true,
+        "undoDepthAtEnd": 0,
+        "undoDepthAtTailStart": 34,
+        "positionsNotReturned": [],
         "undoActsDroppedByTheCap": 0,
-        "mapReturnedToItsStartingLayout": false,
+        "mapReturnedToItsStartingLayout": true,
         "clusterMovedByPose": true,
         "clusterArrangementPreservedByPose": true,
         "clusterGrabbed": "Koji",
@@ -6039,15 +6185,15 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          2.284,
-          0.286,
-          -3.343
+          1.744,
+          -0.047,
+          -3.12
         ],
-        "clusterCentroidTravelled": 17.508,
+        "clusterCentroidTravelled": 18.1817,
         "clusterMaxMemberDrift": 0,
         "clusterLedgerBeforeOnPeer": "5144cc62a503",
-        "clusterLedgerAfterOnPeer": "7720fe60c994",
-        "clusterLedgerAfterHere": "7720fe60c994",
+        "clusterLedgerAfterOnPeer": "526785cccd2e",
+        "clusterLedgerAfterHere": "526785cccd2e",
         "clusterMoveReachedTheHeadlessPeer": true,
         "clusterMovedByMouse": true,
         "clusterInternalArrangementPreserved": true,
@@ -6064,7 +6210,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64",
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "d38003b65a7d9754",
+        "fnSha": "acd89030378b14e5",
         "appSha": "10c188b09545c35e",
         "claimShas": {
           "clusterMovedByPose": "b5bea41b6c62",
@@ -6080,7 +6226,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T13:32:24.088Z"
+      "fileMtime": "2026-09-06T13:58:58.284Z"
     },
     {
       "id": "18",
@@ -6207,7 +6353,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:33:38.374Z"
     },
     {
@@ -6346,7 +6492,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:35:44.034Z"
     },
     {
@@ -6606,7 +6752,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T13:38:52.859Z"
     }
   ],
@@ -6633,17 +6779,17 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T13:38:56.935Z",
+  "finishedAt": "2026-09-06T13:59:03.831Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 826994,
     "sha256": "10c188b09545c35e81cb410984e9f463e024ef3e937857bc5964d72314b08313",
     "appSha": "10c188b09545c35e",
-    "gitHead": "d14cbe1aea50",
-    "gitHeadAt": "2026-09-06T13:20:07+00:00",
-    "treeDirtyAtCapture": false
+    "gitHead": "62391d720eec",
+    "gitHeadAt": "2026-09-06T13:42:01+00:00",
+    "treeDirtyAtCapture": true
   },
-  "captured": 19,
+  "captured": 20,
   "total": 20
 }
