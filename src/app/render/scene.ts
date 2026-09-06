@@ -252,7 +252,15 @@ export class Scene {
                           // placing them ahead of everything but the pin costs
                           // almost nothing at this count and removes the case.
                           priority: n.id === this.pinned ? -1 : !n.placed ? -0.5 : PRIORITY[st],
-                          baseAlpha: st === 'plain' ? 0.86 : 1.0,
+                          // THE SURVIVORS CAN AFFORD TO BE BRIGHTER. Plain labels were held at
+                          // 0.86 to keep a crowded frame from turning into a wall of
+                          // type — but the cap-and-drop ruling already halves the
+                          // count, and at whole-map framing the type was
+                          // simultaneously the smallest and the lowest-contrast thing
+                          // in the build: median stroke contrast 4.2:1 against 15.4:1
+                          // at reading distance. Full weight now; the crowding that
+                          // justified the discount is handled by hiding, not dimming.
+                          baseAlpha: 1.0,
                           nodeSizeWorld: labelSize, held: !n.placed });
       // Unplaced nodes sit in a ring. Their labels are pushed to the outward
       // side so they radiate from the holding cluster rather than pile onto it.

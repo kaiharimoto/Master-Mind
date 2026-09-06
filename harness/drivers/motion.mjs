@@ -861,9 +861,14 @@ export default [
       // travelled together, how far, and the largest drift between them.
       // Each mouse equivalent then gets its own beat with room to be sampled;
       // cycle 4's Gather click was too brief to survive a contact sheet.
-      { at: 1000, fn: async () => page.click('[data-t=tool-spread]') },
-      { at: 1070, fn: async () => page.click('[data-t=tool-gather]') },
-      { at: 1140, fn: async () => page.click('[data-t=tool-two]') },
+      // Pulled in by two seconds. The alt-drag beat's caption expires around
+      // frame 930 and the first mouse-equivalent beat began at 1000, leaving
+      // three seconds of a 41-second vocabulary reel — 7 % of the runtime —
+      // with nothing being asserted. The beats keep their spacing; the dead air
+      // between the two halves of the take is what goes.
+      { at: 940, fn: async () => page.click('[data-t=tool-spread]') },
+      { at: 1010, fn: async () => page.click('[data-t=tool-gather]') },
+      { at: 1080, fn: async () => page.click('[data-t=tool-two]') },
     ];
     await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: script(steps) });
     const uniq = [...new Set(poses)].filter(p => p !== 'none');
