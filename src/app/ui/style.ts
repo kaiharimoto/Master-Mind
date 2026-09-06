@@ -136,6 +136,11 @@ tr.map:hover{background:var(--panel)}
 #gesture.show{display:block}
 #gesture .n{font-weight:bold;color:var(--hot)}
 #gesture .o{color:var(--ink-dim)}
+/* Held: the caption is still readable but is no longer asserting anything the
+   detector is seeing right now, and it must not look like it is. */
+#gesture.held{border-style:dashed;opacity:.72}
+#gesture.held .n{color:var(--ink-dim)}
+#gesture .h{color:var(--ink-dim);font-style:italic}
 
 #toast{position:fixed;left:50%;transform:translateX(-50%);top:56px;z-index:50;
   background:var(--panel);border:1px solid var(--line);padding:9px 14px;display:none;max-width:640px}

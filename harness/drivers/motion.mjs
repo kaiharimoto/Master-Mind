@@ -827,6 +827,9 @@ export default [
     // both meant the pose could regress with the ledger still green.
     clusterMovedByPose: true,
     clusterArrangementPreservedByPose: true,
+    // A caption naming a pose the detector is not reading, on a frame that
+    // ships, is the shape of a staged demo. Zero of them, or a failed capture.
+    captionNeverOutrunsTheDetector: true,
     clusterMovedByMouse: true,
     clusterInternalArrangementPreserved: true,
     // NOT clusterMovePropagatedToTheOtherSurface. It was declared here and the
@@ -835,6 +838,12 @@ export default [
     // not. The measurement stays in the record below; the CLAIM moved to
     // artifact 12, where two surfaces are on screen and a whole district is
     // shown crossing between them.
+    // Dropping it from `requires` was not enough: the cycle-11 Audience found
+    // the same sentence still sitting in the RESULT, where a reader takes the
+    // record's own words for what the take shows. The measurement is real but
+    // it is not a surface — it is a second client with rendering stopped — so
+    // it is now named `clusterMoveReachedTheHeadlessPeer`, which is what was
+    // actually observed and cannot be read as a description of the frames.
     count: (n) => n >= 4,
   },
   demonstrates: 'Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents', minW: 1920, minH: 1080,
@@ -893,6 +902,36 @@ export default [
     });
     const grabWindows = [];
     let liveGrab = null;
+    // A CAPTION IS A CLAIM, AND IT IS SAMPLED LIKE ONE. The cycle-11 Audience
+    // read three frames where the operation caption named a pose while the
+    // hand panel beside it read `no hand · conf 0.00`. The app now marks such
+    // a caption as held; this counts, on every frame that ships, the ones that
+    // assert a live pose without that mark while the detector disagrees.
+    const captionAudit = { frames: 0, showing: 0, held: 0, outran: 0, examples: [] };
+    const sampleCaption = async (i) => {
+      const c = await page.evaluate(() => {
+        const g = document.getElementById('gesture');
+        if (!g || !g.classList.contains('show')) return null;
+        const lg = window.mm.lastGestureFired;
+        const f = window.mm.hands.frame;
+        return { id: lg ? lg.id : null, text: (g.textContent || '').trim(),
+                 held: g.classList.contains('held'),
+                 present: !!f.present, pose: f.pose, conf: +(f.confidence || 0).toFixed(2) };
+      });
+      captionAudit.frames++;
+      if (!c) return;
+      captionAudit.showing++;
+      if (c.held) captionAudit.held++;
+      const fromHand = !!c.id && !c.id.startsWith('mouse:') &&
+                       ['spread', 'gather', 'fist', 'two'].includes(c.id);
+      if (fromHand && !c.held && (!c.present || c.pose !== c.id)) {
+        captionAudit.outran++;
+        if (captionAudit.examples.length < 6)
+          captionAudit.examples.push({ frame: i - 1, second: +((i - 1) / 30).toFixed(2),
+                                       caption: c.text.slice(0, 72), detector: c.present ? c.pose : 'no hand',
+                                       conf: c.conf });
+      }
+    };
     // onFrame runs BEFORE the frame's step(), so what it reads is the state
     // the PREVIOUS step produced: the sample is attributed to frame i - 1.
     const closeGrab = () => { if (liveGrab) grabWindows.push(liveGrab); liveGrab = null; };
@@ -967,6 +1006,7 @@ export default [
       // its own before/after pair and must not leak into the pose record.
       if (i <= 781) await sampleGrab(i);
       else closeGrab();
+      await sampleCaption(i);
       await beats(i, t, total);
     } });
     closeGrab();
@@ -1002,6 +1042,12 @@ export default [
              poseGrabbedClusters: [...new Set(poseGrabs.map(g => g.cluster))],
              poseGrabLargest: poseGrabs.reduce((m, g) => Math.max(m, g.members), 0),
              poseGrabMaxTravel: poseGrabs.reduce((m, g) => Math.max(m, g.travelled), 0),
+             // The caption's own honesty, counted over every frame that shipped.
+             captionFramesShowing: captionAudit.showing,
+             captionFramesMarkedHeld: captionAudit.held,
+             captionFramesOutrunningTheDetector: captionAudit.outran,
+             captionOutrunExamples: captionAudit.examples,
+             captionNeverOutrunsTheDetector: captionAudit.outran === 0,
              clusterMovedByPose: movedByPose.length > 0,
              clusterArrangementPreservedByPose:
                poseGrabs.length > 0 && poseGrabs.every(g => g.maxMemberDrift < 1e-3),
@@ -1016,7 +1062,7 @@ export default [
              clusterLedgerBeforeOnPeer: peerBefore ? createHash('sha256').update(peerBefore).digest('hex').slice(0, 12) : null,
              clusterLedgerAfterOnPeer: peerAfter ? createHash('sha256').update(peerAfter).digest('hex').slice(0, 12) : null,
              clusterLedgerAfterHere: ownAfter ? createHash('sha256').update(ownAfter).digest('hex').slice(0, 12) : null,
-             clusterMovePropagatedToTheOtherSurface:
+             clusterMoveReachedTheHeadlessPeer:
                !!peerBefore && !!peerAfter && !!ownAfter && peerAfter === ownAfter && peerAfter !== peerBefore,
              // Renamed from `clusterMoved`. The old name did not say which input
              // moved it, and the measurement it stood on could only have been

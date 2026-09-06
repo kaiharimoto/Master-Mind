@@ -691,6 +691,36 @@ export class App {
     this.renderReticle();
     this.renderHidden();
     this.renderClusterProof();
+    this.renderGestureLiveness();
+  }
+
+  /**
+   * A CAPTION MUST NOT OUTLIVE ITS EVIDENCE. The operation caption holds for
+   * 2.6 s so it can be read, and the cycle-11 Audience found three frames of
+   * artifact 17 — 7 % of the take — where it asserted `Closed fist — Grab the
+   * nearest cluster` while the hand panel in the SAME FRAME read `no hand ·
+   * show a hand to the camera · conf 0.00`. The caption was then the only
+   * thing on screen making the claim, which is exactly the shape of a staged
+   * demo whether or not it was one.
+   *
+   * So while a hand-pose caption is up and the detector is not, at that
+   * moment, reading that same pose, the caption says what it actually is: the
+   * last pose, held. Runs every frame, because the detector's state changes
+   * between chrome refreshes.
+   */
+  private renderGestureLiveness() {
+    const g = document.getElementById('gesture');
+    if (!g || !g.classList.contains('show')) return;
+    const lg = this.lastGesture;
+    const fromHand = !!lg && !lg.id.startsWith('mouse:') && HAND_VOCAB.some(h => h.id === lg.id);
+    const live = fromHand && this.hands.enabled && this.hands.frame.present
+                 && this.hands.frame.pose === lg!.id;
+    const held = fromHand && !live;
+    g.classList.toggle('held', held);
+    let tag = g.querySelector('.h') as HTMLElement | null;
+    if (!held) { tag?.remove(); return; }
+    if (!tag) { tag = el('span', { class: 'h', 'data-t': 'gesture-held' }) as HTMLElement; g.appendChild(tag); }
+    tag.textContent = ' · last pose, held';
   }
 
   /** Render at a given virtual time. The capture harness steps this at 1/30 s. */
@@ -782,8 +812,22 @@ export class App {
     const parts: string[] = [];
     if (n > 0) parts.push(`${n} label${n === 1 ? '' : 's'} hidden`);
     if (cut > 0) parts.push(`${cut} shortened`);
+    // "MOVE CLOSER TO READ THEM" WAS A PROMISE THE FRAME COULD BREAK. The
+    // cycle-11 Audience put artifact 05's two panels side by side: after the
+    // open-palm move-closer the chip read `118 labels hidden` where before it
+    // read 113 — a frame instructing the reader to do the thing that had just
+    // made it worse. Swept across view distance on the 150-node map the drawn
+    // count does climb with proximity (28 names at 193 units, 39 at 116) but it
+    // is not monotone step to step: the greedy arbiter's output jitters by
+    // about three names, and a 1.15x dolly is inside that jitter.
+    //
+    // So the chip states what it can see and stops instructing. Where the names
+    // it is holding back are actually recoverable — the list of unnamed
+    // thoughts, which is on screen in both the canvas and expansion lenses — it
+    // says so, because that is a route to the name that always works.
+    const listed = !!document.getElementById('unlabelled');
     chip.textContent = parts.length
-      ? `${parts.join(' · ')} at this zoom — move closer to read them` : '';
+      ? `${parts.join(' · ')} at this framing${listed ? ' · listed at right' : ''}` : '';
     // KEPT WHOLE AND KEPT VISIBLE. This chip is how the frame stays honest
     // about how much text it is withholding, and in cycle 9 it was the first
     // thing sacrificed twice over: in artifact 05's half-width panels the seed
