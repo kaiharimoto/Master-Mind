@@ -18,8 +18,12 @@ const mergeChrome = (list) => ({
   chromeWorstOverlapPx: Math.max(0, ...list.map(c => c.worstOverlapPx)),
   chromeOverlaps: list.flatMap(c => c.pairs).slice(0, 8),
   chromeOffFrame: list.flatMap(c => c.offFrame),
+  nodesUnderChrome: list.reduce((t, c) => t + c.nodesUnderChrome, 0),
+  nodesUnderChromeIds: list.flatMap(c => c.nodesUnderChromeIds).slice(0, 12),
+  nodesUnderChromeBy: [...new Set(list.flatMap(c => c.nodesUnderChromeBy))],
   noTwoChromePanelsOverlap: list.every(c => c.noTwoChromePanelsOverlap),
   everyChromeBadgeInsideTheFrame: list.every(c => c.everyChromeBadgeInsideTheFrame),
+  noNodeBuriedByChrome: list.every(c => c.noNodeBuriedByChrome),
 });
 
 /** Turn a list of {at, fn} into an onFrame callback for record(). */
@@ -48,7 +52,11 @@ export default [
               detectorLiveInBothPanels: true,
               // The undo chip was painted over "dist 126.9" in the webcam
               // readout — the frame covering one of its own measurements.
-              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true },
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
+              // A thought a reader cannot see is a thought the frame is not
+              // showing, whatever the model says. The cycle-12 Auditor found
+              // one painted over in both panels here.
+              noNodeBuriedByChrome: true },
   demonstrates: 'Windows hand tracking: an open-palm move-closer shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
@@ -311,7 +319,11 @@ export default [
   // of BOTH panels at their own shutters, because a composite's panels are
   // separate moments and the live page at the end describes neither.
   requires: { placed: true, stableAfterDrop: true, cameraFrozenAcrossPanels: true,
-              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true },
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
+              // A thought a reader cannot see is a thought the frame is not
+              // showing, whatever the model says. The cycle-12 Auditor found
+              // one painted over in both panels here.
+              noNodeBuriedByChrome: true },
   demonstrates: 'placement before/after under one frozen camera: one node leaves holding for a permanent position and every other node projects to the same point', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Placement end-state',
   async run(H) {

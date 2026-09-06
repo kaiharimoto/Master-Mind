@@ -6,10 +6,11 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T10:14:25.618Z",
+  "lastRunAt": "2026-09-06T10:30:07.870Z",
   "lastRunCaptured": [
-    "05",
-    "08"
+    "08",
+    "11",
+    "12"
   ],
   "artifacts": [
     {
@@ -91,7 +92,7 @@
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:17:22.091Z"
+      "fileMtime": "2026-09-06T10:15:17.336Z"
     },
     {
       "id": "02",
@@ -978,9 +979,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:17:23.887Z"
+      "fileMtime": "2026-09-06T10:15:19.419Z"
     },
     {
       "id": "03",
@@ -1147,9 +1147,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:17:27.603Z"
+      "fileMtime": "2026-09-06T10:15:22.983Z"
     },
     {
       "id": "04",
@@ -2266,9 +2265,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:17:30.167Z"
+      "fileMtime": "2026-09-06T10:15:25.383Z"
     },
     {
       "id": "05",
@@ -2441,9 +2439,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T10:14:45.323Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T10:15:45.984Z"
     },
     {
       "id": "06",
@@ -2874,9 +2871,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:17:58.075Z"
+      "fileMtime": "2026-09-06T10:15:50.519Z"
     },
     {
       "id": "07",
@@ -3054,9 +3050,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:17:59.715Z"
+      "fileMtime": "2026-09-06T10:15:52.103Z"
     },
     {
       "id": "08",
@@ -3064,7 +3059,7 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.3,
+      "seconds": 3.5,
       "status": "captured",
       "error": null,
       "check": {
@@ -3116,6 +3111,14 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noNodeBuriedByChrome",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -3128,8 +3131,12 @@
         "chromeWorstOverlapPx": 0,
         "chromeOverlaps": [],
         "chromeOffFrame": [],
+        "nodesUnderChrome": 0,
+        "nodesUnderChromeIds": [],
+        "nodesUnderChromeBy": [],
         "noTwoChromePanelsOverlap": true,
         "everyChromeBadgeInsideTheFrame": true,
+        "noNodeBuriedByChrome": true,
         "placed": true,
         "beforePos": [
           2.056,
@@ -3153,19 +3160,20 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "c0d91001f279cf6c",
-        "appSha": "590fa9908fa4ffdf",
+        "appSha": "fe7d8822be86ef5c",
         "claimShas": {
           "placed": "b5bea41b6c62",
           "stableAfterDrop": "b5bea41b6c62",
           "cameraFrozenAcrossPanels": "b5bea41b6c62",
           "noTwoChromePanelsOverlap": "b5bea41b6c62",
-          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62"
+          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
+          "noNodeBuriedByChrome": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T10:14:47.419Z"
+      "fileMtime": "2026-09-06T10:30:10.493Z"
     },
     {
       "id": "09",
@@ -3332,9 +3340,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:18:04.815Z"
+      "fileMtime": "2026-09-06T10:15:57.563Z"
     },
     {
       "id": "10",
@@ -3669,9 +3676,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:05:58.315Z"
+      "fileMtime": "2026-09-06T10:16:03.471Z"
     },
     {
       "id": "11",
@@ -3679,15 +3685,15 @@
       "title": "Twin composite — before",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 21.7,
+      "seconds": 20.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 170827,
-        "sha256": "2c90c92fe25ee6a2dc0dc66d5cf72f87a8f176e76831ce676ce0abb215ee5f65"
+        "bytes": 173250,
+        "sha256": "2d98e164c2aa6804d92434fe6729fbf9a3434dba648f55a222557fe583c39147"
       },
       "claims": {
         "ok": true,
@@ -3739,7 +3745,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 1,
-            "serverPid": 22251,
+            "serverPid": 18305,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -3751,7 +3757,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 2,
-            "serverPid": 22251,
+            "serverPid": 18305,
             "actor": "android-twin",
             "status": "live"
           }
@@ -3782,7 +3788,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "861f6cca2f545723",
-        "appSha": "78e03b777fc6b68f",
+        "appSha": "fe7d8822be86ef5c",
         "claimShas": {
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "twoDistinctSockets": "b5bea41b6c62",
@@ -3792,8 +3798,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:18:25.460Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T10:30:22.043Z"
     },
     {
       "id": "12",
@@ -3808,8 +3814,8 @@
         "ok": true,
         "width": 1920,
         "height": 2160,
-        "bytes": 779091,
-        "sha256": "78a86c5af5954f412712db4c54e305e32202ac8998eb7e962bce629016e23a6c"
+        "bytes": 782129,
+        "sha256": "729913bdaee362181d729bb7be6d73b5971f97526a5a9a163d3e002c87b48c3d"
       },
       "claims": {
         "ok": true,
@@ -3987,7 +3993,7 @@
             "surface": "windows",
             "transport": "ws://127.0.0.1:8871",
             "socket": 5,
-            "serverPid": 22251,
+            "serverPid": 18305,
             "actor": "windows-twin",
             "status": "live"
           },
@@ -3999,7 +4005,7 @@
             "surface": "android",
             "transport": "ws://127.0.0.1:8871",
             "socket": 6,
-            "serverPid": 22251,
+            "serverPid": 18305,
             "actor": "android-twin",
             "status": "live"
           }
@@ -4019,12 +4025,12 @@
             "shaPrinted": "8a9ee216fc",
             "shaAfterRaster": "8a9ee216fc",
             "worstDisplacedContrast": 3.03,
-            "changedPixels": 39171,
-            "changedFraction": 3.778,
+            "changedPixels": 24232,
+            "changedFraction": 2.337,
             "changedBox": {
               "x0": 84,
               "y0": 104,
-              "x1": 876,
+              "x1": 847,
               "y1": 1000
             },
             "districtBox": {
@@ -4033,9 +4039,9 @@
               "x1": 386,
               "y1": 748
             },
-            "changedSampled": 612,
-            "changedInsideDistrict": 162,
-            "changedInsideDistrictPct": 26.5,
+            "changedSampled": 378,
+            "changedInsideDistrict": 157,
+            "changedInsideDistrictPct": 41.5,
             "lightArrivedAtNewPositions": 12,
             "lightLeftOldPositions": 14,
             "membersThatDidBoth": 8,
@@ -4045,12 +4051,12 @@
             ],
             "measuredTravelPx": [
               45,
-              49
+              48
             ],
-            "travelAgreementPx": 0.8,
-            "matchAtMeasured": 0.396,
-            "matchIfItHadNotMoved": 0.24,
-            "matchSamples": 576
+            "travelAgreementPx": 1.5,
+            "matchAtMeasured": 0.364,
+            "matchIfItHadNotMoved": 0.259,
+            "matchSamples": 615
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4070,12 +4076,12 @@
             "shaPrinted": "8a9ee216fc",
             "shaAfterRaster": "8a9ee216fc",
             "worstDisplacedContrast": 3.03,
-            "changedPixels": 39171,
-            "changedFraction": 3.778,
+            "changedPixels": 24232,
+            "changedFraction": 2.337,
             "changedBox": {
               "x0": 84,
               "y0": 104,
-              "x1": 876,
+              "x1": 847,
               "y1": 1000
             },
             "districtBox": {
@@ -4084,9 +4090,9 @@
               "x1": 386,
               "y1": 748
             },
-            "changedSampled": 612,
-            "changedInsideDistrict": 162,
-            "changedInsideDistrictPct": 26.5,
+            "changedSampled": 378,
+            "changedInsideDistrict": 157,
+            "changedInsideDistrictPct": 41.5,
             "lightArrivedAtNewPositions": 12,
             "lightLeftOldPositions": 14,
             "membersThatDidBoth": 8,
@@ -4096,12 +4102,12 @@
             ],
             "measuredTravelPx": [
               45,
-              49
+              48
             ],
-            "travelAgreementPx": 0.8,
-            "matchAtMeasured": 0.396,
-            "matchIfItHadNotMoved": 0.24,
-            "matchSamples": 576
+            "travelAgreementPx": 1.5,
+            "matchAtMeasured": 0.364,
+            "matchIfItHadNotMoved": 0.259,
+            "matchSamples": 615
           },
           "printedShaMatchesRenderedState": true,
           "displacementVisibleInPixels": true
@@ -4114,12 +4120,12 @@
           "shaPrinted": "8a9ee216fc",
           "shaAfterRaster": "8a9ee216fc",
           "worstDisplacedContrast": 3.03,
-          "changedPixels": 39171,
-          "changedFraction": 3.778,
+          "changedPixels": 24232,
+          "changedFraction": 2.337,
           "changedBox": {
             "x0": 84,
             "y0": 104,
-            "x1": 876,
+            "x1": 847,
             "y1": 1000
           },
           "districtBox": {
@@ -4128,9 +4134,9 @@
             "x1": 386,
             "y1": 748
           },
-          "changedSampled": 612,
-          "changedInsideDistrict": 162,
-          "changedInsideDistrictPct": 26.5,
+          "changedSampled": 378,
+          "changedInsideDistrict": 157,
+          "changedInsideDistrictPct": 41.5,
           "lightArrivedAtNewPositions": 12,
           "lightLeftOldPositions": 14,
           "membersThatDidBoth": 8,
@@ -4140,12 +4146,12 @@
           ],
           "measuredTravelPx": [
             45,
-            49
+            48
           ],
-          "travelAgreementPx": 0.8,
-          "matchAtMeasured": 0.396,
-          "matchIfItHadNotMoved": 0.24,
-          "matchSamples": 576
+          "travelAgreementPx": 1.5,
+          "matchAtMeasured": 0.364,
+          "matchIfItHadNotMoved": 0.259,
+          "matchSamples": 615
         },
         "printedShaMatchesRenderedState": true,
         "clusterDisplacementVisibleInPixels": true,
@@ -4228,7 +4234,7 @@
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "936d2e118cf8cc23",
-        "appSha": "78e03b777fc6b68f",
+        "appSha": "fe7d8822be86ef5c",
         "claimShas": {
           "positionsIdenticalAcrossSurfaces": "b5bea41b6c62",
           "positionEditPropagated": "b5bea41b6c62",
@@ -4251,8 +4257,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:18:32.554Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T10:30:31.378Z"
     },
     {
       "id": "13",
@@ -4333,9 +4339,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:18:34.143Z"
+      "fileMtime": "2026-09-06T10:16:24.091Z"
     },
     {
       "id": "14",
@@ -4547,9 +4552,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:18:37.280Z"
+      "fileMtime": "2026-09-06T10:16:27.335Z"
     },
     {
       "id": "15",
@@ -4608,9 +4612,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:18:40.351Z"
+      "fileMtime": "2026-09-06T10:16:30.975Z"
     },
     {
       "id": "16",
@@ -4731,9 +4734,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:20:20.215Z"
+      "fileMtime": "2026-09-06T10:18:15.019Z"
     },
     {
       "id": "17",
@@ -5513,9 +5515,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:31:28.429Z"
+      "fileMtime": "2026-09-06T10:29:37.770Z"
     },
     {
       "id": "19",
@@ -5652,9 +5653,8 @@
         }
       },
       "capturedInCycle": 12,
-      "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T09:33:37.302Z"
+      "fileMtime": "2026-09-06T10:30:22.395Z"
     },
     {
       "id": "20",
@@ -5882,12 +5882,12 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T10:14:49.684Z",
+  "finishedAt": "2026-09-06T10:30:34.193Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 821010,
-    "sha256": "590fa9908fa4ffdfc7fbfce344c4684b57a88232cefc614c1c6d610f6da42cb8"
+    "bytes": 822419,
+    "sha256": "fe7d8822be86ef5c2bbc144443629bfc9cd7040310af75455b5f30389d4cff42"
   },
   "captured": 20,
   "total": 20

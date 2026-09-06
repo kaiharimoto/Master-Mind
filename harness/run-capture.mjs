@@ -595,18 +595,15 @@ async function runDriver(d) {
       // ...and not behind the app's own chrome either. Off the edge and under
       // a panel are the same failure for an artifact whose claim is that every
       // node is still there.
-      const chromeCover = (p) => p.page.evaluate(() => {
-        const boxes = ['#editor', '#finder', '#states', '#top', '#tools']
-          .map(sel => document.querySelector(sel))
-          .filter(e => e && getComputedStyle(e).display !== 'none')
-          .map(e => e.getBoundingClientRect())
-          .filter(r => r.width > 2 && r.height > 2);
-        const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
-        return window.mm.scene.screenPositions()
-          .filter(s => boxes.some(r => s.x / dpr >= r.left && s.x / dpr <= r.right &&
-                                       s.y / dpr >= r.top && s.y / dpr <= r.bottom))
-          .map(s => s.id);
-      });
+      //
+      // THE APP'S OWN INVENTORY, not a second copy of it. This tested five
+      // selectors — editor, finder, states, top, tools — and the framing-summary
+      // strip that moved into the canvas in cycle 12 was in none of them, so
+      // `everyNodeUnoccludedByChrome` printed as passing over four panels in
+      // which a map-talk node was entirely painted over. The cycle-12 Auditor
+      // read the strip's background where cycle 11 read the node. There is one
+      // list now and the app keeps it.
+      const chromeCover = (p) => p.page.evaluate(() => window.mm.nodesUnderChrome());
       await allVisible(w, 'before/windows'); await allVisible(a, 'before/android');
       const prov = {
         w: await w.page.evaluate(() => window.mm.provenance()),

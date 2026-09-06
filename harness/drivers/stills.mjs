@@ -132,8 +132,11 @@ const chrome = async (page) => {
   return { chromeChecked: c.checked, chromeOverlappingPairs: c.overlapping,
            chromeWorstOverlapPx: c.worstOverlapPx, chromeOverlaps: c.pairs,
            chromeOffFrame: c.offFrame,
+           nodesUnderChrome: c.nodesUnderChrome, nodesUnderChromeIds: c.nodesUnderChromeIds,
+           nodesUnderChromeBy: c.nodesUnderChromeBy,
            noTwoChromePanelsOverlap: c.noTwoChromePanelsOverlap,
-           everyChromeBadgeInsideTheFrame: c.everyChromeBadgeInsideTheFrame };
+           everyChromeBadgeInsideTheFrame: c.everyChromeBadgeInsideTheFrame,
+           noNodeBuriedByChrome: c.noNodeBuriedByChrome };
 };
 
 const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
@@ -357,6 +360,7 @@ export default [
               // somewhere else. Asked of every opaque overlay now, on every
               // artifact that carries chrome.
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
+              noNodeBuriedByChrome: true,
               everyLabelInsideTheFrame: true,
               // The cycle-8 Auditor called 02 a regression: +85.5 % label ink,
               // three unreadable overprinted pairs where cycle 7 had none, and
@@ -577,6 +581,7 @@ export default [
               // somewhere else. Asked of every opaque overlay now, on every
               // artifact that carries chrome.
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
+              noNodeBuriedByChrome: true,
               everyLabelInsideTheFrame: true, recencyChannelExercised: true,
               allFiveStatesAtWholeMapDensity: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
@@ -648,6 +653,7 @@ export default [
               // somewhere else. Asked of every opaque overlay now, on every
               // artifact that carries chrome.
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
+              noNodeBuriedByChrome: true,
               countMatchesMarkers: true, everyHeldLabelAttributable: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
               everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true,

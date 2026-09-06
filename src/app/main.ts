@@ -1082,6 +1082,9 @@ export class App {
     // picture FIRST and scored SECOND, on how much it still covers with a tiny
     // preference for not moving. So the badge always lands somewhere, always
     // inside the frame, and covers as little as any of these placements can.
+    const dpr = this.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    const marks = this.scene.screenPositions()
+      .map(q => ({ x: q.x / dpr, y: q.y / dpr, r: Math.max(q.r / dpr, 3) }));
     const cands: [number, number][] = [[r.left, r.top]];
     for (const b of blockers) {
       cands.push([b.left - M - w, r.top], [b.right + M, r.top],
@@ -1100,7 +1103,14 @@ export class App {
         const oy = Math.min(y + h, b.bottom) - Math.max(y, b.top);
         if (ox > 0 && oy > 0) area += ox * oy;
       }
-      const score = area * 4096 + Math.hypot(x - r.left, y - r.top);
+      // AND A BADGE DOES NOT SIT ON A THOUGHT. Covering another piece of chrome
+      // is worse than covering a node — chrome is recoverable, a hidden thought
+      // is a thought the frame is not showing — but both are avoided, and a
+      // marker costs enough that any clear placement wins over a buried one.
+      let buried = 0;
+      for (const m of marks)
+        if (m.x + m.r > x && m.x - m.r < x + w && m.y + m.r > y && m.y - m.r < y + h) buried++;
+      const score = area * 4096 + buried * 100000 + Math.hypot(x - r.left, y - r.top);
       if (score < bestScore) { bestScore = score; bx = x; by = y; }
     }
     e.style.left = `${Math.round(bx)}px`;
@@ -1124,10 +1134,75 @@ export class App {
    * Reports overlapping pairs with the area, and anything with text that is not
    * wholly inside the frame — the labels-hidden badge was at x = -76.
    */
+  /**
+   * EVERY OPAQUE OVERLAY, IN ONE PLACE.
+   *
+   * This list was kept in two places and one of them had five entries. The twin
+   * artifacts' `everyNodeUnoccludedByChrome` tested `#editor`, `#finder`,
+   * `#states`, `#top` and `#tools` — and the framing-summary strip, which moved
+   * into the canvas this cycle, was in neither that list nor anyone's mind. So
+   * the claim printed as passing over four panels in which it was false, with a
+   * map-talk node entirely painted over. A claim contradicted by its own frame
+   * is the most expensive thing an evidence machine can produce, and the cause
+   * was a second copy of a list.
+   */
+  static readonly CHROME_SELECTORS = [
+    '#top', '#states', '#editor', '#finder', '#hands', '#tools', '#unlabelled',
+    '#hidden', '#hitbreak', '#origin', '#lenstag', '#toast', '#gesture',
+    '#argyro', '#reticle', '#pinmark', '#grabmark', '#grabcand', '#clusterproof',
+    '#activity', '#maps-home', '#settings',
+  ];
+
+  /**
+   * The thoughts this frame is drawing a marker for that a reader cannot see,
+   * because chrome is on top of them. Off the frame and under a panel are the
+   * same failure for an artifact whose claim is that every node is still there.
+   */
+  nodesUnderChrome(): string[] { return this.nodesUnderChromeDetail().map(b => b.id); }
+
+  /** The same question, with the piece of chrome that is doing it named. */
+  nodesUnderChromeDetail(): { id: string; by: string }[] {
+    const boxes: { sel: string; r: DOMRect }[] = [];
+    for (const sel of App.CHROME_SELECTORS) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e) continue;
+      const st = getComputedStyle(e);
+      if (st.display === 'none' || st.visibility === 'hidden' || Number(st.opacity) < 0.05) continue;
+      if (!(e.textContent || '').trim()) continue;
+      // A RING AROUND A NODE IS NOT CHROME ON TOP OF IT.
+      //
+      // The pin, grab and candidate marks are a transparent ring drawn ON their
+      // own node with an opaque NAME hanging off it. The ring hides nothing —
+      // it is that node's own decoration, and the node shows through it — so
+      // only the tag is counted, and the thoughts the mark itself names are
+      // exempt below: a thought whose name is printed on the frame is the
+      // opposite of a thought the frame is hiding.
+      const RING = sel === '#pinmark' || sel === '#grabmark' || sel === '#grabcand';
+      if (RING) {
+        const tag = e.querySelector('.tag');
+        if (!tag) continue;
+        const tr = tag.getBoundingClientRect();
+        if (tr.width > 2 && tr.height > 2) boxes.push({ sel, r: tr });
+        continue;
+      }
+      const r = this.outerRect(e);
+      if (r.width > 2 && r.height > 2) boxes.push({ sel, r });
+    }
+    const named = this.namedElsewhere();
+    const dpr = this.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    const out: { id: string; by: string }[] = [];
+    for (const s of this.scene.screenPositions()) {
+      const x = s.x / dpr, y = s.y / dpr, rad = Math.max(s.r / dpr, 2);
+      if (named.has(s.id)) continue;
+      const hit = boxes.find(b => x + rad > b.r.left && x - rad < b.r.right &&
+                                  y + rad > b.r.top && y - rad < b.r.bottom);
+      if (hit) out.push({ id: s.id, by: hit.sel });
+    }
+    return out;
+  }
+
   chromeAudit() {
-    const SEL = ['#top', '#states', '#editor', '#finder', '#hands', '#tools', '#unlabelled',
-                 '#hidden', '#hitbreak', '#origin', '#lenstag', '#toast', '#gesture',
-                 '#argyro', '#reticle', '#pinmark', '#grabmark', '#grabcand'];
+    const SEL = App.CHROME_SELECTORS;
     const boxes: { id: string; x0: number; y0: number; x1: number; y1: number }[] = [];
     for (const sel of SEL) {
       const e = document.querySelector(sel) as HTMLElement | null;
@@ -1154,10 +1229,16 @@ export class App {
       if (w > 0.5 && h > 0.5) pairs.push({ a: a.id, b: b.id, areaPx: Math.round(w * h) });
     }
     pairs.sort((x, y) => y.areaPx - x.areaPx);
+    const buriedD = this.nodesUnderChromeDetail();
+    const buried = buriedD.map(b => b.id);
     return { checked: boxes.length, overlapping: pairs.length, worstOverlapPx: pairs[0]?.areaPx ?? 0,
              pairs: pairs.slice(0, 8), offFrame,
+             nodesUnderChrome: buried.length,
+             nodesUnderChromeIds: buried.slice(0, 12),
+             nodesUnderChromeBy: [...new Set(buriedD.map(b => b.by))],
              noTwoChromePanelsOverlap: pairs.length === 0,
-             everyChromeBadgeInsideTheFrame: offFrame.length === 0 };
+             everyChromeBadgeInsideTheFrame: offFrame.length === 0,
+             noNodeBuriedByChrome: buried.length === 0 };
   }
 
   /**
