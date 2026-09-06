@@ -1613,7 +1613,8 @@ export default [
               clipboardCarriesTheExportedPrompt: true,
               // The loop at the scale the product claims, not only at eleven
               // nodes where the JSON fits in one screenshot.
-              roundTripShownAt150Nodes: true, bigMapNothingAppliedWhileStaged: true },
+              roundTripShownAt150Nodes: true, bigMapNothingAppliedWhileStaged: true,
+              acceptLandedAt150Nodes: true, rejectLeftNoTraceAt150Nodes: true },
   demonstrates: 'the finder round-trip in motion: a malformed reply, an adversarially messy one, all three suggestion kinds accepted, and a REJECTED placement that leaves the node exactly where it was', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {
@@ -1795,17 +1796,60 @@ export default [
               ? window.mm.lastParse.dropped.map(d => `${d.what}: ${d.why}`).slice(0, 8) : [],
             kinds: [...new Set(window.mm.suggestions.map(s => s.kind))],
           })); } },
-      { at: 1180, fn: async () => {
+      // The staging window is between the parse and the first accept, and it is
+      // measured at both ends of exactly that: nothing is applied while
+      // suggestions are merely staged.
+      { at: 1140, fn: async () => {
           log.bigPositionsBefore = await page.evaluate(() => JSON.stringify(
             Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
+          log.bigLinksAtParse = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+        } },
+      { at: 1200, fn: async () => {
+          log.bigPositionsStaged = await page.evaluate(() => JSON.stringify(
+            Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
+          log.bigLinksStaged = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+        } },
+      // AND IT IS APPLIED AND REFUSED AT SCALE, not only staged there. The
+      // cycle-12 Art Director: the 150-node leg ran prompt, paste, parse and
+      // "Suggestion 1 of 7" and the file ended — so the before/after proof that
+      // exists at eleven nodes had no counterpart at a hundred and fifty.
+      { at: 1210, fn: async () => {
+          log.bigLinksBefore = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+          log.bigAccepted = await page.evaluate(() => {
+            const s2 = window.mm.suggestions[window.mm.sugIndex];
+            return s2 ? { kind: s2.kind, id: s2.id } : null;
+          });
+          // Only a CONNECTION is accepted here, so the before/after is a link
+          // count a viewer can read off the frame. If the queue hands up
+          // something else the claim below fails rather than the assertion
+          // quietly widening to whatever happened.
+          if (log.bigAccepted && log.bigAccepted.kind === 'connection')
+            await page.click('[data-t=finder-accept]');
+        } },
+      { at: 1270, fn: async () => {
+          log.bigLinksAfterAccept = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+        } },
+      { at: 1300, fn: async () => {
+          log.bigRejected = await page.evaluate(() => {
+            const s2 = window.mm.suggestions[window.mm.sugIndex];
+            return s2 ? { kind: s2.kind, id: s2.id,
+                          nodes: ['a', 'b', 'node'].map(k => s2[k]).filter(Boolean) } : null;
+          });
+          log.bigLinksBeforeReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
+          if (log.bigRejected) await page.click('[data-t=finder-reject]');
+        } },
+      { at: 1360, fn: async () => {
+          log.bigLinksAfterReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
+          log.bigQueueLeft = await page.evaluate(() => window.mm.suggestions.length);
         } },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: script(steps) });
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 47, onFrame: script(steps) });
     // Nothing was accepted at 150 nodes — the beat proves the PARSE and the
     // staging queue at scale, and staging is explicitly the state in which
     // nothing has been applied. That the map is untouched is the claim.
     log.bigPositionsAfter = await page.evaluate(() => JSON.stringify(
       Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
+    void log.bigPositionsAfter;
     return {
       placementAccepted: log.placement && log.afterPlacement
         ? { node: log.placement.node, from: log.placement.from, to: log.afterPlacement.pos,
@@ -1822,8 +1866,21 @@ export default [
       bigMapNodes: log.bigPrompt ? log.bigPrompt.nodes : 0,
       roundTripShownAt150Nodes: !!(log.bigPrompt && log.bigPrompt.nodes === 150 &&
         log.bigParse && log.bigParse.ok && log.bigParse.staged > 0 && log.bigParse.dropped > 0),
+      // The same before/after proof at scale that already exists at eleven.
+      bigMapAccepted: log.bigAccepted ?? null,
+      bigMapLinks: [log.bigLinksBefore ?? null, log.bigLinksAfterAccept ?? null],
+      bigMapRejected: log.bigRejected ?? null,
+      bigMapQueueLeft: log.bigQueueLeft ?? null,
+      acceptLandedAt150Nodes:
+        log.bigAccepted?.kind === 'connection' &&
+        log.bigLinksAfterAccept === log.bigLinksBefore + 1,
+      rejectLeftNoTraceAt150Nodes:
+        !!log.bigLinksBeforeReject && log.bigLinksBeforeReject === log.bigLinksAfterReject,
+      // Measured across the STAGING window — parse to first accept — rather than
+      // to the end of the take, which now contains an accept and a reject.
       bigMapNothingAppliedWhileStaged:
-        !!log.bigPositionsBefore && log.bigPositionsBefore === log.bigPositionsAfter,
+        !!log.bigPositionsBefore && log.bigPositionsBefore === log.bigPositionsStaged &&
+        log.bigLinksAtParse === log.bigLinksStaged,
       // Read back OFF the clipboard, not reported by the button that wrote it.
       clipboardChars: log.clipboardChars ?? 0,
       clipboardCarriesTheExportedPrompt: !!log.clipboardCarriesTheExportedPrompt,

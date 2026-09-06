@@ -55,9 +55,24 @@ const persist = (id) => {
   if (d) writeFileSync(resolve(DATA, `${id}.json`), JSON.stringify(d));
 };
 
+// THE SPAN THE MAP WAS GROWN OVER, not only when it was last touched.
+//
+// The maps home listed a node count and "3 h ago" / "6 h ago" — two values
+// hours apart — so it asserted size and said nothing about a place lived in
+// over time, while the canvas underneath encodes age richly enough to colour
+// every node by it. The cycle-12 Art Director asked for exactly this. Taken
+// from the thoughts themselves: the oldest capture, the newest, and how many
+// landed in the last week.
 const summaries = () => [...docs.values()]
-  .map(d => ({ id: d.id, name: d.name, nodes: Object.keys(d.nodes).length,
-               lastOpenedAt: d.lastOpenedAt, createdAt: d.createdAt }))
+  .map(d => {
+    const t = Object.values(d.nodes).map(n => n.createdAt).filter(Number.isFinite);
+    const week = Date.now() - 7 * 864e5;
+    return { id: d.id, name: d.name, nodes: Object.keys(d.nodes).length,
+             lastOpenedAt: d.lastOpenedAt, createdAt: d.createdAt,
+             firstThoughtAt: t.length ? Math.min(...t) : d.createdAt,
+             newestThoughtAt: t.length ? Math.max(...t) : d.createdAt,
+             thisWeek: t.filter(x => x >= week).length };
+  })
   .sort((a, b) => b.lastOpenedAt - a.lastOpenedAt);
 
 function broadcastMaps() {

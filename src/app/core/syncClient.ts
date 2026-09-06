@@ -4,7 +4,11 @@ import type { Transport } from './store.js';
 
 export type SyncStatus = 'offline' | 'connecting' | 'live' | 'error';
 
-export interface MapSummary { id: string; name: string; nodes: number; lastOpenedAt: number; createdAt: number; }
+export interface MapSummary {
+  id: string; name: string; nodes: number; lastOpenedAt: number; createdAt: number;
+  /** The span the map was grown over, and how much of it is recent. */
+  firstThoughtAt?: number; newestThoughtAt?: number; thisWeek?: number;
+}
 
 /** Where the open map was loaded from. A cold start reads the committed seed. */
 export interface MapOrigin { from: 'seed' | 'live'; file?: string; sha256?: string; }

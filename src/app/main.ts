@@ -1913,7 +1913,25 @@ export class App {
 
   closeOverlays() { for (const id of ['maps', 'settings']) document.getElementById(id)?.remove(); }
 
+  /**
+   * THE HOME SURFACE SAYS WHAT KIND OF PLACE EACH MAP IS, not only how big.
+   *
+   * It listed a node count and two last-opened times hours apart, which asserts
+   * size and nothing else — while the canvas underneath colours every thought
+   * by its age. This is that, in one column: the span the map was grown over
+   * and how much of it landed this week.
+   */
+  private mapSpan(m: { firstThoughtAt?: number; newestThoughtAt?: number; thisWeek?: number }) {
+    if (!m.firstThoughtAt || !m.newestThoughtAt) return '—';
+    const days = Math.max(0, Math.round((m.newestThoughtAt - m.firstThoughtAt) / 864e5));
+    const over = days >= 60 ? `${Math.round(days / 30)} months`
+               : days >= 14 ? `${Math.round(days / 7)} weeks`
+               : days >= 1 ? `${days} days` : 'one sitting';
+    return `${over}${m.thisWeek ? ` · ${m.thisWeek} this week` : ''}`;
+  }
+
   openMapsHome() {
+
     this.closeOverlays();
     const o = el('div', { class: 'overlay', id: 'maps', 'data-t': 'maps-home' });
     document.body.appendChild(o);
@@ -1937,11 +1955,12 @@ export class App {
         <input data-t="maps-new-name" placeholder="name a new map…" style="flex:2" value="${esc(typed)}">
         <button data-t="maps-create" style="flex:0 0 auto">Create map</button>
       </div>
-      <table><thead><tr><th>Map</th><th>Nodes</th><th>Last opened</th><th style="width:210px"></th></tr></thead>
+      <table><thead><tr><th>Map</th><th>Nodes</th><th>Grown over</th><th>Last opened</th><th style="width:210px"></th></tr></thead>
       <tbody>${this.maps.map(m => `
         <tr class="map maprow" data-t="map-row-${m.id}">
           <td>${esc(m.name)}</td>
           <td class="num" data-t="map-nodes-${m.id}">${m.nodes}</td>
+          <td class="num" data-t="map-age-${m.id}">${this.mapSpan(m)}</td>
           <td class="num">${ago(m.lastOpenedAt)}</td>
           <td><div style="display:flex;gap:5px">
             <button data-t="map-open-${m.id}">Open</button>

@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T11:03:40.433Z",
+  "lastRunAt": "2026-09-06T11:09:11.752Z",
   "lastRunCaptured": [
-    "04"
+    "01"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -18,15 +18,15 @@
       "title": "Maps home",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.2,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 141685,
-        "sha256": "2c8ae64ea1fff7b9d381da1c0d919fbc037c2bef9aedf3b80da3436b15471039"
+        "bytes": 156250,
+        "sha256": "2374c44a2e20e376a877dfa21be754bae3897176d510cf54c79a4ba5f31038f1"
       },
       "claims": {
         "ok": true,
@@ -81,7 +81,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bde6b0f3cd6905e1",
-        "appSha": "1645e6b3340188b3",
+        "appSha": "c13f41989ff72518",
         "claimShas": {
           "listedCountsMatchTheModel": "b5bea41b6c62",
           "mapsAfterDelete": "ee189345aa72",
@@ -90,8 +90,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:00:27.158Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T11:09:14.577Z"
     },
     {
       "id": "02",
@@ -2124,7 +2124,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T11:03:42.563Z"
     },
     {
@@ -5470,18 +5470,18 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 153.2,
+      "seconds": 185.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1169789,
-        "sha256": "c5a9ba59bcd7d789ba43aafa2d4bfe7aa16c8046f3028133c6b9803fb584f74a",
-        "seconds": 41,
+        "bytes": 1192948,
+        "sha256": "ce0df9c26a5b858746ffddc80b8bed1c50f16ad6351c09546e90951e6554c29e",
+        "seconds": 47,
         "fps": 30,
-        "frames": 1230
+        "frames": 1410
       },
       "claims": {
         "ok": true,
@@ -5536,6 +5536,22 @@
           },
           {
             "claim": "bigMapNothingAppliedWhileStaged",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "acceptLandedAt150Nodes",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "rejectLeftNoTraceAt150Nodes",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -5609,6 +5625,25 @@
         },
         "bigMapNodes": 150,
         "roundTripShownAt150Nodes": true,
+        "bigMapAccepted": {
+          "kind": "connection",
+          "id": "s6"
+        },
+        "bigMapLinks": [
+          208,
+          209
+        ],
+        "bigMapRejected": {
+          "kind": "connection",
+          "id": "s7",
+          "nodes": [
+            "nde70483d7f",
+            "n9aee67caa2"
+          ]
+        },
+        "bigMapQueueLeft": 5,
+        "acceptLandedAt150Nodes": true,
+        "rejectLeftNoTraceAt150Nodes": true,
         "bigMapNothingAppliedWhileStaged": true,
         "clipboardChars": 2698,
         "clipboardCarriesTheExportedPrompt": true,
@@ -5660,7 +5695,7 @@
         "bothRejectionKindsShown": true,
         "rejectionLeftNoTrace": true,
         "linksBefore": 6,
-        "linksAfter": 208
+        "linksAfter": 209
       },
       "pageErrors": [],
       "recipe": {
@@ -5670,8 +5705,8 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "0f2a16b7aa58bb03",
-        "appSha": "fe7d8822be86ef5c",
+        "fnSha": "9387e777a5795c22",
+        "appSha": "5b37b3b57ff185bf",
         "claimShas": {
           "rejectionLeftNoTrace": "b5bea41b6c62",
           "allThreeKindsAccepted": "b5bea41b6c62",
@@ -5679,26 +5714,28 @@
           "bothRejectionKindsShown": "b5bea41b6c62",
           "clipboardCarriesTheExportedPrompt": "b5bea41b6c62",
           "roundTripShownAt150Nodes": "b5bea41b6c62",
-          "bigMapNothingAppliedWhileStaged": "b5bea41b6c62"
+          "bigMapNothingAppliedWhileStaged": "b5bea41b6c62",
+          "acceptLandedAt150Nodes": "b5bea41b6c62",
+          "rejectLeftNoTraceAt150Nodes": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:52:32.775Z"
+      "fileMtime": "2026-09-06T11:07:57.444Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T11:03:44.666Z",
+  "finishedAt": "2026-09-06T11:09:16.195Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 825274,
-    "sha256": "5b37b3b57ff185bf291cececa0e9b6c8fd27ed63a5cb2401c65a009164b7119c",
-    "appSha": "5b37b3b57ff185bf",
-    "gitHead": "8f8f4f6e0e16",
-    "gitHeadAt": "2026-09-06T11:00:29+00:00",
+    "bytes": 825666,
+    "sha256": "c13f41989ff7251814e421c06d677b067f789605ae429a5f55de4a354d119303",
+    "appSha": "c13f41989ff72518",
+    "gitHead": "3263831b97d9",
+    "gitHeadAt": "2026-09-06T11:04:02+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,
