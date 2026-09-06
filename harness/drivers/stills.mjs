@@ -509,22 +509,33 @@ export default [
     // numbers are stated: the app's own, and what a ruler on this image gives.
     const layout = { n: 2, cellW: 1280, labels: true,
                      sublabels: [cap(A), cap(B)], sublabels2: null, sublabels3: null };
-    const captions2 = [
+    // THE STRIP DEPENDS ON THE CAPTION AND THE CAPTION DEPENDS ON THE STRIP.
+    //
+    // A placeholder plus one pass does not solve that: the real caption wrapped
+    // to one more line than the placeholder, the strip grew, the scale the
+    // caption had already quoted was no longer the scale the panel was drawn
+    // at, and `travelScaleDescribesTheDrawnPanel` failed the capture — which is
+    // what it is for. It is iterated to a fixed point instead, and the claim
+    // asserts that the iteration actually reached one rather than that a single
+    // pass happened to agree with itself.
+    const capFor = (scale, onImage) => [
       'cold first launch from the committed seed · the app’s own deviceorientation listener moves the vantage; nothing writes the camera',
-      'PLACEHOLDER',
+      shift === null ? 'anchor not resolved'
+        : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px in the device’s own ` +
+          `1280×1440 frame (${shiftXY[0]}, ${shiftXY[1]}) while its stored position did not change ` +
+          `— these panels draw that frame at ×${scale.toFixed(3)}, so a ruler on this image gives ${onImage} px`,
     ];
-    // The strip depends on the captions, and the caption depends on the strip.
-    // Solved by laying out with the longest form of the second caption first,
-    // so the number that goes in cannot make the strip taller than the one it
-    // was computed from.
-    const probeStrip = stripHeight({ ...layout, sublabels2: captions2 });
-    const panelScale = (1440 - probeStrip) / 1440;
-    const onImage = shift === null ? null : Math.round(shift * panelScale);
-    captions2[1] = shift === null ? 'anchor not resolved'
-      : `the vantage moved: “Sauerkraut by weight” travelled ${shift} px in the device’s own ` +
-        `1280×1440 frame (${shiftXY[0]}, ${shiftXY[1]}) while its stored position did not change ` +
-        `— these panels draw that frame at ×${panelScale.toFixed(3)}, so a ruler on this image gives ${onImage} px`;
-    const finalStrip = stripHeight({ ...layout, sublabels2: captions2 });
+    let panelScale = 1, onImage = shift, captions2 = capFor(1, shift), settled = false;
+    let probeStrip = 0, finalStrip = -1;
+    for (let it = 0; it < 6; it++) {
+      probeStrip = stripHeight({ ...layout, sublabels2: captions2 });
+      const scale = (1440 - probeStrip) / 1440;
+      const px = shift === null ? null : Math.round(shift * scale);
+      const next = capFor(scale, px);
+      finalStrip = stripHeight({ ...layout, sublabels2: next });
+      captions2 = next; panelScale = scale; onImage = px;
+      if (finalStrip === probeStrip) { settled = true; break; }
+    }
     await H.compose([A.file, B.file], H.out(this.file), { mode: 'h', width: 2560, height: 1440,
       labels: [`Gyroscopic vantage — device held at heading ${hdg(A.gyro)}°`,
                `Turned to heading ${hdg(B.gyro)}° — every node position unchanged`],
@@ -538,7 +549,8 @@ export default [
              panelScale: +panelScale.toFixed(4), anchorTravelOnImagePx: onImage,
              // The strip the caption was measured against is the strip that was
              // drawn, or the printed scale describes a layout that did not ship.
-             travelScaleDescribesTheDrawnPanel: finalStrip === probeStrip,
+             travelScaleStripPx: probeStrip, travelScaleSettled: settled,
+             travelScaleDescribesTheDrawnPanel: settled && finalStrip === probeStrip,
              panels: [{ sent: A.sent, received: A.received, pose: A.pose, anchor: A.anchor },
                       { sent: B.sent, received: B.received, pose: B.pose, anchor: B.anchor }],
              poseBefore,

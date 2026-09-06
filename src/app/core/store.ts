@@ -148,8 +148,21 @@ export class Store {
   private moveStack: { what: string; at: number; before: [NodeId, Vec3][] }[] = [];
   private pending: Map<NodeId, Vec3> | null = null;
 
-  /** Start collecting one act's worth of position changes. */
-  beginMove() { this.pending = new Map(); }
+  /**
+   * Start collecting one act's worth of position changes.
+   *
+   * AN OPEN GROUP IS CLOSED FIRST. Two paths call this — a pointer drag and a
+   * hand grab — and a hand grab is released by the hand LEAVING, which never
+   * happens if tracking is switched off mid-hold. Artifact 17 does exactly
+   * that at frame 780 and then starts a mouse drag, and the second `beginMove`
+   * replaced the pending map: the last fist's coordinates were never recorded,
+   * so the take emptied its undo stack and still did not give the map back.
+   * `mapReturnedToItsStartingLayout` caught it.
+   */
+  beginMove() {
+    if (this.pending && this.pending.size) this.endMove('moved thoughts');
+    this.pending = new Map();
+  }
 
   /**
    * Close the act. Pushed only if a coordinate actually differs — a press that

@@ -746,7 +746,13 @@ export class App {
       if (!v) { this.handsOn = false; this.toast('Hand tracking unavailable: no video surface', true); return; }
       try { await this.hands.start(v); }
       catch (e) { this.handsOn = false; this.toast(`Hand tracking unavailable: ${(e as Error).message}`, true); }
-    } else this.hands.stop();
+    } else {
+      // A grab is released by the hand leaving. Switching tracking off is the
+      // hand leaving for good, and it must close the act rather than leaving it
+      // open for the next one to inherit.
+      this.releaseHandGrab();
+      this.hands.stop();
+    }
     this.renderHandPanel();
   }
 
@@ -874,14 +880,30 @@ export class App {
    * last pose, held. Runs every frame, because the detector's state changes
    * between chrome refreshes.
    */
+  /**
+   * What the operation caption asserted on the frame just drawn, and what the
+   * detector was reading when it asserted it. Read by the capture harness.
+   */
+  captionState: { id: string | null; fromHand: boolean; held: boolean;
+                  present: boolean; pose: string; conf: number } | null = null;
+
   private renderGestureLiveness() {
     const g = document.getElementById('gesture');
-    if (!g || !g.classList.contains('show')) return;
+    if (!g || !g.classList.contains('show')) { this.captionState = null; return; }
     const lg = this.lastGesture;
     const fromHand = !!lg && !lg.id.startsWith('mouse:') && HAND_VOCAB.some(h => h.id === lg.id);
     const live = fromHand && this.hands.enabled && this.hands.frame.present
                  && this.hands.frame.pose === lg!.id;
     const held = fromHand && !live;
+    // RECORDED BY THE FRAME THAT DREW IT. The audit used to read the caption's
+    // class from the DOM and the detector's pose from `hands.frame` — but the
+    // detector runs between renders, so it was comparing a decision made at
+    // render time against a state read later, and reported 35 disagreements
+    // that were its own. What the frame decided, and what it decided it
+    // against, are written down together here.
+    this.captionState = { id: lg ? lg.id : null, fromHand, held,
+                          present: this.hands.frame.present, pose: this.hands.frame.pose,
+                          conf: +this.hands.frame.confidence.toFixed(2) };
     g.classList.toggle('held', held);
     let tag = g.querySelector('.h') as HTMLElement | null;
     if (!held) { tag?.remove(); return; }

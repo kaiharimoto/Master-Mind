@@ -60,6 +60,14 @@ export default [
 
     await page.waitForFunction(() => ['spread', 'gather'].includes(window.mm.hands.frame.pose),
                                null, { timeout: 90000 });
+    // THE POSE THAT ACTED, CAUGHT WHEN IT ACTED. The frame used to be read
+    // after the hold, and the hold now runs long enough for the clip to reach
+    // the NEXT pose — so the after panel was captioned "Two fingers — Select or
+    // confirm the node the hand is over" over a dolly that a two-finger pose
+    // does not perform. It is the pose the panel is about, so it is taken at
+    // the moment the panel's operation begins.
+    const acting = await page.evaluate(() =>
+      ({ ...window.mm.hands.frame, landmarks: window.mm.hands.frame.landmarks.length }));
     let held = 0;
     for (let i = 0; i < 260; i++) {
       await page.evaluate(t => window.mm.renderAt(t), 800 + i * 33.3);
@@ -83,7 +91,7 @@ export default [
       return m ? Number(m[1]) : null;
     });
     const distAfter = hudAfter ?? await page.evaluate(() => window.mm.scene.pose.dist);
-    const f = await page.evaluate(() => ({ ...window.mm.hands.frame, landmarks: window.mm.hands.frame.landmarks.length }));
+    const f = acting;
     // THE CAPTION IS READ FROM THE APP'S OWN VOCABULARY, not written beside it.
     //
     // It was a hardcoded string, and when the vocabulary was renamed everywhere
@@ -108,14 +116,19 @@ export default [
     const opHead = vocab ? vocab.operation.split(' — ')[0] : null;
     const v = vocab ? `${vocab.name} — ${opHead}` : `pose ${f.pose}`;
     await H.compose([before, after], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
-      labels: [`Before — hand detected, pose not yet acting  ·  view distance ${distBefore.toFixed(1)}`,
-               `After — ${v}  ·  view distance ${distAfter.toFixed(1)}`],
+      // THE HEADLINE IS THE OPERATION; THE NUMBERS ARE THE CAPTION'S.
+      // "After — Two fingers — Select or confirm the node the hand is over ·
+      // view distance 129.5" measured 1155 px into a 926 px column and the
+      // compose refused it, correctly. The vocabulary's own name is long, so
+      // the measurements move below where a line can wrap.
+      labels: ['Before — hand detected, pose not yet acting',
+               `After — ${v}`],
       // The position guarantee goes in the SUBLABEL, which is wrapped. Set into
       // the headline it ran off the right edge of a 960 px panel and the frame
       // shipped reading "· view distance" with no number — a caption clipped by
       // the fix for a caption that was wrong.
-      sublabels: [`${namedBefore} thoughts named at this framing`,
-                  `no thought moves: the vantage travels, the map does not · ` +
+      sublabels: [`view distance ${distBefore.toFixed(1)} · ${namedBefore} thoughts named at this framing`,
+                  `view distance ${distAfter.toFixed(1)} · no thought moves: the vantage travels, the map does not · ` +
                   `${namedAfter} thoughts named, ${namedAfter - namedBefore} more than before, ` +
                   `at ×${(distBefore / distAfter).toFixed(2)} closer`] });
     const src = await page.evaluate(() => ({ label: window.mm.hands.sourceLabel,
@@ -709,7 +722,7 @@ export default [
                   `rejected ${refused} · ${beforeReject === after ? 'links unchanged' : 'LINKS CHANGED'} · ` +
                   `${rejectedPairJoined ? 'A FILAMENT EXISTS' : 'no filament joins that pair'}`] });
     const caps = capFor(accRect, rejRect, panRect).map((c, i) =>
-      `${c} · ×${mags[i]} of the panel above`);
+      `${i === 0 ? 'Detail row — ' : ''}${c} · ×${mags[i]} of the panel above`);
     const realStrip = stripFor(caps);
     // The margin has to be taken out of the panel height, not hoped for: the
     // panels were sized to fill exactly (BOT - realStrip), so the row's bottom
@@ -717,10 +730,16 @@ export default [
     // equality that could not fail — while glyph descenders were being cut.
     const FOOT = 12;
     const panelH = rects.map(r => Math.round(Math.min(CELL / r.w, (BOT - realStrip - FOOT) / r.h) * r.h));
-    const detailHeads = [`Detail ×${magsOfApp[0]} app px — the panel`,
-                         `Detail ×${magsOfApp[1]} — the pair, before`,
-                         `Detail ×${magsOfApp[2]} — accepted: joined`,
-                         `Detail ×${magsOfApp[3]} — rejected: still apart`];
+    // THE WORD "DETAIL" IS THE ROW'S, NOT EACH CELL'S. Every cell in this row is
+    // a detail; repeating it in all four headlines cost 85 px of column each
+    // time, and at ×0.63 that took "rejected: still apart" to 450 px in a
+    // 446 px column — four pixels, and the frame would have shipped clipped.
+    // The measured widest form is now 365 px. The row says "Detail" once, in
+    // the caption under the first cell.
+    const detailHeads = [`×${magsOfApp[0]} app px — the panel`,
+                         `×${magsOfApp[1]} — the pair, before`,
+                         `×${magsOfApp[2]} — accepted: joined`,
+                         `×${magsOfApp[3]} — rejected: still apart`];
     await H.compose(cuts, rowB, { mode: 'h', width: 1920, height: BOT,
       // THE HEADLINE IS THE RATIO TO THE APP'S OWN PIXELS.
       //
@@ -1029,22 +1048,23 @@ export default [
     // assert a live pose without that mark while the detector disagrees.
     const captionAudit = { frames: 0, showing: 0, held: 0, outran: 0, examples: [] };
     const sampleCaption = async (i) => {
+      // READ FROM THE FRAME'S OWN RECORD, not from the DOM plus a live detector.
+      // The detector runs between renders; sampling it here compared a decision
+      // made at render time against a state read afterwards, and reported 35
+      // disagreements the frames did not contain. The app writes down what the
+      // caption claimed and what it claimed it against, together, at the moment
+      // it drew them.
       const c = await page.evaluate(() => {
+        const st = window.mm.captionState;
+        if (!st) return null;
         const g = document.getElementById('gesture');
-        if (!g || !g.classList.contains('show')) return null;
-        const lg = window.mm.lastGestureFired;
-        const f = window.mm.hands.frame;
-        return { id: lg ? lg.id : null, text: (g.textContent || '').trim(),
-                 held: g.classList.contains('held'),
-                 present: !!f.present, pose: f.pose, conf: +(f.confidence || 0).toFixed(2) };
+        return { ...st, text: g ? (g.textContent || '').trim() : '' };
       });
       captionAudit.frames++;
       if (!c) return;
       captionAudit.showing++;
       if (c.held) captionAudit.held++;
-      const fromHand = !!c.id && !c.id.startsWith('mouse:') &&
-                       ['spread', 'gather', 'fist', 'two'].includes(c.id);
-      if (fromHand && !c.held && (!c.present || c.pose !== c.id)) {
+      if (c.fromHand && !c.held && (!c.present || c.pose !== c.id)) {
         captionAudit.outran++;
         if (captionAudit.examples.length < 6)
           captionAudit.examples.push({ frame: i - 1, second: +((i - 1) / 30).toFixed(2),

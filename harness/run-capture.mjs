@@ -174,6 +174,59 @@ const samplePixels = async (png, points, patch = 1) => {
 // the guard as written would pass a mark nobody could see. Nothing was actually
 // slipping through (worst measured 3.0), so raising it costs nothing today and
 // makes the guard mean what its name says.
+/** A PNG decoded to raw rgb24, with its dimensions. */
+const rawOf = async (png) => {
+  const raw = await new Promise((res) => {
+    const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+      { stdio: ['ignore', 'pipe', 'ignore'] });
+    const bufs = [];
+    p.stdout.on('data', d => bufs.push(d));
+    p.on('close', () => res(Buffer.concat(bufs)));
+  });
+  const [W, H] = await new Promise((res) => {
+    let o = '';
+    const p = spawn('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries',
+      'stream=width,height', '-of', 'csv=p=0', png], { stdio: ['ignore', 'pipe', 'ignore'] });
+    p.stdout.on('data', d => o += d);
+    p.on('close', () => res(o.trim().split(',').map(Number)));
+  });
+  return { raw, W, H };
+};
+
+/**
+ * WHICH PIXELS CHANGED BETWEEN TWO FRAMES, AND WHERE THEY ARE.
+ *
+ * A per-point sampler cannot answer "did this district move" in a district
+ * whose members are fifteen pixels apart and nine pixels across: it finds a lit
+ * marker at the position the cluster left because a NEIGHBOUR is standing
+ * there. The first version of the artifact-12 check did exactly that and
+ * reported twenty markers at both the moved and the pre-move projections — no
+ * discrimination at all, which is the F-030 shape once more.
+ *
+ * Two frames of one frozen camera, differenced, answer it without ambiguity:
+ * the pixels that changed are the thing that moved, and where they are says
+ * whether it was the district the caption names.
+ */
+const diffPixels = async (aPng, bPng, thresh = 14) => {
+  const A = await rawOf(aPng), B = await rawOf(bPng);
+  if (!A.raw.length || !B.raw.length || A.W !== B.W || A.H !== B.H)
+    return { error: 'frames not comparable', changed: 0 };
+  const { W, H } = A;
+  let changed = 0, x0 = W, y0 = H, x1 = -1, y1 = -1;
+  const pts = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const i = (y * W + x) * 3;
+    const d = Math.max(Math.abs(A.raw[i] - B.raw[i]), Math.abs(A.raw[i + 1] - B.raw[i + 1]),
+                       Math.abs(A.raw[i + 2] - B.raw[i + 2]));
+    if (d < thresh) continue;
+    changed++;
+    if (x < x0) x0 = x; if (x > x1) x1 = x;
+    if (y < y0) y0 = y; if (y > y1) y1 = y;
+    if ((changed & 63) === 0) pts.push([x, y]);
+  }
+  return { W, H, changed, box: x1 < 0 ? null : { x0, y0, x1, y1 }, samples: pts };
+};
+
 const sampleDiscs = async (png, discs, min = 2.5) => {
   const raw = await new Promise((res) => {
     const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
@@ -598,10 +651,31 @@ async function runDriver(d) {
       });
       const clusterBeforeW = await clusterLedger(w.page, CLUSTER);
       const clusterBeforeA = await clusterLedger(a.page, CLUSTER);
+      // THE CAMERA IS SET, AND THE UNMOVED MAP PHOTOGRAPHED, BEFORE THE MOVE.
+      //
+      // Both so the framing is solved on the map as it stands rather than on a
+      // displaced one, and so there is a reference frame of the same camera to
+      // difference the shipped panel against. That difference is the only test
+      // with power here: a per-marker sampler cannot tell a district that moved
+      // from one whose neighbour is standing where it used to be.
+      await FRAME_ALL(w.page, 1.06);
+      const bigPose = await w.page.evaluate(() => {
+        const s2 = window.mm.scene.pose;
+        return { yaw: s2.yaw, pitch: s2.pitch, dist: s2.dist,
+                 target: [s2.target.x, s2.target.y, s2.target.z] };
+      });
+      for (const p2 of [w, a]) { await POSE(p2.page, bigPose); await sleepFrames(p2.page, 0, 3); }
+      const preMoveShot = await shot(w.page, w.cdp, resolve(TMP, 'twin-w-big-pre.png'));
       await w.page.evaluate((l) => {
         const ids = Object.values(window.mm.store.doc.nodes)
           .filter(n => n.placed && n.label === l).map(n => n.id);
-        window.mm.store.moveCluster(ids, [1.7, -1.1, 0.6]);
+        // 6.8, -4.4, 2.4 — four times the old delta. At the old size the move
+        // projected to about fifteen pixels on a map whose node cores are nine
+        // pixels across, so the cycle-11 Auditor read the district as sitting
+        // where it had been and was not wrong to: a claim the frame makes has
+        // to be legible in the frame. Every coordinate is written back
+        // afterwards either way, so a larger move costs the ledger nothing.
+        window.mm.store.moveCluster(ids, [6.8, -4.4, 2.4]);
       }, CLUSTER);
       const clusterAfterW = await clusterLedger(w.page, CLUSTER);
       let clusterArrived = false;
@@ -650,12 +724,8 @@ async function runDriver(d) {
         // surfaces are framed by ONE camera, copied from the Windows side, so
         // the two panels superpose and a reader can check the districts land in
         // the same places rather than take the digest's word for it.
-        await FRAME_ALL(w.page, 1.06);
-        const bigPose = await w.page.evaluate(() => {
-          const s = window.mm.scene.pose;
-          return { yaw: s.yaw, pitch: s.pitch, dist: s.dist,
-                   target: [s.target.x, s.target.y, s.target.z] };
-        });
+        // The camera was set before the move (above) and is untouched since, so
+        // these panels and the pre-move reference are one frozen vantage.
         for (const p of [w, a]) { await POSE(p.page, bigPose); await sleepFrames(p.page, 0, 3); }
         bigShots = { w: await shot(w.page, w.cdp, resolve(TMP, 'twin-w-big.png')),
                      a: await shot(a.page, a.cdp, resolve(TMP, 'twin-a-big.png')),
@@ -706,27 +776,45 @@ async function runDriver(d) {
                           .sort((x, y) => x - y);
         const discAt = (xy) => xy.map((q, i) => ({ id: afterSnap[i][0], x: q.x, y: q.y, r: radii[i] }));
         const atNow = await sampleDiscs(bigShots.w, discAt(nowXY));
-        const atWas = await sampleDiscs(bigShots.w, discAt(wasXY));
         const shaAfterRaster = createHash('sha256')
           .update(JSON.stringify(await positions(w.page))).digest('hex').slice(0, 10);
+        // THE FRAME BEFORE THE MOVE AGAINST THE FRAME THAT SHIPS, one frozen
+        // camera between them. Everything that changed is the district; nothing
+        // outside its own ground may have changed at all.
+        const dif = await diffPixels(preMoveShot, bigShots.w);
+        const pad = 26;
+        const bx0 = Math.min(...nowXY.map(q => q.x), ...wasXY.map(q => q.x)) - pad;
+        const bx1 = Math.max(...nowXY.map(q => q.x), ...wasXY.map(q => q.x)) + pad;
+        const by0 = Math.min(...nowXY.map(q => q.y), ...wasXY.map(q => q.y)) - pad;
+        const by1 = Math.max(...nowXY.map(q => q.y), ...wasXY.map(q => q.y)) + pad;
+        const inBox = (dif.samples ?? []).filter(([x, y]) =>
+          x >= bx0 && x <= bx1 && y >= by0 && y <= by1).length;
+        const sampled = (dif.samples ?? []).length;
         clusterProof.pixels = {
           members: afterSnap.length,
           medianSeparationPx: +(seps[seps.length >> 1] ?? 0).toFixed(2),
           minSeparationPx: +(seps[0] ?? 0).toFixed(2),
           markersAtDisplacedPositions: atNow.checked - atNow.invisible,
-          markersAtPreMovePositions: atWas.checked - atWas.invisible,
           shaPrinted: dw, shaAfterRaster,
           worstDisplacedContrast: atNow.worstContrast,
-          worstPreMoveContrast: atWas.worstContrast,
+          // The differencing test, and its own power stated beside its answer.
+          changedPixels: dif.changed ?? 0,
+          changedFraction: dif.W ? +((dif.changed / (dif.W * dif.H)) * 100).toFixed(3) : null,
+          changedBox: dif.box,
+          districtBox: { x0: Math.round(bx0), y0: Math.round(by0), x1: Math.round(bx1), y1: Math.round(by1) },
+          changedSampled: sampled, changedInsideDistrict: inBox,
+          changedInsideDistrictPct: sampled ? +((inBox / sampled) * 100).toFixed(1) : null,
         };
         clusterProof.printedShaMatchesRenderedState = shaAfterRaster === dw &&
           atNow.checked > 0 && atNow.invisible === 0;
-        // The displacement is IN THE PICTURE, not only in the model: the
-        // members have moved far enough to be separable at all, they are lit
-        // where the model says they now are, and the ground they left is empty.
+        // The displacement is IN THE PICTURE: the members are far enough apart
+        // to be told apart at all, they are lit where the model says they now
+        // are, a material number of pixels changed between the two frames of
+        // one frozen camera, and essentially all of them are on the district's
+        // own ground rather than scattered over a map that re-rendered.
         clusterProof.displacementVisibleInPixels =
-          (seps[0] ?? 0) > 4 && atNow.checked > 0 && atNow.invisible === 0 &&
-          clusterProof.pixels.markersAtPreMovePositions < afterSnap.length * 0.5;
+          (seps[0] ?? 0) > 30 && atNow.checked > 0 && atNow.invisible === 0 &&
+          (dif.changed ?? 0) > 4000 && sampled > 20 && (inBox / Math.max(sampled, 1)) > 0.9;
         // Panels taken with the district displaced; now put it back.
         clusterProof.restored = await restoreCluster();
         bigTwin = { nodes: { windows: Object.keys(bw).length, android: Object.keys(ba).length },
@@ -823,7 +911,8 @@ async function runDriver(d) {
               ? `both ledgers agree while it is displaced; every coordinate is written back afterwards` +
                 (clusterProof.pixels
                   ? ` · checked against these pixels: ${clusterProof.pixels.markersAtDisplacedPositions}/${clusterProof.pixels.members} markers lit where the moved ledger says, ` +
-                    `${clusterProof.pixels.markersAtPreMovePositions} still lit where it was, ${clusterProof.pixels.minSeparationPx} px apart at the closest`
+                    `${clusterProof.pixels.minSeparationPx} px of travel at the least, and of everything that changed against the same camera before the move, ` +
+                    `${clusterProof.pixels.changedInsideDistrictPct} % is on this district's own ground`
                   : '')
               : '',
           ] });
