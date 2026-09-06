@@ -1,15 +1,15 @@
 {
-  "cycle": 13,
+  "cycle": 15,
   "seed": {
     "epoch": 1787227200000,
     "rng": 1296913221,
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T15:01:38.904Z",
+  "lastRunAt": "2026-09-06T16:23:40.810Z",
   "lastRunCaptured": [
-    "08",
-    "09"
+    "02",
+    "04"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -100,15 +100,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.9,
+      "seconds": 2.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 416272,
-        "sha256": "159fefa349071375c13b38eb2a43742c6c1b197c74b5b02eaa2ea1be2ab0f0d3"
+        "bytes": 418369,
+        "sha256": "7958c79f7c83e5bf0808bf7d8d77d249a3401825aceec3f9798621b95eb03ab8"
       },
       "claims": {
         "ok": true,
@@ -229,9 +229,11 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 87,
-          "labelsShortened": 13,
-          "unlabelledListed": 87,
+          "labelsHidden": 80,
+          "labelsShortened": 14,
+          "labelsSetSmaller": 8,
+          "smallestLabelPx": 12,
+          "unlabelledListed": 80,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
         },
@@ -247,7 +249,7 @@
         },
         "cameraPinned": true,
         "arbiterSeq": 6,
-        "labelsAudited": 63,
+        "labelsAudited": 70,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Carrot batons hold crunch",
         "labelWorstOffFramePx": 0,
@@ -263,7 +265,7 @@
           "A pellicle is not a mother"
         ],
         "noTwoDrawnLabelsOverlap": true,
-        "labelsTruncated": 40,
+        "labelsTruncated": 43,
         "labelsTruncatedOn": [
           "Kombucha SCOBY overlap",
           "60C for eight weeks",
@@ -272,6 +274,7 @@
           "3.5% for cucumbers",
           "Salt tolerance curve",
           "Stiff levain keeps longer",
+          "Katz: Wild Fermentation",
           "Solera stacking",
           "Filter through muslin",
           "Crock with a water moat",
@@ -279,17 +282,19 @@
           "Koji on pearl barley",
           "Bulk to 50% rise",
           "Garum at 20% salt",
-          "Airlock vs burp",
-          "Amylase plus protease",
+          "Rice koji: polish to 90%",
           "Strips lie above pH 4",
           "Barley miso, 18 months",
+          "Log every batch",
           "Miso at 12% salt",
           "pH 4.6 is the line",
           "Anchovy vs mackerel",
           "Koji Alchemy",
           "Leuconostoc mesenteroides",
           "2% brine baseline",
+          "Grape leaf tannin trick",
           "Carrot batons hold crunch",
+          "Mold vs yeast ID",
           "Creme fraiche shortcut",
           "Salt by weight only",
           "Noma Guide to Fermentation",
@@ -306,15 +311,15 @@
           "The Art of Fermentation",
           "Steam the first 20 min"
         ],
-        "labelWorstDisplacementPx": 37.1,
+        "labelWorstDisplacementPx": 36.3,
         "labelsMoreThan40pxFromTheirNode": 0,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
         "labelWorstReservedDisplacementPx": 36.3,
-        "labelWorstDisplacementEm": 2.65,
+        "labelWorstDisplacementEm": 2.59,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 3.41,
+        "labelWorstAmbiguityRatio": 3.24,
         "labelsAmbiguousWithoutALeader": 0,
         "labelsAmbiguousWithoutALeaderIds": [],
         "everyLabelUnambiguouslyBound": true,
@@ -331,13 +336,13 @@
         "noTwoChromePanelsOverlap": true,
         "everyChromeBadgeInsideTheFrame": true,
         "noNodeBuriedByChrome": true,
-        "namesDrawn": 63,
-        "namesListed": 87,
+        "namesDrawn": 70,
+        "namesListed": 80,
         "thoughtsLeftUnnamed": 0,
         "everyThoughtOnScreenIsNamed": true,
         "markerContrast": {
-          "checked": 63,
-          "sampled": 63,
+          "checked": 70,
+          "sampled": 70,
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
@@ -425,6 +430,15 @@
               "peak": 0.2888,
               "ground": 0.0574,
               "contrast": 3.16
+            },
+            {
+              "id": "n28348ea4f1",
+              "x": 1103,
+              "y": 189,
+              "r": 14.4,
+              "peak": 0.286,
+              "ground": 0.0574,
+              "contrast": 3.13
             },
             {
               "id": "n28b9263cd2",
@@ -571,13 +585,13 @@
               "contrast": 5.85
             },
             {
-              "id": "n523c38191a",
-              "x": 686,
-              "y": 651,
+              "id": "n53badd7a56",
+              "x": 1040,
+              "y": 400,
               "r": 14.4,
-              "peak": 0.289,
+              "peak": 0.288,
               "ground": 0.0574,
-              "contrast": 3.16
+              "contrast": 3.15
             },
             {
               "id": "n5630d9df9f",
@@ -587,15 +601,6 @@
               "peak": 0.2966,
               "ground": 0.0574,
               "contrast": 3.23
-            },
-            {
-              "id": "n5880a05cab",
-              "x": 1040,
-              "y": 426,
-              "r": 14.4,
-              "peak": 0.2891,
-              "ground": 0.0574,
-              "contrast": 3.16
             },
             {
               "id": "n5b46c6f107",
@@ -614,6 +619,15 @@
               "peak": 0.29,
               "ground": 0.0574,
               "contrast": 3.17
+            },
+            {
+              "id": "n5f31be08e0",
+              "x": 790,
+              "y": 468,
+              "r": 14.4,
+              "peak": 0.2957,
+              "ground": 0.0574,
+              "contrast": 3.22
             },
             {
               "id": "n618ee08ab3",
@@ -643,6 +657,15 @@
               "contrast": 3.15
             },
             {
+              "id": "n704f284dfe",
+              "x": 946,
+              "y": 654,
+              "r": 14.4,
+              "peak": 0.2822,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
               "id": "n7091638a5d",
               "x": 1314,
               "y": 358,
@@ -668,6 +691,15 @@
               "peak": 0.3028,
               "ground": 0.0574,
               "contrast": 3.29
+            },
+            {
+              "id": "n7402597e54",
+              "x": 731,
+              "y": 286,
+              "r": 14.4,
+              "peak": 0.2854,
+              "ground": 0.0574,
+              "contrast": 3.12
             },
             {
               "id": "n75d8f580e5",
@@ -715,6 +747,15 @@
               "contrast": 3.12
             },
             {
+              "id": "n8ecfabd19e",
+              "x": 698,
+              "y": 605,
+              "r": 14.4,
+              "peak": 0.2904,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
               "id": "n9a939af75c",
               "x": 730,
               "y": 579,
@@ -731,6 +772,24 @@
               "peak": 0.2935,
               "ground": 0.0574,
               "contrast": 3.2
+            },
+            {
+              "id": "n9b0b5d8a6d",
+              "x": 831,
+              "y": 449,
+              "r": 14.4,
+              "peak": 0.3988,
+              "ground": 0.0574,
+              "contrast": 4.18
+            },
+            {
+              "id": "n9e05705d26",
+              "x": 762,
+              "y": 379,
+              "r": 14.4,
+              "peak": 0.2799,
+              "ground": 0.0574,
+              "contrast": 3.07
             },
             {
               "id": "na2358b2b07",
@@ -911,9 +970,55 @@
               "peak": 0.2899,
               "ground": 0.0574,
               "contrast": 3.17
+            },
+            {
+              "id": "nfb7073c20e",
+              "x": 747,
+              "y": 266,
+              "r": 14.4,
+              "peak": 0.2896,
+              "ground": 0.0574,
+              "contrast": 3.16
             }
           ]
         },
+        "labelsSetSmaller": 8,
+        "reducedLabelInk": {
+          "checked": 8,
+          "worstContrast": 4.08,
+          "belowFloor": 0,
+          "weakest": [
+            {
+              "id": "n704f284dfe",
+              "text": "Muslin vs cheesecloth",
+              "peak": 0.3879,
+              "ground": 0.0574,
+              "contrast": 4.08
+            },
+            {
+              "id": "n9e05705d26",
+              "text": "Mold vs yeast ID",
+              "peak": 0.4106,
+              "ground": 0.0574,
+              "contrast": 4.29
+            },
+            {
+              "id": "n7402597e54",
+              "text": "Autolyse 40 min",
+              "peak": 0.5523,
+              "ground": 0.0574,
+              "contrast": 5.61
+            },
+            {
+              "id": "n53badd7a56",
+              "text": "Rice koji: polish to 90%",
+              "peak": 0.596,
+              "ground": 0.0574,
+              "contrast": 6.02
+            }
+          ]
+        },
+        "everyReducedLabelClearsTheContrastFloor": true,
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
         "arbiterSeqAtShot": 6,
@@ -929,7 +1034,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "73b7deb0e7bd2172",
-        "appSha": "10c188b09545c35e",
+        "appSha": "70a8d3dc760bb00f",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -946,10 +1051,10 @@
           "auditDescribesTheShippedFrame": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:00:28.776Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T16:23:42.405Z"
     },
     {
       "id": "03",
@@ -1126,15 +1231,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.3,
+      "seconds": 2.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 445790,
-        "sha256": "32b3b79cb2041d390a7baf335cddab05467ca4eab93c6428e02664c7c3211131"
+        "bytes": 447575,
+        "sha256": "71aca9b9085471089afe41e4096c95a67419cc7468274784850e7eb911cd8937"
       },
       "claims": {
         "ok": true,
@@ -1263,9 +1368,11 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 82,
+          "labelsHidden": 76,
           "labelsShortened": 12,
-          "unlabelledListed": 82,
+          "labelsSetSmaller": 12,
+          "smallestLabelPx": 12,
+          "unlabelledListed": 76,
           "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
           "mapName": "Fermentation notebook"
         },
@@ -1290,7 +1397,7 @@
         "nodesOnScreen": 150,
         "allFiveStatesAtWholeMapDensity": true,
         "arbiterSeq": 9,
-        "labelsAudited": 67,
+        "labelsAudited": 73,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Fido jars burp themselves",
         "labelWorstOffFramePx": 0,
@@ -1300,34 +1407,34 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 2.39,
+        "labelTightestPairGapPx": 1.63,
         "labelTightestPairOn": [
-          "Preserved lemon, batch 3",
-          "Black garlic: 60C for 40 days"
+          "Crock with a water moat",
+          "Muslin vs cheesecloth"
         ],
         "noTwoDrawnLabelsOverlap": true,
-        "labelsTruncated": 44,
+        "labelsTruncated": 45,
         "labelsTruncatedOn": [
           "Kombucha SCOBY overlap",
           "60C for eight weeks",
           "Soy sauce moromi",
           "Vinegar from failed wine",
           "3.5% for cucumbers",
-          "Salt tolerance curve",
+          "Cold retard overnight",
           "Stiff levain keeps longer",
+          "Katz: Wild Fermentation",
+          "Solera stacking",
           "Filter through muslin",
           "Crock with a water moat",
           "Rennet vs acid set",
           "Sauerkraut by weight",
           "Koji on pearl barley",
           "Bulk to 50% rise",
-          "Chevre at room temp",
           "Garum at 20% salt",
           "Airlock vs burp",
           "Rice koji: polish to 90%",
           "Amylase plus protease",
           "Strips lie above pH 4",
-          "Log every batch",
           "Miso at 12% salt",
           "Dry-salt vs brine",
           "pH 4.6 is the line",
@@ -1340,18 +1447,19 @@
           "Cloudy brine is normal",
           "Carrot batons hold crunch",
           "Cheese science toolkit",
-          "Creme fraiche shortcut",
-          "Bacterial succession",
+          "Phage collapse in dairy",
           "Salt by weight only",
+          "The Sourdough Journey",
           "Noma Guide to Fermentation",
           "Balsamic mosto cotto",
-          "Aspergillus oryzae",
           "Scoring at 30 degrees",
           "Coil folds, not slaps",
           "Dechlorinate the water",
           "Wild yeast capture",
           "The Art of Fermentation",
-          "Steam the first 20 min"
+          "Steam the first 20 min",
+          "Trust smell over sight",
+          "Anaerobic vs aerobic"
         ],
         "labelWorstDisplacementPx": 36.2,
         "labelsMoreThan40pxFromTheirNode": 0,
@@ -1378,13 +1486,13 @@
         "noTwoChromePanelsOverlap": true,
         "everyChromeBadgeInsideTheFrame": true,
         "noNodeBuriedByChrome": true,
-        "namesDrawn": 67,
-        "namesListed": 82,
+        "namesDrawn": 73,
+        "namesListed": 76,
         "thoughtsLeftUnnamed": 0,
         "everyThoughtOnScreenIsNamed": true,
         "markerContrast": {
-          "checked": 67,
-          "sampled": 67,
+          "checked": 73,
+          "sampled": 73,
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
@@ -1465,13 +1573,13 @@
               "contrast": 3.15
             },
             {
-              "id": "n20cb5b490f",
-              "x": 677,
-              "y": 437,
+              "id": "n22f26d558d",
+              "x": 673,
+              "y": 298,
               "r": 14.4,
-              "peak": 0.281,
+              "peak": 0.293,
               "ground": 0.0574,
-              "contrast": 3.08
+              "contrast": 3.19
             },
             {
               "id": "n2570828592",
@@ -1481,6 +1589,24 @@
               "peak": 0.2888,
               "ground": 0.0574,
               "contrast": 3.16
+            },
+            {
+              "id": "n28348ea4f1",
+              "x": 1094,
+              "y": 172,
+              "r": 14.4,
+              "peak": 0.3055,
+              "ground": 0.0574,
+              "contrast": 3.31
+            },
+            {
+              "id": "n28b9263cd2",
+              "x": 1188,
+              "y": 612,
+              "r": 14.4,
+              "peak": 0.2978,
+              "ground": 0.0574,
+              "contrast": 3.24
             },
             {
               "id": "n2a2ac6dd57",
@@ -1564,15 +1690,6 @@
               "contrast": 3.15
             },
             {
-              "id": "n3ad7401001",
-              "x": 1052,
-              "y": 225,
-              "r": 14.4,
-              "peak": 0.2974,
-              "ground": 0.0574,
-              "contrast": 3.23
-            },
-            {
               "id": "n3eba301186",
               "x": 1342,
               "y": 342,
@@ -1649,9 +1766,9 @@
               "x": 1249,
               "y": 635,
               "r": 14.4,
-              "peak": 0.2966,
+              "peak": 0.5912,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 5.97
             },
             {
               "id": "n5880a05cab",
@@ -1663,6 +1780,15 @@
               "contrast": 7.72
             },
             {
+              "id": "n59e1cde627",
+              "x": 705,
+              "y": 395,
+              "r": 14.4,
+              "peak": 0.2887,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
               "id": "n5b46c6f107",
               "x": 810,
               "y": 538,
@@ -1670,15 +1796,6 @@
               "peak": 0.296,
               "ground": 0.0574,
               "contrast": 3.22
-            },
-            {
-              "id": "n5f31be08e0",
-              "x": 796,
-              "y": 459,
-              "r": 14.4,
-              "peak": 0.2968,
-              "ground": 0.0574,
-              "contrast": 3.23
             },
             {
               "id": "n618ee08ab3",
@@ -1699,6 +1816,15 @@
               "contrast": 3.15
             },
             {
+              "id": "n68bbeec55e",
+              "x": 1230,
+              "y": 619,
+              "r": 14.4,
+              "peak": 0.2943,
+              "ground": 0.0574,
+              "contrast": 3.21
+            },
+            {
               "id": "n69344565b8",
               "x": 759,
               "y": 484,
@@ -1713,6 +1839,15 @@
               "y": 266,
               "r": 14.4,
               "peak": 0.2832,
+              "ground": 0.0574,
+              "contrast": 3.1
+            },
+            {
+              "id": "n704f284dfe",
+              "x": 926,
+              "y": 672,
+              "r": 14.4,
+              "peak": 0.283,
               "ground": 0.0574,
               "contrast": 3.1
             },
@@ -1742,6 +1877,15 @@
               "peak": 0.7789,
               "ground": 0.0574,
               "contrast": 7.72
+            },
+            {
+              "id": "n7402597e54",
+              "x": 700,
+              "y": 270,
+              "r": 14.4,
+              "peak": 0.2927,
+              "ground": 0.0574,
+              "contrast": 3.19
             },
             {
               "id": "n75d8f580e5",
@@ -1784,9 +1928,18 @@
               "x": 1193,
               "y": 668,
               "r": 14.4,
-              "peak": 0.2919,
+              "peak": 0.3481,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 3.71
+            },
+            {
+              "id": "n83224a5de3",
+              "x": 1153,
+              "y": 399,
+              "r": 14.4,
+              "peak": 0.7671,
+              "ground": 0.0574,
+              "contrast": 7.61
             },
             {
               "id": "n85ef9080ea",
@@ -1834,15 +1987,6 @@
               "contrast": 3.19
             },
             {
-              "id": "n9e05705d26",
-              "x": 723,
-              "y": 374,
-              "r": 14.4,
-              "peak": 0.2799,
-              "ground": 0.0574,
-              "contrast": 3.07
-            },
-            {
               "id": "n9e5581acc8",
               "x": 1003,
               "y": 213,
@@ -1852,6 +1996,15 @@
               "contrast": 3.12
             },
             {
+              "id": "n9fa75db8ff",
+              "x": 641,
+              "y": 412,
+              "r": 14.4,
+              "peak": 0.2793,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
               "id": "na2358b2b07",
               "x": 837,
               "y": 968,
@@ -1859,33 +2012,6 @@
               "peak": 0.5858,
               "ground": 0.0574,
               "contrast": 5.92
-            },
-            {
-              "id": "na6b4e90f5b",
-              "x": 1117,
-              "y": 225,
-              "r": 14.4,
-              "peak": 0.2963,
-              "ground": 0.0574,
-              "contrast": 3.22
-            },
-            {
-              "id": "na8ba0be3cd",
-              "x": 720,
-              "y": 467,
-              "r": 14.4,
-              "peak": 0.2818,
-              "ground": 0.0574,
-              "contrast": 3.09
-            },
-            {
-              "id": "na9606fee1c",
-              "x": 1262,
-              "y": 606,
-              "r": 14.4,
-              "peak": 0.2961,
-              "ground": 0.0574,
-              "contrast": 3.22
             },
             {
               "id": "naaabbd92cb",
@@ -1902,6 +2028,15 @@
               "y": 532,
               "r": 14.4,
               "peak": 0.297,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "nd0fcb15eb1",
+              "x": 1014,
+              "y": 160,
+              "r": 14.4,
+              "peak": 0.2974,
               "ground": 0.0574,
               "contrast": 3.23
             },
@@ -1924,15 +2059,6 @@
               "contrast": 3.18
             },
             {
-              "id": "ndcecf485a0",
-              "x": 645,
-              "y": 387,
-              "r": 14.4,
-              "peak": 0.4628,
-              "ground": 0.0574,
-              "contrast": 4.77
-            },
-            {
               "id": "ndd346f34ee",
               "x": 560,
               "y": 266,
@@ -1940,6 +2066,15 @@
               "peak": 0.2899,
               "ground": 0.0574,
               "contrast": 3.17
+            },
+            {
+              "id": "nde70483d7f",
+              "x": 677,
+              "y": 475,
+              "r": 14.4,
+              "peak": 0.2802,
+              "ground": 0.0574,
+              "contrast": 3.07
             },
             {
               "id": "ndebe2ada83",
@@ -1994,9 +2129,73 @@
               "peak": 0.2899,
               "ground": 0.0574,
               "contrast": 3.17
+            },
+            {
+              "id": "nf61c123e79",
+              "x": 783,
+              "y": 520,
+              "r": 14.4,
+              "peak": 0.2957,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "nf96342762b",
+              "x": 685,
+              "y": 424,
+              "r": 14.4,
+              "peak": 0.3035,
+              "ground": 0.0574,
+              "contrast": 3.29
+            },
+            {
+              "id": "nfb7073c20e",
+              "x": 722,
+              "y": 247,
+              "r": 14.4,
+              "peak": 0.2896,
+              "ground": 0.0574,
+              "contrast": 3.16
             }
           ]
         },
+        "labelsSetSmaller": 12,
+        "reducedLabelInk": {
+          "checked": 12,
+          "worstContrast": 4.25,
+          "belowFloor": 0,
+          "weakest": [
+            {
+              "id": "nd0fcb15eb1",
+              "text": "The Sourdough Journey",
+              "peak": 0.4067,
+              "ground": 0.0574,
+              "contrast": 4.25
+            },
+            {
+              "id": "n9fa75db8ff",
+              "text": "Phage collapse in dairy",
+              "peak": 0.4109,
+              "ground": 0.0574,
+              "contrast": 4.29
+            },
+            {
+              "id": "n704f284dfe",
+              "text": "Muslin vs cheesecloth",
+              "peak": 0.4758,
+              "ground": 0.0574,
+              "contrast": 4.9
+            },
+            {
+              "id": "n59e1cde627",
+              "text": "Kahm yeast is harmless",
+              "peak": 0.4898,
+              "ground": 0.0574,
+              "contrast": 5.03
+            }
+          ]
+        },
+        "everyReducedLabelClearsTheContrastFloor": true,
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
         "arbiterSeqAtShot": 9,
@@ -2107,7 +2306,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bac9916dd5a965ca",
-        "appSha": "10c188b09545c35e",
+        "appSha": "70a8d3dc760bb00f",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -2125,10 +2324,10 @@
           "auditDescribesTheShippedFrame": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:00:34.428Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T16:23:44.857Z"
     },
     {
       "id": "05",
@@ -3598,7 +3797,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T15:01:41.147Z"
     },
     {
@@ -3878,7 +4077,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T15:01:45.260Z"
     },
     {
@@ -3894,8 +4093,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 189722,
-        "sha256": "333246b1483d778086ff8b60cca990fc02eccc7a410697f9b7981f2c0b9dc057"
+        "bytes": 193173,
+        "sha256": "3c57f38f6d7d271c7470f438f54656cd4d5f85e38d35fc2f3d75535d867c7020"
       },
       "claims": {
         "ok": true,
@@ -4016,7 +4215,7 @@
           "side": "right",
           "leftRows": 56,
           "rightRows": 56,
-          "rowsNeeded": 16
+          "rowsNeeded": 14
         },
         "thoughtsBehindTheRail": 0,
         "railTookTheEmptierSide": true,
@@ -4034,7 +4233,7 @@
         },
         "searchMatchReasonShown": true,
         "searchMatchReasonUnoccluded": true,
-        "labelsAudited": 11,
+        "labelsAudited": 13,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Amazake",
         "labelWorstOffFramePx": 0,
@@ -4044,10 +4243,10 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 23.13,
+        "labelTightestPairGapPx": 7.67,
         "labelTightestPairOn": [
-          "Bed depth 4cm max",
-          "Stir at 24h to cool"
+          "Biofilm formation",
+          "Lactobacillus plantarum"
         ],
         "noTwoDrawnLabelsOverlap": true,
         "labelsTruncated": 4,
@@ -4055,24 +4254,24 @@
           "Bed depth 4cm max",
           "Amylase plus protease",
           "Barley miso, 18 months",
-          "Stir at 24h to cool"
+          "Biofilm formation"
         ],
         "labelWorstDisplacementPx": 52,
-        "labelsMoreThan40pxFromTheirNode": 7,
+        "labelsMoreThan40pxFromTheirNode": 9,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
         "labelWorstReservedDisplacementPx": 52,
-        "labelWorstDisplacementEm": 2.16,
+        "labelWorstDisplacementEm": 2.58,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 3.18,
+        "labelWorstAmbiguityRatio": 2.84,
         "labelsAmbiguousWithoutALeader": 0,
         "labelsAmbiguousWithoutALeaderIds": [],
         "labelsAmbiguousWithoutALeaderOn": [],
         "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
-          "checked": 11,
-          "sampled": 11,
+          "checked": 13,
+          "sampled": 13,
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
@@ -4171,6 +4370,15 @@
               "contrast": 3.09
             },
             {
+              "id": "na8ba0be3cd",
+              "x": 75,
+              "y": 711,
+              "r": 15.1,
+              "peak": 0.2818,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
               "id": "nbc542622a2",
               "x": 724,
               "y": 762,
@@ -4178,6 +4386,15 @@
               "peak": 0.8436,
               "ground": 0.0574,
               "contrast": 8.32
+            },
+            {
+              "id": "ne4fde466fe",
+              "x": 120,
+              "y": 541,
+              "r": 16.6,
+              "peak": 0.281,
+              "ground": 0.0574,
+              "contrast": 3.08
             }
           ]
         },
@@ -4218,7 +4435,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "4e38fdfef29cba10",
-        "appSha": "10c188b09545c35e",
+        "appSha": "103a74c62f8bcd2a",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -4235,10 +4452,10 @@
           "railTookTheEmptierSide": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:01:13.012Z"
+      "fileMtime": "2026-09-06T16:22:21.209Z"
     },
     {
       "id": "11",
@@ -6578,17 +6795,86 @@
       ]
     }
   ],
-  "staleFromEarlierCycles": [],
-  "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T15:01:46.867Z",
+  "staleFromEarlierCycles": [
+    {
+      "id": "01",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "03",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "05",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "06",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "07",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "08",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "09",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "11",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "12",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "13",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "14",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "15",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "16",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "17",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "18",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "19",
+      "capturedInCycle": 13
+    },
+    {
+      "id": "20",
+      "capturedInCycle": 13
+    }
+  ],
+  "allCapturedInThisCycle": false,
+  "finishedAt": "2026-09-06T16:23:47.003Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 826994,
-    "sha256": "10c188b09545c35e81cb410984e9f463e024ef3e937857bc5964d72314b08313",
-    "appSha": "10c188b09545c35e",
-    "gitHead": "221fe405f879",
-    "gitHeadAt": "2026-09-06T14:59:39+00:00",
+    "bytes": 830012,
+    "sha256": "70a8d3dc760bb00f67d82c0f75acd2997404d443f95d45e9b94a7f03b3d68a29",
+    "appSha": "70a8d3dc760bb00f",
+    "gitHead": "c4a530e11cb4",
+    "gitHeadAt": "2026-09-06T15:19:14+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,

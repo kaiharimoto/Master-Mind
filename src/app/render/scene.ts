@@ -9,7 +9,7 @@ import {
   NodeLayer, FilamentLayer, HoldingShell, GROUND, TEXT_COLOR, hue, stateColour,
   type NodeInstance, type LinkInstance,
 } from './world.js';
-import { TextLayer, type FontMeta, type TextRun } from './text.js';
+import { TextLayer, TIER_MIN_PX, type FontMeta, type TextRun } from './text.js';
 
 export type LensKind = 'canvas' | 'expansion' | 'ar';
 
@@ -59,6 +59,14 @@ const RECENCY_STEP = 0.30, SETTLED_FLOOR = 0.22;
  * length is solved per frame by uniqueness, never fixed.
  */
 const STUB_MIN = 3, STUB_MAX = 8;
+/**
+ * The sizes a label may be drawn at, largest first. Full size, then one step
+ * down for a name that has nowhere clear to go at full size — the tier between
+ * "drawn" and "hidden" that two Art Directors asked for in the same words. 0.78
+ * of this frame's type is 13-14 px at whole-map framing, above the renderer's
+ * own 12 px legibility clamp.
+ */
+const LABEL_SCALES = [1, 0.78];
 const SETTLED_CACHE = new Map<number, number>();
 function settledSat(c: THREE.Color): number {
   const key = c.getHex();
@@ -95,6 +103,8 @@ export class Scene {
   private runAlphas = new Float32Array(0);
   private runShifts = new Float32Array(0);
   private runVisible = new Int32Array(0);
+  /** The size each label was drawn at, as a fraction of the frame's own type. */
+  private runScales = new Float32Array(0);
   private runEllipsisDx = new Float32Array(0);
   private dirty = true;
 
@@ -347,6 +357,8 @@ export class Scene {
     if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
     if (this.runShifts.length !== this.runMeta.length * 2) this.runShifts = new Float32Array(this.runMeta.length * 2);
     if (this.runVisible.length !== this.runMeta.length) this.runVisible = new Int32Array(this.runMeta.length);
+    if (this.runScales.length !== this.runMeta.length) this.runScales = new Float32Array(this.runMeta.length);
+    this.runScales.fill(1);
     if (this.runEllipsisDx.length !== this.runMeta.length) this.runEllipsisDx = new Float32Array(this.runMeta.length);
 
     // A filament is live when it touches the selection or a search hit.
@@ -533,6 +545,29 @@ export class Scene {
    * It fades rather than hides: nothing ever pops out of existence, and a
    * crowded label recedes instead of disappearing.
    */
+  /**
+   * The same label's box at a smaller size. The node does not move, so only the
+   * text geometry scales: the em, the box, and the offset that lifts the text
+   * clear of the mark. The mark's own radius is not scaled, because it is not
+   * the label.
+   */
+  private shapeAtScale(sh0: { w: number; h: number; emPx: number; nodePx: number },
+                       span: { x0Em: number; y1Em: number; y0Em: number; vSide: number },
+                       own: { x: number; y: number } | undefined, scale: number) {
+    if (!own || !sh0.w) return { w: 0, h: 0, emPx: sh0.emPx, bx0: 0, by0: 0, nodePx: sh0.nodePx };
+    // The floor is the renderer's own: the tier reduces type toward the
+    // smallest size this atlas draws legibly and stops there, so on a frame
+    // already at the clamp the tier simply has nothing to offer.
+    const emPx = Math.max(sh0.emPx * scale, TIER_MIN_PX);
+    if (emPx >= sh0.emPx - 0.01) return { w: 0, h: 0, emPx: sh0.emPx, bx0: 0, by0: 0, nodePx: sh0.nodePx };
+    const k = emPx / sh0.emPx;
+    const node = -span.vSide * sh0.nodePx * 0.62;
+    const x0 = own.x + span.x0Em * emPx;
+    const y0 = own.y - (span.y1Em * emPx + node);
+    return { w: Math.max(sh0.w * k, 6), h: Math.max(sh0.h * k, 6),
+             emPx, bx0: x0, by0: y0, nodePx: sh0.nodePx };
+  }
+
   private deconflictLabels() {
     const doc = this.doc;
     if (!doc || !this.runMeta.length) return;
@@ -562,13 +597,14 @@ export class Scene {
       [0, -5.10], [0, 5.10],
     ];
     const boxes: Box[] = [];
-    const shape: { w: number; h: number; emPx: number; bx0: number; by0: number }[] = [];
+    const shape: { w: number; h: number; emPx: number; bx0: number; by0: number;
+                   nodePx: number }[] = [];
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const s = byId.get(meta.id);
       const span = this.text.spans[i];
       this.runShifts[i * 2] = 0; this.runShifts[i * 2 + 1] = 0;
-      if (!s || !span) { this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0 }; continue; }
+      if (!s || !span) { this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0, nodePx: 0 }; continue; }
       // A NAME IS NOT DRAWN WITHOUT THE THING IT NAMES.
       //
       // The arbiter knows where a node PROJECTS and placed the label from that,
@@ -591,7 +627,7 @@ export class Scene {
       const el0 = this.renderer.domElement;
       const rr = Math.min(Math.max(meta.nodeSizeWorld * s.pxPerWorld, p.nodeMinPx), p.nodeMaxPx);
       if (s.x - rr < 0 || s.y - rr < 0 || s.x + rr > el0.width || s.y + rr > el0.height) {
-        this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0 }; continue;
+        this.runAlphas[i] = 0; shape[i] = { w: 0, h: 0, emPx: 1, bx0: 0, by0: 0, nodePx: 0 }; continue;
       }
       const emPx = Math.min(Math.max(em * s.pxPerWorld, p.textMinPx), p.textMaxPx);
       // The SHADER's formula, on the run's own clearance radius — not the core
@@ -607,7 +643,7 @@ export class Scene {
       // Shader y is up; screen y is down.
       const y0 = s.y - (span.y1Em * emPx + node);
       const h = Math.max((span.y1Em - span.y0Em) * emPx, 6);
-      shape[i] = { w, h, emPx, bx0: x0, by0: y0 };
+      shape[i] = { w, h, emPx, bx0: x0, by0: y0, nodePx };
       boxes.push({ i, x0, x1: x0 + w, y0, y1: y0 + h, pri: meta.priority, z: s.z });
       this.runAlphas[i] = meta.baseAlpha;
     }
@@ -756,7 +792,23 @@ export class Scene {
     const VW = this.renderer.domElement.width, VH = this.renderer.domElement.height;
     taken.push(...panels);
     for (const b of boxes) {
-      const sh = shape[b.i];
+      const sh0 = shape[b.i];
+      // A SIZE BELOW THE FULL ONE, BEFORE NOTHING AT ALL.
+      //
+      // Both the cycle-13 and cycle-14 Art Directors asked for the same thing:
+      // a tier between "full label" and "hidden". At whole-brain framing 87 of
+      // 127 thoughts carried no on-canvas text and the side list answered WHAT
+      // without answering WHERE, which is the one question this build says
+      // space is for. The tier is a smaller SIZE rather than a shorter string —
+      // a stub says less about the thought, and the cycle-12 Audience already
+      // ruled on stubs. 0.78 of the frame's own type is 13-14 px at whole-map
+      // framing, above the 12 px floor this renderer clamps to, so nothing is
+      // drawn smaller than the atlas can carry.
+      //
+      // It is tried ONLY when the full size finds no clear ground, so a label
+      // that fits is never shrunk and the frame does not get quietly smaller as
+      // the map grows.
+      let SH = sh0;
       const own = byId.get(this.runMeta[b.i].id);
       const span = this.text.spans[b.i];
       const glyphs = span.glyphRight;
@@ -769,7 +821,15 @@ export class Scene {
       // always carries its ellipsis — so it announces itself as shortened
       // rather than reading as a finished phrase. Where no whole word survives,
       // the label is not shortened at all and takes its chances on being faded.
-      const widths: { w: number; vis: number }[] = [{ w: sh.w, vis: 0 }];
+      let best = { frac: 1, score: 99, dx: 0, dy: 0, w: SH.w, vis: 0, fits: false, far: false };
+      let scaleUsed = 1;
+      for (const scale of LABEL_SCALES) {
+        if (best.fits && best.frac <= BRIGHT_MAX) break;   // it fitted at full size
+        SH = scale === 1 ? sh0 : this.shapeAtScale(sh0, span, own, scale);
+        if (!SH.w) continue;
+        scaleUsed = scale;
+        best = { frac: 1, score: 99, dx: 0, dy: 0, w: SH.w, vis: 0, fits: false, far: false };
+      const widths: { w: number; vis: number }[] = [{ w: SH.w, vis: 0 }];
       // THE CHOSEN THOUGHT IS ALWAYS NAMED IN FULL. Artifact 03's headline is a
       // measurement about "Sauerkraut by weight", and panel 2 rendered that
       // node's label as "Sauerkraut by…" — the frame asserting a claim about a
@@ -790,7 +850,7 @@ export class Scene {
       if (this.runMeta[b.i].priority <= 0) {
         // widths stays [full], so no truncated candidate is ever considered.
       } else if (span.ellipsis >= 0 && span.wordEnds.length) {
-        const ellW = span.ellipsisWidthEm * sh.emPx;
+        const ellW = span.ellipsisWidthEm * SH.emPx;
         for (let wi = span.wordEnds.length - 1; wi >= 0; wi--) {
           const k = span.wordEnds[wi];
           // A STUB MUST STILL NAME SOMETHING. Cycle 9 shipped "Log…", "Salt…",
@@ -803,7 +863,7 @@ export class Scene {
           // chances on being placed whole, and is hidden and listed if it
           // cannot be. The Art Director's C3, and its own suggested floor.
           if (k < 10 || k >= glyphs.length) continue;
-          widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * sh.emPx + ellW, 6), vis: k });
+          widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * SH.emPx + ellW, 6), vis: k });
           if (widths.length >= 4) break;
         }
         // THE COMPRESSED IDENTITY — the last thing tried, and only where the
@@ -847,10 +907,9 @@ export class Scene {
         }
         if (stub >= STUB_MIN && stub < glyphs.length &&
             !widths.some(w => w.vis === stub)) {
-          widths.push({ w: Math.max((glyphs[stub - 1] - span.x0Em) * sh.emPx + ellW, 6), vis: stub });
+          widths.push({ w: Math.max((glyphs[stub - 1] - span.x0Em) * SH.emPx + ellW, 6), vis: stub });
         }
       }
-      let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0, fits: false, far: false };
       // A LABEL KEEPS THE PLACE IT HAD, IF THAT PLACE IS STILL FREE.
       //
       // The arbiter re-solved from scratch every frame, so one text edit
@@ -871,26 +930,26 @@ export class Scene {
       // text changes the box changes, so the memory is dropped rather than
       // stretched — this label is not settled any more and must find ground
       // like any newcomer.
-      if (prev && prev.span !== sh.w) { this.lastPlacement.delete(this.runMeta[b.i].id); }
-      if (prev && prev.span === sh.w) {
-        const cand = { w: prev.vis > 0 ? prev.w : sh.w, vis: prev.vis };
-        const x0 = sh.bx0 + prev.dx * sh.emPx, y0 = sh.by0 + prev.dy * sh.emPx;
-        const area = Math.max(cand.w * sh.h, 1);
+      if (prev && prev.span !== SH.w) { this.lastPlacement.delete(this.runMeta[b.i].id); }
+      if (prev && prev.span === SH.w) {
+        const cand = { w: prev.vis > 0 ? prev.w : SH.w, vis: prev.vis };
+        const x0 = SH.bx0 + prev.dx * SH.emPx, y0 = SH.by0 + prev.dy * SH.emPx;
+        const area = Math.max(cand.w * SH.h, 1);
         const M = 8;
-        const inFrame = x0 >= M && y0 >= M && x0 + cand.w <= VW - M && y0 + sh.h <= VH - M;
+        const inFrame = x0 >= M && y0 >= M && x0 + cand.w <= VW - M && y0 + SH.h <= VH - M;
         let ok = inFrame;
         if (ok && own) {
           const keep = own.r + 4;
           const nx = Math.min(Math.max(own.x, x0), x0 + cand.w);
-          const ny = Math.min(Math.max(own.y, y0), y0 + sh.h);
+          const ny = Math.min(Math.max(own.y, y0), y0 + SH.h);
           if (Math.hypot(own.x - nx, own.y - ny) < keep) ok = false;
-          const MAX_DISP = 2.6 * sh.emPx;
+          const MAX_DISP = 2.6 * SH.emPx;
           if (ok && Math.hypot(own.x - nx, own.y - ny) > MAX_DISP) ok = false;
         }
         if (ok) {
-          const GX = 0.22 * sh.emPx, GY = 0.11 * sh.emPx;
-          const frac = Math.min(1, coverage(x0 - GX, y0 - GY, x0 + cand.w + GX, y0 + sh.h + GY, area) +
-                                   discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area));
+          const GX = 0.22 * SH.emPx, GY = 0.11 * SH.emPx;
+          const frac = Math.min(1, coverage(x0 - GX, y0 - GY, x0 + cand.w + GX, y0 + SH.h + GY, area) +
+                                   discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + SH.h, area));
           if (frac <= BRIGHT_MAX)
             best = { frac, score: -1, dx: prev.dx, dy: prev.dy, w: cand.w, vis: cand.vis,
                      fits: true, far: prev.far };
@@ -903,13 +962,13 @@ export class Scene {
       if (best.fits && best.frac <= BRIGHT_MAX) break;   // kept its place; no search
       const anchors = pass === 0 ? CAND : FAR;
       for (const cand of widths) {
-        const area = Math.max(cand.w * sh.h, 1);
+        const area = Math.max(cand.w * SH.h, 1);
         // A shortened label is only taken if a longer one could not be placed,
         // so length is worth a real penalty rather than a tie-break.
         const shortPenalty = cand.vis ? 0.55 : 0;
         for (const [cx, cy] of anchors) {
-          const dx = cx * sh.emPx, dy = cy * sh.emPx;
-          const x0 = sh.bx0 + dx, y0 = sh.by0 + dy;
+          const dx = cx * SH.emPx, dy = cy * SH.emPx;
+          const x0 = SH.bx0 + dx, y0 = SH.by0 + dy;
           // NODE DISCS ARE OCCUPANCY, not a preference. Text drawn over a core
           // erases the quietest state in the frame — a plain node measured 0.098
           // with bone glyphs at 0.87 sitting across it — so a marker counts
@@ -920,7 +979,7 @@ export class Scene {
           // whole, but it reads as one that was cut, which costs the reader the
           // same certainty. A small margin settles it.
           const M = 8;
-          if (x0 < M || y0 < M || x0 + cand.w > VW - M || y0 + sh.h > VH - M) continue;
+          if (x0 < M || y0 < M || x0 + cand.w > VW - M || y0 + SH.h > VH - M) continue;
           // A LABEL STAYS BESIDE THE THING IT NAMES. Hard cap, not a score.
           //
           // The far ring bought about thirty more drawn labels on the whole-map
@@ -940,9 +999,9 @@ export class Scene {
           // box, which is the distance a reader's eye actually crosses — not
           // the anchor's shift, which says nothing on its own because a label
           // sits beside its node to begin with.
-          const MAX_DISP = 2.6 * sh.emPx;   // two line-heights at 1.3 em each
+          const MAX_DISP = 2.6 * SH.emPx;   // two line-heights at 1.3 em each
           {
-            const px0 = x0, py0 = y0, px1 = x0 + cand.w, py1 = y0 + sh.h;
+            const px0 = x0, py0 = y0, px1 = x0 + cand.w, py1 = y0 + SH.h;
             const nx2 = Math.min(Math.max(own ? own.x : px0, px0), px1);
             const ny2 = Math.min(Math.max(own ? own.y : py0, py0), py1);
             if (own && Math.hypot(own.x - nx2, own.y - ny2) > MAX_DISP) continue;
@@ -959,10 +1018,10 @@ export class Scene {
           if (own) {
             const keep = own.r + 4;                       // the mark, plus air
             const nx = Math.min(Math.max(own.x, x0), x0 + cand.w);
-            const ny = Math.min(Math.max(own.y, y0), y0 + sh.h);
+            const ny = Math.min(Math.max(own.y, y0), y0 + SH.h);
             if (Math.hypot(own.x - nx, own.y - ny) < keep) continue;
           }
-          const dc = discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + sh.h, area);
+          const dc = discCover(this.runMeta[b.i].id, x0, y0, x0 + cand.w, y0 + SH.h, area);
           // A GUTTER, NOT MERE NON-INTERSECTION.
           //
           // The bright tier's guarantee was that two boxes do not overlap, and
@@ -976,8 +1035,8 @@ export class Scene {
           // above and below. Coverage is still expressed as a fraction of the
           // label's OWN area, so intruding on the gutter costs in proportion to
           // the name it crowds.
-          const GX = 0.22 * sh.emPx, GY = 0.11 * sh.emPx;
-          const frac = Math.min(1, coverage(x0 - GX, y0 - GY, x0 + cand.w + GX, y0 + sh.h + GY, area) + dc);
+          const GX = 0.22 * SH.emPx, GY = 0.11 * SH.emPx;
+          const frac = Math.min(1, coverage(x0 - GX, y0 - GY, x0 + cand.w + GX, y0 + SH.h + GY, area) + dc);
           // Text-on-text decides the tier; text-on-marker only breaks ties; and
           // a label that wanders pays for the distance. Inside a tight cluster
           // an unpenalised anchor could push a name out to open ground where it
@@ -1017,6 +1076,9 @@ export class Scene {
         if (best.frac <= 0 && !best.vis) break;   // placed whole and clear
       }
       }
+      }
+      if (!(best.fits && best.frac <= BRIGHT_MAX)) { scaleUsed = 1; SH = sh0; }
+      this.runScales[b.i] = scaleUsed;
       this.runVisible[b.i] = best.vis;
       // Move the ellipsis back from the end of the full run to the cut point.
       this.runEllipsisDx[b.i] = best.vis
@@ -1024,7 +1086,7 @@ export class Scene {
         : 0;
       this.runShifts[b.i * 2] = best.dx;
       this.runShifts[b.i * 2 + 1] = -best.dy;   // screen y grows downward; the shader's y does not
-      const px = { x0: sh.bx0 + best.dx * sh.emPx, y0: sh.by0 + best.dy * sh.emPx };
+      const px = { x0: SH.bx0 + best.dx * SH.emPx, y0: SH.by0 + best.dy * SH.emPx };
       // Two tiers, and the bright one is exclusive BY CONSTRUCTION.
       //
       // A label is drawn at full weight only if its clearest placement is at
@@ -1079,11 +1141,11 @@ export class Scene {
       // rectangle and pushed other names off the map for room it was not
       // using.
       if (this.runAlphas[b.i] > 0.02) {
-        taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h,
+        taken.push({ i: b.i, x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + SH.h,
                      pri: b.pri, z: b.z });
         // Remembered for the next frame, so a label that is happy stays put.
         this.lastPlacement.set(this.runMeta[b.i].id,
-          { dx: best.dx, dy: best.dy, w: best.w, vis: best.vis, far: best.far, span: sh.w });
+          { dx: best.dx, dy: best.dy, w: best.w, vis: best.vis, far: best.far, span: SH.w });
       } else {
         this.lastPlacement.delete(this.runMeta[b.i].id);
       }
@@ -1092,9 +1154,10 @@ export class Scene {
       // not cut a name in half, a hit test, a safe area — needs the label's
       // rectangle after re-anchoring and shortening, not the node's disc.
       this.labelRects.set(this.runMeta[b.i].id,
-        { x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + sh.h, alpha: this.runAlphas[b.i] });
+        { x0: px.x0, y0: px.y0, x1: px.x0 + best.w, y1: px.y0 + SH.h, alpha: this.runAlphas[b.i] });
     }
     this.text.setRunAlphas(this.runAlphas, this.runVisible);
+    this.text.setRunScales(this.runScales);
     this.text.setRunShifts(this.runShifts, this.runEllipsisDx);
     // Counted only for nodes actually ON SCREEN. A node behind the camera has no
     // label to hide, and counting it would overstate what the view is omitting.
@@ -1143,10 +1206,22 @@ export class Scene {
     this.shortenedIds.length = 0;
     this.compressed = 0;
     this.compressedIds.length = 0;
+    this.reduced = 0;
+    this.reducedIds.length = 0;
+    this.minLabelEmPx = Infinity;
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const r = this.labelRects.get(meta.id);
       if (r && r.alpha > 0.02) {
+        // A NAME DRAWN SMALLER IS STILL A NAME THE VIEW IS SHOWING, and the
+        // frame says how many it had to shrink to fit. Counted apart from every
+        // other omission because it is not one: nothing is lost from the words.
+        const q0 = this.lastScreen.get(meta.id);
+        if (q0) {
+          const px = this.text.emPxFor(i, q0.pxPerWorld);
+          if (px < this.minLabelEmPx) this.minLabelEmPx = px;
+        }
+        if ((this.runScales[i] ?? 1) < 0.999) { this.reduced++; this.reducedIds.push(meta.id); }
         // A NAME CUT SHORT IS ALSO A NAME THE VIEW IS NOT SHOWING. The chrome
         // said "0 labels hidden" on a frame where 42 of 150 names ended in an
         // ellipsis, which is true of the word "hidden" and false of what a
@@ -1174,6 +1249,12 @@ export class Scene {
       }
     }
   }
+
+  /** How many drawn names are set one size down to fit, and which. */
+  reduced = 0;
+  reducedIds: NodeId[] = [];
+  /** The smallest type any drawn label is set at this frame, in pixels. */
+  minLabelEmPx = 0;
 
   /** How many drawn names are cut short at this framing, and which. */
   shortened = 0;

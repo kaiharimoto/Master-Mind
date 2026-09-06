@@ -1351,7 +1351,8 @@ export class App {
     // The badge exists to declare what the frame is not showing, so it must not
     // itself be the thing that is hidden: it stands down when the editor would
     // draw over it rather than being clipped to "1 label hid".
-    chip.className = (n > 0 || cut > 0 || this.scene.compressed > 0) ? 'show' : '';
+    chip.className = (n > 0 || cut > 0 || this.scene.compressed > 0 || this.scene.reduced > 0)
+      ? 'show' : '';
     // Both kinds of omission, named separately. Saying only the first let a
     // frame declare "0 labels hidden" while 42 of its 150 names were shortened
     // to an ellipsis — a true sentence a reader would take for a false one.
@@ -1366,6 +1367,13 @@ export class App {
     // "Fil…" have become "Bed depth…" and "Filter…".
     const abbr = this.scene.compressed;
     if (abbr > 0) parts.push(`${abbr} named by their opening word`);
+    // AND THE ONES SET SMALLER TO FIT. Two Art Directors asked for a tier
+    // between a full name and nothing, and a tier the frame does not declare is
+    // a tier a reader has to notice for themselves. This is the one omission
+    // that omits nothing — the whole name is there, one size down — so it is
+    // said last and said plainly.
+    const small = this.scene.reduced;
+    if (small > 0) parts.push(`${small} set smaller to fit`);
     // "MOVE CLOSER TO READ THEM" WAS A PROMISE THE FRAME COULD BREAK. The
     // cycle-11 Audience put artifact 05's two panels side by side: after the
     // open-palm move-closer the chip read `118 labels hidden` where before it

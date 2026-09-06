@@ -487,6 +487,50 @@ const subjectInk = async (png, { box = null, exclude = null, minChroma = 0.16,
            box: { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }, hue, minChroma, minLum };
 };
 
+/**
+ * INK CONTRAST INSIDE A LABEL'S OWN BOX, off the written file.
+ *
+ * The renderer's legibility floor is stated as a contrast ratio — the alpha at
+ * which glyphs reach 3:1 on this ground — and every claim about it so far has
+ * been about alpha, which is the thing the renderer controls rather than the
+ * thing a reader sees. A tier that draws crowded names one size down is exactly
+ * the case where that difference matters, so the ink is measured where it was
+ * drawn: brightest pixel inside the box against the median of a ring outside
+ * it.
+ */
+const inkContrast = async (png, rects) => {
+  const { raw, W, H } = await rawOf(png);
+  if (!raw.length || !W || !H) return { checked: 0, error: 'frame not decodable' };
+  const lum = (x, y) => {
+    const i = (y * W + x) * 3;
+    return (0.2126 * raw[i] + 0.7152 * raw[i + 1] + 0.0722 * raw[i + 2]) / 255;
+  };
+  const rows = [];
+  for (const r of rects) {
+    const x0 = Math.max(0, Math.round(r.x0)), y0 = Math.max(0, Math.round(r.y0));
+    const x1 = Math.min(W, Math.round(r.x1)), y1 = Math.min(H, Math.round(r.y1));
+    if (x1 - x0 < 2 || y1 - y0 < 2) { rows.push({ id: r.id, contrast: 0, why: 'box off the frame' }); continue; }
+    let peak = 0;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { const l = lum(x, y); if (l > peak) peak = l; }
+    const g = [];
+    const M = 6;
+    for (let y = Math.max(0, y0 - M); y < Math.min(H, y1 + M); y++)
+      for (let x = Math.max(0, x0 - M); x < Math.min(W, x1 + M); x++) {
+        if (x >= x0 && x < x1 && y >= y0 && y < y1) continue;
+        g.push(lum(x, y));
+      }
+    if (!g.length) { rows.push({ id: r.id, contrast: 0, why: 'no ground to compare' }); continue; }
+    g.sort((a, b) => a - b);
+    const ground = g[g.length >> 1];
+    rows.push({ id: r.id, text: r.text, peak: +peak.toFixed(4), ground: +ground.toFixed(4),
+                contrast: +((peak + 0.05) / (ground + 0.05)).toFixed(2) });
+  }
+  const worst = rows.length ? Math.min(...rows.map(r => r.contrast)) : null;
+  return { checked: rows.length, worstContrast: worst,
+           belowFloor: rows.filter(r => r.contrast < 3).length,
+           weakest: rows.slice().sort((a, b) => a.contrast - b.contrast).slice(0, 4) };
+};
+
 const modelStats = (page) => page.evaluate(() => {
   const d = window.mm.store.doc;
   // The numbers the app PRINTS ON THE FRAME, read back from the DOM that drew
@@ -506,6 +550,10 @@ const modelStats = (page) => page.evaluate(() => {
     // would have reported 44 labels hidden on a frame that hides none.
     labelsHidden: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+labels?\s+hidden/); return m ? Number(m[1]) : 0; })(),
     labelsShortened: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+shortened/); return m ? Number(m[1]) : 0; })(),
+    // The tier between a full name and nothing, read off the chip that declares
+    // it rather than out of the renderer that decided it.
+    labelsSetSmaller: (() => { const t = txt('[data-t=labels-hidden]'); const m = t && t.match(/(\d+)\s+set smaller/); return m ? Number(m[1]) : 0; })(),
+    smallestLabelPx: Math.round((window.mm.scene.minLabelEmPx ?? 0) * 10) / 10,
     // Counted from the rendered rows, excluding the overflow line — it was one
     // more than the frame showed, because the "…and N more" line is an <li> too
     // and a count of thoughts should not include the line that says how many
@@ -583,7 +631,7 @@ async function runDriver(d) {
       pages.push(r);
       return r;
     },
-    shot, step, record, compose, stack, crop, samplePixels, sampleDiscs, subjectInk, diffPixels, modelStats, clusterState, clusterDelta, positions,
+    shot, step, record, compose, stack, crop, samplePixels, sampleDiscs, subjectInk, diffPixels, inkContrast, modelStats, clusterState, clusterDelta, positions,
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };

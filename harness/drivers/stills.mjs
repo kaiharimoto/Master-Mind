@@ -219,7 +219,29 @@ const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
                   JSON.stringify([byId.get(row.id).x, byId.get(row.id).y, byId.get(row.id).r]), row.text);
   }
   const m = await H.sampleDiscs(H.out(file), anchors);
+  // THE SMALL TIER IS MEASURED WHERE IT WAS DRAWN.
+  //
+  // A tier that draws a crowded name one size down is only worth having if the
+  // name is still readable, and "still readable" has been an alpha in this
+  // renderer rather than a measurement of ink. These are the boxes of the
+  // labels actually reduced this frame, sampled out of the written file against
+  // the same 3:1 floor the alpha was solved for.
+  const reduced = await page.evaluate(() => {
+    const sc = window.mm.scene, d = window.mm.store.doc;
+    return (sc.reducedIds ?? []).map(id => {
+      const r = sc.labelRects.get(id);
+      return r && r.alpha > 0.02
+        ? { id, text: (d.nodes[id] || {}).text, x0: r.x0, y0: r.y0, x1: r.x1, y1: r.y1 } : null;
+    }).filter(Boolean);
+  });
+  const ink = reduced.length ? await H.inkContrast(H.out(file), reduced) : { checked: 0 };
   return { ...a, ...(await chrome(page)), markerContrast: m,
+           labelsSetSmaller: reduced.length,
+           reducedLabelInk: ink,
+           // A name drawn smaller is still a name a reader can read, or the
+           // tier is buying coverage with ink nobody can use.
+           everyReducedLabelClearsTheContrastFloor:
+             ink.checked === 0 || ink.belowFloor === 0,
            labelsWithoutVisibleMarker: m.invisible ?? null,
            everyDrawnLabelHasAVisibleMarker: m.checked > 0 && m.invisible === 0,
            // THE AUDIT AND THE IMAGE MUST BE THE SAME FRAME.
@@ -397,7 +419,10 @@ export default [
               // the two claims above passed throughout because neither of them
               // looks at one label against another. These two do.
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true, auditDescribesTheShippedFrame: true },
+              everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true, auditDescribesTheShippedFrame: true,
+              // A name drawn one size down is still a name a reader can read,
+              // measured as ink in the written file against the 3:1 floor.
+              everyReducedLabelClearsTheContrastFloor: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {

@@ -53,6 +53,14 @@ export function wrap(text: string, perLine = 17, maxLines = 2): string[] {
   return lines;
 }
 
+/**
+ * The smallest type this atlas is built to draw. The lens profiles' own
+ * `textMinPx` is the size a frame uses when it has room; this is the size below
+ * which the SDF stops carrying stems, and it is the floor the reduced tier may
+ * shrink a crowded label toward — never past.
+ */
+export const TIER_MIN_PX = 12;
+
 const VERT = /* glsl */`
 precision highp float;
 attribute vec4 aRect;      // x, y (em, baseline-relative), w, h
@@ -63,9 +71,11 @@ attribute float aNodeSize; // world radius of that node, for vertical offset
 attribute float aAlpha;
 attribute vec2  aOff;      // x: em offset of the block, y: +1 below / -1 above
 attribute vec2  aShift;    // per-frame re-anchor, in em, from label deconfliction
+attribute float aEmScale;  // 1, or the smaller tier a crowded label was drawn at
 uniform vec2  uViewport;
 uniform float uEmWorld;    // em height in world units
 uniform float uMinPx;
+uniform float uTierMinPx;  // the atlas's own floor, for the reduced tier only
 uniform float uMaxPx;
 uniform float uNodeMinPx;
 uniform float uNodeMaxPx;
@@ -79,7 +89,21 @@ void main() {
   vec4 mv = modelViewMatrix * vec4(aAnchor, 1.0);
   float dist = max(-mv.z, 1e-4);
   float pxPerWorld = uViewport.y * projectionMatrix[1][1] * 0.5 / dist;
-  float emPx   = clamp(uEmWorld  * pxPerWorld, uMinPx, uMaxPx);
+  // THE SMALL TIER. A label with nowhere clear to go at full size is drawn one
+  // step down rather than not at all; the arbiter decides which, and this is
+  // where that decision reaches the glyphs. The clamp is applied first, so the
+  // tier is a fraction of the size the frame would have used, not a way around
+  // the minimum: the arbiter keeps the product above the atlas's floor.
+  // ...AND NEVER BELOW THE ATLAS'S OWN FLOOR. The first run of the tier set 15
+  // labels at 10.9 px on a frame whose clamp is 12 — a tier that bought its
+  // room by going under the size this renderer says is the smallest it can draw
+  // legibly. The scale reduces the type toward that floor and stops there.
+  // ...AND NEVER BELOW THE ATLAS'S OWN FLOOR. The first run of the tier set 15
+  // labels at 10.9 px. The lens profile's minimum is the size the frame uses
+  // when there is room; the atlas is built and hinted for 12 px and up, and
+  // that — not the profile's comfort size — is the floor a crowded label may
+  // reduce toward. It stops there.
+  float emPx   = max(clamp(uEmWorld * pxPerWorld, uMinPx, uMaxPx) * aEmScale, uTierMinPx);
   float nodePx = clamp(aNodeSize * pxPerWorld, uNodeMinPx, uNodeMaxPx);
   vec2 corner = position.xy + 0.5;                 // PlaneGeometry(1,1) -> 0..1
   vec2 em = aRect.xy + corner * aRect.zw;
@@ -173,6 +197,7 @@ export class TextLayer {
   private aAlpha!: THREE.InstancedBufferAttribute;
   private aOff!: THREE.InstancedBufferAttribute;
   private aShift!: THREE.InstancedBufferAttribute;
+  private aEmScale!: THREE.InstancedBufferAttribute;
 
   constructor(private meta: FontMeta, atlas: THREE.Texture, opts: { emWorld: number; minPx: number; maxPx: number }) {
     atlas.flipY = false;
@@ -192,6 +217,7 @@ export class TextLayer {
         uViewport: { value: new THREE.Vector2(1920, 1080) },
         uEmWorld: { value: opts.emWorld },
         uMinPx: { value: opts.minPx }, uMaxPx: { value: opts.maxPx },
+        uTierMinPx: { value: TIER_MIN_PX },
         uNodeMinPx: { value: 4 }, uNodeMaxPx: { value: 96 },
         uFadeStart: { value: 40 }, uFadeEnd: { value: 260 },
         uOutline: { value: new THREE.Color('#120E0B') },
@@ -223,7 +249,13 @@ export class TextLayer {
     const sp = this.spans[run];
     if (!sp) return null;
     const u = this.material.uniforms;
-    const emPx = Math.min(Math.max(u.uEmWorld.value * pxPerWorld, u.uMinPx.value), u.uMaxPx.value);
+    // AT THE SIZE IT WAS DRAWN. A run in the small tier is drawn at a fraction
+    // of the frame's type, and an audit that measured it at full size would
+    // report a box larger than the ink — which is the F-015 shape again, an
+    // arbiter and a drawing reasoning about different rectangles.
+    const emPx = Math.max(
+      Math.min(Math.max(u.uEmWorld.value * pxPerWorld, u.uMinPx.value), u.uMaxPx.value)
+      * this.scaleOf(run), u.uTierMinPx.value);
     const R = this.aRect.array as Float32Array, S = this.aShift.array as Float32Array;
     const A = this.aAlpha.array as Float32Array, O = this.aOff.array as Float32Array;
     const N = this.aNodeSize.array as Float32Array;
@@ -247,9 +279,11 @@ export class TextLayer {
   }
 
   /** The em size this run is drawn at, in pixels, at a given scale. */
-  emPxFor(_run: number, pxPerWorld: number): number {
+  emPxFor(run: number, pxPerWorld: number): number {
     const u = this.material.uniforms;
-    return Math.min(Math.max(u.uEmWorld.value * pxPerWorld, u.uMinPx.value), u.uMaxPx.value);
+    return Math.max(
+      Math.min(Math.max(u.uEmWorld.value * pxPerWorld, u.uMinPx.value), u.uMaxPx.value)
+      * this.scaleOf(run), u.uTierMinPx.value);
   }
 
   setViewport(w: number, h: number) { this.material.uniforms.uViewport.value.set(w, h); }
@@ -273,6 +307,12 @@ export class TextLayer {
     this.aRect = mk(4); this.aUV = mk(4); this.aAnchor = mk(3);
     this.aColor = mk(3); this.aNodeSize = mk(1); this.aAlpha = mk(1); this.aOff = mk(2);
     this.aShift = mk(2);
+    // Every glyph is full size until an arbiter says otherwise. A zero here
+    // would draw the whole layer at nothing, so the default is written rather
+    // than left to the buffer's own zeroes.
+    this.aEmScale = mk(1);
+    (this.aEmScale.array as Float32Array).fill(1);
+    this.geo.setAttribute('aEmScale', this.aEmScale);
     this.geo.setAttribute('aRect', this.aRect);
     this.geo.setAttribute('aUV', this.aUV);
     this.geo.setAttribute('aAnchor', this.aAnchor);
@@ -310,6 +350,30 @@ export class TextLayer {
     if (!sp || sp.ellipsis < 0) return false;
     const arr = this.aAlpha.array as Float32Array;
     return arr[sp.start + sp.ellipsis] > 0.01;
+  }
+
+  /**
+   * Per-run em scale: 1, or the smaller tier the arbiter fell back to when a
+   * label had nowhere clear to go at full size. Written per glyph so the
+   * vertex shader needs no lookup, and read back by `drawnRect` and `emPxFor`
+   * so every measurement of this frame is taken at the size it was drawn.
+   */
+  setRunScales(scales: Float32Array) {
+    const arr = this.aEmScale.array as Float32Array;
+    for (let r = 0; r < this.spans.length && r < scales.length; r++) {
+      const { start, count } = this.spans[r];
+      const v = scales[r] > 0 ? scales[r] : 1;
+      for (let k = 0; k < count; k++) arr[start + k] = v;
+    }
+    this.aEmScale.needsUpdate = true;
+  }
+
+  /** The size a run was actually drawn at, as a fraction of the frame's type. */
+  scaleOf(run: number): number {
+    const sp = this.spans[run];
+    if (!sp) return 1;
+    const v = (this.aEmScale.array as Float32Array)[sp.start];
+    return v > 0 ? v : 1;
   }
 
   setRunAlphas(alphas: Float32Array, visible?: Int32Array) {
@@ -458,7 +522,8 @@ export class TextLayer {
                         glyphRight, wordEnds, ellipsis: ellipsisIdx,
                         ellipsisLeftEm: ellipsisLeft, ellipsisWidthEm: ellipsisW });
     }
-    for (const a of [this.aRect, this.aUV, this.aAnchor, this.aColor, this.aNodeSize, this.aAlpha, this.aOff]) a.needsUpdate = true;
+    for (const a of [this.aRect, this.aUV, this.aAnchor, this.aColor, this.aNodeSize,
+                     this.aAlpha, this.aOff, this.aEmScale]) a.needsUpdate = true;
     this.geo.instanceCount = i;
   }
 }
