@@ -1263,6 +1263,12 @@ export class App {
     const buriedD = this.nodesUnderChromeDetail();
     const buried = buriedD.map(b => b.id);
     return { checked: boxes.length, overlapping: pairs.length, worstOverlapPx: pairs[0]?.areaPx ?? 0,
+             // The inventory itself, not only what it concluded. A capture that
+             // needs to place something clear of the chrome was reading
+             // `chromeAudit().boxes` and getting undefined — so artifact 08's
+             // drop landed inside its own payload chip, and the pixel readback
+             // of that drop failed on a bright box rather than on a mark.
+             boxes,
              pairs: pairs.slice(0, 8), offFrame,
              nodesUnderChrome: buried.length,
              nodesUnderChromeIds: buried.slice(0, 12),

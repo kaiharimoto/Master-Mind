@@ -207,14 +207,22 @@ const rawOf = async (png) => {
  * the pixels that changed are the thing that moved, and where they are says
  * whether it was the district the caption names.
  */
-const diffPixels = async (aPng, bPng, thresh = 14) => {
+const diffPixels = async (aPng, bPng, thresh = 14, region = null) => {
   const A = await rawOf(aPng), B = await rawOf(bPng);
   if (!A.raw.length || !B.raw.length || A.W !== B.W || A.H !== B.H)
     return { error: 'frames not comparable', changed: 0 };
   const { W, H } = A;
   let changed = 0, x0 = W, y0 = H, x1 = -1, y1 = -1;
   const pts = [];
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+  // An optional window to ask the question inside, and windows to ignore within
+  // it. A frame's chrome is expected to change when a card is dismissed; the
+  // claim that a rejection leaves no trace is about the MAP.
+  const R = region?.box ?? { x: 0, y: 0, w: W, h: H };
+  const skip = region?.exclude ?? [];
+  const yA = Math.max(0, Math.round(R.y)), yB = Math.min(H, Math.round(R.y + R.h));
+  const xA = Math.max(0, Math.round(R.x)), xB = Math.min(W, Math.round(R.x + R.w));
+  for (let y = yA; y < yB; y++) for (let x = xA; x < xB; x++) {
+    if (skip.some(b => x >= b.x && y >= b.y && x < b.x + b.w && y < b.y + b.h)) continue;
     const i = (y * W + x) * 3;
     const d = Math.max(Math.abs(A.raw[i] - B.raw[i]), Math.abs(A.raw[i + 1] - B.raw[i + 1]),
                        Math.abs(A.raw[i + 2] - B.raw[i + 2]));
@@ -559,7 +567,7 @@ async function runDriver(d) {
       pages.push(r);
       return r;
     },
-    shot, step, record, compose, stack, crop, samplePixels, sampleDiscs, subjectInk, modelStats, clusterState, clusterDelta, positions,
+    shot, step, record, compose, stack, crop, samplePixels, sampleDiscs, subjectInk, diffPixels, modelStats, clusterState, clusterDelta, positions,
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };

@@ -484,7 +484,15 @@ export default [
       const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
       const pts = sc.screenPositions().filter(p2 => p2.id !== skip)
         .map(q => [q.x / dpr, q.y / dpr]);
-      const boxes = window.mm.chromeAudit().boxes ?? [];
+      // Chrome AND the names already drawn. Clearance from other markers alone
+      // put the drop on top of a label: the before panel measured peak 0.906 at
+      // the destination, brighter than the mark that lands there. A spot with a
+      // name already in it is not an empty spot.
+      const boxes = (window.mm.chromeAudit().boxes ?? []).slice();
+      for (const [, r] of window.mm.scene.labelRects) {
+        if (r.alpha <= 0.02) continue;
+        boxes.push({ x0: r.x0 / dpr, y0: r.y0 / dpr, x1: r.x1 / dpr, y1: r.y1 / dpr });
+      }
       let best = null;
       for (let y = 130; y <= window.innerHeight - 170; y += 10)
         for (let x = 130; x <= lim - 150; x += 10) {
@@ -788,6 +796,8 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { allThreeKinds: true, rejectionLeftNoTrace: true, rejectedIsGone: true,
+              // And the same claim asked of the picture, not of the links dict.
+              rejectionLeftNoTraceInThePixels: true,
               acceptanceLanded: true, cameraFrozenAcrossPanels: true,
               rejectedPairUnjoined: true, detailExceedsPanelScale: true,
               detailRowInsideFrame: true, detailHeadingsFitTheirColumns: true },
@@ -883,6 +893,51 @@ export default [
     await HIDE_TOAST();
     await sleepFrames(page, 0, 2);
     const midClean = await H.tmpShot(page, cdp, '14bc');
+    // THE REJECTION LEAVES NO TRACE — IN THE PIXELS OF THE MAP.
+    //
+    // `rejectionLeftNoTrace` compares the links dict and `rejectedPairUnjoined`
+    // asks the model whether the pair is joined. Both are answers from the
+    // state, and this artifact's whole standing rests on the claim that nothing
+    // reached the map. The two frames either side of the reject are compared
+    // directly, inside the canvas and outside the panels that are supposed to
+    // change — the finder card advances, the toast appears — and outside the
+    // holding cluster, whose unplaced marks pulse by design.
+    const chromeRegion = () => page.evaluate(() => {
+      const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const skip = [];
+      for (const sel of ['#finder', '#toast', '#hidden', '#unlabelled', '#top', '#tools',
+                         '#states', '#origin', '#editor', '#clusterproof']) {
+        const e = document.querySelector(sel);
+        if (!e || getComputedStyle(e).display === 'none') continue;
+        // outerRect, not getBoundingClientRect: the finder panel's footer line —
+        // the one naming what is still queued, which is exactly what a
+        // rejection changes — hangs below the padding box, so the narrower
+        // rectangle left 6450 px of legitimate chrome change inside the region
+        // this claim calls the map. Same lesson as the badge solver's.
+        const r = window.mm.outerRect(e);
+        if (r.width > 2 && r.height > 2)
+          skip.push({ x: r.left - 6, y: r.top - 6, w: r.width + 12, h: r.height + 12 });
+      }
+      const h = window.mm.store.doc.holding;
+      const sc = window.mm.scene;
+      const pts = [];
+      for (let k = 0; k < 16; k++) {
+        const t = (k / 16) * Math.PI * 2;
+        for (const p of [[Math.cos(t), 0, Math.sin(t)], [Math.cos(t), Math.sin(t), 0]]) {
+          const q = sc.project([h.origin[0] + p[0] * h.radius, h.origin[1] + p[1] * h.radius,
+                                h.origin[2] + p[2] * h.radius]);
+          if (q) pts.push([q.x / dpr, q.y / dpr]);
+        }
+      }
+      if (pts.length) {
+        const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+        skip.push({ x: Math.min(...xs) - 24, y: Math.min(...ys) - 24,
+                    w: Math.max(...xs) - Math.min(...xs) + 48,
+                    h: Math.max(...ys) - Math.min(...ys) + 48 });
+      }
+      return { box: { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight }, exclude: skip };
+    });
+    const regionBefore = await chromeRegion();
     // Read the rejected suggestion off the card IMMEDIATELY BEFORE rejecting it.
     const rejectedSug = await CURRENT();
     involved.push(...(rejectedSug ? rejectedSug.nodes : []));
@@ -903,6 +958,14 @@ export default [
     await HIDE_TOAST();
     await sleepFrames(page, 0, 2);
     const postClean = await H.tmpShot(page, cdp, '14cc');
+    // MEASURED AT BOTH MOMENTS AND UNIONED. Taken only after the reject, the
+    // panel is one card shorter, so its footer line's OLD position — the line
+    // that names what is still queued — sat outside the rectangle and read as
+    // 5590 px of map change. The chrome to forgive is the chrome as it was and
+    // as it is.
+    const rejectRegion = { box: regionBefore.box,
+                           exclude: [...regionBefore.exclude, ...(await chromeRegion()).exclude] };
+    const rejectDiff = await H.diffPixels(midClean, postClean, 6, rejectRegion);
     const say = (s) => s && s.texts.length === 2
       ? `${s.kind} “${s.texts[0]}” ↔ “${s.texts[1]}”`
       : s ? `${s.kind} of ${s.texts.length} node(s)` : 'the staged suggestion';
@@ -1159,6 +1222,10 @@ export default [
              // reframing rather than an accepted suggestion.
              cameraFrozenAcrossPanels: posBefore === posAfter,
              rejectedId: rejectedSug && rejectedSug.id, rejectionLeftNoTrace: beforeReject === after,
+             rejectPixelDiff: { changed: rejectDiff.changed, box: rejectDiff.box,
+                                excluded: rejectRegion.exclude.length },
+             // Not one pixel of the map differs across the rejection.
+             rejectionLeftNoTraceInThePixels: rejectDiff.changed === 0,
              rejectedIsGone: !!rejectedSug && !(await page.evaluate(i => window.mm.suggestions.some(s => s.id === i), rejectedSug.id)) };
   },
 },

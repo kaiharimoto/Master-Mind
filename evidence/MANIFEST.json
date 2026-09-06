@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T13:13:51.112Z",
+  "lastRunAt": "2026-09-06T13:19:47.979Z",
   "lastRunCaptured": [
-    "08"
+    "14"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -3416,18 +3416,18 @@
       "title": "Placement end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.9,
-      "status": "claim-not-met",
+      "seconds": 2.7,
+      "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 242560,
-        "sha256": "253ecaf00aa648506610d99d9e157264d40d3a9610f61fa3c1e77c37755c2656"
+        "bytes": 197616,
+        "sha256": "98c6df87cb6eace5cf323957dabf26d4831c1e5b7f26be9a5d635298f6d5de24"
       },
       "claims": {
-        "ok": false,
+        "ok": true,
         "claims": [
           {
             "claim": "placed",
@@ -3456,8 +3456,8 @@
           {
             "claim": "theDropIsVisibleInThePixels",
             "expected": true,
-            "actual": false,
-            "pass": false,
+            "actual": true,
+            "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
           },
@@ -3485,8 +3485,7 @@
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
           }
-        ],
-        "why": "declared claim(s) not met: theDropIsVisibleInThePixels = false"
+        ]
       },
       "result": {
         "node": "Steal the parking-lot bit",
@@ -3510,30 +3509,36 @@
           3.869
         ],
         "afterPos": [
-          1.9986645724823138,
-          4.587178802023548,
-          2.022677780267024
+          2.0215593738561672,
+          -14.357950856663557,
+          4.393055158234333
         ],
         "stableAfterDrop": true,
+        "dropTarget": {
+          "x": 510,
+          "y": 790,
+          "score": 890.8633976421492,
+          "clearance": 105.6
+        },
         "destinationSampleBefore": {
           "id": "sec77dd4720",
-          "x": 524,
-          "y": 368,
+          "x": 510,
+          "y": 790,
           "r": 14.4,
-          "peak": 0.3017,
+          "peak": 0.0574,
           "ground": 0.0574,
-          "contrast": 3.28
+          "contrast": 1
         },
         "destinationSampleAfter": {
           "id": "sec77dd4720",
-          "x": 524,
-          "y": 368,
+          "x": 510,
+          "y": 790,
           "r": 14.4,
           "peak": 0.8018,
           "ground": 0.0574,
           "contrast": 7.93
         },
-        "theDropIsVisibleInThePixels": false,
+        "theDropIsVisibleInThePixels": true,
         "cameraFrozenAcrossPanels": true
       },
       "pageErrors": [],
@@ -3544,8 +3549,8 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "23303d0d4589ba01",
-        "appSha": "953acb913dd6aeee",
+        "fnSha": "72c14b8f02469da6",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "placed": "b5bea41b6c62",
           "stableAfterDrop": "b5bea41b6c62",
@@ -3558,8 +3563,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T13:13:53.139Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T13:17:28.526Z"
     },
     {
       "id": "09",
@@ -4861,15 +4866,15 @@
       "title": "Finder review",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.2,
+      "seconds": 3.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 391770,
-        "sha256": "6d160780b741cd713a2210e44a7eaaefe8d2503109439658ec28d279ffa3a61d"
+        "bytes": 391232,
+        "sha256": "1c9fd9179f24e8f693b7c8f33ec8ef89a828fd8895d8b760e895e3887badb6bc"
       },
       "claims": {
         "ok": true,
@@ -4892,6 +4897,14 @@
           },
           {
             "claim": "rejectedIsGone",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "rejectionLeftNoTraceInThePixels",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -5040,6 +5053,12 @@
         "cameraFrozenAcrossPanels": true,
         "rejectedId": "s2",
         "rejectionLeftNoTrace": true,
+        "rejectPixelDiff": {
+          "changed": 0,
+          "box": null,
+          "excluded": 12
+        },
+        "rejectionLeftNoTraceInThePixels": true,
         "rejectedIsGone": true
       },
       "pageErrors": [],
@@ -5050,12 +5069,13 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "6eef1bb7a5f4aa9b",
-        "appSha": "afee2ffa14e2e205",
+        "fnSha": "e1c6a167c2e30336",
+        "appSha": "10c188b09545c35e",
         "claimShas": {
           "allThreeKinds": "b5bea41b6c62",
           "rejectionLeftNoTrace": "b5bea41b6c62",
           "rejectedIsGone": "b5bea41b6c62",
+          "rejectionLeftNoTraceInThePixels": "b5bea41b6c62",
           "acceptanceLanded": "b5bea41b6c62",
           "cameraFrozenAcrossPanels": "b5bea41b6c62",
           "rejectedPairUnjoined": "b5bea41b6c62",
@@ -5066,8 +5086,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:41:40.695Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:19:51.402Z"
     },
     {
       "id": "15",
@@ -6459,17 +6479,17 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T13:13:55.611Z",
+  "finishedAt": "2026-09-06T13:19:53.102Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 826986,
-    "sha256": "953acb913dd6aeee675b77030db8e32a93010159754a11213ad3c8e9ffd2cb29",
-    "appSha": "953acb913dd6aeee",
-    "gitHead": "9186dd81ac6e",
-    "gitHeadAt": "2026-09-06T13:11:48+00:00",
+    "bytes": 826994,
+    "sha256": "10c188b09545c35e81cb410984e9f463e024ef3e937857bc5964d72314b08313",
+    "appSha": "10c188b09545c35e",
+    "gitHead": "724c4c25d619",
+    "gitHeadAt": "2026-09-06T13:16:30+00:00",
     "treeDirtyAtCapture": true
   },
-  "captured": 19,
+  "captured": 20,
   "total": 20
 }
