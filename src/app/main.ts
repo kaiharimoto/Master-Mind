@@ -172,6 +172,30 @@ export class App {
       b.addEventListener('click', () => this.runHandOperation(p.id, true));
       tools.appendChild(b);
     }
+    // THE WAY BACK FROM A MOVE, and the only undo this build has. It sits with
+    // the map-scale operations because that is what it undoes: the grab that
+    // took the wrong district, the drag that overshot. Disabled, with its own
+    // label, when there is nothing to put back — so it says what it can do
+    // rather than looking available and doing nothing.
+    const u = el('button', { 'data-t': 'tool-undo', class: 'ghost',
+                             title: 'Put the last move back — Ctrl+Z' }, 'Undo move');
+    u.addEventListener('click', () => this.undoMove());
+    tools.appendChild(u);
+  }
+
+  /**
+   * Put the last move back and say what went back.
+   *
+   * Not silent: a position changing without a visible cause is the one thing
+   * the avoid-list names first, and an undo is a position changing. The toast
+   * names the act and how many thoughts it covered.
+   */
+  undoMove() {
+    const r = this.store.undoMove();
+    if (!r) { this.toast('Nothing to put back — no move has been made on this map'); return; }
+    this.toast(`Put back: ${r.what} — ${r.nodes} thought${r.nodes === 1 ? '' : 's'} returned to where they were`);
+    this.scene.markDirty();
+    this.refresh();
   }
 
   private attachInput() {
@@ -183,6 +207,7 @@ export class App {
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       if (e.key === 'n' || e.key === 'N') { e.preventDefault(); this.quickAdd(''); }
       if (e.key === 'Escape') { this.select(null); this.closeOverlays(); }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); this.undoMove(); }
     });
     // Gyroscopic orientation for the AR lens. The app listens for the real
     // DeviceOrientationEvent; nothing else feeds the camera in AR.
@@ -723,10 +748,22 @@ export class App {
     this.renderHandPanel();
   }
 
+  /**
+   * The fist opens. Whatever the hold moved becomes ONE undoable act — the
+   * district went as one, so it comes back as one.
+   */
+  private releaseHandGrab() {
+    if (!this.handGrab) return;
+    const n = this.handGrab.ids.length;
+    this.handGrab = null;
+    this.store.endMove(`grabbed ${n} thought${n === 1 ? '' : 's'}`);
+    this.refresh();
+  }
+
   private onHand(f: HandFrame) {
     this.drawLandmarks(f);
     this.renderHandPanel();
-    if (!f.present || f.pose === 'none') { this.handGrab = null; return; }
+    if (!f.present || f.pose === 'none') { this.releaseHandGrab(); return; }
     this.runHandOperation(f.pose, false, f);
   }
 
@@ -760,12 +797,14 @@ export class App {
         const id = this.scene.pick(sx, sy, 70);
         if (!id) return;
         this.handGrab = { ids: this.controls.clusterOf(id), x: sx, y: sy };
+        // The whole hold is one act, however many frames it lasts.
+        this.store.beginMove();
         return;
       }
       // Rigid translation: every member moves by the same delta, so the
       // cluster's internal arrangement is preserved exactly.
       const anchor = this.store.node(this.handGrab.ids[0]);
-      if (!anchor) { this.handGrab = null; return; }
+      if (!anchor) { this.releaseHandGrab(); return; }
       const at = new THREE.Vector3(...anchor.pos);
       const from = this.scene.screenToWorld(this.handGrab.x, this.handGrab.y, at);
       const to = this.scene.screenToWorld(sx, sy, at);
@@ -867,6 +906,16 @@ export class App {
 
   refresh() {
     $('[data-t=map-name]').textContent = this.store.doc.name;
+    {
+      // The control states what it would put back, or that there is nothing.
+      const u = document.querySelector('[data-t=tool-undo]') as HTMLButtonElement | null;
+      const m = this.store.undoableMove;
+      if (u) {
+        u.disabled = !m;
+        u.textContent = m ? `Undo: ${m.what}` : 'Nothing to undo';
+        u.title = m ? `Put back: ${m.what} — Ctrl+Z` : 'No move has been made on this map';
+      }
+    }
     $('[data-t=holding-count]').textContent = String(this.store.holdingCount());
     const chip = $('[data-t=holding-chip]');
     chip.classList.toggle('on', this.store.holdingCount() > 0);

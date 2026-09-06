@@ -866,6 +866,12 @@ export default [
     // A caption naming a pose the detector is not reading, on a frame that
     // ships, is the shape of a staged demo. Zero of them, or a failed capture.
     captionNeverOutrunsTheDetector: true,
+    // The take moves districts around with four real grabs and then gives every
+    // coordinate back, through the control a user has. Layouts are never
+    // auto-tidied; a demo that leaves the map worse than it found it is a
+    // different failure, and this is the one that closes it.
+    mapReturnedToItsStartingLayout: true,
+    undoStackEmptiedOnCamera: true,
     clusterMovedByMouse: true,
     clusterInternalArrangementPreserved: true,
     // NOT clusterMovePropagatedToTheOtherSurface. It was declared here and the
@@ -902,6 +908,9 @@ export default [
     // map here and is stopped from rendering, so it costs the take nothing and
     // its model is read before and after the grab: if the cluster move is real
     // and committed, the peer's ledger changes to match.
+    // The layout as the take found it, so the take can be asked at the end
+    // whether it gave it back — bit for bit, not approximately.
+    const startLedger = JSON.stringify(await H.positions(page));
     const peer = await H.app({ surface: 'android', lens: 'canvas', map: 'map-fermentation',
                                actor: 'hands-peer', width: 640, height: 480 });
     await peer.page.evaluate(() => window.mm.stop());
@@ -1035,6 +1044,22 @@ export default [
       { at: 940, fn: async () => page.click('[data-t=tool-spread]') },
       { at: 1010, fn: async () => page.click('[data-t=tool-gather]') },
       { at: 1080, fn: async () => page.click('[data-t=tool-two]') },
+      // THE TAKE PUTS THE MAP BACK, ON CAMERA.
+      //
+      // The cycle-11 Audience compared the same crop at six timestamps and
+      // watched the lacto-vegetables district migrate steadily right until it
+      // overlapped the blue one and their labels collided — four explicit
+      // grabs, so not drift, but a demo that ends messier than it started and
+      // offers no way back. The way back exists now, and it is a feature rather
+      // than a capture trick: the same Undo control a user has, clicked, once
+      // per act, with the toast naming each district as it returns.
+      ...Array.from({ length: 26 }, (_, k) => ({ at: 1090 + k * 5, fn: async () => {
+          const enabled = await page.evaluate(() => {
+            const b = document.querySelector('[data-t=tool-undo]');
+            return !!b && !b.disabled;
+          });
+          if (enabled) await page.click('[data-t=tool-undo]');
+        } })),
     ];
     const beats = script(steps);
     await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: async (i, t, total) => {
@@ -1046,6 +1071,8 @@ export default [
       await beats(i, t, total);
     } });
     closeGrab();
+    const endLedger = JSON.stringify(await H.positions(page));
+    const undoLeft = await page.evaluate(() => window.mm.store.undoDepth);
     const uniq = [...new Set(poses)].filter(p => p !== 'none');
     // "Moved" is a question about the CENTROID; "arrangement preserved" is a
     // question about each member's offset FROM that centroid. The old check
@@ -1084,6 +1111,10 @@ export default [
              captionFramesOutrunningTheDetector: captionAudit.outran,
              captionOutrunExamples: captionAudit.examples,
              captionNeverOutrunsTheDetector: captionAudit.outran === 0,
+             // EVERY COORDINATE THE TAKE MOVED IS GIVEN BACK, through the app's
+             // own Undo control rather than by the harness writing positions.
+             undoStackEmptiedOnCamera: undoLeft === 0,
+             mapReturnedToItsStartingLayout: endLedger === startLedger,
              clusterMovedByPose: movedByPose.length > 0,
              clusterArrangementPreservedByPose:
                poseGrabs.length > 0 && poseGrabs.every(g => g.maxMemberDrift < 1e-3),

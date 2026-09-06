@@ -284,5 +284,9 @@ tr.map:hover{background:var(--panel)}
 #tools{position:fixed;left:252px;bottom:12px;z-index:26;display:none;gap:6px}
 #tools.show{display:flex}
 #tools button{min-width:78px}
+/* The undo control names what it would put back, and a district name can be
+   long; it truncates rather than stretching the row off the ground it sits on. */
+#tools button[data-t=tool-undo]{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tools button[data-t=tool-undo]:disabled{opacity:.5}
 .mono{font-family:"DejaVu Sans Mono",monospace;font-size:11px}
 `;

@@ -170,6 +170,10 @@ export class Controls {
     if (!n) return;
     this.dragging = id;
     this.dragMoved = false;
+    // ONE DRAG IS ONE ACT. Every coordinate this gesture changes is collected
+    // between here and endDrag, so putting it back is one operation rather than
+    // as many as there were mouse-move events.
+    this.store.beginMove();
     this.dragPlane.set(n.pos[0], n.pos[1], n.pos[2]);
     this.dragLast.copy(this.dragPlane);
     if (cluster) {
@@ -213,7 +217,7 @@ export class Controls {
       const n = this.store.node(this.dragging);
       if (n && !n.placed) this.store.place(this.dragging, [n.pos[0], n.pos[1], n.pos[2]]);
     }
-    if (this.dragging) this.hooks.onDragEnd?.();
+    const wasDragging = !!this.dragging;
     if (this.dragCluster && this.clusterStart && this.dragMoved) {
       const end = this.snapshotCluster(this.clusterStart.ids);
       const n0 = this.store.node(this.clusterStart.ids[0]);
@@ -232,7 +236,14 @@ export class Controls {
         };
       }
     }
+    const what = this.dragCluster
+      ? `moved ${this.dragCluster.length} thoughts` : 'moved a thought';
     this.dragging = null; this.dragCluster = null; this.clusterStart = null;
+    this.store.endMove(what);
+    // AFTER the act is closed, not before: the chrome asks the store what the
+    // next undo would put back, and refreshing first showed it the act before
+    // this one.
+    if (wasDragging) this.hooks.onDragEnd?.();
     this.scene.holding.setActive(false);
     this.scene.markDirty();
   }

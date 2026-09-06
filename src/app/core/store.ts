@@ -126,6 +126,83 @@ export class Store {
     return id;
   }
 
+  // -- undoing a move ------------------------------------------------------
+
+  /**
+   * PUTTING A DISTRICT BACK.
+   *
+   * Positions are sacred and layouts are never auto-tidied — which cuts both
+   * ways: nothing may move a thought without an explicit act, and an explicit
+   * act that moved the wrong thing left no way back. The closed fist takes
+   * whatever district the hand is over, and the cycle-11 Audience watched four
+   * grabs pile two districts on top of each other across artifact 17, ending
+   * the take with a messier map than it started and no route to the one before.
+   *
+   * So: a bounded stack of MOVES, and only moves. Each entry is one user act —
+   * a drag, a cluster grab, a placement — holding every coordinate that act
+   * changed, as it stood before. Undoing writes those coordinates back through
+   * `commit`, so it crosses to the other surface like any other explicit act
+   * and is not a local rewind of a shared model. Nothing else is undoable: this
+   * is not a general history, it is the way back from a move.
+   */
+  private moveStack: { what: string; at: number; before: [NodeId, Vec3][] }[] = [];
+  private pending: Map<NodeId, Vec3> | null = null;
+
+  /** Start collecting one act's worth of position changes. */
+  beginMove() { this.pending = new Map(); }
+
+  /**
+   * Close the act. Pushed only if a coordinate actually differs — a press that
+   * never moved anything must not fill the stack with entries that undo to the
+   * state they are already in.
+   */
+  endMove(what: string) {
+    const p = this.pending;
+    this.pending = null;
+    if (!p || !p.size) return;
+    const before: [NodeId, Vec3][] = [];
+    for (const [id, pos] of p) {
+      const n = this.doc.nodes[id];
+      if (!n) continue;
+      if (n.pos[0] !== pos[0] || n.pos[1] !== pos[1] || n.pos[2] !== pos[2]) before.push([id, pos]);
+    }
+    if (!before.length) return;
+    this.moveStack.push({ what, at: Date.now(), before });
+    if (this.moveStack.length > 24) this.moveStack.shift();
+  }
+
+  /** Record a node's position as it stood before the act now being collected. */
+  private noteMove(id: NodeId) {
+    if (!this.pending || this.pending.has(id)) return;
+    const n = this.doc.nodes[id];
+    if (n) this.pending.set(id, [n.pos[0], n.pos[1], n.pos[2]]);
+  }
+
+  /** What the next undo would put back, for anything that wants to say so. */
+  get undoableMove() {
+    const top = this.moveStack[this.moveStack.length - 1];
+    return top ? { what: top.what, nodes: top.before.length } : null;
+  }
+  get undoDepth() { return this.moveStack.length; }
+
+  /**
+   * Put the last move back, coordinate for coordinate.
+   *
+   * The ORIGINAL vectors are written, never an inverse delta: adding 1.7 and
+   * subtracting 1.7 does not return a float to where it started, and a position
+   * guarantee measured to six decimals cannot afford the difference.
+   */
+  undoMove(): { what: string; nodes: number } | null {
+    const top = this.moveStack.pop();
+    if (!top) return null;
+    for (const [id, pos] of top.before) {
+      if (!this.doc.nodes[id]) continue;
+      this.commit(ts => ({ t: 'node.set', id, actor: this.actor, ts,
+                           fields: { pos: [pos[0], pos[1], pos[2]], lastTouchedAt: Date.now() } }));
+    }
+    return { what: top.what, nodes: top.before.length };
+  }
+
   // -- placement (explicit user acts only) ---------------------------------
 
   /** Drag out of holding to a permanent spot. The node stays exactly there. */
@@ -135,6 +212,7 @@ export class Store {
     // 'holding' is a state, not a name. It is cleared on placement so the word
     // does not outlive the state it described.
     const nextLabel = label !== undefined ? label : (n.label === 'holding' ? '' : n.label);
+    this.noteMove(id);
     this.commit(ts => ({
       t: 'node.set', id, actor: this.actor, ts,
       fields: { pos, placed: true, lastTouchedAt: Date.now(), label: nextLabel },
@@ -144,6 +222,7 @@ export class Store {
   /** Move an already-placed node. Also an explicit drag. */
   move(id: NodeId, pos: Vec3) {
     if (!this.doc.nodes[id]) return;
+    this.noteMove(id);
     this.commit(ts => ({ t: 'node.set', id, actor: this.actor, ts, fields: { pos, lastTouchedAt: Date.now() } }));
   }
 
@@ -152,6 +231,7 @@ export class Store {
     for (const id of ids) {
       const n = this.doc.nodes[id];
       if (!n) continue;
+      this.noteMove(id);
       const pos: Vec3 = [n.pos[0] + delta[0], n.pos[1] + delta[1], n.pos[2] + delta[2]];
       this.commit(ts => ({ t: 'node.set', id, actor: this.actor, ts, fields: { pos, lastTouchedAt: Date.now() } }));
     }
