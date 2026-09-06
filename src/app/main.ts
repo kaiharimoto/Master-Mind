@@ -249,6 +249,49 @@ export class App {
    * full, and it survives a turn of the device, which is the whole point of it
    * in the AR lens.
    */
+  /**
+   * Which thought the pin/selection tag is naming this frame, if any.
+   *
+   * One source of truth, because two things need the answer: the tag that draws
+   * it, and the count of thoughts the frame is NOT naming. The cycle-11 Auditor
+   * found those two disagreeing — artifact 08's panel said "4 thoughts on
+   * screen without room for a label" and listed one whose text was displayed
+   * 30 px away in this very tag; artifact 12 said 2 and listed one for the same
+   * reason. A frame that miscounts what it is withholding is worse than one
+   * that withholds more.
+   */
+  private tagNames(): NodeId | null {
+    const suppressed = this.selected !== null &&
+      (this.scene.labelRects.get(this.selected)?.alpha ?? 0) <= 0.02;
+    return this.pinned ?? (suppressed ? this.selected : null);
+  }
+
+  /**
+   * Thoughts whose text this frame is showing somewhere OTHER than the label
+   * layer: the pin or selection tag, the AR reticle's readout, the editor's own
+   * Text field. Their names are on the frame, so they are not names the frame
+   * is failing to give.
+   */
+  namedElsewhere(): Set<NodeId> {
+    const out = new Set<NodeId>();
+    if (this.pinned) out.add(this.pinned);
+    if (this.aimedAt) out.add(this.aimedAt);
+    const tag = this.tagNames();
+    if (tag) out.add(tag);
+    if (this.selected && document.getElementById('editor')) out.add(this.selected);
+    return out;
+  }
+
+  /**
+   * The thoughts on screen this frame genuinely leaves unnamed — the arbiter's
+   * suppressed set less anything the chrome names. This is what the badge
+   * counts and what the recovery column lists; nothing else may count them.
+   */
+  unnamedOnScreen(): NodeId[] {
+    const other = this.namedElsewhere();
+    return this.scene.suppressedIds.filter(i => !other.has(i));
+  }
+
   private renderPin() {
     // THE THOUGHT UNDER EDIT IS NAMED ON THE MAP, not only in a form field.
     //
@@ -259,9 +302,7 @@ export class App {
     // arbiter could not place its label clear, the tag draws instead: same
     // mechanism as the pin, for the same reason, and it costs no other label
     // its ground because the tag is a reserved rectangle like any panel.
-    const suppressed = this.selected !== null &&
-      (this.scene.labelRects.get(this.selected)?.alpha ?? 0) <= 0.02;
-    const id = this.pinned ?? (suppressed ? this.selected : null);
+    const id = this.tagNames();
     let r = document.getElementById('pinmark');
     if (!id || !this.store.doc.nodes[id]) { r?.remove(); return; }
     if (!r) {
@@ -277,7 +318,67 @@ export class App {
     r.style.left = `${Math.round(s.x / dpr - rad)}px`;
     r.style.top = `${Math.round(s.y / dpr - rad)}px`;
     r.style.width = r.style.height = `${Math.round(rad * 2)}px`;
-    $('[data-t=pin-name]', r).textContent = this.store.doc.nodes[id].text;
+    const tag = $('[data-t=pin-name]', r) as HTMLElement;
+    tag.textContent = this.store.doc.nodes[id].text;
+    this.placeTag(tag, s, rad, dpr, id);
+  }
+
+  /**
+   * THE TAG GOES WHERE IT BURIES THE LEAST.
+   *
+   * It was pinned below the ring unconditionally, and on artifact 04 that put
+   * it straight over the densest part of a search-hit cluster: the cycle-11
+   * Auditor measured three of the nineteen hits falling from 0.62 relative
+   * luminance to 0.19, 0.23 and 0.27 — from lit hit to near-background, on the
+   * one frame whose subject is that the hits read at a glance. The label
+   * arbiter has solved this problem for every automatic label since cycle 5;
+   * the tag was simply not going through it.
+   *
+   * Eight placements around the ring, scored by how many node markers the tag's
+   * own rectangle would cover, with the default below-centre winning ties so a
+   * frame with room everywhere looks exactly as it did. Markers, not labels:
+   * the tag is drawn above the label layer and a name it covers is recoverable
+   * from the recovery column, while a buried marker is a state the reader
+   * cannot see at all.
+   */
+  private placeTag(tag: HTMLElement, s: { x: number; y: number }, rad: number,
+                   dpr: number, own: NodeId) {
+    tag.style.left = ''; tag.style.top = ''; tag.style.transform = '';
+    const w = tag.offsetWidth, h = tag.offsetHeight;
+    if (!w || !h) return;
+    const cx = s.x / dpr, cy = s.y / dpr;
+    const G = 6;
+    // left/top of the tag's box, in page pixels, for each candidate.
+    const cands: [number, number][] = [
+      [cx - w / 2, cy + rad + G],           // below   — the default
+      [cx - w / 2, cy - rad - G - h],       // above
+      [cx + rad + G, cy - h / 2],           // right
+      [cx - rad - G - w, cy - h / 2],       // left
+      [cx + rad * 0.7, cy + rad * 0.7],     // below-right
+      [cx - rad * 0.7 - w, cy + rad * 0.7], // below-left
+      [cx + rad * 0.7, cy - rad * 0.7 - h], // above-right
+      [cx - rad * 0.7 - w, cy - rad * 0.7 - h],
+    ];
+    const marks = this.scene.screenPositions()
+      .filter(q => q.id !== own)
+      .map(q => ({ x: q.x / dpr, y: q.y / dpr, r: Math.max(q.r / dpr, 2) }));
+    const W = window.innerWidth, H = window.innerHeight;
+    let best = 0, bestScore = Infinity;
+    for (let i = 0; i < cands.length; i++) {
+      const [x0, y0] = cands[i];
+      const x1 = x0 + w, y1 = y0 + h;
+      // Off-frame is worse than crowded: a tag half outside the picture names
+      // nothing. Counted as heavily as a dozen buried markers.
+      let score = (x0 < 4 || y0 < 4 || x1 > W - 4 || y1 > H - 4) ? 12 : 0;
+      for (const m of marks)
+        if (m.x + m.r > x0 && m.x - m.r < x1 && m.y + m.r > y0 && m.y - m.r < y1) score++;
+      if (score < bestScore) { bestScore = score; best = i; if (!score) break; }
+    }
+    if (best === 0) return;                 // the stylesheet already does this
+    const [x0, y0] = cands[best];
+    tag.style.left = `${Math.round(x0 - (cx - rad))}px`;
+    tag.style.top = `${Math.round(y0 - (cy - rad))}px`;
+    tag.style.transform = 'none';
   }
 
   /** Keep a thought identified while the view moves. Toggled from the editor. */
@@ -800,7 +901,7 @@ export class App {
       chip = el('div', { id: 'hidden', 'data-t': 'labels-hidden' });
       document.body.appendChild(chip);
     }
-    const n = this.scene.suppressed;
+    const n = this.unnamedOnScreen().length;
     const cut = this.scene.shortened;
     // The badge exists to declare what the frame is not showing, so it must not
     // itself be the thing that is hidden: it stands down when the editor would
@@ -1009,7 +1110,7 @@ export class App {
       col = el('div', { id: 'unlabelled', 'data-t': 'unlabelled-list' });
       document.body.appendChild(col);
     }
-    const ids = this.scene.suppressedIds;
+    const ids = this.unnamedOnScreen();
     // THE CANVAS LENS GETS IT TOO. The recovery column existed on mind
     // expansion only, so the same map at the same loss offered a way back to
     // the hidden names in one lens and nothing at all in the other — and the
@@ -1025,10 +1126,26 @@ export class App {
                  !this.panelOpen();
     col.className = show ? 'show' : '';
     if (!show) { col.innerHTML = ''; col.style.top = ''; return; }
+    // BELOW EVERYTHING ALREADY IN THE RIGHT RAIL, not only the editor.
+    //
+    // The badge-stacking fix went in per-artifact in cycle 11 and the cycle-11
+    // Auditor found where it had not been generalised: on artifacts 05 and 12
+    // this column's FIRST line — the one carrying the count — sat entirely
+    // behind the "labels hidden" badge, so the panel began mid-sentence at
+    // "for a label". The rule belongs here, once, against every rail occupant
+    // that actually overlaps this column.
     {
-      const ed = document.getElementById('editor');
-      const r = ed ? ed.getBoundingClientRect() : null;
-      col.style.top = r && r.height > 2 ? `${Math.round(r.bottom + 10)}px` : '';
+      col.style.top = '';
+      const own = col.getBoundingClientRect();
+      let top = 0;
+      for (const sel of ['#editor', '#hidden', '#hitbreak', '#origin', '#states']) {
+        const e = document.querySelector(sel) as HTMLElement | null;
+        if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
+        const r = e.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2) continue;
+        if (r.right + 6 > own.left && r.left < own.right) top = Math.max(top, r.bottom + 10);
+      }
+      col.style.top = top ? `${Math.round(top)}px` : '';
     }
     // As many as the column can hold, longest-settled first so the order is a
     // property of the map rather than of the arbiter's iteration.
