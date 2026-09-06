@@ -103,11 +103,34 @@ export async function shot(page, cdp, out, ms = 0) {
  * only checked where it is convenient is not a guarantee.
  */
 export async function record(page, cdp, { out, seconds, fps = SEED.fps, onFrame = null, startMs = 0,
-                                          auditEvery = 0, auditInto = null }) {
+                                          auditEvery = 0, auditInto = null, letterbox = null }) {
   const total = Math.ceil(seconds * fps);
   mkdirSync(dirname(out), { recursive: true });
+  // A PORTRAIT DEVICE STAYS A PORTRAIT DEVICE.
+  //
+  // The Android artifacts disagreed about what an Android device is: the AR
+  // hero shows a 1280x1440 portrait frame, and the touch-vocabulary take was
+  // captured 1920x1080 landscape with a desktop-width side editor — the same
+  // lens, two device shapes, which the cycle-11 Audience read as the set not
+  // knowing what it is showing. A take may now be shot at the device's own
+  // aspect and letterboxed into the delivered frame, with the margin carrying
+  // the reference the take is about rather than being padding.
+  const lb = letterbox;
+  const vf = lb
+    ? [`scale=-2:${lb.height}`,
+       // The device sits left with a small margin; the reference column takes
+       // the ground that is left. Centring it would have put the caption text
+       // on top of the picture.
+       `pad=${lb.width}:${lb.height}:${lb.padX ?? 40}:0:color=0x120E0B`,
+       ...(lb.lines ?? []).map((t, i) =>
+         `drawtext=fontfile=${i === 0 ? HEAD_FONT : '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'}:` +
+         `text='${String(t).replace(/[\\:']/g, m => '\\' + m)}':x=${lb.textX ?? 24}:` +
+         `y=${(lb.textY ?? 40) + i * (lb.lead ?? 26)}:fontsize=${i === 0 ? 21 : 14}:` +
+         `fontcolor=${i === 0 ? '0xEFE6D8' : '0x918779'}`)].join(',')
+    : null;
   const ff = spawn('ffmpeg', [
     '-y', '-f', 'image2pipe', '-vcodec', 'mjpeg', '-r', String(fps), '-i', 'pipe:0',
+    ...(vf ? ['-vf', vf] : []),
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p',
     '-r', String(fps), '-movflags', '+faststart', out,
   ], { stdio: ['pipe', 'ignore', 'pipe'] });

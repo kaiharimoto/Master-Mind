@@ -1,0 +1,698 @@
+{
+  "cycle": 11,
+  "previousCycle": 10,
+  "previousCycleSource": "derived from the snapshot directory being diffed",
+  "capturedNow": 20,
+  "capturedPrev": 20,
+  "capturedPrevSource": "artifact files actually present in the previous snapshot",
+  "previousManifestSelfReport": {
+    "cycle": 10,
+    "captured": 20
+  },
+  "headerDisagreement": null,
+  "rowsVsCapturedPrev": "ok",
+  "notes": [
+    "02 02_canvas_large_map.png: output moved materially: lit subject moved 4 %, mean luminance 20 % — inspect",
+    "11 11_sync_twin_before.png: output moved materially: ssim 0.847 is 0.143 below its 0.99 threshold — inspect",
+    "12 12_sync_twin_after.png: output moved materially: ssim 0.824 is 0.166 below its 0.99 threshold; lit subject moved 9 %, mean luminance 9 % — inspect",
+    "17 17_hand_vocabulary.mp4: output moved materially: ssim 0.846 is 0.054 below its 0.9 threshold — inspect",
+    "19 19_capture_place_arc.mp4: output moved materially: lit subject moved 24 %, mean luminance 4 % — inspect",
+    "02 02_canvas_large_map.png: claims added — everyLabelUnambiguouslyBound",
+    "06 06_holding_cluster.png: claims added — everyLabelUnambiguouslyBound",
+    "10 10_search_flyto_end.png: claims added — everyLabelUnambiguouslyBound, searchMatchReasonUnoccluded",
+    "04 04_mind_expansion.png: ssim 0.9592 is below its 0.99 threshold and the lit subject moved — inspect",
+    "05 05_hand_tracking.png: ssim 0.9345 is below its 0.94 threshold — inspect",
+    "08 08_placement_endstate.png: ssim 0.9673 is below its 0.985 threshold — inspect",
+    "09 09_connect_edit.png: ssim 0.9791 is below its 0.985 threshold — inspect",
+    "14 14_finder_review.png: ssim 0.9143 is below its 0.995 threshold — inspect"
+  ],
+  "rows": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 32809,
+          "meanLum": 0.5746,
+          "peakLum": 0.9991
+        },
+        "prev": {
+          "litPixels": 32809,
+          "meanLum": 0.5746,
+          "peakLum": 0.9991
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "substantive": false
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.947823,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 77016,
+          "meanLum": 0.4146,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 73744,
+          "meanLum": 0.3468,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.196,
+        "litDelta": 0.044
+      },
+      "subjectChanged": true,
+      "onFrameChanged": [
+        "unlabelledListed 48 -> 37"
+      ],
+      "claims": {
+        "added": [
+          "everyLabelUnambiguouslyBound"
+        ],
+        "removed": [],
+        "before": 8,
+        "after": 9
+      },
+      "substantive": true,
+      "whatChanged": "output moved materially: lit subject moved 4 %, mean luminance 20 % — inspect"
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.997723,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 143643,
+          "meanLum": 0.4616,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 142740,
+          "meanLum": 0.4634,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.004,
+        "litDelta": 0.006
+      },
+      "whatChanged": "demonstrates: \"AR lens hero on Android at cold first launch, one map at two device orientations\" -> \"AR lens hero on Android at cold first launch, one map at two device orientations — framed on a placed district, so the holding ring is at the frame edge rather than whole\"; demonstrates now: \"AR lens hero on Android at cold first launch, one map at two device orientations — framed on a placed district, so the holding ring is at the frame edge rather than whole\"",
+      "recipeChanged": false,
+      "why": "recipe reworded, output unchanged",
+      "substantive": false
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.959193,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 93537,
+          "meanLum": 0.4283,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 78203,
+          "meanLum": 0.4101,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.044,
+        "litDelta": 0.196
+      },
+      "subjectChanged": true,
+      "onFrameChanged": [
+        "unlabelledListed 0 -> 20"
+      ],
+      "substantive": false
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssim": 0.934535,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 266318,
+          "meanLum": 0.4218,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 255333,
+          "meanLum": 0.403,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.047,
+        "litDelta": 0.043
+      },
+      "substantive": false
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.989029,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 58041,
+          "meanLum": 0.4625,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 56317,
+          "meanLum": 0.4435,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.043,
+        "litDelta": 0.031
+      },
+      "claims": {
+        "added": [
+          "everyLabelUnambiguouslyBound"
+        ],
+        "removed": [],
+        "before": 9,
+        "after": 10
+      },
+      "substantive": false
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.999893,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 72813,
+          "meanLum": 0.4601,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 72787,
+          "meanLum": 0.4602,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "substantive": false
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.967313,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 89732,
+          "meanLum": 0.4902,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 81823,
+          "meanLum": 0.4941,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.008,
+        "litDelta": 0.097
+      },
+      "substantive": false
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "status": "captured",
+      "threshold": 0.985,
+      "ssim": 0.979088,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 100034,
+          "meanLum": 0.5318,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 94363,
+          "meanLum": 0.5372,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.01,
+        "litDelta": 0.06
+      },
+      "substantive": false
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.969067,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 84479,
+          "meanLum": 0.5172,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 78017,
+          "meanLum": 0.5194,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.004,
+        "litDelta": 0.083
+      },
+      "claims": {
+        "added": [
+          "everyLabelUnambiguouslyBound",
+          "searchMatchReasonUnoccluded"
+        ],
+        "removed": [],
+        "before": 10,
+        "after": 12
+      },
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (491ed807d1cf3a88 -> ef4340f5a9e4398f); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.846597,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 65973,
+          "meanLum": 0.4903,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 61909,
+          "meanLum": 0.4957,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.011,
+        "litDelta": 0.066
+      },
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.847 is 0.143 below its 0.99 threshold — inspect"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "status": "captured",
+      "threshold": 0.99,
+      "ssim": 0.823897,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 232511,
+          "meanLum": 0.468,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 213717,
+          "meanLum": 0.4293,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.09,
+        "litDelta": 0.088
+      },
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.824 is 0.166 below its 0.99 threshold; lit subject moved 9 %, mean luminance 9 % — inspect"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.999789,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 102800,
+          "meanLum": 0.4825,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 102784,
+          "meanLum": 0.4826,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "substantive": false
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 0.914255,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 153837,
+          "meanLum": 0.5005,
+          "peakLum": 1
+        },
+        "prev": {
+          "litPixels": 149024,
+          "meanLum": 0.5066,
+          "peakLum": 1
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.012,
+        "litDelta": 0.032
+      },
+      "recipeFingerprintChanged": true,
+      "whatChanged": "capture script changed (67637281bbe5a5e0 -> fef3cb770ce05bd0); demonstrates: unchanged",
+      "recipeChanged": true,
+      "substantive": true
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "status": "captured",
+      "threshold": 0.995,
+      "ssim": 1,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 79897,
+          "meanLum": 0.411,
+          "peakLum": 0.9063
+        },
+        "prev": {
+          "litPixels": 79897,
+          "meanLum": 0.411,
+          "peakLum": 0.9063
+        },
+        "peakDelta": 0,
+        "meanDelta": 0,
+        "litDelta": 0
+      },
+      "substantive": false
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "ssim": 0.996112,
+      "seconds": {
+        "cur": 34,
+        "prev": 34
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 1830894,
+        "prev": 1770993
+      },
+      "bitrateDelta": 0.034,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 284167,
+          "meanLum": 0.4258,
+          "peakLum": 0.9914
+        },
+        "prev": {
+          "litPixels": 282518,
+          "meanLum": 0.426,
+          "peakLum": 0.9973
+        },
+        "peakDelta": 0.006,
+        "meanDelta": 0,
+        "litDelta": 0.006
+      },
+      "substantive": false
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "status": "captured",
+      "threshold": 0.9,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "ssim": 0.845783,
+      "seconds": {
+        "cur": 41,
+        "prev": 41
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 6622457,
+        "prev": 5606539
+      },
+      "bitrateDelta": 0.181,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 765359,
+          "meanLum": 0.3677,
+          "peakLum": 0.9911
+        },
+        "prev": {
+          "litPixels": 693735,
+          "meanLum": 0.3649,
+          "peakLum": 0.9772
+        },
+        "peakDelta": 0.014,
+        "meanDelta": 0.008,
+        "litDelta": 0.103
+      },
+      "subjectChanged": true,
+      "substantive": true,
+      "whatChanged": "output moved materially: ssim 0.846 is 0.054 below its 0.9 threshold — inspect"
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "status": "captured",
+      "threshold": 0.94,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "ssim": 0.959608,
+      "seconds": {
+        "cur": 13,
+        "prev": 13
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 2903148,
+        "prev": 2576881
+      },
+      "bitrateDelta": 0.127,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 530736,
+          "meanLum": 0.3856,
+          "peakLum": 0.9904
+        },
+        "prev": {
+          "litPixels": 470368,
+          "meanLum": 0.3784,
+          "peakLum": 0.985
+        },
+        "peakDelta": 0.005,
+        "meanDelta": 0.019,
+        "litDelta": 0.128
+      },
+      "subjectChanged": true,
+      "why": "subject luminance moved: peak 0.985 -> 0.9904, mean 0.3784 -> 0.3856, lit pixels 470368 -> 530736",
+      "substantive": false
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "status": "captured",
+      "threshold": 0.93,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "ssim": 0.953986,
+      "seconds": {
+        "cur": 23,
+        "prev": 23
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 2037766,
+        "prev": 1724397
+      },
+      "bitrateDelta": 0.182,
+      "verdict": "changed",
+      "subject": {
+        "cur": {
+          "litPixels": 494159,
+          "meanLum": 0.3743,
+          "peakLum": 0.9709
+        },
+        "prev": {
+          "litPixels": 399961,
+          "meanLum": 0.3618,
+          "peakLum": 0.9771
+        },
+        "peakDelta": 0.006,
+        "meanDelta": 0.035,
+        "litDelta": 0.236
+      },
+      "subjectChanged": true,
+      "why": "subject luminance moved: peak 0.9771 -> 0.9709, mean 0.3618 -> 0.3743, lit pixels 399961 -> 494159",
+      "substantive": true,
+      "whatChanged": "output moved materially: lit subject moved 24 %, mean luminance 4 % — inspect"
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "status": "captured",
+      "threshold": 0.95,
+      "ssimMethod": "contact sheet, 20 frames spanning the take",
+      "ssim": 0.985021,
+      "seconds": {
+        "cur": 30,
+        "prev": 30
+      },
+      "fps": {
+        "cur": "30/1",
+        "prev": "30/1"
+      },
+      "bytes": {
+        "cur": 647178,
+        "prev": 636707
+      },
+      "bitrateDelta": 0.016,
+      "verdict": "unchanged",
+      "subject": {
+        "cur": {
+          "litPixels": 429953,
+          "meanLum": 0.4219,
+          "peakLum": 0.9656
+        },
+        "prev": {
+          "litPixels": 416400,
+          "meanLum": 0.4231,
+          "peakLum": 0.9656
+        },
+        "peakDelta": 0,
+        "meanDelta": 0.003,
+        "litDelta": 0.033
+      },
+      "substantive": false
+    }
+  ],
+  "positions": {
+    "compared": true,
+    "moved": [],
+    "added": [],
+    "removed": [],
+    "identical": true,
+    "what": "the seed ledger as each capture left it — not a runtime drift measure; runtime stillness is evidenced by the idle windows in artifacts 16, 17, 19 and 20"
+  },
+  "summary": {
+    "unchanged": 7,
+    "changed": 13,
+    "new": 0,
+    "missing": 0,
+    "uncomparable": 0,
+    "total": 20,
+    "changedIds": [
+      "02",
+      "04",
+      "05",
+      "06",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "14",
+      "17",
+      "18",
+      "19"
+    ],
+    "missingIds": [],
+    "uncomparableIds": [],
+    "substantiveIds": [
+      "02",
+      "10",
+      "11",
+      "12",
+      "14",
+      "17",
+      "19"
+    ],
+    "recipeChangedIds": [
+      "10",
+      "14"
+    ],
+    "claimsChangedIds": [
+      "02",
+      "06",
+      "10"
+    ],
+    "claimsRemovedIds": [],
+    "belowThresholdIds": [
+      "02",
+      "04",
+      "05",
+      "06",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "14",
+      "17"
+    ]
+  }
+}

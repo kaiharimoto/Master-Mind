@@ -811,13 +811,20 @@ export default [
   id: '16', file: '16_touch_vocabulary.mp4', kind: 'mp4',
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
-  requires: { tapSelected: true, doubleTapConnected: true, dragPlacedIt: true },
+  requires: { tapSelected: true, doubleTapConnected: true, dragPlacedIt: true,
+              devicePortraitAsInTheHero: true, marginReferenceFitsItsColumn: true },
   demonstrates: 'Android touch vocabulary in motion inside the AR lens, with an orientation-only beat', minW: 1920, minH: 1080,
   minFps: 24, minSec: 30, surface: 'android', map: 'map-talk', title: 'Touch gesture vocabulary',
   async run(H) {
     // Run the vocabulary inside the AR lens: the touch gestures belong to both
     // Android lenses, and this is the take that shows AR in motion.
-    const { page, cdp } = await H.app({ surface: 'android', lens: 'ar', map: 'map-talk', touch: true });
+    // THE SAME DEVICE SHAPE THE AR HERO USES. 1280x1440 portrait, letterboxed
+    // into the delivered 1920x1080 frame, with the touch vocabulary itself in
+    // the margin. The take was shot 1920x1080 landscape with a desktop-width
+    // side editor, so the two Android artifacts showed the same lens on two
+    // different devices — the cycle-11 Audience's A7.
+    const { page, cdp } = await H.app({ surface: 'android', lens: 'ar', map: 'map-talk', touch: true,
+                                        width: 1280, height: 1440 });
     await orient(page, cdp, { alpha: 0, beta: 90, gamma: 0 });
     await POSE(page, { yaw: 0.30, pitch: 0.14 });
     await FRAME_ALL(page, 1.18);
@@ -833,6 +840,8 @@ export default [
       window.mm.showGesture = (id, detail) => { window.__gesture(id); return orig(id, detail); };
     });
     const A = await SCREEN_OF(page, idA), B = await SCREEN_OF(page, idB);
+    const vp = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
+    const VX = (f) => Math.round(vp[0] * f), VY = (f) => Math.round(vp[1] * f);
     let newId = null, drag = null;
     const steps = [
       // Screen positions are re-read before each touch: any interaction may
@@ -842,7 +851,10 @@ export default [
       { at: 150, fn: async () => { const a = await SCREEN_OF(page, idA); if (a) await touch.tap(cdp, a.x, a.y); } },
       { at: 156, fn: async () => { const a = await SCREEN_OF(page, idA); if (a) await touch.tap(cdp, a.x, a.y); } },
       { at: 205, fn: async () => { const b2 = await SCREEN_OF(page, idB); if (b2) await touch.tap(cdp, b2.x, b2.y); } },
-      { at: 300, fn: async () => touch.start(cdp, 320, 830) },                      // long-press begins
+      // COORDINATES AS FRACTIONS OF THE DEVICE, not as numbers tuned to one
+      // viewport. They were literals from the 1920x1080 shoot; on a 1280x1440
+      // portrait device the look-around drag started 100 px past the right edge.
+      { at: 300, fn: async () => touch.start(cdp, VX(0.25), VY(0.58)) },            // long-press begins
       { at: 322, fn: async () => { await touch.end(cdp);                            // fires at +500 ms
           newId = await page.evaluate(() => window.mm.selected); } },
       { at: 400, fn: async () => { drag = await SCREEN_OF(page, newId); if (drag) await touch.start(cdp, drag.x, drag.y); } },
@@ -851,16 +863,17 @@ export default [
           await touch.move(cdp, [{ x: drag.x + (k + 1) * 15, y: drag.y - (k + 1) * 12, id: 1 }]);
         } })),
       { at: 466, fn: async () => touch.end(cdp) },
-      { at: 560, fn: async () => touch.start(cdp, 1380, 470) },                     // look around
+      { at: 560, fn: async () => touch.start(cdp, VX(0.72), VY(0.44)) },            // look around
       ...Array.from({ length: 34 }, (_, k) => ({ at: 562 + k * 2, fn: async () =>
-          touch.move(cdp, [{ x: 1380 - (k + 1) * 4, y: 470 + (k + 1) * 1.4, id: 1 }]) })),
+          touch.move(cdp, [{ x: VX(0.72) - (k + 1) * 4, y: VY(0.44) + (k + 1) * 1.4, id: 1 }]) })),
       { at: 634, fn: async () => touch.end(cdp) },
       { at: 720, fn: async () => cdp.send('Input.dispatchTouchEvent',                // pinch / spread
-          { type: 'touchStart', touchPoints: [{ x: 830, y: 520, id: 1 }, { x: 1090, y: 560, id: 2 }] }) },
+          { type: 'touchStart', touchPoints: [{ x: VX(0.43), y: VY(0.48), id: 1 },
+                                              { x: VX(0.57), y: VY(0.52), id: 2 }] }) },
       ...Array.from({ length: 34 }, (_, k) => ({ at: 722 + k * 2, fn: async () =>
           cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [
-            { x: 830 - (k + 1) * 2.2, y: 520 - (k + 1) * 0.8, id: 1 },
-            { x: 1090 + (k + 1) * 2.2, y: 560 + (k + 1) * 0.8, id: 2 }] }) })),
+            { x: VX(0.43) - (k + 1) * 2.2, y: VY(0.48) - (k + 1) * 0.8, id: 1 },
+            { x: VX(0.57) + (k + 1) * 2.2, y: VY(0.52) + (k + 1) * 0.8, id: 2 }] }) })),
       { at: 794, fn: async () => cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }) },
       // Orientation gets its own beat, with no touch input in it, so
       // gyroscopic control is demonstrated on its own rather than entangled
@@ -874,7 +887,24 @@ export default [
           await orient(page, cdp, { alpha: (k + 1) * 1.5, beta: 90 - (k + 1) * 0.5, gamma: 0 });
         } })),
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 34, onFrame: script(steps) });
+    // The vocabulary read out of the app's own table, so the margin cannot
+    // drift from what the gestures actually do.
+    const vocab = await page.evaluate(() => window.mm.touchVocab.map(g => `${g.name} — ${g.operation}`));
+    const dev = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
+    // The margin's own fit, measured through the fonts that draw it. A
+    // reference column running off the frame would be worse than no column.
+    const MARGIN_X = 1060, MARGIN_RIGHT = 1920 - 24;
+    const marginHead = ['Android touch vocabulary'];
+    const marginBody = ['the device frame is 1280×1440 portrait, as in artifact 03', ...vocab];
+    const inkHead = await inkWidths(marginHead,
+      { font: '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', size: 21 });
+    const inkBody = await inkWidths(marginBody,
+      { font: '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', size: 14 });
+    const marginRoom = MARGIN_RIGHT - MARGIN_X;
+    const marginWorst = Math.max(...inkHead, ...inkBody);
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 34, onFrame: script(steps),
+      letterbox: { width: 1920, height: 1080, padX: 40, textX: MARGIN_X, textY: 96, lead: 32,
+                   lines: [...marginHead, ...marginBody] } });
     const uniq = [...new Set(fired)];
     const gyroEnd = await page.evaluate(() => (window.mm.gyro ? { ...window.mm.gyro } : null));
     const poseEnd = await page.evaluate(() => ({ yaw: +window.mm.scene.pose.yaw.toFixed(3),
@@ -883,6 +913,15 @@ export default [
       .some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a)), { a: idA, b: idB });
     const placed = newId ? await page.evaluate(i => !!(window.mm.store.doc.nodes[i] || {}).placed, newId) : false;
     return { lens: 'ar', gesturesFired: uniq, count: uniq.length, quickAddedNode: newId,
+             deviceViewport: dev,
+             // MEASURED, not asserted. A flag written `true` beside the value it
+             // is about is the instrument agreeing with itself; this compares
+             // the viewport the take actually ran in against the shape the AR
+             // hero uses.
+             devicePortraitAsInTheHero: dev[0] === 1280 && dev[1] === 1440,
+             vocabularyInMargin: vocab.length,
+             marginRoomPx: marginRoom, marginWorstLinePx: marginWorst,
+             marginReferenceFitsItsColumn: marginWorst <= marginRoom,
              tapSelected: A && B ? true : false, doubleTapConnected: linked, dragPlacedIt: placed,
              gyroEnd, poseEnd,
              holding: await page.evaluate(() => window.mm.store.holdingCount()) };

@@ -1,0 +1,3097 @@
+{
+  "cycle": 11,
+  "seed": {
+    "epoch": 1787227200000,
+    "rng": 1296913221,
+    "fps": 30
+  },
+  "startedAt": "2026-09-04T19:46:47.167Z",
+  "lastRunAt": "2026-09-06T06:38:22.607Z",
+  "lastRunCaptured": [
+    "17"
+  ],
+  "artifacts": [
+    {
+      "id": "01",
+      "file": "01_maps_home.png",
+      "title": "Maps home",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 3.2,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 141685,
+        "sha256": "2c8ae64ea1fff7b9d381da1c0d919fbc037c2bef9aedf3b80da3436b15471039"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "listedCountsMatchTheModel",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "mapsAfterDelete",
+            "expected": "(predicate)",
+            "actual": 2,
+            "pass": true
+          },
+          {
+            "claim": "renameWentThroughThePrompt",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "maps": {
+          "map-talk": 11,
+          "map-fermentation": 150
+        },
+        "listedOnFrame": {
+          "map-talk": 11,
+          "map-fermentation": 150
+        },
+        "countMismatches": [],
+        "renameWentThroughThePrompt": true,
+        "listedCountsMatchTheModel": true,
+        "mapsAfterDelete": 2,
+        "note": "create, rename and delete each driven through that row's own button; three states composited"
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "maps home: create, rename and delete a map, both seeded maps listed with node counts",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "e97c2524c7397c53"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:52:57.630Z"
+    },
+    {
+      "id": "02",
+      "file": "02_canvas_large_map.png",
+      "title": "Canvas at scale",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 2.2,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 310540,
+        "sha256": "5bf8858d9d55830daa24a0b082edd507bf8ca6d52d15b45ec331f97932f640f0"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "nodes",
+            "expected": "(predicate)",
+            "actual": 150,
+            "pass": true
+          },
+          {
+            "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "noTwoDrawnLabelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyDrawnLabelHasAVisibleMarker",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelStaysBesideItsNode",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelUnambiguouslyBound",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "auditDescribesTheShippedFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "canvas",
+        "surface": "windows",
+        "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 109,
+          "labelsShortened": 16,
+          "unlabelledListed": 37,
+          "searchBreakdown": null,
+          "mapName": "Fermentation notebook"
+        },
+        "camera": {
+          "yaw": 0.42,
+          "pitch": 0.2,
+          "dist": 120.110861,
+          "target": [
+            4.227,
+            -4.996,
+            0.6945
+          ]
+        },
+        "cameraPinned": true,
+        "arbiterSeq": 6,
+        "labelsAudited": 41,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Mesophilic vs thermophilic",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
+        "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
+        "labelOverlappingPairs": 0,
+        "labelWorstPairOverlapPx": 0,
+        "labelWorstPairOn": null,
+        "labelTightestPairGapPx": 3.5,
+        "labelTightestPairOn": [
+          "Fido jars burp themselves",
+          "Label tape and a marker"
+        ],
+        "noTwoDrawnLabelsOverlap": true,
+        "labelsTruncated": 16,
+        "labelsTruncatedOn": [
+          "Vinegar from failed wine",
+          "Stiff levain keeps longer",
+          "Crock with a water moat",
+          "Sauerkraut by weight",
+          "Label tape and a marker",
+          "Rice koji: polish to 90%",
+          "Kahm yeast is harmless",
+          "Leuconostoc mesenteroides",
+          "Cheese cave humidity",
+          "Noma Guide to Fermentation",
+          "Mesophilic vs thermophilic",
+          "Scoring at 30 degrees",
+          "Whey as a brine starter",
+          "Wild yeast capture",
+          "The Art of Fermentation",
+          "Trust smell over sight"
+        ],
+        "labelWorstDisplacementPx": 36.3,
+        "labelsMoreThan40pxFromTheirNode": 0,
+        "markersBuriedByOtherLabels": 0,
+        "worstBuriedFraction": 0,
+        "noDrawnLabelBuriesAnotherMarker": true,
+        "labelWorstReservedDisplacementPx": 36.3,
+        "labelWorstDisplacementEm": 2.59,
+        "everyLabelStaysBesideItsNode": true,
+        "labelWorstAmbiguityRatio": 3.73,
+        "labelsAmbiguousWithoutALeader": 0,
+        "everyLabelUnambiguouslyBound": true,
+        "markerContrast": {
+          "checked": 41,
+          "sampled": 41,
+          "offFrame": 0,
+          "threshold": 2.5,
+          "invisible": 0,
+          "worstContrast": 3,
+          "invisibleIds": [],
+          "weakest": []
+        },
+        "labelsWithoutVisibleMarker": 0,
+        "everyDrawnLabelHasAVisibleMarker": true,
+        "arbiterSeqAtShot": 6,
+        "arbiterSeqAtAudit": 6,
+        "auditDescribesTheShippedFrame": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "canvas lens at whole-map framing on Windows, 150 nodes with seed provenance",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "73b7deb0e7bd2172"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:52:59.562Z"
+    },
+    {
+      "id": "03",
+      "file": "03_hero_ar_coldstart.png",
+      "title": "Hero — AR projection, cold start",
+      "kind": "png",
+      "minimum": "2560x1440",
+      "seconds": 3.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 2560,
+        "height": 1440,
+        "bytes": 809390,
+        "sha256": "07daf5624a8dce99c4e4a7857d2d2d6575e9da763496479cc42bf9f7a9b6da01"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "gyroDroveTheView",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "positionsUnchangedBetweenPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "headingChanged",
+            "expected": "(predicate)",
+            "actual": 62,
+            "pass": true
+          },
+          {
+            "claim": "anchorNamedInBothPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "ar",
+        "surface": "android",
+        "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 74,
+          "labelsShortened": 16,
+          "unlabelledListed": 0,
+          "searchBreakdown": null,
+          "mapName": "Fermentation notebook"
+        },
+        "panels": [
+          {
+            "sent": {
+              "alpha": 34,
+              "beta": 62,
+              "gamma": 6
+            },
+            "received": {
+              "alpha": 34,
+              "beta": 62,
+              "gamma": 6
+            },
+            "pose": {
+              "yaw": 0.007,
+              "pitch": -0.269
+            },
+            "anchor": {
+              "x": 253,
+              "y": 460
+            }
+          },
+          {
+            "sent": {
+              "alpha": 96,
+              "beta": 58,
+              "gamma": -4
+            },
+            "received": {
+              "alpha": 96,
+              "beta": 58,
+              "gamma": -4
+            },
+            "pose": {
+              "yaw": -1.076,
+              "pitch": -0.339
+            },
+            "anchor": {
+              "x": 378,
+              "y": 220
+            }
+          }
+        ],
+        "poseBefore": {
+          "yaw": 0.6,
+          "pitch": 0.22
+        },
+        "gyroDroveTheView": true,
+        "headingChanged": 62,
+        "anchorMovedOnScreen": 271,
+        "anchorMovedOnScreenXY": [
+          125,
+          -240
+        ],
+        "positionsUnchangedBetweenPanels": true,
+        "pinnedNode": "n36627f75c9",
+        "pinNameA": "Sauerkraut by weight",
+        "pinNameB": "Sauerkraut by weight",
+        "anchorNamedInBothPanels": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations — framed on a placed district, so the holding ring is at the frame edge rather than whole",
+        "surface": "android",
+        "lens": null,
+        "runtimes": [
+          "android: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "e7fe41560af4b8c2"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:03.199Z"
+    },
+    {
+      "id": "04",
+      "file": "04_mind_expansion.png",
+      "title": "Mind expansion overview",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 3.2,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 326936,
+        "sha256": "5890fd4f81be90d32678b86d5c70b33193e1260be63e460e0fff4f758b71acbd"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "nodes",
+            "expected": "(predicate)",
+            "actual": 150,
+            "pass": true
+          },
+          {
+            "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "recencyChannelExercised",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "allFiveStatesAtWholeMapDensity",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "noTwoDrawnLabelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyDrawnLabelHasAVisibleMarker",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelStaysBesideItsNode",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "auditDescribesTheShippedFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "expansion",
+        "surface": "windows",
+        "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 105,
+          "labelsShortened": 16,
+          "unlabelledListed": 20,
+          "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
+          "mapName": "Fermentation notebook"
+        },
+        "camera": {
+          "yaw": 0.3,
+          "pitch": 0.16,
+          "dist": 128.755009,
+          "target": [
+            4.227,
+            -4.996,
+            0.6945
+          ]
+        },
+        "cameraPinned": true,
+        "statesOnScreen": [
+          "connected",
+          "plain",
+          "searchHit",
+          "selected",
+          "unplaced"
+        ],
+        "nodesOnScreen": 150,
+        "allFiveStatesAtWholeMapDensity": true,
+        "arbiterSeq": 11,
+        "labelsAudited": 45,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Fido jars burp themselves",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
+        "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
+        "labelOverlappingPairs": 0,
+        "labelWorstPairOverlapPx": 0,
+        "labelWorstPairOn": null,
+        "labelTightestPairGapPx": 1.81,
+        "labelTightestPairOn": [
+          "Peach pit garum?",
+          "Mesophilic vs thermophilic"
+        ],
+        "noTwoDrawnLabelsOverlap": true,
+        "labelsTruncated": 16,
+        "labelsTruncatedOn": [
+          "Vinegar from failed wine",
+          "Stiff levain keeps longer",
+          "Crock with a water moat",
+          "Sauerkraut by weight",
+          "Rice koji: polish to 90%",
+          "Kahm yeast is harmless",
+          "Strips lie above pH 4",
+          "Leuconostoc mesenteroides",
+          "Cheap pH meters drift",
+          "Cheese cave humidity",
+          "Carrot batons hold crunch",
+          "Noma Guide to Fermentation",
+          "Scoring at 30 degrees",
+          "Wild yeast capture",
+          "The Art of Fermentation",
+          "Trust smell over sight"
+        ],
+        "labelWorstDisplacementPx": 36.9,
+        "labelsMoreThan40pxFromTheirNode": 0,
+        "markersBuriedByOtherLabels": 0,
+        "worstBuriedFraction": 0,
+        "noDrawnLabelBuriesAnotherMarker": true,
+        "labelWorstReservedDisplacementPx": 36.3,
+        "labelWorstDisplacementEm": 2.63,
+        "everyLabelStaysBesideItsNode": true,
+        "labelWorstAmbiguityRatio": 3.3,
+        "labelsAmbiguousWithoutALeader": 0,
+        "everyLabelUnambiguouslyBound": true,
+        "markerContrast": {
+          "checked": 45,
+          "sampled": 45,
+          "offFrame": 0,
+          "threshold": 2.5,
+          "invisible": 0,
+          "worstContrast": 3.16,
+          "invisibleIds": [],
+          "weakest": []
+        },
+        "labelsWithoutVisibleMarker": 0,
+        "everyDrawnLabelHasAVisibleMarker": true,
+        "arbiterSeqAtShot": 11,
+        "arbiterSeqAtAudit": 11,
+        "auditDescribesTheShippedFrame": true,
+        "recencyByDistrict": {
+          "violet": {
+            "n": 18,
+            "recency": [
+              0,
+              0.2
+            ],
+            "chroma": [
+              0.055,
+              0.521
+            ]
+          },
+          "lime": {
+            "n": 30,
+            "recency": [
+              0,
+              0.89
+            ],
+            "chroma": [
+              0.045,
+              0.52
+            ]
+          },
+          "amber": {
+            "n": 18,
+            "recency": [
+              0.01,
+              0.32
+            ],
+            "chroma": [
+              0.047,
+              0.517
+            ]
+          },
+          "coral": {
+            "n": 25,
+            "recency": [
+              0.36,
+              1
+            ],
+            "chroma": [
+              0.059,
+              0.52
+            ]
+          },
+          "azure": {
+            "n": 14,
+            "recency": [
+              0.41,
+              0.71
+            ],
+            "chroma": [
+              0.048,
+              0.519
+            ]
+          },
+          "bone": {
+            "n": 21,
+            "recency": [
+              0.47,
+              1
+            ],
+            "chroma": [
+              0.054,
+              0.52
+            ]
+          },
+          "magenta": {
+            "n": 12,
+            "recency": [
+              0.01,
+              0.85
+            ],
+            "chroma": [
+              0.05,
+              0.365
+            ]
+          },
+          "teal": {
+            "n": 12,
+            "recency": [
+              0.02,
+              0.82
+            ],
+            "chroma": [
+              0.104,
+              0.518
+            ]
+          }
+        },
+        "recencyChromaSpan": [
+          0.045,
+          0.521
+        ],
+        "recencyChannelExercised": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "mind-expansion lens, the whole map and the holding cluster on screen at once",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "bac9916dd5a965ca"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:06.198Z"
+    },
+    {
+      "id": "05",
+      "file": "05_hand_tracking.png",
+      "title": "Hand tracking live",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 17.1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 834353,
+        "sha256": "0c6fcc3de514f04cc28c21617f0285882f42d3374ceeb582176172e039ad993f"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "operationTookEffect",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "declaredSynthetic",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "captionMatchesTheAppsVocabulary",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "headlineMatchesTheHud",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "pose": "spread",
+        "poseName": "Open palm",
+        "operation": "Move closer — the map fills more of the frame; no thought moves",
+        "captionHead": "Open palm — Move closer",
+        "captionMatchesTheAppsVocabulary": true,
+        "landmarks": 21,
+        "tipsOut": 4,
+        "fan": 1.03,
+        "confidence": 0.952,
+        "distBefore": 148.41,
+        "distAfter": 129.5,
+        "distAfterReadFromTheFrame": true,
+        "headlineMatchesTheHud": true,
+        "operationTookEffect": true,
+        "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
+        "declaredSynthetic": true
+      },
+      "pageErrors": [
+        "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+      ],
+      "recipe": {
+        "demonstrates": "Windows hand tracking: an open-palm move-closer shown before and after in one framing",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "bfbd59fe83cedb03"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:23.465Z"
+    },
+    {
+      "id": "06",
+      "file": "06_holding_cluster.png",
+      "title": "Holding cluster",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 5,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 180322,
+        "sha256": "b63d40a641f8c7aa896aa7805496ef55ba89d3296619c9d9057f139f2d0f5af5"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "holdingRingFillsFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyHeldNodeInFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "countMatchesMarkers",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyHeldLabelAttributable",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "noTwoDrawnLabelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyDrawnLabelHasAVisibleMarker",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyHeldMarkerCountable",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelStaysBesideItsNode",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelUnambiguouslyBound",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "auditDescribesTheShippedFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "arbiterSeq": 56,
+        "labelsAudited": 12,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Sour cherry kvass",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
+        "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
+        "labelOverlappingPairs": 0,
+        "labelWorstPairOverlapPx": 0,
+        "labelWorstPairOn": null,
+        "labelTightestPairGapPx": 11.39,
+        "labelTightestPairOn": [
+          "Read the succession paper",
+          "Nixtamal plus koji"
+        ],
+        "noTwoDrawnLabelsOverlap": true,
+        "labelsTruncated": 1,
+        "labelsTruncatedOn": [
+          "Label tape and a marker"
+        ],
+        "labelWorstDisplacementPx": 51.1,
+        "labelsMoreThan40pxFromTheirNode": 5,
+        "markersBuriedByOtherLabels": 0,
+        "worstBuriedFraction": 0,
+        "noDrawnLabelBuriesAnotherMarker": true,
+        "labelWorstReservedDisplacementPx": 51.1,
+        "labelWorstDisplacementEm": 2.13,
+        "everyLabelStaysBesideItsNode": true,
+        "labelWorstAmbiguityRatio": 2.3,
+        "labelsAmbiguousWithoutALeader": 0,
+        "everyLabelUnambiguouslyBound": true,
+        "markerContrast": {
+          "checked": 12,
+          "sampled": 12,
+          "offFrame": 0,
+          "threshold": 2.5,
+          "invisible": 0,
+          "worstContrast": 3.25,
+          "invisibleIds": [],
+          "weakest": []
+        },
+        "labelsWithoutVisibleMarker": 0,
+        "everyDrawnLabelHasAVisibleMarker": true,
+        "arbiterSeqAtShot": 56,
+        "arbiterSeqAtAudit": 56,
+        "auditDescribesTheShippedFrame": true,
+        "map": "map-fermentation",
+        "nodes": 150,
+        "links": 208,
+        "holding": 8,
+        "lens": "canvas",
+        "surface": "windows",
+        "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 8,
+          "labelsShortened": 1,
+          "unlabelledListed": 8,
+          "searchBreakdown": null,
+          "mapName": "Fermentation notebook"
+        },
+        "holdingOrigin": [
+          -5,
+          -40,
+          22
+        ],
+        "holdingRadius": 6.6,
+        "heldMarkerYaw": 5.76,
+        "heldMarkerWorstGapPx": 26.4,
+        "heldMarkerClosestPair": [
+          "n1ada6cb3e2",
+          "n2a2ac6dd57"
+        ],
+        "everyHeldMarkerCountable": true,
+        "cameraDistance": 20.626,
+        "ringHeightFraction": 0.66,
+        "heldNodes": {
+          "held": 8,
+          "onScreen": 8,
+          "inFrame": 8,
+          "badge": "8"
+        },
+        "heldLabelAttribution": [
+          {
+            "text": "Sour cherry kvass",
+            "own": 37.8,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 26.3
+          },
+          {
+            "text": "Nixtamal plus koji",
+            "own": 41.4,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 10.1
+          },
+          {
+            "text": "Recalibrate the pH meter",
+            "own": 43.3,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 55
+          },
+          {
+            "text": "Ask M about her crock",
+            "own": 43.4,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 140.8
+          },
+          {
+            "text": "Preserved lemon, batch 3",
+            "own": 32.7,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 1.2
+          },
+          {
+            "text": "Coffee cherry cascara ferment?",
+            "own": 51.1,
+            "nearestIsOwn": true,
+            "hasLeader": true,
+            "margin": 65.9
+          },
+          {
+            "text": "Black garlic: 60C for 40 days",
+            "own": 44.4,
+            "nearestIsOwn": true,
+            "hasLeader": true,
+            "margin": 33.8
+          },
+          {
+            "text": "Read the succession paper",
+            "own": 26.8,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 2.7
+          }
+        ],
+        "heldLabelsNearestOwnNode": 5,
+        "heldLabelsWithLeader": 5,
+        "everyHeldLabelAttributable": true,
+        "holdingRingFillsFrame": true,
+        "everyHeldNodeInFrame": true,
+        "countMatchesMarkers": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "c3c27bb00aca3d71"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:28.322Z"
+    },
+    {
+      "id": "07",
+      "file": "07_five_node_states.png",
+      "title": "Five node states staged",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.6,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 184356,
+        "sha256": "5befa39c8a91e9310c42facb70c791269e8936179ae375e9d8179ab3ff7f9237"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "ok",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "ladderMonotonic",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "ladderStepsClearScatter",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "ladderMonotonicInRelLuminance",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "ladderStepsClearScatterInRelLuminance",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "statesInFrame": [
+          "connected",
+          "plain",
+          "searchHit",
+          "selected",
+          "unplaced"
+        ],
+        "byNode": {
+          "Opening: where did you park?": "plain",
+          "Method of loci": "searchHit",
+          "Lists flatten meaning": "connected",
+          "Positions are the memory": "selected",
+          "Demo: search fly-to": "connected",
+          "Slide budget: 12": "plain",
+          "Closing: build your own": "plain",
+          "Steal the parking-lot bit": "unplaced",
+          "Ask about the demo laptop": "unplaced",
+          "Cut the history section?": "unplaced",
+          "Timebox to 18 minutes": "unplaced"
+        },
+        "measuredRungsLuma709": {
+          "plain": 0.2975,
+          "connected": 0.4247,
+          "unplaced": 0.5628,
+          "searchHit": 0.6769,
+          "selected": 0.8025
+        },
+        "withinRungSpreadLuma709": {
+          "plain": 0.002,
+          "connected": 0.0005,
+          "unplaced": 0.0005,
+          "searchHit": 0,
+          "selected": 0
+        },
+        "rungStepsLuma709": [
+          0.1272,
+          0.1381,
+          0.1141,
+          0.1256
+        ],
+        "measuredRungsRelLuminance": {
+          "plain": 0.0759,
+          "connected": 0.1683,
+          "unplaced": 0.2781,
+          "searchHit": 0.4195,
+          "selected": 0.6233
+        },
+        "withinRungSpreadRelLuminance": {
+          "plain": 0.0088,
+          "connected": 0.022,
+          "unplaced": 0.0005,
+          "searchHit": 0,
+          "selected": 0
+        },
+        "rungStepsRelLuminance": [
+          0.0924,
+          0.1098,
+          0.1414,
+          0.2038
+        ],
+        "ladderMonotonicInRelLuminance": true,
+        "ladderStepsClearScatterInRelLuminance": true,
+        "minRungStepRelLuminance": 0.0924,
+        "maxWithinRungSpreadRelLuminance": 0.022,
+        "ladderMonotonic": true,
+        "minRungStep": 0.1141,
+        "maxWithinRungSpread": 0.002,
+        "ladderStepsClearScatter": true,
+        "ok": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the five node states side by side with the legend, with the luminance ladder measured off the shipped frame",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "6e5e6422b8ed0a2a"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:29.898Z"
+    },
+    {
+      "id": "08",
+      "file": "08_placement_endstate.png",
+      "title": "Placement end-state",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 2.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 205491,
+        "sha256": "515564010224b2fc796b14e820b95c72cd6762f6c24fcf4648b45329c2744223"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "placed",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "stableAfterDrop",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "cameraFrozenAcrossPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "node": "Steal the parking-lot bit",
+        "beforeCount": 4,
+        "afterCount": 3,
+        "placed": true,
+        "beforePos": [
+          2.056,
+          -10.26,
+          3.869
+        ],
+        "afterPos": [
+          1.9986645724823138,
+          4.587178802023548,
+          2.022677780267024
+        ],
+        "stableAfterDrop": true,
+        "cameraFrozenAcrossPanels": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "placement before/after under one frozen camera: one node leaves holding for a permanent position and every other node projects to the same point",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "44bb27a07e81dc26"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:32.017Z"
+    },
+    {
+      "id": "09",
+      "file": "09_connect_edit.png",
+      "title": "Connect and edit",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 2.5,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 264878,
+        "sha256": "5cb25f9b5847b24c829bcaef1ebb75ada57e8f8941e2a394227b4345e427409e"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "connectedByThisCapture",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "linkedBefore",
+            "expected": false,
+            "actual": false,
+            "pass": true
+          },
+          {
+            "claim": "linkedAfter",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "editorWroteToTheModel",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "recencyMatchesModel",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyOtherLabelHeldItsPlace",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "between": [
+          "Koji-cured egg yolk",
+          "Shio koji"
+        ],
+        "linkedBefore": false,
+        "linkedAfter": true,
+        "connectedByThisCapture": true,
+        "labelsInBothPanels": 5,
+        "labelsThatShifted": 0,
+        "labelsThatShiftedOn": [],
+        "labelPlacementsBefore": {
+          "n209e6a2a86": [
+            -125,
+            52,
+            259
+          ],
+          "n35b0bd9a37": [
+            -102,
+            -73,
+            211
+          ],
+          "n83224a5de3": [
+            -69,
+            38,
+            125
+          ],
+          "n84a7397186": [
+            -79,
+            62,
+            167
+          ],
+          "n99ff69458f": [
+            -118,
+            -92,
+            247
+          ]
+        },
+        "labelPlacementsAfter": {
+          "n209e6a2a86": [
+            -125,
+            52,
+            259
+          ],
+          "n35b0bd9a37": [
+            -102,
+            -73,
+            211
+          ],
+          "n4e9bd59c87": [
+            -146,
+            -89,
+            303
+          ],
+          "n83224a5de3": [
+            -69,
+            40,
+            125
+          ],
+          "n84a7397186": [
+            -79,
+            62,
+            167
+          ],
+          "n99ff69458f": [
+            61,
+            -55,
+            328
+          ]
+        },
+        "everyOtherLabelHeldItsPlace": true,
+        "nodeCount": 150,
+        "editorOpen": true,
+        "colourBefore": "coral",
+        "colourAfter": "teal",
+        "textBefore": "Koji-cured egg yolk",
+        "textAfter": "Koji-cured egg yolk · aged 60d",
+        "recencyShown": "Captured 2025-06-12 · newer than 70% of this map · mid chroma",
+        "recencyMatchesModel": true,
+        "editorWroteToTheModel": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "connect and edit before/after: a new filament created between two named nodes",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "307df49d193c5df3"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:34.901Z"
+    },
+    {
+      "id": "10",
+      "file": "10_search_flyto_end.png",
+      "title": "Search fly-to end-state",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 6.8,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 198705,
+        "sha256": "ae21ca70a01ce7bf5e826773b83e421158c68edb9e3b156101af6fa6ed3b356c"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "positionUnchanged",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "severalHitsShown",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "severalHitsMatched",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "flownHitCentred",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "noTwoDrawnLabelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyDrawnLabelHasAVisibleMarker",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelStaysBesideItsNode",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelUnambiguouslyBound",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "searchMatchReasonShown",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "searchMatchReasonUnoccluded",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "query": "koji",
+        "node": "Koji-kin sourcing",
+        "hits": 19,
+        "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
+        "hitsMatchedOnLabel": 13,
+        "searchBreakdownOcclusion": {
+          "ok": true,
+          "coveredFraction": 0,
+          "coveredBy": null,
+          "rect": [
+            1144,
+            46,
+            289
+          ]
+        },
+        "searchMatchReasonShown": true,
+        "searchMatchReasonUnoccluded": true,
+        "labelsAudited": 13,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Sweet vs savoury paths",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
+        "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
+        "labelOverlappingPairs": 0,
+        "labelWorstPairOverlapPx": 0,
+        "labelWorstPairOn": null,
+        "labelTightestPairGapPx": 33.41,
+        "labelTightestPairOn": [
+          "Rice koji: polish to 90%",
+          "Amazake"
+        ],
+        "noTwoDrawnLabelsOverlap": true,
+        "labelsTruncated": 1,
+        "labelsTruncatedOn": [
+          "Amylase plus protease"
+        ],
+        "labelWorstDisplacementPx": 58.2,
+        "labelsMoreThan40pxFromTheirNode": 11,
+        "markersBuriedByOtherLabels": 0,
+        "worstBuriedFraction": 0,
+        "noDrawnLabelBuriesAnotherMarker": true,
+        "labelWorstReservedDisplacementPx": 58.2,
+        "labelWorstDisplacementEm": 2.42,
+        "everyLabelStaysBesideItsNode": true,
+        "labelWorstAmbiguityRatio": 3.18,
+        "labelsAmbiguousWithoutALeader": 0,
+        "everyLabelUnambiguouslyBound": true,
+        "markerContrast": {
+          "checked": 13,
+          "sampled": 13,
+          "offFrame": 0,
+          "threshold": 2.5,
+          "invisible": 0,
+          "worstContrast": 3.25,
+          "invisibleIds": [],
+          "weakest": []
+        },
+        "labelsWithoutVisibleMarker": 0,
+        "everyDrawnLabelHasAVisibleMarker": true,
+        "flownHitCentred": true,
+        "hitsInFrame": 13,
+        "severalHitsShown": true,
+        "severalHitsMatched": true,
+        "homeBefore": [
+          16.511,
+          12.545,
+          -9.513
+        ],
+        "homeAfter": [
+          16.511,
+          12.545,
+          -9.513
+        ],
+        "positionUnchanged": true,
+        "cameraTarget": [
+          16.51,
+          12.55,
+          -9.51
+        ],
+        "endDistance": 12,
+        "centred": {
+          "dx": 0,
+          "dy": 0
+        }
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "ef4340f5a9e4398f"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:41.470Z"
+    },
+    {
+      "id": "11",
+      "file": "11_sync_twin_before.png",
+      "title": "Twin composite — before",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 15.1,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 200233,
+        "sha256": "5306565d03c556fbeeb71ab0d4778c2ae5c8e2ecaf333a853925339a729702d7"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "positionsIdenticalAcrossSurfaces",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "windowsSurface": "windows-binary-under-wine",
+        "windowsUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) MasterMind/1.0.0 Chrome/130.0.6723.191 Electron/33.4.11 Safari/537.36",
+        "positionsIdenticalAcrossSurfaces": true,
+        "provenance": {
+          "windows": {
+            "runtime": "electron 33.4.11",
+            "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+            "isElectron": true,
+            "platform": "Win32",
+            "surface": "windows",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 1,
+            "serverPid": 27531,
+            "actor": "windows-twin",
+            "status": "live"
+          },
+          "android": {
+            "runtime": "chromium 141.0.7390.37",
+            "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+            "isElectron": false,
+            "platform": "Linux x86_64",
+            "surface": "android",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 2,
+            "serverPid": 27531,
+            "actor": "android-twin",
+            "status": "live"
+          }
+        },
+        "panelRuntimes": {
+          "windows": "electron 33.4.11",
+          "android": "chromium 141.0.7390.37"
+        },
+        "panelRasterisers": {
+          "windows": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "android": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+        },
+        "nodeCount": {
+          "windows": 11,
+          "android": 11
+        }
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "twin composite BEFORE: Windows and Android on one map, identical frozen camera",
+        "surface": "twin",
+        "lens": null,
+        "runtimes": [
+          "windows: electron 33.4.11 · Win32",
+          "android: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "861f6cca2f545723"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:52.251Z"
+    },
+    {
+      "id": "12",
+      "file": "12_sync_twin_after.png",
+      "title": "Twin composite — after",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 0.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 2160,
+        "bytes": 821930,
+        "sha256": "9ead855d164d72ab0c35d91576b02dec44f6c9dce86b56ef20a14b9498be596f"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "positionsIdenticalAcrossSurfaces",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "positionEditPropagated",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "onlyTheDraggedNodeMoved",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyOtherPositionUnchanged",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "noNodeDropped",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "editPropagated",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "concurrentConflictKeptBoth",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "bothSurfacesAgreeOnNode",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "twoDistinctSockets",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "panelRuntimesDiffer",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "eachPanelNamesItsRasteriser",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "clusterMoveCrossedTheBoundary",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "bigMapShownOnBothSurfaces",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "bigMapLedgersIdentical",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyNodeUnoccludedByChrome",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "positionsIdenticalAcrossSurfaces": true,
+        "movedNode": "s480af97d09",
+        "movedFrom": [
+          -6.1,
+          -4.3,
+          -3.1
+        ],
+        "movedTo": [
+          6.224564346905375,
+          2.1243814001730583,
+          -8.559369780986067
+        ],
+        "positionEditPropagated": true,
+        "onlyTheDraggedNodeMoved": true,
+        "everyOtherPositionUnchanged": true,
+        "noNodeDropped": true,
+        "editPropagated": true,
+        "concurrentConflictKeptBoth": true,
+        "bothSurfacesAgreeOnNode": true,
+        "nodeCount": {
+          "windows": 11,
+          "android": 11
+        },
+        "windowsSurface": "windows-binary-under-wine",
+        "windowsUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) MasterMind/1.0.0 Chrome/130.0.6723.191 Electron/33.4.11 Safari/537.36",
+        "provenance": {
+          "windows": {
+            "runtime": "electron 33.4.11",
+            "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+            "isElectron": true,
+            "platform": "Win32",
+            "surface": "windows",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 5,
+            "serverPid": 27531,
+            "actor": "windows-twin",
+            "status": "live"
+          },
+          "android": {
+            "runtime": "chromium 141.0.7390.37",
+            "gl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+            "isElectron": false,
+            "platform": "Linux x86_64",
+            "surface": "android",
+            "transport": "ws://127.0.0.1:8871",
+            "socket": 6,
+            "serverPid": 27531,
+            "actor": "android-twin",
+            "status": "live"
+          }
+        },
+        "twoDistinctSockets": true,
+        "clusterAcrossSurfaces": {
+          "district": "Lacto-vegetables",
+          "members": 20,
+          "movedOnWindows": true,
+          "arrivedOnAndroid": true,
+          "restored": true
+        },
+        "clusterMoveCrossedTheBoundary": true,
+        "panelRuntimes": {
+          "windows": "electron 33.4.11",
+          "android": "chromium 141.0.7390.37"
+        },
+        "panelRasterisers": {
+          "windows": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "android": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+        },
+        "panelRuntimesDiffer": true,
+        "rasterLineOnFrame": [
+          "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+          "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+        ],
+        "eachPanelNamesItsRasteriser": true,
+        "cameraFrozen": {
+          "yaw": 0.34,
+          "pitch": 0.16,
+          "dist": 53.41637354938651,
+          "target": [
+            -0.15000000000000036,
+            -3.3499999999999996,
+            1.7499999999999998
+          ]
+        },
+        "everyNodeInFrame": true,
+        "movedNodeCoords": {
+          "id": "s480af97d09",
+          "before": [
+            -6.1,
+            -4.3,
+            -3.1
+          ],
+          "after": [
+            6.224564346905375,
+            2.1243814001730583,
+            -8.559369780986067
+          ]
+        },
+        "nodesUnderChrome": {
+          "windows": [],
+          "android": []
+        },
+        "everyNodeUnoccludedByChrome": true,
+        "bigMapCrossSurface": {
+          "nodes": {
+            "windows": 150,
+            "android": 150
+          },
+          "sha": {
+            "windows": "d05073a5ff",
+            "android": "d05073a5ff"
+          },
+          "identical": true,
+          "shown": true,
+          "camera": {
+            "yaw": 0.34,
+            "pitch": 0.16,
+            "dist": 122.82488576389757,
+            "target": [
+              4.227,
+              -4.996000000000002,
+              0.6945000000000014
+            ]
+          }
+        },
+        "bigMapShownOnBothSurfaces": true,
+        "bigMapLedgersIdentical": true,
+        "bigMapNodeCount": 150
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "twin composite AFTER: an Android drag and edit arriving on Windows at the same frozen camera, and the 150-node map on those same two sockets under one camera",
+        "surface": "twin",
+        "lens": null,
+        "runtimes": [
+          "windows: electron 33.4.11 · Win32",
+          "android: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "936d2e118cf8cc23"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:56.815Z"
+    },
+    {
+      "id": "13",
+      "file": "13_finder_prompt.png",
+      "title": "Finder prompt export",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 1.4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 262974,
+        "sha256": "501a553418a213f2e43f5f459dd37fce0cc65a694d03c38e042dd9d9f106ee8d"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "hasPositions",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "hasInstructions",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "mentionsUnplaced",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "noLabelUnderThePanel",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "promptChars": 2698,
+        "hasPositions": true,
+        "labelsUnderThePanel": [],
+        "noLabelUnderThePanel": true,
+        "hasInstructions": true,
+        "mentionsUnplaced": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder prompt export, preamble and position records together",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "904c8c79130e761a"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:53:58.550Z"
+    },
+    {
+      "id": "14",
+      "file": "14_finder_review.png",
+      "title": "Finder review",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 388122,
+        "sha256": "049768378558f359df67e4a5687ecf3daff5050c803619a81e8966b104a661e2"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "allThreeKinds",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "rejectionLeftNoTrace",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "rejectedIsGone",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "acceptanceLanded",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "cameraFrozenAcrossPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "rejectedPairUnjoined",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "detailExceedsPanelScale",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "detailRowInsideFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "stagedKinds": [
+          "connection",
+          "connection",
+          "grouping",
+          "placement",
+          "placement"
+        ],
+        "kindsAfterReject": [
+          "grouping",
+          "placement",
+          "placement"
+        ],
+        "acceptedAdded": 1,
+        "acceptanceLanded": true,
+        "allThreeKinds": true,
+        "detailCrops": [
+          {
+            "x": 14,
+            "y": 442,
+            "w": 482,
+            "h": 404
+          },
+          {
+            "x": 506,
+            "y": 50,
+            "w": 506,
+            "h": 424
+          },
+          {
+            "x": 506,
+            "y": 50,
+            "w": 506,
+            "h": 424
+          },
+          {
+            "x": 516,
+            "y": 50,
+            "w": 764,
+            "h": 640
+          }
+        ],
+        "detailMagnificationsOfThePanel": [
+          1.99,
+          1.9,
+          1.9,
+          1.26
+        ],
+        "detailMagnificationsOfAppPixels": [
+          1,
+          0.95,
+          0.95,
+          0.63
+        ],
+        "detailHeadlineQuotesAppPixels": true,
+        "detailStripPx": 103,
+        "detailPanelHeights": [
+          369,
+          369,
+          369,
+          369
+        ],
+        "detailRowBottomPx": 1068,
+        "detailRowBottomMarginPx": 12,
+        "detailRowInsideFrame": true,
+        "detailNodesFound": 4,
+        "acceptedId": "s1",
+        "acceptedNodes": [
+          "s8341efc5bb",
+          "se318fc2f75"
+        ],
+        "rejectedKind": "connection",
+        "rejectedNodes": [
+          "s480af97d09",
+          "s88f833ea80"
+        ],
+        "rejectedPairUnjoined": true,
+        "detailExceedsPanelScale": true,
+        "detailMagnificationOfPanelFloor": 1.26,
+        "detailMagnificationOfAppPixelsFloor": 0.63,
+        "cameraFrozenAcrossPanels": true,
+        "rejectedId": "s2",
+        "rejectionLeftNoTrace": true,
+        "rejectedIsGone": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder review stage: parsed suggestions with accept and reject controls, and the same three moments magnified on the nodes they touch",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "fef3cb770ce05bd0"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:54:01.541Z"
+    },
+    {
+      "id": "15",
+      "file": "15_settings_gestures.png",
+      "title": "Settings and gesture reference",
+      "kind": "png",
+      "minimum": "1920x1080",
+      "seconds": 4,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 122666,
+        "sha256": "7eb9af761a46de51ba1fe8485736634a1faebc1e78026989a52070c5ebdbf0cc"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "referenceMatchesTheRuntime",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "pose": "spread",
+        "status": "tracking",
+        "sync": "live",
+        "account": "kai@master-mind.local",
+        "touch": 6,
+        "hand": 4,
+        "vocabularyStringsChecked": 20,
+        "vocabularyMismatches": [],
+        "referenceMatchesTheRuntime": true
+      },
+      "pageErrors": [
+        "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+      ],
+      "recipe": {
+        "demonstrates": "settings and the gesture reference for touch and hand vocabularies",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "8891521182f0f526"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:54:05.282Z"
+    },
+    {
+      "id": "16",
+      "file": "16_touch_vocabulary.mp4",
+      "title": "Touch gesture vocabulary",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 30s",
+      "seconds": 109.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 1830894,
+        "sha256": "d5497a322a2b9bc00bb695ef554af76c07f754626edbd54ca5d43168f7346413",
+        "seconds": 34,
+        "fps": 30,
+        "frames": 1020
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "tapSelected",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "doubleTapConnected",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "dragPlacedIt",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "lens": "ar",
+        "gesturesFired": [
+          "tap",
+          "doubletap",
+          "longpress",
+          "dragnode",
+          "dragempty",
+          "pinch",
+          "gyro"
+        ],
+        "count": 7,
+        "quickAddedNode": "nmt1gy6of1mte8",
+        "tapSelected": true,
+        "doubleTapConnected": true,
+        "dragPlacedIt": true,
+        "gyroEnd": {
+          "alpha": 66,
+          "beta": 68,
+          "gamma": 0
+        },
+        "poseEnd": {
+          "yaw": 0.196,
+          "pitch": 0.05
+        },
+        "holding": 4
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "Android touch vocabulary in motion inside the AR lens, with an orientation-only beat",
+        "surface": "android",
+        "lens": null,
+        "runtimes": [
+          "android: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "cd01c1b5a2319bda"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T05:55:52.727Z"
+    },
+    {
+      "id": "17",
+      "file": "17_hand_vocabulary.mp4",
+      "title": "Hand gesture vocabulary",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 24s",
+      "seconds": 585.3,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 6076918,
+        "sha256": "b4213b75dd6021b2af2ef168e925c45d995eda73fbe751612c53c0560843fd81",
+        "seconds": 41,
+        "fps": 30,
+        "frames": 1230
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "clusterMovedByPose",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "clusterArrangementPreservedByPose",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "clusterMovedByMouse",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "clusterInternalArrangementPreserved",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "count",
+            "expected": "(predicate)",
+            "actual": 4,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "posesRecognised": [
+          "spread",
+          "two",
+          "fist",
+          "gather"
+        ],
+        "count": 4,
+        "samples": 1799,
+        "poseGrabs": [
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -1.927,
+              0.332,
+              16.814
+            ],
+            "centroidAfter": [
+              -2.048,
+              -3.588,
+              17.513
+            ],
+            "travelled": 3.9846,
+            "maxMemberDrift": 0,
+            "frames": [
+              31,
+              33
+            ],
+            "seconds": [
+              1.03,
+              1.1
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -20.228,
+              -15.778,
+              10.138
+            ],
+            "centroidAfter": [
+              -13.041,
+              -16.179,
+              7.983
+            ],
+            "travelled": 7.514,
+            "maxMemberDrift": 0,
+            "frames": [
+              36,
+              47
+            ],
+            "seconds": [
+              1.2,
+              1.57
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -11.492,
+              -17.602,
+              7.744
+            ],
+            "centroidAfter": [
+              -5.591,
+              -19.333,
+              6.211
+            ],
+            "travelled": 6.3382,
+            "maxMemberDrift": 0,
+            "frames": [
+              49,
+              65
+            ],
+            "seconds": [
+              1.63,
+              2.17
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.224,
+              -3.009,
+              18.089
+            ],
+            "centroidAfter": [
+              6.47,
+              1.488,
+              14.021
+            ],
+            "travelled": 12.2943,
+            "maxMemberDrift": 0,
+            "frames": [
+              67,
+              70
+            ],
+            "seconds": [
+              2.23,
+              2.33
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.623,
+              -21.113,
+              3.352
+            ],
+            "centroidAfter": [
+              4.623,
+              -21.113,
+              3.352
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              197,
+              197
+            ],
+            "seconds": [
+              6.57,
+              6.57
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.623,
+              -21.113,
+              3.352
+            ],
+            "centroidAfter": [
+              4.77,
+              -20.769,
+              3.248
+            ],
+            "travelled": 0.388,
+            "maxMemberDrift": 0,
+            "frames": [
+              216,
+              220
+            ],
+            "seconds": [
+              7.2,
+              7.33
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.189,
+              -20.124,
+              3.319
+            ],
+            "centroidAfter": [
+              8.854,
+              -22.609,
+              2.296
+            ],
+            "travelled": 5.3836,
+            "maxMemberDrift": 0,
+            "frames": [
+              224,
+              232
+            ],
+            "seconds": [
+              7.47,
+              7.73
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.559,
+              -25.853,
+              -6.533
+            ],
+            "centroidAfter": [
+              4.414,
+              -22.525,
+              -9.871
+            ],
+            "travelled": 10.1354,
+            "maxMemberDrift": 0,
+            "frames": [
+              235,
+              237
+            ],
+            "seconds": [
+              7.83,
+              7.9
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              10.648,
+              -19.079,
+              1.145
+            ],
+            "centroidAfter": [
+              10.648,
+              -19.079,
+              1.145
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              407,
+              407
+            ],
+            "seconds": [
+              13.57,
+              13.57
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              9.458,
+              -15.944,
+              0.983
+            ],
+            "centroidAfter": [
+              13.751,
+              -13.204,
+              -0.808
+            ],
+            "travelled": 5.3983,
+            "maxMemberDrift": 0,
+            "frames": [
+              410,
+              411
+            ],
+            "seconds": [
+              13.67,
+              13.7
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              10.49,
+              3.843,
+              12.38
+            ],
+            "centroidAfter": [
+              10.49,
+              3.843,
+              12.38
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              746,
+              746
+            ],
+            "seconds": [
+              24.87,
+              24.87
+            ]
+          }
+        ],
+        "poseGrabCount": 11,
+        "poseGrabbedClusters": [
+          "Safety and pH",
+          "Lacto-vegetables",
+          "Equipment"
+        ],
+        "poseGrabLargest": 20,
+        "poseGrabMaxTravel": 12.2943,
+        "clusterMovedByPose": true,
+        "clusterArrangementPreservedByPose": true,
+        "clusterGrabbed": "Koji",
+        "clusterMembers": 16,
+        "clusterCentroidBefore": [
+          16.21,
+          9.168,
+          -9.151
+        ],
+        "clusterCentroidAfter": [
+          2.03,
+          0.122,
+          -3.237
+        ],
+        "clusterCentroidTravelled": 17.8296,
+        "clusterMaxMemberDrift": 0,
+        "clusterLedgerBeforeOnPeer": "5144cc62a503",
+        "clusterLedgerAfterOnPeer": "50b0a07a0afd",
+        "clusterLedgerAfterHere": "50b0a07a0afd",
+        "clusterMovePropagatedToTheOtherSurface": true,
+        "clusterMovedByMouse": true,
+        "clusterInternalArrangementPreserved": true,
+        "mouseOnlyTail": true
+      },
+      "pageErrors": [
+        "console: INFO: Created TensorFlow Lite XNNPACK delegate for CPU."
+      ],
+      "recipe": {
+        "demonstrates": "Windows hand vocabulary in motion: four poses, four map operations, mouse equivalents",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64",
+          "android: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "aff50901f6687ec6"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T06:48:04.671Z"
+    },
+    {
+      "id": "18",
+      "file": "18_search_flyto.mp4",
+      "title": "Search fly-to in motion",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 10s",
+      "seconds": 78.8,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 2903148,
+        "sha256": "0e6caf31ea688b4d9988d79b44fc87c82b2b8b61784d17043715dfb6758b297b",
+        "seconds": 13,
+        "fps": 30,
+        "frames": 390
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "steppedToASecondHit",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "severalHitsMatched",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "endsOnTheHit",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "everyLabelInsideTheFrameThroughout",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "query": "koji",
+        "endDistance": 12,
+        "centred": {
+          "dx": 0,
+          "dy": 0
+        },
+        "hits": 19,
+        "landedOn": [
+          {
+            "tag": "first",
+            "id": "n3e0d08c741",
+            "text": "Koji-kin sourcing"
+          },
+          {
+            "tag": "next",
+            "id": "n67398866c5",
+            "text": "Koji-accelerated garum"
+          }
+        ],
+        "labelAuditsAcrossTake": 26,
+        "labelWorstAuditFrame": {
+          "f": 0,
+          "checked": 45,
+          "gap": 0,
+          "off": 0,
+          "gapOn": {
+            "text": "Mesophilic vs thermophilic",
+            "res": [
+              1179,
+              221,
+              1272,
+              238
+            ],
+            "drawn": [
+              1179,
+              221,
+              1270,
+              238
+            ]
+          },
+          "offOn": null
+        },
+        "labelWorstOverhangAcrossTake": 0,
+        "labelWorstOffFrameAcrossTake": 0,
+        "everyLabelInsideTheFrameThroughout": true,
+        "steppedToASecondHit": true,
+        "severalHitsMatched": true,
+        "endsOnTheHit": true
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "search fly-to in motion: whole-map framing to one hit of several, then on to the next",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "a60024ab92924687"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T06:06:00.323Z"
+    },
+    {
+      "id": "19",
+      "file": "19_capture_place_arc.mp4",
+      "title": "Capture, place, connect, refind",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 15s",
+      "seconds": 137.5,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 2037766,
+        "sha256": "ab8c422ca55adf0abc76b8b9008f8e85afc07fb53908130836695ea198b3f60d",
+        "seconds": 23,
+        "fps": 30,
+        "frames": 690
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "created",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "placed",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "stayedPut",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "connectedAfterPlacing",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "refoundBySearch",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "positionSurvivedTheWholeLoop",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "text": "Rehearse the fly-to twice",
+        "created": true,
+        "placed": true,
+        "pos": [
+          21.886072220568707,
+          -14.641830931020468,
+          13.698109627554544
+        ],
+        "stayedPut": true,
+        "connectedTo": "Vinegar from failed wine",
+        "linksAcrossConnect": [
+          208,
+          209
+        ],
+        "connectedAfterPlacing": true,
+        "searchHits": 1,
+        "flewToTheNewNode": true,
+        "centredOnRefind": {
+          "dx": 0,
+          "dy": 0
+        },
+        "refoundBySearch": true,
+        "positionThroughTheLoop": {
+          "atDrop": [
+            21.886072220568707,
+            -14.641830931020468,
+            13.698109627554544
+          ],
+          "afterConnect": [
+            21.886072220568707,
+            -14.641830931020468,
+            13.698109627554544
+          ],
+          "atEnd": [
+            21.886072220568707,
+            -14.641830931020468,
+            13.698109627554544
+          ]
+        },
+        "positionSurvivedTheWholeLoop": true,
+        "holding": 8
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the whole core loop in one take: compose a thought, it lands in holding, drag it out to a place, connect it to an existing thought, and find it again by name — in the place it was put",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "8f6ace6323401f42"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T06:08:15.320Z"
+    },
+    {
+      "id": "20",
+      "file": "20_finder_roundtrip.mp4",
+      "title": "Finder round-trip",
+      "kind": "mp4",
+      "minimum": "1920x1080 @24fps 20s",
+      "seconds": 90.9,
+      "status": "captured",
+      "error": null,
+      "check": {
+        "ok": true,
+        "width": 1920,
+        "height": 1080,
+        "bytes": 647178,
+        "sha256": "e286bf1a4a45839ab145c2f61049bcb877825f005cec0c50be43a385261b7559",
+        "seconds": 30,
+        "fps": 30,
+        "frames": 900
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "rejectionLeftNoTrace",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "allThreeKindsAccepted",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "placementRejectionLeftNoTrace",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "bothRejectionKindsShown",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          }
+        ]
+      },
+      "result": {
+        "placementAccepted": {
+          "node": "s13669df17f",
+          "from": [
+            0.869,
+            -8.496,
+            0.944
+          ],
+          "to": [
+            -5.4,
+            -3.6,
+            -2.2
+          ],
+          "landedWhereSuggested": true,
+          "wasUnplaced": true,
+          "nowPlaced": true,
+          "holding": [
+            4,
+            3
+          ]
+        },
+        "replyPath": "authored by the agent's own session acting as the chat (declared in report.md); a malformed reply and an adversarially messy reply pass through the same parser in the same take",
+        "malformed": {
+          "ok": false,
+          "error": "No JSON found in that reply. Nothing was changed.",
+          "staged": 0,
+          "links": 6
+        },
+        "messy": {
+          "ok": true,
+          "staged": 5,
+          "dropped": 6,
+          "kinds": [
+            "connection",
+            "connection",
+            "grouping",
+            "placement",
+            "placement"
+          ]
+        },
+        "accepted": {
+          "kind": "connection",
+          "id": "s1"
+        },
+        "rejected": {
+          "kind": "connection",
+          "id": "s2"
+        },
+        "groupingAccepted": {
+          "name": "Framing",
+          "nodes": 2,
+          "labelsBefore": [
+            "arc",
+            "ground"
+          ],
+          "labelsAfter": [
+            "Framing",
+            "Framing"
+          ],
+          "applied": true
+        },
+        "allThreeKindsAccepted": true,
+        "placementRejected": {
+          "node": "Steal the parking-lot bit",
+          "wouldHaveMovedTo": [
+            -6.2,
+            2.4,
+            1.1
+          ],
+          "posBefore": [
+            2.056,
+            -10.26,
+            3.869
+          ],
+          "posAfter": [
+            2.056,
+            -10.26,
+            3.869
+          ],
+          "holding": [
+            4,
+            4
+          ]
+        },
+        "placementRejectionLeftNoTrace": true,
+        "bothRejectionKindsShown": true,
+        "rejectionLeftNoTrace": true,
+        "linksBefore": 6,
+        "linksAfter": 7
+      },
+      "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the finder round-trip in motion: a malformed reply, an adversarially messy one, all three suggestion kinds accepted, and a REJECTED placement that leaves the node exactly where it was",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "dd8867f00542f2cc"
+      },
+      "capturedInCycle": 11,
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T06:09:48.175Z"
+    }
+  ],
+  "staleFromEarlierCycles": [],
+  "allCapturedInThisCycle": true,
+  "finishedAt": "2026-09-06T06:48:09.685Z",
+  "lateFaults": [],
+  "build": {
+    "bundle": "src/dist/app.js",
+    "bytes": 805784,
+    "sha256": "e6ed98b70084daba1fb3660fb28fae8533ee48d9cf8136f049ba4b8b8645b5ec"
+  },
+  "captured": 20,
+  "total": 20
+}
