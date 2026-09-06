@@ -6,28 +6,10 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T09:17:18.952Z",
+  "lastRunAt": "2026-09-06T10:14:25.618Z",
   "lastRunCaptured": [
-    "01",
-    "02",
-    "03",
-    "04",
     "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20"
+    "08"
   ],
   "artifacts": [
     {
@@ -108,7 +90,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:17:22.091Z"
     },
     {
@@ -997,7 +979,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:17:23.887Z"
     },
     {
@@ -1166,7 +1148,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:17:27.603Z"
     },
     {
@@ -2285,7 +2267,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:17:30.167Z"
     },
     {
@@ -2294,15 +2276,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 23,
+      "seconds": 20,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 859897,
-        "sha256": "f5752224f245a6900be973f1c2e78e276832074aa7d7d12c0d7b5b0b12886585"
+        "bytes": 799146,
+        "sha256": "822fc32029a97c4d634595ae39cc20dcca7f11dae2df00ed26decd57eec7f7d2"
       },
       "claims": {
         "ok": true,
@@ -2346,6 +2328,30 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "detectorLiveInBothPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noTwoChromePanelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyChromeBadgeInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -2357,42 +2363,56 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 1.016,
-        "confidence": 0.94,
+        "fan": 1.013,
+        "confidence": 0.942,
         "distBefore": 174.91,
-        "distAfter": 126.9,
+        "distAfter": 136.3,
         "distAfterReadFromTheFrame": true,
         "headlineMatchesTheHud": true,
         "operationTookEffect": true,
         "namesBefore": {
-          "drawn": 58,
-          "compressed": 34,
-          "shortened": 8,
-          "inFull": 16,
+          "drawn": 50,
+          "compressed": 24,
+          "shortened": 9,
+          "inFull": 17,
           "typePx": 17.5,
           "cloudSpanPx": 1097.8
         },
         "namesAfter": {
-          "drawn": 55,
-          "compressed": 38,
-          "shortened": 5,
-          "inFull": 12,
+          "drawn": 46,
+          "compressed": 27,
+          "shortened": 9,
+          "inFull": 10,
           "typePx": 17.5,
-          "cloudSpanPx": 1187.5
+          "cloudSpanPx": 1066.6
         },
-        "namesDrawnBefore": 58,
-        "namesDrawnAfter": 55,
-        "namesInFullBefore": 16,
-        "namesInFullAfter": 12,
-        "viewDistanceRatio": 1.378,
-        "poseHeldFrames": 67,
+        "namesDrawnBefore": 50,
+        "namesDrawnAfter": 46,
+        "namesInFullBefore": 17,
+        "namesInFullAfter": 10,
+        "viewDistanceRatio": 1.283,
+        "poseHeldFrames": 49,
         "typePxBefore": 17.5,
         "typePxAfter": 17.5,
         "cloudSpanBefore": 1097.8,
-        "cloudSpanAfter": 1187.5,
-        "cloudSpanRatio": 1.082,
-        "hiddenChipBefore": "92 labels hidden · 8 shortened · 34 named by their first letters at this framing · listed at right",
-        "hiddenChipAfter": "95 labels hidden · 5 shortened · 38 named by their first letters at this framing · listed at right",
+        "cloudSpanAfter": 1066.6,
+        "cloudSpanRatio": 0.972,
+        "hiddenChipBefore": "100 labels hidden · 9 shortened · 24 named by their opening word at this framing · listed at right",
+        "hiddenChipAfter": "104 labels hidden · 9 shortened · 27 named by their opening word at this framing · listed at right",
+        "chromePanels": 2,
+        "chromeOverlappingPairs": 0,
+        "chromeWorstOverlapPx": 0,
+        "chromeOverlaps": [],
+        "chromeOffFrame": [],
+        "noTwoChromePanelsOverlap": true,
+        "everyChromeBadgeInsideTheFrame": true,
+        "detectorAtShutter": {
+          "pose": "spread",
+          "present": true,
+          "conf": 0.957
+        },
+        "confidenceBefore": 0.942,
+        "detectorLiveInBothPanels": true,
         "chipPromisesNoLegibilityItCannotDeliver": true,
         "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
         "declaredSynthetic": true
@@ -2407,20 +2427,23 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "9a1f508a274dd29b",
-        "appSha": "78e03b777fc6b68f",
+        "fnSha": "11671750a037d745",
+        "appSha": "590fa9908fa4ffdf",
         "claimShas": {
           "operationTookEffect": "b5bea41b6c62",
           "declaredSynthetic": "b5bea41b6c62",
           "captionMatchesTheAppsVocabulary": "b5bea41b6c62",
           "headlineMatchesTheHud": "b5bea41b6c62",
-          "chipPromisesNoLegibilityItCannotDeliver": "b5bea41b6c62"
+          "chipPromisesNoLegibilityItCannotDeliver": "b5bea41b6c62",
+          "detectorLiveInBothPanels": "b5bea41b6c62",
+          "noTwoChromePanelsOverlap": "b5bea41b6c62",
+          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T09:17:53.344Z"
+      "fileMtime": "2026-09-06T10:14:45.323Z"
     },
     {
       "id": "06",
@@ -2852,7 +2875,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:17:58.075Z"
     },
     {
@@ -3032,7 +3055,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:17:59.715Z"
     },
     {
@@ -3048,8 +3071,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 188217,
-        "sha256": "1aa5f1c0f06514f0ea362403f13f8cbd9063dbf6b997863352c74653143148ca"
+        "bytes": 212286,
+        "sha256": "9dab0a2bc0f8dfcba49a1fcaaa578d218476d7fe66c401b6c03cde5152f90ab7"
       },
       "claims": {
         "ok": true,
@@ -3077,6 +3100,22 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noTwoChromePanelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyChromeBadgeInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -3084,6 +3123,13 @@
         "node": "Steal the parking-lot bit",
         "beforeCount": 4,
         "afterCount": 3,
+        "chromePanels": 2,
+        "chromeOverlappingPairs": 0,
+        "chromeWorstOverlapPx": 0,
+        "chromeOverlaps": [],
+        "chromeOffFrame": [],
+        "noTwoChromePanelsOverlap": true,
+        "everyChromeBadgeInsideTheFrame": true,
         "placed": true,
         "beforePos": [
           2.056,
@@ -3091,9 +3137,9 @@
           3.869
         ],
         "afterPos": [
-          2.001359133437294,
-          -0.7102745148604441,
-          2.6865507758132736
+          1.9986645724823138,
+          4.587178802023548,
+          2.022677780267024
         ],
         "stableAfterDrop": true,
         "cameraFrozenAcrossPanels": true
@@ -3106,18 +3152,20 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "44bb27a07e81dc26",
-        "appSha": "78e03b777fc6b68f",
+        "fnSha": "c0d91001f279cf6c",
+        "appSha": "590fa9908fa4ffdf",
         "claimShas": {
           "placed": "b5bea41b6c62",
           "stableAfterDrop": "b5bea41b6c62",
-          "cameraFrozenAcrossPanels": "b5bea41b6c62"
+          "cameraFrozenAcrossPanels": "b5bea41b6c62",
+          "noTwoChromePanelsOverlap": "b5bea41b6c62",
+          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T09:18:01.828Z"
+      "fileMtime": "2026-09-06T10:14:47.419Z"
     },
     {
       "id": "09",
@@ -3285,7 +3333,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:18:04.815Z"
     },
     {
@@ -3294,15 +3342,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 6,
+      "seconds": 6.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 187753,
-        "sha256": "b083a45014ee83fe1559af60c4ff68901531ea7073e5277132bab9abe524397d"
+        "bytes": 186367,
+        "sha256": "2782f3d4aa4fdce46d206f6d0f01f46da425af8d90530d2573733d9af600d6e3"
       },
       "claims": {
         "ok": true,
@@ -3423,9 +3471,9 @@
         },
         "searchMatchReasonShown": true,
         "searchMatchReasonUnoccluded": true,
-        "labelsAudited": 12,
+        "labelsAudited": 11,
         "labelWorstOverhangPx": 0,
-        "labelWorstOverhangOn": "Barley miso, 18 months",
+        "labelWorstOverhangOn": "Amazake",
         "labelWorstOffFramePx": 0,
         "labelWorstOffFrameOn": null,
         "labelArbiterAgreesWithDraw": true,
@@ -3443,22 +3491,22 @@
         "labelsTruncatedOn": [
           "Bed depth 4cm max",
           "Amylase plus protease",
-          "Koji-cured egg yolk"
+          "Barley miso, 18 months"
         ],
-        "labelWorstDisplacementPx": 63.2,
-        "labelsMoreThan40pxFromTheirNode": 9,
+        "labelWorstDisplacementPx": 52,
+        "labelsMoreThan40pxFromTheirNode": 6,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
-        "labelWorstReservedDisplacementPx": 60.7,
-        "labelWorstDisplacementEm": 2.63,
+        "labelWorstReservedDisplacementPx": 52,
+        "labelWorstDisplacementEm": 2.16,
         "everyLabelStaysBesideItsNode": true,
         "labelWorstAmbiguityRatio": 3.18,
         "labelsAmbiguousWithoutALeader": 0,
         "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
-          "checked": 12,
-          "sampled": 12,
+          "checked": 11,
+          "sampled": 11,
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
@@ -3557,15 +3605,6 @@
               "contrast": 3.26
             },
             {
-              "id": "n99ff69458f",
-              "x": 1322,
-              "y": 675,
-              "r": 80.6,
-              "peak": 0.9016,
-              "ground": 0.0574,
-              "contrast": 8.86
-            },
-            {
               "id": "nbc542622a2",
               "x": 724,
               "y": 762,
@@ -3613,7 +3652,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "ef4340f5a9e4398f",
-        "appSha": "78e03b777fc6b68f",
+        "appSha": "4f5f10980fc878e7",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -3631,8 +3670,8 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T09:18:10.655Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T10:05:58.315Z"
     },
     {
       "id": "11",
@@ -3753,7 +3792,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:18:25.460Z"
     },
     {
@@ -4212,7 +4251,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:18:32.554Z"
     },
     {
@@ -4295,7 +4334,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:18:34.143Z"
     },
     {
@@ -4509,7 +4548,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:18:37.280Z"
     },
     {
@@ -4570,7 +4609,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:18:40.351Z"
     },
     {
@@ -4693,7 +4732,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:20:20.215Z"
     },
     {
@@ -5347,7 +5386,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:30:11.779Z"
     },
     {
@@ -5475,7 +5514,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:31:28.429Z"
     },
     {
@@ -5614,7 +5653,7 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:33:37.302Z"
     },
     {
@@ -5837,18 +5876,18 @@
       },
       "capturedInCycle": 12,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T09:36:07.196Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T09:36:11.571Z",
+  "finishedAt": "2026-09-06T10:14:49.684Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 818277,
-    "sha256": "78e03b777fc6b68f73d9e0c27d6b1c8ba1d231a085b538f09a96b8fa7435e3f6"
+    "bytes": 821010,
+    "sha256": "590fa9908fa4ffdfc7fbfce344c4684b57a88232cefc614c1c6d610f6da42cb8"
   },
   "captured": 20,
   "total": 20

@@ -114,9 +114,15 @@ export default [
     });
     const countBefore = await nameCount();
     const chipBefore = await chipText();
-    const chrome05 = [await chromeAt(page)];
     const namedBefore = countBefore.drawn;
     const before = await H.tmpShot(page, cdp, '05a', 800);
+    // AFTER THE SHOT, because the shot is what drives the render. Sampled
+    // before it, the audit described a layout that had never been laid out:
+    // the app was stopped, the webcam panel had appeared since the last frame,
+    // and nothing had re-run the placement rules — so it reported 92,015 px of
+    // overlap that the frame it was about does not contain. Same lesson as
+    // F-030 and the arbiter's own seq counter, in a third place.
+    const chrome05 = [await chromeAt(page)];
 
     await page.waitForFunction(() => ['spread', 'gather'].includes(window.mm.hands.frame.pose),
                                null, { timeout: 90000 });
@@ -165,9 +171,9 @@ export default [
     }
     const countAfter = await nameCount();
     const chipAfter = await chipText();
-    chrome05.push(await chromeAt(page));
     const namedAfter = countAfter.drawn;
     const after = await H.tmpShot(page, cdp, '05b', 800 + (held + 1) * 33.3);
+    chrome05.push(await chromeAt(page));
     // READ OFF THE FRAME, not from the model after it. The headline was taking
     // the camera distance after the shot while the HUD in the picture had been
     // rendered a moment earlier, so cycle 9 shipped a panel whose HUD said
@@ -348,8 +354,8 @@ export default [
         .map(p => [p.id, +p.x.toFixed(2), +p.y.toFixed(2)])), id);
     const othersBefore = await OTHERS();
     const chrome08 = [];
-    chrome08.push(await chromeAt(page));
     const a = await H.tmpShot(page, cdp, '08a');
+    chrome08.push(await chromeAt(page));
 
     const from = await SCREEN_OF(page, id);
     // Dropped clear of the editor panel: a node placed underneath the panel
@@ -371,8 +377,8 @@ export default [
     if (!landed || landed.x > edLeft - 60)
       throw new Error(`08: the dropped node landed under the editor panel (x ${landed && landed.x} vs panel ${edLeft})`);
     const othersAfter = await OTHERS();
-    chrome08.push(await chromeAt(page));
     const b = await H.tmpShot(page, cdp, '08b');
+    chrome08.push(await chromeAt(page));
     await H.compose([a, b], H.out(this.file), { mode: 'h', width: 1920, height: 1080,
       labels: [`Before — unplaced, waiting in holding (${beforeCount})`,
                `After — dropped, and it stays there (holding ${beforeCount - 1})`] });

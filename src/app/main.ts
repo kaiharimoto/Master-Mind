@@ -727,6 +727,34 @@ export class App {
     }
   }
 
+  /**
+   * THE MOUSE-EQUIVALENT ROW GETS THE SAME TREATMENT. At 960 px — the width
+   * artifact 05's panels are shot at — the row runs from x=252 and the webcam
+   * panel starts at x=660, so the two overlapped by about 1800 px of the one
+   * frame whose subject is the hand vocabulary. It is small, it is chrome, and
+   * it can move. Its own method, because it was inside the labels-hidden
+   * badge's branch and so only ran when that badge happened to be showing.
+   */
+  private placeTools() {
+    {
+      const tools = document.getElementById('tools');
+      if (tools && tools.classList.contains('show')) {
+        tools.style.left = ''; tools.style.top = ''; tools.style.bottom = '';
+        const r0 = tools.getBoundingClientRect();
+        tools.style.top = `${Math.round(r0.top)}px`;
+        tools.style.bottom = 'auto';
+        const b: DOMRect[] = [];
+        for (const sel of ['#hands', '#gesture', '#lenstag', '#argyro']) {
+          const e = document.querySelector(sel) as HTMLElement | null;
+          if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
+          const r = this.outerRect(e);
+          if (r.width > 2 && r.height > 2) b.push(r);
+        }
+        this.placeBadge(tools, b);
+      }
+    }
+  }
+
   /** Search flies the view to the node in its actual place, in every lens. */
   flyToHit(step = 0) {
     if (!this.hits.length) return;
@@ -889,6 +917,7 @@ export class App {
     this.renderGrab();
     this.renderReticle();
     this.renderHidden();
+    this.placeTools();
     this.renderClusterProof();
     this.renderGestureLiveness();
   }
@@ -1043,24 +1072,41 @@ export class App {
     const W = window.innerWidth, H = window.innerHeight, M = 8;
     const r = e.getBoundingClientRect();
     const w = r.width, h = r.height;
-    const hits = (x: number, y: number) => blockers.filter(b =>
-      x < b.right + M && x + w > b.left - M && y < b.bottom + M && y + h > b.top - M);
-    let x = r.left, y = r.top;
-    let clash = hits(x, y);
-    if (clash.length) {
-      // Clear it horizontally, to whichever side has room.
-      const leftOf = Math.min(...clash.map(b => b.left)) - M - w;
-      const rightOf = Math.max(...clash.map(b => b.right)) + M;
-      const tryX = leftOf >= M ? leftOf : rightOf + w <= W - M ? rightOf : null;
-      if (tryX !== null && !hits(tryX, y).length) x = tryX;
-      else y = Math.max(...clash.map(b => b.bottom)) + M;
+    // EVERY PLACE IT COULD GO, SCORED, rather than three steps and a clamp.
+    //
+    // The three-step version — natural, then shifted clear, then dropped below —
+    // could clamp its answer back into a blocker it had just cleared, and did:
+    // artifact 08's framing notice landed on the selection chip through exactly
+    // that path. The candidates are the natural place, the four sides of every
+    // blocker, and the four corners of the frame; each is clamped into the
+    // picture FIRST and scored SECOND, on how much it still covers with a tiny
+    // preference for not moving. So the badge always lands somewhere, always
+    // inside the frame, and covers as little as any of these placements can.
+    const cands: [number, number][] = [[r.left, r.top]];
+    for (const b of blockers) {
+      cands.push([b.left - M - w, r.top], [b.right + M, r.top],
+                 [r.left, b.bottom + M], [r.left, b.top - M - h],
+                 [b.left - M - w, b.bottom + M], [b.right + M, b.bottom + M],
+                 [b.left - M - w, b.top - M - h], [b.right + M, b.top - M - h]);
     }
-    x = Math.min(Math.max(x, M), Math.max(M, W - w - M));
-    y = Math.min(Math.max(y, M), Math.max(M, H - h - M));
-    e.style.left = `${Math.round(x)}px`;
+    cands.push([M, M], [W - w - M, M], [M, H - h - M], [W - w - M, H - h - M]);
+    let bx = r.left, by = r.top, bestScore = Infinity;
+    for (const [cx, cy] of cands) {
+      const x = Math.min(Math.max(cx, M), Math.max(M, W - w - M));
+      const y = Math.min(Math.max(cy, M), Math.max(M, H - h - M));
+      let area = 0;
+      for (const b of blockers) {
+        const ox = Math.min(x + w, b.right) - Math.max(x, b.left);
+        const oy = Math.min(y + h, b.bottom) - Math.max(y, b.top);
+        if (ox > 0 && oy > 0) area += ox * oy;
+      }
+      const score = area * 4096 + Math.hypot(x - r.left, y - r.top);
+      if (score < bestScore) { bestScore = score; bx = x; by = y; }
+    }
+    e.style.left = `${Math.round(bx)}px`;
     e.style.right = 'auto';
-    e.style.top = `${Math.round(y)}px`;
-    blockers.push(new DOMRect(x, y, w, h));
+    e.style.top = `${Math.round(by)}px`;
+    blockers.push(new DOMRect(bx, by, w, h));
   }
 
   /**
@@ -1089,7 +1135,7 @@ export class App {
       const st = getComputedStyle(e);
       if (st.display === 'none' || st.visibility === 'hidden' || Number(st.opacity) < 0.05) continue;
       if (!(e.textContent || '').trim()) continue;
-      const r = e.getBoundingClientRect();
+      const r = this.outerRect(e);
       if (r.width < 2 || r.height < 2) continue;
       boxes.push({ id: sel, x0: r.left, y0: r.top, x1: r.right, y1: r.bottom });
     }
@@ -1114,6 +1160,35 @@ export class App {
              everyChromeBadgeInsideTheFrame: offFrame.length === 0 };
   }
 
+  /**
+   * AN ELEMENT'S RECTANGLE INCLUDING WHATEVER HANGS OUT OF IT.
+   *
+   * `getBoundingClientRect` returns the padding box, and the pin and grab marks
+   * are a small ring with their NAME absolutely positioned outside it. So a
+   * badge could clear the ring and still land on the name — which is how
+   * artifact 08's framing notice came to be sitting on "Steal the parking-lot
+   * bit" even after the chip was added to the blocker set. The union of the
+   * element and its children is what a reader actually sees.
+   */
+  private outerRect(e: Element): DOMRect {
+    const r = e.getBoundingClientRect();
+    // AN ELEMENT THAT CLIPS ITS CHILDREN IS ITS OWN EXTENT. The recovery column
+    // is `overflow:hidden` and its list is longer than its box, so unioning the
+    // children reported 111 px of list hanging past the frame that no reader
+    // can see — the audit inventing a fault out of its own arithmetic, which is
+    // the same class of error it exists to catch.
+    const st = getComputedStyle(e);
+    if (st.overflow !== 'visible' || st.overflowY !== 'visible' || st.overflowX !== 'visible') return r;
+    let x0 = r.left, y0 = r.top, x1 = r.right, y1 = r.bottom;
+    for (const c of Array.from(e.children)) {
+      const q = c.getBoundingClientRect();
+      if (q.width < 1 || q.height < 1) continue;
+      x0 = Math.min(x0, q.left); y0 = Math.min(y0, q.top);
+      x1 = Math.max(x1, q.right); y1 = Math.max(y1, q.bottom);
+    }
+    return new DOMRect(x0, y0, x1 - x0, y1 - y0);
+  }
+
   /** The panels a badge must not sit on: they are the frame's subject. */
   private badgeBlockers(): DOMRect[] {
     const out: DOMRect[] = [];
@@ -1126,7 +1201,7 @@ export class App {
                        '#unlabelled', '#pinmark', '#grabmark']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e || getComputedStyle(e).display === 'none') continue;
-      const r = e.getBoundingClientRect();
+      const r = this.outerRect(e);
       if (r.width > 2 && r.height > 2) out.push(r);
     }
     return out;
@@ -1428,14 +1503,36 @@ export class App {
       col.style.top = '';
       const own = col.getBoundingClientRect();
       let top = 0;
+      // Only what sits ABOVE this column pushes its top down. The webcam panel
+      // and the tool row are anchored to the bottom of the frame, so treating
+      // them as things to start below drove the column to y=1078 with 20 px of
+      // height left — the recovery list reduced to nothing by the rule meant to
+      // keep it clear. What is below the column shortens it instead; see
+      // floor() further down.
       for (const sel of ['#editor', '#hidden', '#hitbreak', '#origin', '#states']) {
         const e = document.querySelector(sel) as HTMLElement | null;
         if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
-        const r = e.getBoundingClientRect();
+        const r = this.outerRect(e);
         if (r.width < 2 || r.height < 2) continue;
         if (r.right + 6 > own.left && r.left < own.right) top = Math.max(top, r.bottom + 10);
       }
       col.style.top = top ? `${Math.round(top)}px` : '';
+      // AND ITS FLOOR IS RAISED, not just its content trimmed. The column's own
+      // BOX ran from y=96 to y=1016 while the webcam panel occupied 698 to 1068
+      // in the same rail — 92,015 px of one sitting on the other, which the
+      // trim could not fix because the trim shortens the list, not the panel.
+      // The panel ends above whatever shares the rail below it.
+      col.style.bottom = '';
+      const mine = col.getBoundingClientRect();
+      let floorY = window.innerHeight - 12;
+      for (const sel of ['#hands', '#tools', '#gesture']) {
+        const e = document.querySelector(sel) as HTMLElement | null;
+        if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
+        const r = this.outerRect(e);
+        if (r.width > 2 && r.height > 2 && r.right + 6 > mine.left && r.left < mine.right)
+          floorY = Math.min(floorY, r.top - 10);
+      }
+      if (floorY < mine.bottom) col.style.bottom = `${Math.round(window.innerHeight - floorY)}px`;
     }
     // As many as the column can hold, longest-settled first so the order is a
     // property of the map rather than of the arbiter's iteration.
@@ -1483,9 +1580,27 @@ export class App {
     // the overflow line.
     col.innerHTML = render(named);
     let shown = named.length;
+    // THE FLOOR IS THE FRAME'S, NOT THE COLUMN'S. The trim compared the last
+    // row against the column's own bottom edge — and once the column started
+    // below the webcam panel its own bottom edge was itself off the frame, so
+    // the check passed while 111 px of list hung past the picture. Whichever is
+    // higher: the column's box, the viewport, or the top of anything sharing
+    // the rail below it.
+    const floor = () => {
+      let f = Math.min(col!.getBoundingClientRect().bottom, window.innerHeight - 12);
+      const own = col!.getBoundingClientRect();
+      for (const sel of ['#hands', '#tools', '#gesture']) {
+        const e = document.querySelector(sel) as HTMLElement | null;
+        if (!e || getComputedStyle(e).display === 'none') continue;
+        const r = this.outerRect(e);
+        if (r.width > 2 && r.height > 2 && r.right + 6 > own.left && r.left < own.right)
+          f = Math.min(f, r.top - 10);
+      }
+      return f;
+    };
     const fits = () => {
       const last = col!.lastElementChild as HTMLElement | null;
-      return !last || last.getBoundingClientRect().bottom <= col!.getBoundingClientRect().bottom - 2;
+      return !last || last.getBoundingClientRect().bottom <= floor() - 2;
     };
     if (!fits()) {
       // One extra off the end so the marker itself has a line to sit on.

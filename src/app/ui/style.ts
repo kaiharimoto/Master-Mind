@@ -34,7 +34,11 @@ span.chip.on{border-color:var(--hot);color:var(--ink)}
 input:focus,textarea:focus{border-color:#4A3E34}
 textarea{resize:none;width:100%;font:11px/1.4 "DejaVu Sans Mono",monospace}
 
-#top{position:fixed;top:0;left:0;right:0;height:44px;display:flex;align-items:center;
+/* 52px, not 44. The lens tabs and the taller buttons measure 52 px and the bar
+   centred them, so four pixels of every one of them sat ABOVE the top of the
+   frame — clipped, on every artifact in the set. The bar is the height of its
+   tallest control now. */
+#top{position:fixed;top:0;left:0;right:0;height:52px;display:flex;align-items:center;
   gap:8px;padding:0 12px;background:var(--panel);border-bottom:1px solid var(--line);z-index:20}
 #top .name{font-weight:bold;letter-spacing:.2px;margin-right:4px;white-space:nowrap}
 #top .sp{flex:1}
