@@ -218,6 +218,24 @@ tr.map:hover{background:var(--panel)}
   background:var(--panel);
   font-size:12px;line-height:1.55;letter-spacing:.2px;color:var(--ink-dim);overflow:hidden}
 #unlabelled.show{display:block}
+/* TWO COLUMNS WHEN ONE WILL NOT HOLD THEM ALL.
+   The column is a fixed-height rail and it truncated with "…and 43 more" — so
+   on the whole-brain frame 43 of 118 thoughts had no name anywhere, on canvas
+   or in the list, which is the one thing this panel exists to prevent. Setting
+   it in two columns roughly doubles what fits before the trim has to start, and
+   the trim still runs after it as the last resort it always was. */
+/* THE SIDE WITH ROOM. The rail is the right one by default, but the editor
+   lives there too, and on artifact 04 the column started below it with a third
+   of the height and 30 of 149 thoughts went unnamed. The left margin was empty.
+   A recovery affordance squeezed into the busy side by convention is not a
+   convention worth keeping. */
+#unlabelled.left{right:auto;left:0;border-left:0;border-right:1px solid var(--line);
+  padding:10px 16px 10px 14px}
+#unlabelled.two{column-count:2;column-gap:16px;width:440px;line-height:1.34}
+#unlabelled.two h5{margin:6px 0 1px}
+#unlabelled.two h4{column-span:all}
+#unlabelled.two h5{break-after:avoid}
+#unlabelled li,#unlabelled h5{break-inside:avoid}
 #unlabelled h4{margin:0 0 7px;font-size:11px;font-weight:600;letter-spacing:.4px;
   color:var(--ink-dim);text-transform:none}
 /* NOT THE DIMMEST TEXT IN THE BUILD. The rows measured 2.3:1 modal against the

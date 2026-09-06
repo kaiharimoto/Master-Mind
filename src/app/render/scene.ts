@@ -691,7 +691,23 @@ export class Scene {
                        '#toast', '#tools', '#hidden', '#origin', '#grabmark', '#grabcand']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e) continue;
-      const r = e.getBoundingClientRect();
+      // THE UNION, because a mark's NAME hangs outside its box. `#pinmark` is a
+      // small ring with an absolutely-positioned tag beside it, and
+      // `getBoundingClientRect` returns only the ring — so the arbiter reserved
+      // the ring and the tag was drawn over whatever label had been placed
+      // there. On artifact 04 the "Koji-kin sourcing" callout overpainted its
+      // neighbour so that only "…egg yolk" survived of "Koji and egg yolk".
+      const cr = e.getBoundingClientRect();
+      let rx0 = cr.left, ry0 = cr.top, rx1 = cr.right, ry1 = cr.bottom;
+      const cs = getComputedStyle(e);
+      if (cs.overflow === 'visible' && cs.overflowX === 'visible' && cs.overflowY === 'visible')
+        for (const c of Array.from(e.children)) {
+          const q = c.getBoundingClientRect();
+          if (q.width < 1 || q.height < 1) continue;
+          rx0 = Math.min(rx0, q.left); ry0 = Math.min(ry0, q.top);
+          rx1 = Math.max(rx1, q.right); ry1 = Math.max(ry1, q.bottom);
+        }
+      const r = new DOMRect(rx0, ry0, rx1 - rx0, ry1 - ry0);
       if (r.width < 2 || r.height < 2) continue;
       panels.push({ i: -1, x0: r.left * dpr, y0: r.top * dpr,
                     x1: r.right * dpr, y1: r.bottom * dpr, pri: -1, z: -1 });

@@ -129,6 +129,16 @@ const labelAudit = async (page) => {
  */
 const chrome = async (page) => {
   const c = await page.evaluate(() => window.mm.chromeAudit());
+  // EVERY THOUGHT ON SCREEN IS NAMED SOMEWHERE — drawn on the canvas, or listed
+  // by district in the recovery column. The column is a fixed rail and it used
+  // to truncate: the cycle-12 Art Director counted 43 of 118 nodes with no name
+  // anywhere in the frame, on canvas or in the list. It widens to two columns
+  // before it trims anything now, and what it still cannot hold is counted.
+  const named = await page.evaluate(() => ({
+    unlisted: window.mm.unlistedCount ?? 0,
+    drawn: [...window.mm.scene.labelRects.values()].filter(r => r.alpha > 0.02).length,
+    hidden: window.mm.unnamedOnScreen().length,
+  }));
   return { chromeChecked: c.checked, chromeOverlappingPairs: c.overlapping,
            chromeWorstOverlapPx: c.worstOverlapPx, chromeOverlaps: c.pairs,
            chromeOffFrame: c.offFrame,
@@ -138,7 +148,10 @@ const chrome = async (page) => {
            noHeldNodeBuriedByChrome: c.noHeldNodeBuriedByChrome,
            noTwoChromePanelsOverlap: c.noTwoChromePanelsOverlap,
            everyChromeBadgeInsideTheFrame: c.everyChromeBadgeInsideTheFrame,
-           noNodeBuriedByChrome: c.noNodeBuriedByChrome };
+           noNodeBuriedByChrome: c.noNodeBuriedByChrome,
+           namesDrawn: named.drawn, namesListed: named.hidden - named.unlisted,
+           thoughtsLeftUnnamed: named.unlisted,
+           everyThoughtOnScreenIsNamed: named.unlisted === 0 };
 };
 
 const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
@@ -367,7 +380,7 @@ export default [
               // somewhere else. Asked of every opaque overlay now, on every
               // artifact that carries chrome.
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
-              noNodeBuriedByChrome: true,
+              noNodeBuriedByChrome: true, everyThoughtOnScreenIsNamed: true,
               everyLabelInsideTheFrame: true,
               // The cycle-8 Auditor called 02 a regression: +85.5 % label ink,
               // three unreadable overprinted pairs where cycle 7 had none, and
@@ -588,7 +601,7 @@ export default [
               // somewhere else. Asked of every opaque overlay now, on every
               // artifact that carries chrome.
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
-              noNodeBuriedByChrome: true,
+              noNodeBuriedByChrome: true, everyThoughtOnScreenIsNamed: true,
               everyLabelInsideTheFrame: true, recencyChannelExercised: true,
               allFiveStatesAtWholeMapDensity: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,

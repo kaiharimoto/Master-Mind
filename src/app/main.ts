@@ -1349,7 +1349,16 @@ export class App {
     // it is holding back are actually recoverable — the list of unnamed
     // thoughts, which is on screen in both the canvas and expansion lenses — it
     // says so, because that is a route to the name that always works.
-    const listed = !!document.getElementById('unlabelled');
+    // SHOWING, not merely existing. The element is created once and kept, so
+    // this read `true` whenever the app had ever drawn the column — including
+    // on artifact 07, where the column stands down for the open editor and the
+    // badge nonetheless said "listed at right" over a right column that is one
+    // flat colour. The cycle-12 Art Director called that the one place in the
+    // build where the frame makes a claim the pixels do not honour, and they
+    // were right; a disclosure pointing at nothing is worse than none.
+    const col0 = document.getElementById('unlabelled');
+    const listed = !!col0 && col0.classList.contains('show') &&
+                   !!(col0.textContent || '').trim();
     chip.textContent = parts.length
       ? `${parts.join(' · ')} at this framing${listed ? ' · listed at right' : ''}` : '';
     // KEPT WHOLE AND KEPT VISIBLE. This chip is how the frame stays honest
@@ -1554,6 +1563,9 @@ export class App {
     this.scene.setDrawnLeaders(this.leaderFor);
   }
 
+  /** Thoughts the recovery column could not fit, after widening to two columns. */
+  unlistedCount = 0;
+
   /** Which labels needed a leader this frame, for anything checking the frame. */
   readonly leaderFor = new Set<NodeId>();
 
@@ -1594,7 +1606,32 @@ export class App {
                  !this.panelOpen();
     col.className = show ? 'show' : '';
     if (!show) { col.innerHTML = ''; col.style.top = ''; return; }
-    // BELOW EVERYTHING ALREADY IN THE RIGHT RAIL, not only the editor.
+    // WHICHEVER SIDE HAS ROOM. Measured, not assumed: the free vertical run on
+    // each side after whatever is already there, and the column takes the
+    // larger. On artifact 04 the editor occupies the right rail and the left
+    // margin is empty, and the column was starting under the editor with a
+    // third of the height — 30 of 149 thoughts unnamed anywhere in the frame.
+    {
+      const H2 = window.innerHeight;
+      const freeFrom = (side: 'left' | 'right') => {
+        let top = 96, bottom = H2 - 12;
+        for (const sel of ['#editor', '#states', '#finder', '#hands', '#hidden',
+                           '#hitbreak', '#origin', '#tools']) {
+          const e = document.querySelector(sel) as HTMLElement | null;
+          if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
+          const r = this.outerRect(e);
+          if (r.width < 2 || r.height < 2) continue;
+          const onSide = side === 'right' ? r.right > window.innerWidth - 460
+                                          : r.left < 460;
+          if (!onSide) continue;
+          if (r.bottom < H2 * 0.6) top = Math.max(top, r.bottom + 10);
+          else bottom = Math.min(bottom, r.top - 10);
+        }
+        return bottom - top;
+      };
+      col.classList.toggle('left', freeFrom('left') > freeFrom('right') + 40);
+    }
+    // BELOW EVERYTHING ALREADY IN THE RAIL IT CHOSE, not only the editor.
     //
     // The badge-stacking fix went in per-artifact in cycle 11 and the cycle-11
     // Auditor found where it had not been generalised: on artifacts 05 and 12
@@ -1681,6 +1718,10 @@ export class App {
     // honesty affordance quietly failing to be honest. It is laid out and then
     // measured, and rows come off the end until the last one fits with room for
     // the overflow line.
+    // Laid out in ONE column first; if that cannot hold every name, widened to
+    // two before anything is trimmed. Dropping a thought from the list is the
+    // last resort, not the first.
+    col.classList.remove('two');
     col.innerHTML = render(named);
     let shown = named.length;
     // THE FLOOR IS THE FRAME'S, NOT THE COLUMN'S. The trim compared the last
@@ -1706,6 +1747,10 @@ export class App {
       return !last || last.getBoundingClientRect().bottom <= floor() - 2;
     };
     if (!fits()) {
+      col.classList.add('two');
+      col.innerHTML = render(named);
+    }
+    if (!fits()) {
       // One extra off the end so the marker itself has a line to sit on.
       while (shown > 1 && !fits()) {
         shown--;
@@ -1713,6 +1758,9 @@ export class App {
           `<li class="more">…and ${named.length - shown} more</li>`);
       }
     }
+    // What the column could not hold, so the frame's own record says whether it
+    // named everything it said it was naming.
+    this.unlistedCount = named.length - shown;
   }
 
   /**

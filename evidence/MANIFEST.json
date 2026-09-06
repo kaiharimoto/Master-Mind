@@ -6,9 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T11:00:24.097Z",
+  "lastRunAt": "2026-09-06T11:03:40.433Z",
   "lastRunCaptured": [
-    "01"
+    "04"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -90,7 +90,7 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T11:00:27.158Z"
     },
     {
@@ -99,15 +99,15 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.2,
+      "seconds": 2.1,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 336312,
-        "sha256": "484ce734f40911139fee32adb10c8db3ec5c1a3cd8fd0bfd5d302455038d2637"
+        "bytes": 415690,
+        "sha256": "b21bac3789516dd18bab0da3088b462b1ba751f62e205877f580a0dcd903d1a9"
       },
       "claims": {
         "ok": true,
@@ -154,6 +154,14 @@
           },
           {
             "claim": "noNodeBuriedByChrome",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyThoughtOnScreenIsNamed",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -221,8 +229,8 @@
         "onFrame": {
           "holdingBadge": 8,
           "labelsHidden": 87,
-          "labelsShortened": 12,
-          "unlabelledListed": 37,
+          "labelsShortened": 13,
+          "unlabelledListed": 87,
           "searchBreakdown": null,
           "mapName": "Fermentation notebook"
         },
@@ -237,7 +245,7 @@
           ]
         },
         "cameraPinned": true,
-        "arbiterSeq": 6,
+        "arbiterSeq": 7,
         "labelsAudited": 63,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Carrot batons hold crunch",
@@ -254,7 +262,7 @@
           "A pellicle is not a mother"
         ],
         "noTwoDrawnLabelsOverlap": true,
-        "labelsTruncated": 39,
+        "labelsTruncated": 40,
         "labelsTruncatedOn": [
           "Kombucha SCOBY overlap",
           "60C for eight weeks",
@@ -269,6 +277,7 @@
           "Sauerkraut by weight",
           "Koji on pearl barley",
           "Bulk to 50% rise",
+          "Garum at 20% salt",
           "Airlock vs burp",
           "Amylase plus protease",
           "Strips lie above pH 4",
@@ -320,6 +329,10 @@
         "noTwoChromePanelsOverlap": true,
         "everyChromeBadgeInsideTheFrame": true,
         "noNodeBuriedByChrome": true,
+        "namesDrawn": 63,
+        "namesListed": 87,
+        "thoughtsLeftUnnamed": 0,
+        "everyThoughtOnScreenIsNamed": true,
         "markerContrast": {
           "checked": 63,
           "sampled": 63,
@@ -901,8 +914,8 @@
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 6,
-        "arbiterSeqAtAudit": 6,
+        "arbiterSeqAtShot": 7,
+        "arbiterSeqAtAudit": 7,
         "auditDescribesTheShippedFrame": true
       },
       "pageErrors": [],
@@ -914,7 +927,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "73b7deb0e7bd2172",
-        "appSha": "1645e6b3340188b3",
+        "appSha": "9bfd7dd6585c83ad",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -922,6 +935,7 @@
           "noTwoChromePanelsOverlap": "b5bea41b6c62",
           "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
           "noNodeBuriedByChrome": "b5bea41b6c62",
+          "everyThoughtOnScreenIsNamed": "b5bea41b6c62",
           "everyLabelInsideTheFrame": "b5bea41b6c62",
           "noTwoDrawnLabelsOverlap": "b5bea41b6c62",
           "everyDrawnLabelHasAVisibleMarker": "b5bea41b6c62",
@@ -933,7 +947,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:58:56.499Z"
+      "fileMtime": "2026-09-06T11:02:26.531Z"
     },
     {
       "id": "03",
@@ -1110,15 +1124,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 3.7,
+      "seconds": 2.6,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 346945,
-        "sha256": "b8cc2608c971d24fc056d37e0444538c4b278a3692102b3f80662fa9e90ff73d"
+        "bytes": 445196,
+        "sha256": "2c8686f126c16374bccae8f26e3fb6dc72542c5cd176a13b5799751b79977c96"
       },
       "claims": {
         "ok": true,
@@ -1165,6 +1179,14 @@
           },
           {
             "claim": "noNodeBuriedByChrome",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyThoughtOnScreenIsNamed",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -1239,9 +1261,9 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 80,
-          "labelsShortened": 11,
-          "unlabelledListed": 20,
+          "labelsHidden": 82,
+          "labelsShortened": 12,
+          "unlabelledListed": 82,
           "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
           "mapName": "Fermentation notebook"
         },
@@ -1265,8 +1287,8 @@
         ],
         "nodesOnScreen": 150,
         "allFiveStatesAtWholeMapDensity": true,
-        "arbiterSeq": 9,
-        "labelsAudited": 69,
+        "arbiterSeq": 10,
+        "labelsAudited": 67,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Fido jars burp themselves",
         "labelWorstOffFramePx": 0,
@@ -1276,10 +1298,10 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 1.86,
+        "labelTightestPairGapPx": 2.39,
         "labelTightestPairOn": [
-          "Amylase plus protease",
-          "Barley miso, 18 months"
+          "Preserved lemon, batch 3",
+          "Black garlic: 60C for 40 days"
         ],
         "noTwoDrawnLabelsOverlap": true,
         "labelsTruncated": 44,
@@ -1298,20 +1320,20 @@
           "Koji on pearl barley",
           "Bulk to 50% rise",
           "Chevre at room temp",
+          "Garum at 20% salt",
           "Airlock vs burp",
+          "Rice koji: polish to 90%",
           "Amylase plus protease",
           "Strips lie above pH 4",
-          "Barley miso, 18 months",
           "Log every batch",
           "Miso at 12% salt",
           "Dry-salt vs brine",
-          "Koji-accelerated garum",
           "pH 4.6 is the line",
           "Peach pit garum?",
+          "Anchovy vs mackerel",
           "Koji Alchemy",
           "Leuconostoc mesenteroides",
           "Cheap pH meters drift",
-          "Stir at 24h to cool",
           "Beef garum trial",
           "Cloudy brine is normal",
           "Carrot batons hold crunch",
@@ -1348,16 +1370,22 @@
         "nodesUnderChrome": 0,
         "nodesUnderChromeIds": [],
         "nodesUnderChromeBy": [],
+        "heldNodesUnderChrome": 0,
+        "noHeldNodeBuriedByChrome": true,
         "noTwoChromePanelsOverlap": true,
         "everyChromeBadgeInsideTheFrame": true,
         "noNodeBuriedByChrome": true,
+        "namesDrawn": 67,
+        "namesListed": 82,
+        "thoughtsLeftUnnamed": 0,
+        "everyThoughtOnScreenIsNamed": true,
         "markerContrast": {
-          "checked": 69,
-          "sampled": 69,
+          "checked": 67,
+          "sampled": 67,
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
-          "worstContrast": 3.15,
+          "worstContrast": 2.73,
           "invisibleIds": [],
           "weakest": [],
           "rows": [
@@ -1366,198 +1394,198 @@
               "x": 1157,
               "y": 585,
               "r": 14.4,
-              "peak": 0.2962,
+              "peak": 0.2833,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.1
             },
             {
               "id": "n12900c3690",
               "x": 1379,
               "y": 309,
               "r": 14.4,
-              "peak": 0.4562,
+              "peak": 0.3128,
               "ground": 0.0574,
-              "contrast": 4.71
+              "contrast": 3.38
             },
             {
               "id": "n191b9e1952",
               "x": 1324,
               "y": 274,
               "r": 14.4,
-              "peak": 0.8274,
+              "peak": 0.5249,
               "ground": 0.0574,
-              "contrast": 8.17
+              "contrast": 5.35
             },
             {
               "id": "n1aba7a1979",
               "x": 1114,
               "y": 444,
               "r": 14.4,
-              "peak": 0.8029,
+              "peak": 0.7789,
               "ground": 0.0574,
-              "contrast": 7.94
+              "contrast": 7.72
             },
             {
               "id": "n1ada6cb3e2",
               "x": 776,
               "y": 934,
               "r": 14.4,
-              "peak": 0.5741,
+              "peak": 0.5626,
               "ground": 0.0574,
-              "contrast": 5.81
+              "contrast": 5.7
             },
             {
               "id": "n1ba5874893",
               "x": 1156,
               "y": 655,
               "r": 14.4,
-              "peak": 0.2947,
+              "peak": 0.2818,
               "ground": 0.0574,
-              "contrast": 3.21
+              "contrast": 3.09
             },
             {
               "id": "n1c35c6c62f",
               "x": 871,
               "y": 717,
               "r": 14.4,
-              "peak": 0.2933,
+              "peak": 0.2582,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 2.87
             },
             {
               "id": "n1d49087545",
               "x": 657,
               "y": 593,
               "r": 14.4,
-              "peak": 0.2927,
+              "peak": 0.2678,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 2.96
             },
             {
               "id": "n20cb5b490f",
               "x": 677,
               "y": 437,
               "r": 14.4,
-              "peak": 0.4486,
+              "peak": 0.2568,
               "ground": 0.0574,
-              "contrast": 4.64
+              "contrast": 2.86
             },
             {
               "id": "n2570828592",
               "x": 646,
               "y": 242,
               "r": 14.4,
-              "peak": 0.2925,
+              "peak": 0.272,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 3
             },
             {
               "id": "n2a2ac6dd57",
               "x": 745,
               "y": 935,
               "r": 14.4,
-              "peak": 0.6012,
+              "peak": 0.5898,
               "ground": 0.0574,
-              "contrast": 6.06
+              "contrast": 5.96
             },
             {
               "id": "n2eac7c2b16",
               "x": 1324,
               "y": 341,
               "r": 14.4,
-              "peak": 0.7679,
+              "peak": 0.7315,
               "ground": 0.0574,
-              "contrast": 7.62
+              "contrast": 7.28
             },
             {
               "id": "n344b78a9bd",
               "x": 848,
               "y": 568,
               "r": 14.4,
-              "peak": 0.2959,
+              "peak": 0.285,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.12
             },
             {
               "id": "n354196ac48",
               "x": 876,
               "y": 695,
               "r": 14.4,
-              "peak": 0.2908,
+              "peak": 0.2526,
               "ground": 0.0574,
-              "contrast": 3.17
+              "contrast": 2.82
             },
             {
               "id": "n356aeca57a",
               "x": 1077,
               "y": 292,
               "r": 14.4,
-              "peak": 0.2963,
+              "peak": 0.2895,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.16
             },
             {
               "id": "n36627f75c9",
               "x": 605,
               "y": 617,
               "r": 14.4,
-              "peak": 0.2924,
+              "peak": 0.2669,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 2.95
             },
             {
               "id": "n380afc9e85",
               "x": 813,
               "y": 953,
               "r": 14.4,
-              "peak": 0.5665,
+              "peak": 0.5654,
               "ground": 0.0574,
-              "contrast": 5.74
+              "contrast": 5.73
             },
             {
               "id": "n383f10ab25",
               "x": 1069,
               "y": 418,
               "r": 14.4,
-              "peak": 0.7965,
+              "peak": 0.7813,
               "ground": 0.0574,
-              "contrast": 7.88
+              "contrast": 7.74
             },
             {
               "id": "n3a2b198a84",
               "x": 656,
               "y": 334,
               "r": 14.4,
-              "peak": 0.4887,
+              "peak": 0.277,
               "ground": 0.0574,
-              "contrast": 5.02
+              "contrast": 3.04
             },
             {
               "id": "n3ad7401001",
               "x": 1052,
               "y": 225,
               "r": 14.4,
-              "peak": 0.2963,
+              "peak": 0.2935,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.2
             },
             {
               "id": "n3eba301186",
               "x": 1342,
               "y": 342,
               "r": 14.4,
-              "peak": 0.4687,
+              "peak": 0.3052,
               "ground": 0.0574,
-              "contrast": 4.83
+              "contrast": 3.31
             },
             {
               "id": "n4163afee7d",
               "x": 864,
               "y": 743,
               "r": 14.4,
-              "peak": 0.2907,
+              "peak": 0.2492,
               "ground": 0.0574,
-              "contrast": 3.17
+              "contrast": 2.79
             },
             {
               "id": "n4233b3d94d",
@@ -1573,421 +1601,403 @@
               "x": 1029,
               "y": 145,
               "r": 14.4,
-              "peak": 0.4562,
+              "peak": 0.2974,
               "ground": 0.0574,
-              "contrast": 4.71
+              "contrast": 3.23
             },
             {
               "id": "n49831ccd16",
               "x": 624,
               "y": 204,
               "r": 14.4,
-              "peak": 0.293,
+              "peak": 0.2658,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 2.94
             },
             {
               "id": "n4fd66d29cd",
               "x": 811,
               "y": 928,
               "r": 14.4,
-              "peak": 0.5819,
+              "peak": 0.5704,
               "ground": 0.0574,
-              "contrast": 5.88
+              "contrast": 5.78
             },
             {
               "id": "n523c38191a",
               "x": 662,
               "y": 668,
               "r": 14.4,
-              "peak": 0.293,
+              "peak": 0.2711,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 2.99
+            },
+            {
+              "id": "n53badd7a56",
+              "x": 1040,
+              "y": 390,
+              "r": 14.4,
+              "peak": 0.7794,
+              "ground": 0.0574,
+              "contrast": 7.72
             },
             {
               "id": "n5630d9df9f",
               "x": 1249,
               "y": 635,
               "r": 14.4,
-              "peak": 0.2966,
+              "peak": 0.2932,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 3.2
             },
             {
               "id": "n5880a05cab",
               "x": 1038,
               "y": 419,
               "r": 14.4,
-              "peak": 0.7968,
+              "peak": 0.7794,
               "ground": 0.0574,
-              "contrast": 7.89
+              "contrast": 7.72
             },
             {
               "id": "n5b46c6f107",
               "x": 810,
               "y": 538,
               "r": 14.4,
-              "peak": 0.296,
+              "peak": 0.291,
               "ground": 0.0574,
-              "contrast": 3.22
-            },
-            {
-              "id": "n5daeac7b96",
-              "x": 1064,
-              "y": 409,
-              "r": 14.4,
-              "peak": 0.7965,
-              "ground": 0.0574,
-              "contrast": 7.88
+              "contrast": 3.18
             },
             {
               "id": "n5f31be08e0",
               "x": 796,
               "y": 459,
               "r": 14.4,
-              "peak": 0.2968,
+              "peak": 0.2909,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 3.17
             },
             {
               "id": "n618ee08ab3",
               "x": 1041,
               "y": 406,
               "r": 14.4,
-              "peak": 0.8032,
+              "peak": 0.7794,
               "ground": 0.0574,
-              "contrast": 7.95
+              "contrast": 7.72
             },
             {
               "id": "n633fb7a959",
               "x": 663,
               "y": 571,
               "r": 14.4,
-              "peak": 0.2924,
+              "peak": 0.2666,
               "ground": 0.0574,
-              "contrast": 3.19
-            },
-            {
-              "id": "n67398866c5",
-              "x": 1317,
-              "y": 321,
-              "r": 14.4,
-              "peak": 0.7737,
-              "ground": 0.0574,
-              "contrast": 7.67
+              "contrast": 2.95
             },
             {
               "id": "n69344565b8",
               "x": 759,
               "y": 484,
               "r": 14.4,
-              "peak": 0.2958,
+              "peak": 0.291,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.18
             },
             {
               "id": "n703e3384c3",
               "x": 1330,
               "y": 266,
               "r": 14.4,
-              "peak": 0.291,
+              "peak": 0.2561,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 2.85
+            },
+            {
+              "id": "n7091638a5d",
+              "x": 1316,
+              "y": 347,
+              "r": 14.4,
+              "peak": 0.3245,
+              "ground": 0.0574,
+              "contrast": 3.49
             },
             {
               "id": "n70b3c5270b",
               "x": 958,
               "y": 138,
               "r": 14.4,
-              "peak": 0.8523,
+              "peak": 0.8187,
               "ground": 0.0574,
-              "contrast": 8.4
+              "contrast": 8.09
             },
             {
               "id": "n714166721d",
               "x": 1108,
               "y": 427,
               "r": 14.4,
-              "peak": 0.8029,
+              "peak": 0.7789,
               "ground": 0.0574,
-              "contrast": 7.94
+              "contrast": 7.72
             },
             {
               "id": "n75d8f580e5",
               "x": 620,
               "y": 402,
               "r": 14.4,
-              "peak": 0.2914,
+              "peak": 0.2516,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 2.81
             },
             {
               "id": "n798586ed6b",
               "x": 840,
               "y": 943,
               "r": 14.4,
-              "peak": 0.5858,
+              "peak": 0.5744,
               "ground": 0.0574,
-              "contrast": 5.92
+              "contrast": 5.81
             },
             {
               "id": "n7d25b2da8a",
               "x": 863,
               "y": 714,
               "r": 14.4,
-              "peak": 0.2933,
+              "peak": 0.2582,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 2.87
             },
             {
               "id": "n7deb3cc285",
               "x": 653,
               "y": 662,
               "r": 14.4,
-              "peak": 0.293,
+              "peak": 0.2711,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 2.99
             },
             {
               "id": "n7e876747ad",
               "x": 1193,
               "y": 668,
               "r": 14.4,
-              "peak": 0.2922,
+              "peak": 0.2751,
               "ground": 0.0574,
-              "contrast": 3.19
-            },
-            {
-              "id": "n8118cf8107",
-              "x": 1086,
-              "y": 374,
-              "r": 14.4,
-              "peak": 0.7999,
-              "ground": 0.0574,
-              "contrast": 7.91
+              "contrast": 3.03
             },
             {
               "id": "n85ef9080ea",
               "x": 1299,
               "y": 293,
               "r": 14.4,
-              "peak": 0.2893,
+              "peak": 0.2508,
               "ground": 0.0574,
-              "contrast": 3.16
+              "contrast": 2.8
             },
             {
               "id": "n996700c24d",
               "x": 657,
               "y": 645,
               "r": 14.4,
-              "peak": 0.2913,
+              "peak": 0.2591,
               "ground": 0.0574,
-              "contrast": 3.18
-            },
-            {
-              "id": "n99ff69458f",
-              "x": 1148,
-              "y": 364,
-              "r": 14.4,
-              "peak": 0.7934,
-              "ground": 0.0574,
-              "contrast": 7.85
+              "contrast": 2.88
             },
             {
               "id": "n9a939af75c",
               "x": 707,
               "y": 588,
               "r": 14.4,
-              "peak": 0.2916,
+              "peak": 0.2661,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 2.94
             },
             {
               "id": "n9aee67caa2",
               "x": 1240,
               "y": 575,
               "r": 14.4,
-              "peak": 0.2938,
+              "peak": 0.2798,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 3.07
             },
             {
               "id": "n9b0b5d8a6d",
               "x": 829,
               "y": 441,
               "r": 14.4,
-              "peak": 0.2921,
+              "peak": 0.2773,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 3.05
             },
             {
               "id": "n9e05705d26",
               "x": 723,
               "y": 374,
               "r": 14.4,
-              "peak": 0.2883,
+              "peak": 0.2437,
               "ground": 0.0574,
-              "contrast": 3.15
+              "contrast": 2.74
             },
             {
               "id": "n9e5581acc8",
               "x": 1003,
               "y": 213,
               "r": 14.4,
-              "peak": 0.2924,
+              "peak": 0.2579,
               "ground": 0.0574,
-              "contrast": 3.19
+              "contrast": 2.87
             },
             {
               "id": "na2358b2b07",
               "x": 837,
               "y": 968,
               "r": 14.4,
-              "peak": 0.5898,
+              "peak": 0.5858,
               "ground": 0.0574,
-              "contrast": 5.96
+              "contrast": 5.92
             },
             {
               "id": "na6b4e90f5b",
               "x": 1117,
               "y": 225,
               "r": 14.4,
-              "peak": 0.2963,
+              "peak": 0.2851,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.12
             },
             {
               "id": "na8ba0be3cd",
               "x": 720,
               "y": 467,
               "r": 14.4,
-              "peak": 0.2911,
+              "peak": 0.2429,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 2.73
             },
             {
               "id": "na9606fee1c",
               "x": 1262,
               "y": 606,
               "r": 14.4,
-              "peak": 0.2961,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.15
             },
             {
               "id": "naaabbd92cb",
               "x": 909,
               "y": 712,
               "r": 14.4,
-              "peak": 0.291,
+              "peak": 0.2467,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 2.76
             },
             {
               "id": "nba2805e3e1",
               "x": 882,
               "y": 532,
               "r": 14.4,
-              "peak": 0.2967,
+              "peak": 0.2908,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 3.17
             },
             {
               "id": "nd682eed70b",
               "x": 942,
               "y": 191,
               "r": 14.4,
-              "peak": 0.4522,
+              "peak": 0.2643,
               "ground": 0.0574,
-              "contrast": 4.68
+              "contrast": 2.93
             },
             {
               "id": "nd960763431",
               "x": 1174,
               "y": 646,
               "r": 14.4,
-              "peak": 0.2941,
+              "peak": 0.2762,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 3.04
             },
             {
               "id": "ndcecf485a0",
               "x": 645,
               "y": 387,
               "r": 14.4,
-              "peak": 0.5646,
+              "peak": 0.4628,
               "ground": 0.0574,
-              "contrast": 5.72
+              "contrast": 4.77
             },
             {
               "id": "ndd346f34ee",
               "x": 560,
               "y": 266,
               "r": 14.4,
-              "peak": 0.2935,
+              "peak": 0.274,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 3.02
             },
             {
               "id": "ndebe2ada83",
               "x": 598,
               "y": 285,
               "r": 14.4,
-              "peak": 0.2938,
+              "peak": 0.2689,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 2.97
             },
             {
               "id": "ne85bc87b03",
               "x": 928,
               "y": 483,
               "r": 14.4,
-              "peak": 0.2966,
+              "peak": 0.2958,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 3.22
             },
             {
               "id": "nef369efdfc",
               "x": 637,
               "y": 427,
               "r": 14.4,
-              "peak": 0.2891,
+              "peak": 0.2451,
               "ground": 0.0574,
-              "contrast": 3.16
+              "contrast": 2.75
             },
             {
               "id": "nf2bb761959",
               "x": 742,
               "y": 965,
               "r": 14.4,
-              "peak": 0.6323,
+              "peak": 0.6256,
               "ground": 0.0574,
-              "contrast": 6.35
+              "contrast": 6.29
             },
             {
               "id": "nf3603a277e",
               "x": 990,
               "y": 256,
               "r": 14.4,
-              "peak": 0.5684,
+              "peak": 0.4281,
               "ground": 0.0574,
-              "contrast": 5.76
+              "contrast": 4.45
             },
             {
               "id": "nf53f4946cf",
               "x": 553,
               "y": 279,
               "r": 14.4,
-              "peak": 0.2935,
+              "peak": 0.2731,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 3.01
             }
           ]
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 9,
-        "arbiterSeqAtAudit": 9,
+        "arbiterSeqAtShot": 10,
+        "arbiterSeqAtAudit": 10,
         "auditDescribesTheShippedFrame": true,
         "recencyByDistrict": {
           "violet": {
@@ -2094,7 +2104,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bac9916dd5a965ca",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "5b37b3b57ff185bf",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -2102,6 +2112,7 @@
           "noTwoChromePanelsOverlap": "b5bea41b6c62",
           "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
           "noNodeBuriedByChrome": "b5bea41b6c62",
+          "everyThoughtOnScreenIsNamed": "b5bea41b6c62",
           "everyLabelInsideTheFrame": "b5bea41b6c62",
           "recencyChannelExercised": "b5bea41b6c62",
           "allFiveStatesAtWholeMapDensity": "b5bea41b6c62",
@@ -2113,8 +2124,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:33:09.071Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T11:03:42.563Z"
     },
     {
       "id": "05",
@@ -2310,7 +2321,7 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 4.8,
+      "seconds": 4.3,
       "status": "captured",
       "error": null,
       "check": {
@@ -2430,7 +2441,7 @@
         ]
       },
       "result": {
-        "arbiterSeq": 55,
+        "arbiterSeq": 54,
         "labelsAudited": 7,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Ask M about her crock",
@@ -2473,6 +2484,10 @@
         "noTwoChromePanelsOverlap": true,
         "everyChromeBadgeInsideTheFrame": true,
         "noNodeBuriedByChrome": true,
+        "namesDrawn": 7,
+        "namesListed": 1,
+        "thoughtsLeftUnnamed": 0,
+        "everyThoughtOnScreenIsNamed": true,
         "markerContrast": {
           "checked": 7,
           "sampled": 7,
@@ -2550,8 +2565,8 @@
         },
         "labelsWithoutVisibleMarker": 0,
         "everyDrawnLabelHasAVisibleMarker": true,
-        "arbiterSeqAtShot": 55,
-        "arbiterSeqAtAudit": 55,
+        "arbiterSeqAtShot": 54,
+        "arbiterSeqAtAudit": 54,
         "auditDescribesTheShippedFrame": true,
         "map": "map-fermentation",
         "nodes": 150,
@@ -2656,7 +2671,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "8dd48b690de940ed",
-        "appSha": "1645e6b3340188b3",
+        "appSha": "9bfd7dd6585c83ad",
         "claimShas": {
           "holdingRingFillsFrame": "b5bea41b6c62",
           "everyHeldNodeInFrame": "b5bea41b6c62",
@@ -2676,7 +2691,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:00:02.595Z"
+      "fileMtime": "2026-09-06T11:02:33.531Z"
     },
     {
       "id": "07",
@@ -3161,15 +3176,15 @@
       "title": "Search fly-to end-state",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 9.2,
+      "seconds": 6.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 186311,
-        "sha256": "89438b3f41c067ea92cc6ce10f74ab1a6e97ecc36a26f2598dea2811bfe10f0e"
+        "bytes": 189647,
+        "sha256": "7b28db4c4e3f863ecf720370e5f79e0b9ffe8397a41b209db5988716699fb911"
       },
       "claims": {
         "ok": true,
@@ -3300,20 +3315,21 @@
         "labelOverlappingPairs": 0,
         "labelWorstPairOverlapPx": 0,
         "labelWorstPairOn": null,
-        "labelTightestPairGapPx": 33.41,
+        "labelTightestPairGapPx": 23.13,
         "labelTightestPairOn": [
-          "Rice koji: polish to 90%",
-          "Amazake"
+          "Bed depth 4cm max",
+          "Stir at 24h to cool"
         ],
         "noTwoDrawnLabelsOverlap": true,
-        "labelsTruncated": 3,
+        "labelsTruncated": 4,
         "labelsTruncatedOn": [
           "Bed depth 4cm max",
           "Amylase plus protease",
-          "Barley miso, 18 months"
+          "Barley miso, 18 months",
+          "Stir at 24h to cool"
         ],
         "labelWorstDisplacementPx": 52,
-        "labelsMoreThan40pxFromTheirNode": 6,
+        "labelsMoreThan40pxFromTheirNode": 7,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
@@ -3329,7 +3345,7 @@
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
-          "worstContrast": 3.25,
+          "worstContrast": 2.68,
           "invisibleIds": [],
           "weakest": [],
           "rows": [
@@ -3338,99 +3354,99 @@
               "x": 105,
               "y": 443,
               "r": 15.9,
-              "peak": 0.2992,
+              "peak": 0.2373,
               "ground": 0.0574,
-              "contrast": 3.25
+              "contrast": 2.68
             },
             {
               "id": "n209e6a2a86",
               "x": 1105,
               "y": 663,
               "r": 32.2,
-              "peak": 0.7979,
+              "peak": 0.7777,
               "ground": 0.0574,
-              "contrast": 7.9
+              "contrast": 7.71
             },
             {
               "id": "n4e9bd59c87",
               "x": 1217,
               "y": 538,
               "r": 55.7,
-              "peak": 0.7976,
+              "peak": 0.7861,
               "ground": 0.0574,
-              "contrast": 7.89
+              "contrast": 7.79
             },
             {
               "id": "n53badd7a56",
               "x": 489,
               "y": 711,
               "r": 36.6,
-              "peak": 0.8111,
+              "peak": 0.7946,
               "ground": 0.0574,
-              "contrast": 8.02
+              "contrast": 7.86
             },
             {
               "id": "n5880a05cab",
               "x": 567,
               "y": 884,
               "r": 38.6,
-              "peak": 0.7979,
+              "peak": 0.7816,
               "ground": 0.0574,
-              "contrast": 7.9
+              "contrast": 7.74
             },
             {
               "id": "n5daeac7b96",
               "x": 734,
               "y": 844,
               "r": 40.9,
-              "peak": 0.8043,
+              "peak": 0.7878,
               "ground": 0.0574,
-              "contrast": 7.96
+              "contrast": 7.8
             },
             {
               "id": "n8118cf8107",
               "x": 968,
               "y": 577,
               "r": 34.4,
-              "peak": 0.9055,
+              "peak": 0.819,
               "ground": 0.0574,
-              "contrast": 8.9
+              "contrast": 8.09
             },
             {
               "id": "n83224a5de3",
               "x": 1547,
               "y": 811,
               "r": 40,
-              "peak": 0.8046,
+              "peak": 0.7884,
               "ground": 0.0574,
-              "contrast": 7.96
+              "contrast": 7.81
             },
             {
               "id": "n84a7397186",
               "x": 1496,
               "y": 662,
               "r": 52.7,
-              "peak": 0.9055,
+              "peak": 0.7886,
               "ground": 0.0574,
-              "contrast": 8.9
+              "contrast": 7.81
             },
             {
               "id": "n8d055e5297",
               "x": 125,
               "y": 571,
               "r": 14.4,
-              "peak": 0.3001,
+              "peak": 0.2463,
               "ground": 0.0574,
-              "contrast": 3.26
+              "contrast": 2.76
             },
             {
               "id": "nbc542622a2",
               "x": 724,
               "y": 762,
               "r": 66,
-              "peak": 0.9055,
+              "peak": 0.8436,
               "ground": 0.0574,
-              "contrast": 8.9
+              "contrast": 8.32
             }
           ]
         },
@@ -3471,7 +3487,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "ef4340f5a9e4398f",
-        "appSha": "fe7d8822be86ef5c",
+        "appSha": "9bfd7dd6585c83ad",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -3490,7 +3506,7 @@
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T10:33:59.171Z"
+      "fileMtime": "2026-09-06T11:02:39.903Z"
     },
     {
       "id": "11",
@@ -5674,15 +5690,15 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T11:00:28.879Z",
+  "finishedAt": "2026-09-06T11:03:44.666Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 823123,
-    "sha256": "1645e6b3340188b3d6452fff94fcfdfe080bb83254309b433e409ff1a482571a",
-    "appSha": "1645e6b3340188b3",
-    "gitHead": "a9d10e0311bf",
-    "gitHeadAt": "2026-09-06T10:54:49+00:00",
+    "bytes": 825274,
+    "sha256": "5b37b3b57ff185bf291cececa0e9b6c8fd27ed63a5cb2401c65a009164b7119c",
+    "appSha": "5b37b3b57ff185bf",
+    "gitHead": "8f8f4f6e0e16",
+    "gitHeadAt": "2026-09-06T11:00:29+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,
