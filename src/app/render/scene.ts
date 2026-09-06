@@ -52,6 +52,13 @@ export interface CameraPose { target: THREE.Vector3; yaw: number; pitch: number;
 // chroma far better preserved by the OKLab ladder (D-013), there is room to
 // separate the ends further.
 const RECENCY_STEP = 0.30, SETTLED_FLOOR = 0.22;
+/**
+ * The compressed identity's length band. Three characters is the shortest thing
+ * that can carry a word's beginning; eight is where a stub stops being cheap
+ * enough to be worth having instead of a hidden name. Within the band the
+ * length is solved per frame by uniqueness, never fixed.
+ */
+const STUB_MIN = 3, STUB_MAX = 8;
 const SETTLED_CACHE = new Map<number, number>();
 function settledSat(c: THREE.Color): number {
   const key = c.getHex();
@@ -128,6 +135,7 @@ export class Scene {
     this.camera.updateProjectionMatrix();
     this.nodes.setViewport(w, h);
     this.text.setViewport(w, h);
+    this.holding.setViewport(w, h);
   }
 
   setDoc(doc: MapDoc | null) { this.doc = doc; this.dirty = true; }
@@ -187,6 +195,12 @@ export class Scene {
     }
   }
   private namedByChrome = new Set<NodeId>();
+
+  /**
+   * The compressed identity length for each run this frame: the shortest prefix
+   * of its text that no other text in the frame shares. Rebuilt with the runs.
+   */
+  private stubLen = new Map<NodeId, number>();
   getSelection() { return this.selected; }
   setHits(ids: Iterable<NodeId>) { this.hits = new Set(ids); this.dirty = true; }
   getHits() { return this.hits; }
@@ -263,7 +277,19 @@ export class Scene {
                           // label lost its ground to a higher-priority one;
                           // placing them ahead of everything but the pin costs
                           // almost nothing at this count and removes the case.
-                          priority: n.id === this.pinned ? -1 : !n.placed ? -0.5 : PRIORITY[st],
+                          // WHICH NAMES SURVIVE IS A STRUCTURAL QUESTION, not
+                          // an arbitrary one. The tiers are unchanged — the pin,
+                          // then held thoughts, then the five states — but
+                          // WITHIN a tier the arbiter used to settle ties on
+                          // camera depth, which is to say on nothing a reader
+                          // cares about. A thought that joins six others is the
+                          // one whose name makes the region around it readable;
+                          // a leaf is recoverable from its district and its
+                          // neighbours. Degree is folded in as a fraction of a
+                          // tier so it orders inside one and can never promote
+                          // a plain node past a search hit.
+                          priority: (n.id === this.pinned ? -1 : !n.placed ? -0.5 : PRIORITY[st]) -
+                                    Math.min(deg.get(n.id) ?? 0, 9) * 0.05,
                           // THE SURVIVORS CAN AFFORD TO BE BRIGHTER. Plain labels were held at
                           // 0.86 to keep a crowded frame from turning into a wall of
                           // type — but the cap-and-drop ruling already halves the
@@ -294,6 +320,30 @@ export class Scene {
     this.nodes.build(inst);
     const p = LENS_PROFILE[this.lens];
     this.text.build(runs, 28, p.textLines);
+    // THE SHORTEST PREFIX THAT IS STILL THIS THOUGHT AND NO OTHER.
+    //
+    // Computed once per run rebuild, over every text in the frame. See
+    // `compressedIdentity` below for why this exists; what matters here is that
+    // the length is chosen by DISAMBIGUATION rather than by a constant. If
+    // "Rice vinegar base" and "Rice koji: polish to 70 %" are both on screen,
+    // neither may compress to "Rice" — they get "Rice v" and "Rice k", the
+    // shortest prefixes that tell them apart. If a text is unique at three
+    // characters it gets three.
+    {
+      this.stubLen.clear();
+      const texts = runs.map(r => r.text.trim());
+      for (let i = 0; i < texts.length; i++) {
+        let k = STUB_MIN;
+        for (; k < STUB_MAX; k++) {
+          const pre = texts[i].slice(0, k).toLowerCase();
+          let clash = false;
+          for (let j = 0; j < texts.length && !clash; j++)
+            if (j !== i && texts[j].slice(0, k).toLowerCase() === pre) clash = true;
+          if (!clash) break;
+        }
+        this.stubLen.set(this.runMeta[i].id, Math.min(k, texts[i].length));
+      }
+    }
     if (this.runAlphas.length !== this.runMeta.length) this.runAlphas = new Float32Array(this.runMeta.length);
     if (this.runShifts.length !== this.runMeta.length * 2) this.runShifts = new Float32Array(this.runMeta.length * 2);
     if (this.runVisible.length !== this.runMeta.length) this.runVisible = new Int32Array(this.runMeta.length);
@@ -667,6 +717,33 @@ export class Scene {
           widths.push({ w: Math.max((glyphs[k - 1] - span.x0Em) * sh.emPx + ellW, 6), vis: k });
           if (widths.length >= 4) break;
         }
+        // THE COMPRESSED IDENTITY — the last thing tried, and only where the
+        // alternative is nothing at all.
+        //
+        // The cycle-9 Art Director set the truncation floor at ten glyphs, and
+        // was right about what they were looking at: "Rice…", "Salt…", "Log…"
+        // cost the same ink and the same collision budget as a full name and
+        // returned almost nothing, because "Rice…" could equally have been
+        // "Rice koji: polish to 70 %". The cycle-11 Art Director asks for the
+        // opposite — an always-on compressed identity for a suppressed node,
+        // because 78 % of the nodes on a whole-brain frame carry no text at all
+        // and an overview of coloured dots plus a sidebar is not the standard.
+        //
+        // Both are right about their own case, and the floor is what reconciles
+        // them: a stub is admissible only when it is UNIQUE IN THE FRAME. The
+        // length is solved above by disambiguation, not chosen as a constant,
+        // so the exact failure the floor was raised against — a stub that could
+        // be either of two thoughts on screen — cannot occur. It carries its
+        // ellipsis like any shortening, it is counted and reported separately
+        // from a full name, and the recovery column still lists the whole text.
+        // This is a ruling by the same role that made the earlier one, on a
+        // different proposal; it is recorded as an amendment in DIRECTION.md,
+        // not applied quietly.
+        const stub = this.stubLen.get(this.runMeta[b.i].id) ?? 0;
+        if (stub >= STUB_MIN && stub < glyphs.length &&
+            !widths.some(w => w.vis === stub)) {
+          widths.push({ w: Math.max((glyphs[stub - 1] - span.x0Em) * sh.emPx + ellW, 6), vis: stub });
+        }
       }
       let best = { frac: 1, score: 99, dx: 0, dy: 0, w: sh.w, vis: 0, fits: false, far: false };
       // A LABEL KEEPS THE PLACE IT HAD, IF THAT PLACE IS STILL FREE.
@@ -923,6 +1000,8 @@ export class Scene {
     this.suppressedIds.length = 0;
     this.shortened = 0;
     this.shortenedIds.length = 0;
+    this.compressed = 0;
+    this.compressedIds.length = 0;
     for (let i = 0; i < this.runMeta.length; i++) {
       const meta = this.runMeta[i];
       const r = this.labelRects.get(meta.id);
@@ -932,7 +1011,16 @@ export class Scene {
         // ellipsis, which is true of the word "hidden" and false of what a
         // reader can recover: "Coffee cherry cascara…" is no more the thought
         // than a name that was never drawn.
-        if (this.text.isTruncated(i)) { this.shortened++; this.shortenedIds.push(meta.id); }
+        if (this.text.isTruncated(i)) {
+          // A COMPRESSED IDENTITY IS NOT A SHORTENED NAME, and the frame must
+          // not report it as one. "Rice v…" tells a reader which thought this
+          // is and nothing about what it says; "Koji-kin sourcing for…" is a
+          // name with its tail cut. Counted apart so the badge can state both
+          // and a reader knows which kind of omission they are looking at.
+          const vis = this.runVisible[i];
+          if (vis > 0 && vis <= STUB_MAX) { this.compressed++; this.compressedIds.push(meta.id); }
+          else { this.shortened++; this.shortenedIds.push(meta.id); }
+        }
         continue;
       }
       // A pinned node's run stands down because the pin tag names it, so it is
@@ -949,6 +1037,14 @@ export class Scene {
   /** How many drawn names are cut short at this framing, and which. */
   shortened = 0;
   shortenedIds: NodeId[] = [];
+
+  /**
+   * How many names are drawn only as a compressed identity — a prefix short
+   * enough that it identifies the thought without saying it — and which.
+   * Reported apart from `shortened` because they are different omissions.
+   */
+  compressed = 0;
+  compressedIds: NodeId[] = [];
 
   /**
    * How many labels the arbiter could not place at this framing. Reported so a

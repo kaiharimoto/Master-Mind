@@ -3,7 +3,13 @@
 export const CSS = `
 :root{
   --ground:#120E0B; --panel:#191410; --panel2:#221B16; --line:#2E2620;
-  --ink:#EFE6D8; --ink-dim:#A2968A; --ink-faint:#6E645B;
+  /* --ink-faint was #6E645B: 3.17:1 on the panel and 3.33:1 on the ground, and
+     the cycle-11 Art Director measured it as the lowest-contrast text in the
+     frame — on the badge that explains why other text is missing. #918779
+     clears 4.5:1 on all three surfaces this build has (5.44 on the ground,
+     5.18 on a panel, 4.81 on a raised panel) and stays a muted warm grey
+     rather than becoming a second ink. */
+  --ink:#EFE6D8; --ink-dim:#A2968A; --ink-faint:#918779;
   --hot:#FFB020; --bad:#FF6B4A; --ok:#2FD0C0;
 }
 *{box-sizing:border-box}

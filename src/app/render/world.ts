@@ -555,25 +555,50 @@ uniform float uRadius;
 uniform vec2  uViewport;
 varying vec2 vQuad;
 varying float vFade;
+varying float vPxR;
 void main() {
   vec4 mv = modelViewMatrix * vec4(uCentre, 1.0);
   float dist = max(-mv.z, 1e-4);
   mv.xy += position.xy * 2.0 * uRadius;
   gl_Position = projectionMatrix * mv;
   vQuad = position.xy * 2.0;
-  vFade = mix(1.0, 0.35, clamp((dist - 55.0) / 245.0, 0.0, 1.0));
+  // THE RING'S RADIUS IN PIXELS, so the dash period, the stroke and the
+  // antialiasing can be held in screen space rather than in world space.
+  // Everything below was defined in quad units, which means every one of them
+  // grew without bound as the camera approached: the cycle-11 Art Director
+  // measured a 5.5 s window of artifact 19 where this boundary rendered as
+  // roughly forty pale rounded slabs with a 10 px-soft edge sweeping the frame,
+  // in a build whose every other contour is crisp to 1-2 px.
+  float rw = uRadius * 0.5;
+  vPxR = rw * (uViewport.y * projectionMatrix[1][1] * 0.5 / dist);
+  // AND IT GOES WHEN YOU ARE INSIDE IT. A boundary seen from within is not a
+  // boundary, it is a wall across the view; the count and the dashed markers
+  // still say what is in holding.
+  float inside = smoothstep(rw * 0.85, rw * 1.9, dist);
+  vFade = mix(1.0, 0.35, clamp((dist - 55.0) / 245.0, 0.0, 1.0)) * inside;
 }`;
 const SHELL_FRAG = /* glsl */`
 precision highp float;
 #define TAU 6.28318530718
 varying vec2 vQuad;
 varying float vFade;
+varying float vPxR;
 uniform float uActive;
 void main() {
   float r = length(vQuad);
-  float aa = max(fwidth(r) * 1.1, 0.004);
+  // One quad unit is 2 * vPxR pixels across the ring's diameter, so a screen
+  // length of P pixels is P / (2 * vPxR) here. Each of the three constants
+  // below is now a MINIMUM in quad units capped by its screen equivalent: at
+  // normal framing the caps are slack and the ring looks exactly as it did; as
+  // the camera closes they take over and hold it to a thin dashed circle.
+  float perPx = 1.0 / max(2.0 * vPxR, 1.0);
+  float aa = max(fwidth(r) * 1.1, min(0.004, perPx));
   float u = atan(vQuad.y, vQuad.x) / TAU + 0.5;
-  float f = fract(u * 44.0);
+  // Never fewer dashes than the forty-four this always had, and more as the
+  // circumference grows, so a dash-and-gap stays about twelve pixels long
+  // instead of becoming a card.
+  float dashes = clamp(vPxR * TAU / 12.0, 44.0, 600.0);
+  float f = fract(u * dashes);
   float dash = smoothstep(0.0, 0.10, f) * (1.0 - smoothstep(0.42, 0.52, f));
   // THE BOUNDARY EARNS ITS LIGHT WHEN IT IS LOAD-BEARING.
   //
@@ -586,7 +611,7 @@ void main() {
   // being dragged, crossing this circle is the difference between a thought
   // that stays in holding and one that gets a permanent position, so the ring
   // thickens and brightens to say which side of that line the drag is on.
-  float wid = mix(0.006, 0.011, uActive);
+  float wid = min(mix(0.006, 0.011, uActive), mix(2.2, 3.4, uActive) * perPx);
   float ring = (1.0 - smoothstep(wid - aa, wid + aa, abs(r - 0.5))) * dash;
   if (ring < 0.004) discard;
   // Below the quietest node state. The boundary encodes real state and belongs
@@ -626,6 +651,13 @@ export class HoldingShell {
     this.material.uniforms.uCentre.value.copy(centre);
     this.material.uniforms.uRadius.value = radius * 2;
   }
+
+  /**
+   * The ring holds its dash period, stroke and antialiasing in SCREEN space, so
+   * it needs to know how big the screen is. It was initialised to 1920x1080 and
+   * never updated, which was harmless while nothing read it and is not now.
+   */
+  setViewport(w: number, h: number) { this.material.uniforms.uViewport.value.set(w, h); }
 
   /** Live while a node is being dragged: this circle is the drop boundary. */
   setActive(on: boolean) { this.material.uniforms.uActive.value = on ? 1 : 0; }

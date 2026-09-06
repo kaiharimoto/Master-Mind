@@ -980,13 +980,18 @@ export class App {
     // The badge exists to declare what the frame is not showing, so it must not
     // itself be the thing that is hidden: it stands down when the editor would
     // draw over it rather than being clipped to "1 label hid".
-    chip.className = (n > 0 || cut > 0) ? 'show' : '';
+    chip.className = (n > 0 || cut > 0 || this.scene.compressed > 0) ? 'show' : '';
     // Both kinds of omission, named separately. Saying only the first let a
     // frame declare "0 labels hidden" while 42 of its 150 names were shortened
     // to an ellipsis — a true sentence a reader would take for a false one.
     const parts: string[] = [];
     if (n > 0) parts.push(`${n} label${n === 1 ? '' : 's'} hidden`);
     if (cut > 0) parts.push(`${cut} shortened`);
+    // Named apart from "shortened", because they are different omissions: a
+    // shortened name has lost its tail, a compressed one was never said — it
+    // identifies the thought and leaves the words to the list.
+    const abbr = this.scene.compressed;
+    if (abbr > 0) parts.push(`${abbr} named by their first letters`);
     // "MOVE CLOSER TO READ THEM" WAS A PROMISE THE FRAME COULD BREAK. The
     // cycle-11 Audience put artifact 05's two panels side by side: after the
     // open-palm move-closer the chip read `118 labels hidden` where before it
