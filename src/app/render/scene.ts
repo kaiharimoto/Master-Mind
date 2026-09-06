@@ -304,6 +304,29 @@ export class Scene {
     this.camera.up.set(0, 1, 0);
     this.camera.lookAt(target);
     this.camera.updateMatrixWorld();
+    // THE PROJECTION CACHE DIES WITH THE CAMERA THAT MADE IT.
+    //
+    // It was invalidated at the END of render() only, and the chrome pass runs
+    // AFTER render — the reticle, the leaders, the pin all call
+    // screenPositions() — so the cache was immediately refilled with the frame
+    // that had just been drawn. On the next frame applyPose() moved the camera
+    // and the label arbiter, calling screenPositions() first thing, was handed
+    // the PREVIOUS frame's projection.
+    //
+    // So labels were laid out against a camera one frame stale. On a still
+    // frame repeated renders converge and it looks correct, which is why this
+    // survived nine cycles; when the camera had just moved it put names in the
+    // wrong places, let two labels take one anchor, and left the marker probe
+    // sampling bare ground at a node's supposed position. It is the single
+    // cause behind the cycle-9 Auditor's B1, the Art Director's C1, and the
+    // nine "peak 0.0574 against ground 0.0574" marker failures.
+    //
+    // Measured on artifact 02 before the fix: the arbiter had node
+    // n12900c3690 at x 1447.12 while both screenPositions() and a direct
+    // project() of its stored position agreed on 1378.06 — 69 px apart, with an
+    // identical camera, an identical canvas and a projection that reproduces to
+    // 0.000 px on consecutive calls.
+    this.screenCache = [];
   }
 
   private holdingMembers: [number, number, number][] = [];

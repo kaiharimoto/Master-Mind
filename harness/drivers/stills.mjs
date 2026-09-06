@@ -124,6 +124,20 @@ const labelsAndMarkers = async (H, page, file, seqAtShot = null) => {
       inner: [window.innerWidth, window.innerHeight], dpr: window.devicePixelRatio,
       lastCanvas: window.mm.scene.lastCanvas,
     }));
+    const three = await page.evaluate((ids) => {
+      const sc = window.mm.scene, d = window.mm.store.doc;
+      const fresh = new Map(sc.screenPositions().map(q => [q.id, [+q.x.toFixed(2), +q.y.toFixed(2), +q.r.toFixed(2)]]));
+      return ids.slice(0, 3).map(i => ({
+        id: i,
+        pos: d.nodes[i].pos,
+        proj: (() => { const q = sc.project(d.nodes[i].pos); return q ? [+q.x.toFixed(2), +q.y.toFixed(2)] : null; })(),
+        fresh: fresh.get(i) ?? null,
+      }));
+    }, anchors.map(a => a.id));
+    const byIdT = new Map(anchors.map(a => [a.id, a]));
+    for (const r of three)
+      console.log('    [3-way]', r.id, 'arbiter', JSON.stringify([byIdT.get(r.id).x, byIdT.get(r.id).y]),
+                  'screenPositions', JSON.stringify(r.fresh), 'project(pos)', JSON.stringify(r.proj));
     const det = await page.evaluate(() => {
       const sc = window.mm.scene;
       const a = new Map(sc.screenPositions().map(q => [q.id, [q.x, q.y]]));
