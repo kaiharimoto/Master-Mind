@@ -2066,7 +2066,7 @@ export default [
       // So: the destination is photographed before the accept, the accept
       // happens, the landed thought is SELECTED so the frame names it, and the
       // state is held for nearly four seconds before the map changes.
-      { at: 740, fn: async () => {
+      { at: 780, fn: async () => {
           log.holdingBeforePlacement = await page.evaluate(() => window.mm.store.holdingCount());
           log.badgeBeforePlacement = await page.evaluate(() => {
             const e = document.querySelector('[data-t=holding-count]');
@@ -2095,10 +2095,10 @@ export default [
             log.destBefore = await H.sampleDiscs(png, log.destDisc, 2.0);
           }
         } },
-      { at: 760, fn: async () => {
+      { at: 800, fn: async () => {
           if (log.placement) await page.click('[data-t=finder-accept]');
         } },
-      { at: 790, fn: async () => {
+      { at: 830, fn: async () => {
           log.afterPlacement = await page.evaluate((n) => {
             const x = n ? window.mm.store.doc.nodes[n] : null;
             return x ? { placed: x.placed, pos: x.pos.slice() } : null;
@@ -2125,9 +2125,9 @@ export default [
       // were unproven at the scale the product claims. The map is changed the
       // way a user changes it — Maps, then Open — and the same adversarial
       // reply shape goes through the same parser against 150 nodes, on camera.
-      { at: 900, fn: async () => { await page.click('[data-t=open-maps]');
+      { at: 960, fn: async () => { await page.click('[data-t=open-maps]');
                                    await page.waitForSelector('[data-t=maps-home]'); } },
-      { at: 940, fn: async () => {
+      { at: 1000, fn: async () => {
           await page.click('[data-t=map-open-map-fermentation]');
           await page.waitForFunction(() => window.mm.store.doc.id === 'map-fermentation',
                                      null, { timeout: 20000 });
@@ -2138,18 +2138,18 @@ export default [
       // thirty seconds for a Generate button that was no longer on the page —
       // the take's only failure, and it took the whole run down with it because
       // a dead take used to hang the recorder rather than fail it.
-      { at: 980, fn: async () => {
+      { at: 1040, fn: async () => {
           const open = await page.$('[data-t=finder-generate]');
           if (!open) await page.click('[data-t=open-finder]');
           await page.waitForSelector('[data-t=finder-generate]', { timeout: 10000 });
           await page.evaluate(() => window.mm.clearOfPanels()); } },
-      { at: 1010, fn: async () => { await page.click('[data-t=finder-generate]');
+      { at: 1070, fn: async () => { await page.click('[data-t=finder-generate]');
           log.bigPrompt = await page.evaluate(() => ({
             chars: document.querySelector('[data-t=finder-prompt]').value.length,
             nodes: Object.keys(window.mm.store.doc.nodes).length,
           })); } },
-      { at: 1070, fn: async () => type('[data-t=finder-reply]', REPLIES[2].text) },
-      { at: 1130, fn: async () => { await page.click('[data-t=finder-parse]');
+      { at: 1130, fn: async () => type('[data-t=finder-reply]', REPLIES[2].text) },
+      { at: 1190, fn: async () => { await page.click('[data-t=finder-parse]');
           log.bigParse = await page.evaluate(() => ({
             ok: !!(window.mm.lastParse && window.mm.lastParse.ok),
             staged: window.mm.suggestions.length,
@@ -2161,12 +2161,12 @@ export default [
       // The staging window is between the parse and the first accept, and it is
       // measured at both ends of exactly that: nothing is applied while
       // suggestions are merely staged.
-      { at: 1140, fn: async () => {
+      { at: 1200, fn: async () => {
           log.bigPositionsBefore = await page.evaluate(() => JSON.stringify(
             Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
           log.bigLinksAtParse = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
         } },
-      { at: 1200, fn: async () => {
+      { at: 1260, fn: async () => {
           log.bigPositionsStaged = await page.evaluate(() => JSON.stringify(
             Object.fromEntries(Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.pos]))));
           log.bigLinksStaged = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
@@ -2175,7 +2175,7 @@ export default [
       // cycle-12 Art Director: the 150-node leg ran prompt, paste, parse and
       // "Suggestion 1 of 7" and the file ended — so the before/after proof that
       // exists at eleven nodes had no counterpart at a hundred and fifty.
-      { at: 1210, fn: async () => {
+      { at: 1270, fn: async () => {
           log.bigLinksBefore = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
           log.bigAccepted = await page.evaluate(() => {
             const s2 = window.mm.suggestions[window.mm.sugIndex];
@@ -2188,10 +2188,10 @@ export default [
           if (log.bigAccepted && log.bigAccepted.kind === 'connection')
             await page.click('[data-t=finder-accept]');
         } },
-      { at: 1270, fn: async () => {
+      { at: 1330, fn: async () => {
           log.bigLinksAfterAccept = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
         } },
-      { at: 1300, fn: async () => {
+      { at: 1360, fn: async () => {
           log.bigRejected = await page.evaluate(() => {
             const s2 = window.mm.suggestions[window.mm.sugIndex];
             return s2 ? { kind: s2.kind, id: s2.id,
@@ -2200,12 +2200,12 @@ export default [
           log.bigLinksBeforeReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
           if (log.bigRejected) await page.click('[data-t=finder-reject]');
         } },
-      { at: 1360, fn: async () => {
+      { at: 1420, fn: async () => {
           log.bigLinksAfterReject = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
           log.bigQueueLeft = await page.evaluate(() => window.mm.suggestions.length);
         } },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 47, onFrame: script(steps) });
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 49, onFrame: script(steps) });
     // Nothing was accepted at 150 nodes — the beat proves the PARSE and the
     // staging queue at scale, and staging is explicitly the state in which
     // nothing has been applied. That the map is untouched is the claim.
