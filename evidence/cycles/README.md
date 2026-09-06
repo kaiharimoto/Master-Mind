@@ -53,3 +53,30 @@ copy; its comparison section is void for that reason and says so.
 No artifact was touched — only the derived diff file. This is the sole
 post-freeze edit to any frozen set in the run, and it is the reason the ledger
 is regenerated rather than silently reconciled.
+
+## Cycle 12 was frozen twice, and this is the disclosure
+
+The first cycle-12 run captured **15 of 20**. Five artifacts failed, every one
+of them on a claim added during cycle 12 itself, and every one of those failures
+was a real finding rather than a strict gate — three defects in the app or the
+drivers, and two instruments that could not fail for the reason they existed.
+They are written up in `report.md`.
+
+That 15/20 set was frozen because `cycle.mjs` freezes whatever the run
+produced, which is the correct behaviour: a cycle that failed artifacts must not
+be able to quietly become a cycle that did not. It was then **replaced** by a
+second run of the same cycle number after the five were fixed, with
+`--refreeze`, which prints what it is replacing.
+
+No critic read the first cycle-12 set. The three cycle-12 verdicts in
+`evidence/critics/` were all written against the second.
+
+Two guards were added at the same time, because re-running a cycle number is
+evidently a thing this build needs to do and both doors into an overwrite were
+open:
+
+- `history/cycle-N` is written **once**. Re-running cycle N would otherwise
+  archive the current working set over the snapshot of cycle N-1 — the cycle-7
+  incident above, by a different route.
+- Re-freezing an existing `cycles/cycle-N` requires `--refreeze` and refuses
+  otherwise, naming how many artifacts the set it is replacing had captured.
