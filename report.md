@@ -1327,6 +1327,98 @@ row count estimated from a height measured before the rows existed, a bottom
 margin asserted by an equality that could not fail. The fix in each case was not
 a better value but a comparison against something the error could not move.
 
+## Cycle 10 — a regression, and most of it was mine
+
+Cycle 10 captured 20 of 20 with positions identical for the tenth consecutive
+cycle. **It scored 82.0 — 21 + 20 + 17 + 12 + 8 + 4 — against cycle 9's 85.5.**
+Category 04 was below its minimum for the second cycle running, and the Auditor
+declared the cycle not regression-free.
+
+**Three of the four Audience findings were caused by cycle 9's own fixes.** That
+is the fact worth putting first, because the failure mode is not carelessness in
+any one change — each fix was correct about the thing it fixed — but that a fix
+aimed at one frame moved furniture on several others, and nothing was measuring
+the others.
+
+| cycle 9 fix | what it broke in cycle 10 |
+|---|---|
+| the labels-hidden chip always shows, because standing it down hid the count exactly when the frame was busiest | it landed **on top of** the search readout — 8 % of "19 hits · 6 in the text · 13 in the label “Koji”" visible on artifact 04, 16 % on 10 |
+| artifact 04 selects a node, to prove all five states at 150-node density | the selection opened the editor, and the recovery rail stood down whenever a right panel opened — **113 of 150 nodes identifiable became 45** |
+| — | artifact 08's dropped node lost its name to the hidden count, on a composite whose headline is *"the same node at its permanent dropped spot"* |
+
+All three are fixed and each verified in the pixels rather than in the manifest:
+the two chips stack and both read whole, the rail survives an open editor and
+starts below it, and the dropped node is ringed and reads *"Steal the parking-lot
+bit"*.
+
+### The one that was not a regression
+
+**A1 — the closed fist never moved anything.** The pose is one of the four the
+mission requires, and the artifact's `clusterMoved: true` was *true of the take*
+and produced by the alt-drag mouse substitute that follows it. The Audience
+proved it scale-invariantly: the coral district's centroid, normalised by the
+azure district's own radius so camera zoom cancels, held at (0.540, −0.782)
+through all three fist beats and only moved at t = 28.0 s — the frame captioned
+*"Alt-drag — the Closed fist equivalent"*.
+
+The app's grab-and-translate path was real all along: it picks a node under the
+hand, takes its cluster, and moves it by the hand's delta. **The clip held the
+pose with the hand almost still**, so the delta was nil. Nobody grabbing
+something keeps their hand still. The fist beat now carries the hand across the
+frame and the app's own path does the rest — pose accuracy re-validated at
+**99.7 %** over three passes, cluster travel **17.29** with internal drift
+0.000000. And the fist now draws what it has hold of, because even when the
+operation worked, nothing on the frame said which district was in the hand.
+
+### The Auditor's structural finding
+
+**B2 — the diff could not see claims.** It compared bytes, SSIM, recipe
+fingerprints, subject luminance and positions, and not the machine-checked
+claim sets — which are the thing the whole apparatus exists for. Between cycles
+9 and 10 **eight artifacts changed their claim sets and one lost a passing
+claim**, and none of it appeared anywhere in the diff. The critic found it by
+diffing the claim names by hand, which is work the instrument should have done.
+
+Claims are diffed now, and **a removal is a finding by default**: adding a claim
+is ordinary progress; dropping one means an assertion that used to be checked no
+longer is. Run over cycles 9→10 it names exactly the eight, and calls out both
+removals — including the one I made.
+
+| # | Finding | Done |
+|---|---|---|
+| B1 | `searchMatchReasonShown` passes on a frame where 84 % of the chip is covered | Whether a string was *rendered* and whether it *survives to the viewer* are different questions. `searchMatchReasonUnoccluded` measures the rendered extent against everything drawn above it: 0.0 % covered, required. |
+| M1 | a12 asserts a cluster crossing that appears nowhere in its own frame | The district was moved, checked and put back **before** the panels were shot. The restore is deferred: both surfaces are now photographed with *Lacto-vegetables* — 20 thoughts — displaced, ledgers agreeing at `d05073a5ff`, captioned so a reader need not diff against artifact 11. Then written back bit for bit, and checked. |
+| M2 | `concurrentConflictKeptBoth` proved only the recolour | The retext and relabel are text fields, so the editor opens on the conflicted node rather than the dragged one. |
+| M3/M4 | ten rows said *"demonstrates now: X"* with X unchanged; three artifacts crossed their similarity thresholds unremarked | It says *"demonstrates: unchanged"* when that is what happened, and below-threshold always produces a line. |
+| m5 | `positions.identical` promises more than it checks | It is the committed-seed ledger as each capture left it — seed stability, not runtime stillness. The field says so and points at where the runtime evidence is. |
+| C3 | the rail I added is the least legible text in the build — **2.3:1** against the **9.2:1** of the labels it replaces | Rows take the reading ink; district heads carry the colour and count. |
+| C6/C7 | the accepted filament measures 1.10:1; plain filaments 1.06:1 | The critic had to sample 200 points to confirm the accepted link existed. One endpoint is selected so it renders at the app's own live weight — not a capture-only brightening. Rest alpha 0.22 → 0.34. |
+| C10 | the marker-visibility bar sat below the contrast at which the same critic called filaments marginal | It was derived from what the palette's lowest rung can deliver at depth — a floor on the *ladder*, not on visibility. Raised 1.45 → 2.5; nothing was slipping through. |
+| C8/C9/m1/m2/m3 | the rejection log truncated at four; scrollbar thumbs in artifact 01; twin label selection differs; a count off by one; the hero's narrowed framing undeclared | All done. The rejection log is where *"placed positions are not the finder's to change"* stops being a promise and becomes a refusal, so the two drops a reader could not see were the most interesting part of it. |
+
+### The two binding rulings
+
+**The disposal of a hidden label is a district-grouped, located rail, not a flat
+inventory.** The list I shipped was 109 items long, named 43 % of them in no
+visible order, and discarded the one attribute this build treats as sacred:
+*where the thought is*. The colour dash on every row proved the district was
+already known at render time. Grouped, it reads as a handful of scannable
+neighbourhoods that still say where.
+
+**The leader trigger changes from displacement to ambiguity.** The cap stands;
+what a cap cannot see is that a label may sit well inside it and still be
+unreadable as a binding when several identical markers are at almost the same
+distance — measured ratios of 0.84, 0.67 and 0.71, all ambiguous, none of them
+getting a line. A leader is drawn whenever the second-nearest marker is within
+0.6 of the nearest. `everyLabelStaysBesideItsNode` measured a distance in em;
+`everyLabelUnambiguouslyBound` measures the margin, and is required.
+
+That measurement was wrong once before it was right, in the now-familiar way:
+the audit tested the arbiter's far-ring set rather than **the leaders the
+renderer actually drew**, and reported 23 unleadered on artifact 02 where the
+frame had lines on all of them. The drawn set is reported back to the scene, so
+the claim is measured against the frame instead of against intent.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
