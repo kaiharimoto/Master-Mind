@@ -1234,6 +1234,99 @@ this label travel from its node* is about the frame the deconflictor built, and
 Feeding the pixel sampler the deconflictor's coordinates made six markers on
 artifact 02 that are plainly there measure as missing.
 
+## Cycle 9 — the critics' findings and what was done
+
+Cycle 9 captured 20 of 20; positions identical for the ninth consecutive cycle;
+the frozen cycle-8 set verified against its external ledger, 28 of 28, before
+the diff ran. **85.5 / 100 — 22 + 22 + 17 + 12 + 8 + 4.5 — the highest total of
+the run, and it does not exit: category 04 scored 12 against a minimum of 13,
+so a hard gate failed.**
+
+Verdicts verbatim in `evidence/critics/{audience,auditor,art-director}-cycle-9.md`.
+
+### The blocking finding, and its root cause
+
+Two critics, reading independently, found the same thing: **artifact 02 asserted
+`noTwoDrawnLabelsOverlap` on a frame containing two labels fused into
+unreadable mush.** The Auditor confirmed it three ways including a row-density
+profile; the Art Director named the mechanism the Auditor did not — *"the
+identical-slot case, two labels assigned one anchor, is not being tested at
+all."* Both were right, and the cause was one line.
+
+**F-034 — the label arbiter was laying out against the previous frame's
+camera.** The projection cache was invalidated at the *end* of `render()`. The
+chrome pass — reticle, leaders, pin — runs *after* render and calls
+`screenPositions()`, so the cache was refilled immediately with the frame just
+drawn. On the next frame `applyPose()` moved the camera and the arbiter, which
+calls `screenPositions()` first thing, was handed **the previous frame's
+projection**. Every label since the chrome pass was introduced has been placed
+against a camera one frame stale. On a still frame repeated renders converge,
+which is why it looked correct for nine cycles; when the camera had just moved
+it put names in the wrong places, let two labels take one anchor, and left the
+marker probe sampling bare ground where a node was supposed to be.
+
+It was found by elimination, not by guessing — and the eliminations are the
+useful part of the record:
+
+| checked | result |
+|---|---|
+| the camera differs between layout and audit | **no** — identical to six decimals, dist 120.110861 |
+| the canvas was resized | **no** — 1920×1080, dpr 1, at both moments |
+| the projection is non-deterministic | **no** — two consecutive calls agree to 0.000 px over 150 nodes |
+| the arbiter's stored positions match a fresh projection | **no** — `n12900c3690` at x 1447.12 against 1378.06 |
+
+Three readings of one node, two agreeing and one stale, with every other
+explanation ruled out. The fix is that the cache dies in `applyPose()`, with the
+camera that made it.
+
+Verified in the pixels at the coordinates both critics named, not only in the
+instrument that had been wrong: the cycle-9 frame at x 1043–1087, y 200–209
+shows *"Raw…"* and *"Katz…"* superimposed into one illegible band; the same crop
+after the fix shows *"Raw…"* alone and legible, with *"Katz…"* properly in the
+hidden count.
+
+**Two captures were committed failing before it was found.** Making the audit
+prove it describes the shipped frame — the arbiter counts its runs, the capture
+stops the loop and compares across the shot — turned
+`everyDrawnLabelHasAVisibleMarker` from passing to failing on 02 and 04, with
+probes reading peak 0.0574 against ground 0.0574: bare canvas, not a dim mark.
+That check had been passing since it was introduced *because it sampled the
+reading that happened to match the image.* Leaving those captures red was the
+correct state; the alternative was keeping a claim that agreed with itself.
+
+### Everything else
+
+| # | Critic | Finding | Done |
+|---|---|---|---|
+| B2 | Auditor | a17 asserts cluster propagation on a take where no second surface appears | **Claim moved to artifact 12**, where two sockets are on screen — and moved again onto the 150-node map, because map-talk's largest district is two nodes. District *Lacto-vegetables*, **20 members**, moved on Windows, arrived on Android, restored. Restored *exactly*: the inverse-delta version passed its own ledger check and still failed 12's `onlyTheDraggedNodeMoved`, because adding 1.7 and subtracting 1.7 does not return a float to where it started. |
+| M1 | Auditor | the marker claims are about a label's *own* node, so a label may bury a neighbour's | `noDrawnLabelBuriesAnotherMarker` measures exactly that — 0 on 02, 04, 10. Not made a placement rule: the arbiter treats other discs as a preference deliberately, and what was missing was the measurement of that cost. |
+| M3 | Auditor | `recipeChangedIds` named 9 of 11 changed capture functions | The fingerprint change is its own field. It had been gated on the output moving too, which omitted 07 and **15 — the one byte-identical artifact in the set**, the combination an auditor most needs surfaced. |
+| M4 / m1 | Auditor | a12 claims each panel names its rasteriser and none does; "CAMERA FROZEN FROM 11" doesn't register with 11 | Both panels print the raster line; the camera line says *"same camera as 11, shorter viewport"*, which is what is true — 12's header is a line taller, giving a 0.979 scale. |
+| M5 / C8 / C9 | both | a14's detail row runs off the frame while claiming it doesn't; `detailIsMagnified` passes on ×0.68 | The row ended at *exactly* 1080 — an equality that could not fail — and the margin had to come out of the panel height, not be hoped for. Now 12 px, claim requires 8. `detailExceedsPanelScale` is named for what it tests, with the app-pixel floor (0.63) beside it and in the headline. |
+| A1 | Audience | a09 regressed: 14 labels → 6, and one moved 115 px between two panels of a frozen-camera composite | **Placement hysteresis.** A label keeps its place if that place is still free, and *settlement outranks everything* — exempting the selection was the obvious kindness and was exactly what kept it failing, since the selected node is the one whose text just grew. 0 of 6 labels shift now. |
+| A2 / C11 | both | the AR reticle's readout overpaints the label it duplicates | Generalised rather than special-cased a third time: anything that puts a node's name on the frame declares it, its label run stands down, and its rectangle is reserved. The occluder list became *every* element that draws an opaque box — the gyro HUD had never been in it. |
+| A3 / m3 | both | the labels-hidden chip is overpainted in 05 and clipped in 17 | Standing it down when a panel opens was the old answer and the wrong one — the count stops being stated exactly when the frame is busiest. It is placed instead. |
+| A5 / M2 / C5 | all three | the roster announces 87 and lists 50 | The marker existed and could never fire: rows were estimated from a height measured *before* the content was written, so it over-counted and the surplus was clipped. Laid out, then measured. |
+| A6 | Audience | a08 draws four held markers and three labels | Held thoughts are named first, behind only the pin. |
+| A7 | Audience | a06 shows the cluster in a void — 8 saturated district pixels against 51 | Pulling back made it 0; offsetting toward the centroid failed loudly and correctly at 3 of 8 held nodes in frame. The yaw search scores district visibility alongside marker separation: 51 pixels, all 8 held nodes in frame. |
+| C2 / C4 | Art Director | the recovery column exists on one lens and is drawn over the live map | Both lenses; matte opaque ground; bullets are short bars, so a list row cannot be taken for a thing in the world. |
+| C3 | Art Director | truncation stubs below the information floor — *"Rice…"* indistinguishable from a prefix of *"Rice koji: polish…"* | Below ten characters a label is not shortened at all. |
+| C6 | Art Director | the search-hit signature reaches 3.4× the node's radius and displaces every hit's label | Ticks pulled to 2.1×, and the arbiter's clearance multiplier tracks the shader instead of being a second copy of the number. |
+| C7 / C13 | Art Director | a px counter contradicting an em claim; the recency legend overstated | Renamed for what it counts; the legend says *within a district*, and why it does not hold between them. |
+| C14 | Art Director | three of five states never shown at 100+ node density | Artifact 04 runs a query and a selection at its pinned camera: all five states, 150 nodes on screen, required. |
+| C10 / m2 | both | a stray banner behind the states legend; the hero's travel figure measured in a different frame than the one it is printed on | The banner stands down for the shot. The caption names the frame its number is in, and that this composite reads ~5 % lower. The measurement was never wrong; the frame it belonged to was unstated. |
+| C12 | Art Director | far-zoom text is the smallest *and* lowest-contrast in the build | Plain labels were discounted to 0.86 alpha to stop crowding, and the cap-and-drop ruling already halves the count, so the discount was paid twice. Full weight: median 3.75 → **4.54:1**, p10 6.73 → **8.56:1**. Still short of the 7:1 median asked for — closing the rest means larger type and fewer labels again, which is a trade for the critic rather than one to make unilaterally. |
+| A8 | Audience | three seconds of a 41-second reel with nothing asserted | The beats keep their spacing and move in by two seconds. |
+| A9 | Audience | a17 claims propagation its frames cannot show | See B2 — same finding from the other side. |
+
+The pattern worth keeping is the one the eliminations show. Every serious
+finding in this cycle was **an instrument agreeing with itself**: an audit
+reading a later frame than the picture, a marker probe sampling whichever
+projection happened to match, a claim named for the defect it did not test, a
+row count estimated from a height measured before the rows existed, a bottom
+margin asserted by an equality that could not fail. The fix in each case was not
+a better value but a comparison against something the error could not move.
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
