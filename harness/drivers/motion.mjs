@@ -17,7 +17,12 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { operationTookEffect: true, declaredSynthetic: true,
-              captionMatchesTheAppsVocabulary: true, headlineMatchesTheHud: true },
+              captionMatchesTheAppsVocabulary: true, headlineMatchesTheHud: true,
+              // A move-closer that leaves fewer thoughts named is a move-closer
+              // not worth the gesture. Counted off the two panels' own label
+              // layers, so the frames cannot say one thing and the record
+              // another.
+              nearerVantageDrawsMoreNames: true },
   demonstrates: 'Windows hand tracking: an open-palm move-closer shown before and after in one framing', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Hand tracking live',
   camera: 'hand-vocabulary-slow',
@@ -27,22 +32,45 @@ export default [
     const { page, cdp } = await H.app({ surface: 'windows', lens: 'expansion',
                                         camera: true, width: 960, height: 1080 });
     await POSE(page, { yaw: 0.30, pitch: 0.16 });
-    await FRAME_ALL(page, 1.12);
+    // 1.32, NOT 1.12 — THE OPERATION IS SHOWN AT A SCALE WHERE IT READS.
+    //
+    // The cycle-11 Audience found the after panel hiding FIVE MORE labels than
+    // the before, under a chip that said "move closer to read them". Swept
+    // across view distance on this map the drawn count does climb with
+    // proximity — 28 names at 193 units, 39 at 116 — but the greedy arbiter
+    // jitters by about three names from one distance to the next, and the
+    // 1.146x dolly the take was capturing is INSIDE that jitter. The frames
+    // were honest; the interval was too small to show what the pose does.
+    //
+    // So the take opens on the whole map with margin and holds the pose until
+    // the vantage has actually travelled, rather than for a fixed 70 frames.
+    // Same operation, same recognised-pose path, shown over an interval where
+    // its effect is larger than the noise — and if it still is not, the claim
+    // below fails the capture rather than the caption papering over it.
+    await FRAME_ALL(page, 1.32);
     await page.click('[data-t=hands-chip]');
     await page.waitForFunction(() => window.mm.hands.enabled, null, { timeout: 90000 });
     await page.waitForFunction(() => window.mm.hands.frame.present, null, { timeout: 90000 });
     // Hold at the neutral framing with the hand present but before the pose has
     // acted, so the two panels differ by the operation and nothing else.
     const distBefore = await page.evaluate(() => window.mm.scene.pose.dist);
+    const namedBefore = await page.evaluate(() =>
+      [...window.mm.scene.labelRects.values()].filter(r => r.alpha > 0.02).length);
     const before = await H.tmpShot(page, cdp, '05a', 800);
 
     await page.waitForFunction(() => ['spread', 'gather'].includes(window.mm.hands.frame.pose),
                                null, { timeout: 90000 });
-    for (let i = 0; i < 70; i++) {
+    let held = 0;
+    for (let i = 0; i < 260; i++) {
       await page.evaluate(t => window.mm.renderAt(t), 800 + i * 33.3);
-      await page.waitForTimeout(10);
+      await page.waitForTimeout(6);
+      held = i;
+      const d = await page.evaluate(() => window.mm.scene.pose.dist);
+      if (distBefore / d >= 1.30) break;
     }
-    const after = await H.tmpShot(page, cdp, '05b', 3200);
+    const namedAfter = await page.evaluate(() =>
+      [...window.mm.scene.labelRects.values()].filter(r => r.alpha > 0.02).length);
+    const after = await H.tmpShot(page, cdp, '05b', 800 + (held + 1) * 33.3);
     // READ OFF THE FRAME, not from the model after it. The headline was taking
     // the camera distance after the shot while the HUD in the picture had been
     // rendered a moment earlier, so cycle 9 shipped a panel whose HUD said
@@ -86,7 +114,10 @@ export default [
       // the headline it ran off the right edge of a 960 px panel and the frame
       // shipped reading "· view distance" with no number — a caption clipped by
       // the fix for a caption that was wrong.
-      sublabels: ['', 'no thought moves: the vantage travels, the map does not'] });
+      sublabels: [`${namedBefore} thoughts named at this framing`,
+                  `no thought moves: the vantage travels, the map does not · ` +
+                  `${namedAfter} thoughts named, ${namedAfter - namedBefore} more than before, ` +
+                  `at ×${(distBefore / distAfter).toFixed(2)} closer`] });
     const src = await page.evaluate(() => ({ label: window.mm.hands.sourceLabel,
                                              synthetic: window.mm.hands.synthetic }));
     return { pose: f.pose, poseName: vocab?.name ?? null, operation: vocab?.operation ?? null,
@@ -104,6 +135,11 @@ export default [
              headlineMatchesTheHud: hudAfter !== null &&
                Math.abs(hudAfter - distAfter) < 0.05,
              operationTookEffect: Math.abs(distAfter - distBefore) > 0.5,
+             // WHAT THE OPERATION BOUGHT, counted rather than promised.
+             namesDrawnBefore: namedBefore, namesDrawnAfter: namedAfter,
+             viewDistanceRatio: +(distBefore / distAfter).toFixed(3),
+             poseHeldFrames: held + 1,
+             nearerVantageDrawsMoreNames: namedAfter > namedBefore,
              captureSource: src.label, declaredSynthetic: src.synthetic };
   },
 },
@@ -1331,7 +1367,11 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { rejectionLeftNoTrace: true, allThreeKindsAccepted: true,
-              placementRejectionLeftNoTrace: true, bothRejectionKindsShown: true },
+              placementRejectionLeftNoTrace: true, bothRejectionKindsShown: true,
+              // The exported prompt is read back OFF the clipboard and shown,
+              // rather than the app's own "Prompt copied." toast standing for
+              // it. It was the only self-reported step in the loop.
+              clipboardCarriesTheExportedPrompt: true },
   demonstrates: 'the finder round-trip in motion: a malformed reply, an adversarially messy one, all three suggestion kinds accepted, and a REJECTED placement that leaves the node exactly where it was', minW: 1920, minH: 1080,
   minFps: 24, minSec: 20, surface: 'windows', map: 'map-talk', title: 'Finder round-trip',
   async run(H) {
@@ -1346,9 +1386,30 @@ export default [
     }, { s: sel, t: text });
 
     const linksBefore = await page.evaluate(() => JSON.stringify(window.mm.store.doc.links));
+    // THE ONE LINK IN THE CHAIN THE APP WAS ITS OWN WITNESS FOR.
+    //
+    // The cycle-11 Art Director: the copy step was evidenced by a select-all
+    // highlight and the app's own "Prompt copied." toast, so in an otherwise
+    // pixel-verifiable loop the single step the premise depends on — that the
+    // exported JSON really leaves the app — rested on a self-report. It is
+    // shown now: the clipboard is read back and pasted into the reply box for a
+    // beat and a half, so the exported prompt is visibly ON the clipboard, then
+    // cleared before the AI reply is typed in its place.
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
     const steps = [
       { at: 30,  fn: async () => page.click('[data-t=finder-generate]') },
       { at: 90,  fn: async () => page.click('[data-t=finder-copy]') },
+      { at: 100, fn: async () => {
+          const r = await page.evaluate(async () => {
+            const back = await navigator.clipboard.readText();
+            const src = document.querySelector('[data-t=finder-prompt]').value;
+            return { back, same: back === src, chars: back.length };
+          });
+          log.clipboardChars = r.chars;
+          log.clipboardCarriesTheExportedPrompt = r.same && r.chars > 200;
+          await type('[data-t=finder-reply]', r.back);
+        } },
+      { at: 145, fn: async () => type('[data-t=finder-reply]', '') },
       // 1 — malformed. Visible error, zero change.
       { at: 150, fn: async () => type('[data-t=finder-reply]', REPLIES[0].text) },
       { at: 210, fn: async () => { await page.click('[data-t=finder-parse]');
@@ -1463,6 +1524,9 @@ export default [
       replyPath: "authored by the agent's own session acting as the chat (declared in report.md); " +
                  'a malformed reply and an adversarially messy reply pass through the same parser in the same take',
       malformed: log.parses[0], messy: log.parses[1],
+      // Read back OFF the clipboard, not reported by the button that wrote it.
+      clipboardChars: log.clipboardChars ?? 0,
+      clipboardCarriesTheExportedPrompt: !!log.clipboardCarriesTheExportedPrompt,
       accepted: log.accepted, rejected: log.rejected,
       groupingAccepted: log.groupingBefore && log.groupingAfter
         ? { name: log.groupingBefore.name, nodes: log.groupingBefore.nodes.length,
