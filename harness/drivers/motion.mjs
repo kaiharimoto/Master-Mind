@@ -204,7 +204,7 @@ export default [
               // labels 0.00 px apart — so they are gates on a fixed fault, not
               // gates written to describe what the code already did.
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyLabelStaysBesideItsNode: true,
+              everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true,
               searchMatchReasonShown: true, searchMatchReasonUnoccluded: true },
   demonstrates: 'search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
@@ -329,6 +329,12 @@ export default [
              // placement cap; a small tolerance covers the drawn box
              // sitting inside the reserved one.
              everyLabelStaysBesideItsNode: audit.checked > 0 && audit.worstDisplacementEm <= 2.8,
+             labelWorstAmbiguityRatio: audit.worstAmbiguityRatio,
+             labelsAmbiguousWithoutALeader: audit.ambiguousUnleaded,
+             // Beside its node is not the same as unmistakably ITS. A label
+             // whose second-nearest marker is within 0.6 of its nearest is
+             // ambiguous however close it sits, and gets a leader or fails.
+             everyLabelUnambiguouslyBound: audit.checked > 0 && audit.ambiguousUnleaded === 0,
              // And whether each of those names has a marker a reader can see.
              // Measured off the captured PNG, not asked of the renderer; see
              // the note on labelsAndMarkers in drivers/stills.mjs.
@@ -454,6 +460,17 @@ export default [
     await page.click('[data-t=finder-accept]');
     await page.waitForTimeout(60);
     const linksAfterAccept = await page.evaluate(() => Object.keys(window.mm.store.doc.links).length);
+    // THE NEW FILAMENT IS SHOWN AT THE WEIGHT THAT MAKES IT VISIBLE.
+    //
+    // This panel's whole argument is before/after, and the applied link was
+    // rendering at the resting weight — the cycle-10 Art Director had to sample
+    // 200 points along the segment to confirm it existed at all, measuring
+    // 1.10:1 against the ground and saying they could not see it by eye. A
+    // difference a composite rests on has to survive a glance. Selecting one
+    // endpoint brings its incident links live, which is the app's own existing
+    // treatment rather than a capture-only brightening.
+    if (acceptedSug?.nodes?.length)
+      await page.evaluate(i => window.mm.scene.setSelection(i), acceptedSug.nodes[0]);
     await sleepFrames(page, 0, 3);
     const mid = await H.tmpShot(page, cdp, '14b');
     // A second frame of the SAME moment with the transient toast hidden, for

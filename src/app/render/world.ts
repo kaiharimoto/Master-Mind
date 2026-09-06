@@ -519,7 +519,13 @@ export class FilamentLayer {
    * stronger than a link inside one district, where the proximity already says
    * it.
    */
-  build(links: LinkInstance[], restAlpha = 0.22, liveAlpha = 0.78, crossAlpha = 0.30) {
+  // 0.34 at rest, not 0.22. The spec asks for links "thin, always visible at
+  // every zoom", and the cycle-10 Art Director measured the plain filament core
+  // at (26,21,17) against a (18,14,11) ground — 1.06:1, eleven luma steps out
+  // of 255. That reads in a dark room and vanishes in daylight or after video
+  // compression, which is not "always visible". Still faint, still subordinate
+  // to every node state, but robust enough to survive being looked at.
+  build(links: LinkInstance[], restAlpha = 0.34, liveAlpha = 0.78, crossAlpha = 0.40) {
     this.grow(Math.max(links.length, 1));
     links.forEach((l, i) => {
       const c = l.live ? this.live : this.rest;

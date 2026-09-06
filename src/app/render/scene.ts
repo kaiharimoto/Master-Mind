@@ -168,6 +168,18 @@ export class Scene {
    * puts a node's name on the frame declares it here, the label run stands
    * down, and the chip's rectangle is reserved like any other panel.
    */
+  /**
+   * Which labels the app actually DREW a leader for, this frame.
+   *
+   * The audit was testing `labelNeedsLeader` — the arbiter's far-ring set — and
+   * calling a label unleadered when the renderer had in fact drawn it a line,
+   * because the two sets are not the same thing and only one of them is what
+   * ships. The drawn set comes back here so the ambiguity claim is measured
+   * against the frame rather than against the arbiter's intent.
+   */
+  setDrawnLeaders(ids: Iterable<NodeId>) { this.drawnLeaders = new Set(ids); }
+  private drawnLeaders = new Set<NodeId>();
+
   setNamedByChrome(ids: Iterable<NodeId>) {
     const next = new Set(ids);
     if (next.size !== this.namedByChrome.size || [...next].some(i => !this.namedByChrome.has(i))) {
@@ -1015,6 +1027,8 @@ export class Scene {
     markersBuriedByOtherLabels: number; worstBuriedFraction: number;
     worstDisplacementPx: number; worstDisplacement: string | null;
     farFromNode: number; farFromNodeIds: string[]; worstReservedDisplacementPx: number;
+    worstAmbiguityRatio: number; worstAmbiguityOn: string | null;
+    ambiguousUnleaded: number; ambiguousUnleadedIds: string[];
     worstDisplacementEm: number;
     anchors: { id: string; x: number; y: number; r: number;
                x0: number; y0: number; x1: number; y1: number }[];
@@ -1024,7 +1038,9 @@ export class Scene {
     let off = 0, offId: string | null = null;
     let worstDisp = 0, worstDispId: string | null = null;
     const farIds: string[] = [];
-    let worstResDisp = 0, worstDispEm = 0;
+    let worstResDisp = 0, worstDispEm = 0, worstMargin = 0;
+    let worstMarginId: string | null = null;
+    const ambiguousIds: string[] = [];
     // EVERY DRAWN LABEL'S BOX, kept so the drawn set can be compared against
     // ITSELF.
     //
@@ -1106,6 +1122,25 @@ export class Scene {
         // its node is what it counted as orphaned. One worst case says less
         // than how many there are.
         if (d > 40) farIds.push(meta.id);
+        // AND WHETHER THIS NAME COULD BE READ AS BELONGING TO SOMETHING ELSE.
+        //
+        // `everyLabelStaysBesideItsNode` measures a distance in the label's own
+        // type size, and the cycle-10 Art Director was right that this is not
+        // what its name promises: a label can sit well inside the cap and still
+        // be unreadable as a binding when several identical markers are at
+        // almost the same distance. The margin is the measure — the label's own
+        // node against the nearest other one — and 0.6 is the ruling's bar.
+        let other = Infinity;
+        for (const [oid, oq] of this.lastScreen) {
+          if (oid === meta.id) continue;
+          const ox = Math.min(Math.max(oq.x, drawn.x0), drawn.x1);
+          const oy = Math.min(Math.max(oq.y, drawn.y0), drawn.y1);
+          const od = Math.hypot(oq.x - ox, oq.y - oy);
+          if (od < other) other = od;
+        }
+        const margin = other > 0 && Number.isFinite(other) ? d / other : 0;
+        if (margin > worstMargin) { worstMargin = margin; worstMarginId = meta.id; }
+        if (margin > 0.6 && !this.drawnLeaders.has(meta.id)) ambiguousIds.push(meta.id);
         // AND THE SAME DISTANCE IN THE LABEL'S OWN TYPE SIZE, which is the
         // measure the cap is expressed in and the one that means the same thing
         // at every zoom. Forty pixels is far beside 12 px type and adjacent
@@ -1189,7 +1224,9 @@ export class Scene {
              worstDisplacementPx: Number(worstDisp.toFixed(1)), worstDisplacement: worstDispId,
              farFromNode: farIds.length, farFromNodeIds: farIds.slice(0, 40),
              worstReservedDisplacementPx: Number(worstResDisp.toFixed(1)),
-             worstDisplacementEm: Number(worstDispEm.toFixed(2)) };
+             worstDisplacementEm: Number(worstDispEm.toFixed(2)),
+             worstAmbiguityRatio: Number(worstMargin.toFixed(2)), worstAmbiguityOn: worstMarginId,
+             ambiguousUnleaded: ambiguousIds.length, ambiguousUnleadedIds: ambiguousIds.slice(0, 30) };
   }
 
   /**

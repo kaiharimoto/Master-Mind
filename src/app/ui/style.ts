@@ -196,15 +196,25 @@ tr.map:hover{background:var(--panel)}
 #unlabelled{position:fixed;right:0;top:96px;bottom:64px;width:300px;z-index:22;display:none;
   padding:10px 14px 10px 16px;border-left:1px solid var(--line);pointer-events:none;
   background:var(--panel);
-  font-size:11px;line-height:1.62;letter-spacing:.2px;color:var(--ink-faint);overflow:hidden}
+  font-size:12px;line-height:1.55;letter-spacing:.2px;color:var(--ink-dim);overflow:hidden}
 #unlabelled.show{display:block}
 #unlabelled h4{margin:0 0 7px;font-size:11px;font-weight:600;letter-spacing:.4px;
   color:var(--ink-dim);text-transform:none}
-#unlabelled li{list-style:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* NOT THE DIMMEST TEXT IN THE BUILD. The rows measured 2.3:1 modal against the
+   panel ground while the node labels they stand in for measure 9.2:1 in the
+   same frame — the disposal surface was less legible than the thing it was
+   disposing of. Rows take the reading ink; the district heads carry the colour
+   and the count. */
+#unlabelled li{list-style:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:var(--ink);padding-left:11px}
+#unlabelled li.more{color:var(--ink-dim);padding-left:0;margin-top:5px}
+#unlabelled h5{margin:8px 0 2px;font-size:11px;font-weight:600;letter-spacing:.2px;
+  color:var(--ink-dim);text-transform:none}
+#unlabelled h5 b{color:var(--ink-faint);font-weight:400;margin-left:3px}
 /* A short bar, not a dot: the bullets were the same size and shape as node
    markers, so a reader scanning the column could take a list row for a thing in
    the world. Same hue, different form. */
-#unlabelled i{display:inline-block;width:9px;height:3px;border-radius:1px;margin-right:7px;
+#unlabelled i{display:inline-block;width:9px;height:3px;border-radius:1px;margin-right:6px;
   vertical-align:middle}
 /* Leaders for held thoughts. In the holding ring the dots are close together
    and the names radiate outward, so a label can end up nearer a neighbour's

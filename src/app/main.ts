@@ -900,19 +900,32 @@ export class App {
       // thoughts get one when their name is nearer a neighbour's dot than
       // their own. Every other label sits against its node and needs none.
       const far = this.scene.labelNeedsLeader.has(s.id);
-      if (!far && !n.placed) { /* held: fall through to the ambiguity test */ }
-      else if (!far) continue;
-      // AMBIGUITY IS THE TEST, not distance. A leader is drawn exactly when the
-      // node nearest this label's box is NOT the node it names — which is the
-      // only case a reader can get wrong. Everywhere else the pairing is plain
-      // and a line would be decoration.
+      // AMBIGUITY IS THE TEST, AND IT IS A MARGIN, NOT A TIE.
+      //
+      // A leader used to be drawn only when the nearest node to a label's box
+      // was outright not its own, and only for held or far-placed labels. The
+      // cycle-10 Art Director's binding ruling is that this is too weak:
+      // a label can be nearest to its own node and still unreadable as a
+      // binding when several identical markers sit at almost the same distance
+      // — measured nearest/second-nearest ratios of 0.84, 0.67 and 0.71 on
+      // artifact 10, all of them ambiguous, none of them getting a line.
+      //
+      // So the trigger is the RATIO. A label whose second-nearest marker is
+      // within 0.6 of its nearest gets a leader, whoever the nearest is.
       const near = (p: { x: number; y: number }) => {
         const px = Math.min(Math.max(p.x, r.x0), r.x1), py = Math.min(Math.max(p.y, r.y0), r.y1);
         return Math.hypot(p.x - px, p.y - py);
       };
-      let closest = s, cd = near(s);
-      for (const q of scr) { const d = near(q); if (d < cd) { cd = d; closest = q; } }
-      if (!far && closest.id === s.id) continue;
+      const own = near(s);
+      let best = Infinity, closest = s;
+      for (const q of scr) {
+        if (q.id === s.id) continue;
+        const d = near(q);
+        if (d < best) { best = d; closest = q; }
+      }
+      const ratio = best > 0 ? own / best : 1;
+      const ambiguous = closest.id !== s.id && best < own ? true : ratio > 0.6;
+      if (!far && !ambiguous) continue;
       this.leaderFor.add(s.id);
       const x = s.x / dpr, y = s.y / dpr;
       const tx = Math.min(Math.max(x, r.x0 / dpr), r.x1 / dpr);
@@ -924,6 +937,8 @@ export class App {
                  `x2="${tx.toFixed(1)}" y2="${ty.toFixed(1)}"></line>`);
     }
     svg.innerHTML = parts.join('');
+    // The set the audit measures ambiguity against is the set that was drawn.
+    this.scene.setDrawnLeaders(this.leaderFor);
   }
 
   /** Which labels needed a leader this frame, for anything checking the frame. */
@@ -975,10 +990,36 @@ export class App {
     // property of the map rather than of the arbiter's iteration.
     const named = ids.map(i => this.store.doc.nodes[i]).filter(Boolean)
       .sort((a, b) => a.createdAt - b.createdAt);
-    const row = (n: MMNode) =>
-      `<li><i style="background:${PALETTE[n.color as ColorKey] ?? '#8A7C70'}"></i>${esc(n.text)}</li>`;
+    // GROUPED BY DISTRICT, because a list stripped of place is the wrong
+    // disposal for a product whose story is that space is the memory.
+    //
+    // The Art Director's binding ruling: the flat list is 109 items long, names
+    // 43 % of them, and discards the one attribute this build treats as sacred.
+    // The colour dash on every row proves the district is already known at
+    // render time, so grouping costs nothing and turns an unreadable 109 into a
+    // handful of scannable neighbourhoods that still say WHERE.
+    const row = (n: MMNode) => `<li>${esc(n.text)}</li>`;
     const head = (k: number) =>
       `<h4>${k} thought${k === 1 ? '' : 's'} on screen without room for a label</h4>`;
+    const group = (ns: MMNode[]) => {
+      const by = new Map<string, MMNode[]>();
+      for (const n of ns) {
+        const k = n.label || '—';
+        (by.get(k) ?? by.set(k, []).get(k)!).push(n);
+      }
+      return [...by.entries()].sort((a, b) => b[1].length - a[1].length || (a[0] < b[0] ? -1 : 1));
+    };
+    const groupHead = (name: string, col: string, k: number) =>
+      `<h5><i style="background:${col}"></i>${esc(name)} <b>${k}</b></h5>`;
+    const render = (ns: MMNode[], tail = '') => {
+      const parts: string[] = [head(named.length)];
+      for (const [label, members] of group(ns)) {
+        const col = PALETTE[members[0].color as ColorKey] ?? '#8A7C70';
+        parts.push(groupHead(label, col, members.length));
+        parts.push(members.map(row).join(''));
+      }
+      return parts.join('') + tail;
+    };
     // TRIMMED AGAINST WHAT WAS ACTUALLY RENDERED, not against an estimate.
     //
     // The row count was derived from clientHeight divided by an assumed 18 px
@@ -989,7 +1030,7 @@ export class App {
     // honesty affordance quietly failing to be honest. It is laid out and then
     // measured, and rows come off the end until the last one fits with room for
     // the overflow line.
-    col.innerHTML = head(named.length) + named.map(row).join('');
+    col.innerHTML = render(named);
     let shown = named.length;
     const fits = () => {
       const last = col!.lastElementChild as HTMLElement | null;
@@ -999,8 +1040,8 @@ export class App {
       // One extra off the end so the marker itself has a line to sit on.
       while (shown > 1 && !fits()) {
         shown--;
-        col.innerHTML = head(named.length) + named.slice(0, shown).map(row).join('') +
-          `<li style="opacity:.6">…and ${named.length - shown} more</li>`;
+        col.innerHTML = render(named.slice(0, shown),
+          `<li class="more">…and ${named.length - shown} more</li>`);
       }
     }
   }

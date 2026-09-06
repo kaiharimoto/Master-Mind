@@ -167,7 +167,14 @@ const samplePixels = async (png, points, patch = 1) => {
  * was written for — the clipped marker on artifact 06 measured 1.00:1, peak
  * identical to its own surround, and an off-frame node scores 0.
  */
-const sampleDiscs = async (png, discs, min = 1.45) => {
+// 2.5, not 1.45. The old bar was derived from what the palette's lowest rung
+// can deliver at depth, which made it a floor on the LADDER rather than a floor
+// on visibility — and the cycle-10 Art Director pointed out it sat below the
+// contrast at which that same critic called the plain filaments marginal, so
+// the guard as written would pass a mark nobody could see. Nothing was actually
+// slipping through (worst measured 3.0), so raising it costs nothing today and
+// makes the guard mean what its name says.
+const sampleDiscs = async (png, discs, min = 2.5) => {
   const raw = await new Promise((res) => {
     const p = spawn('ffmpeg', ['-v', 'error', '-i', png, '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
       { stdio: ['ignore', 'pipe', 'ignore'] });

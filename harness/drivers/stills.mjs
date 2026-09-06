@@ -95,6 +95,12 @@ const labelAudit = async (page) => {
            // placement cap; a small tolerance covers the drawn box
            // sitting inside the reserved one.
            everyLabelStaysBesideItsNode: a.checked > 0 && a.worstDisplacementEm <= 2.8,
+           labelWorstAmbiguityRatio: a.worstAmbiguityRatio,
+           labelsAmbiguousWithoutALeader: a.ambiguousUnleaded,
+           // Beside its node is not the same as unmistakably ITS. A label
+           // whose second-nearest marker is within 0.6 of its nearest is
+           // ambiguous however close it sits, and gets a leader or fails.
+           everyLabelUnambiguouslyBound: a.checked > 0 && a.ambiguousUnleaded === 0,
            labelAnchors: a.anchors };
 };
 
@@ -334,7 +340,7 @@ export default [
               // the two claims above passed throughout because neither of them
               // looks at one label against another. These two do.
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyLabelStaysBesideItsNode: true, auditDescribesTheShippedFrame: true },
+              everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true, auditDescribesTheShippedFrame: true },
   demonstrates: 'canvas lens at whole-map framing on Windows, 150 nodes with seed provenance', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Canvas at scale',
   async run(H) {
@@ -570,7 +576,7 @@ export default [
   requires: { holdingRingFillsFrame: true, everyHeldNodeInFrame: true,
               countMatchesMarkers: true, everyHeldLabelAttributable: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
-              everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true,
+              everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true,
               auditDescribesTheShippedFrame: true },
   demonstrates: 'the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Holding cluster',
