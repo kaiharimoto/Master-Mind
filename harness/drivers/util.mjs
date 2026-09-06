@@ -7,7 +7,23 @@ export const POSE = (page, p) => page.evaluate(q => {
   if (q.dist !== undefined) s.dist = q.dist;
 }, p);
 
-export const FRAME_ALL = (page, margin = 1.04) => page.evaluate(m => window.mm.frameAll(m), margin);
+/**
+ * FRAMED TWICE, WITH A RENDER BETWEEN.
+ *
+ * The framing reserves room for whatever chrome is open, and one of those
+ * panels — the recovery column listing the thoughts the frame cannot name —
+ * only APPEARS once a frame has been laid out and found some. So a single fit
+ * framed the map against the chrome that existed before it, the column then
+ * opened over the result, and on artifact 05 it covered forty-seven thoughts.
+ * The second fit sees the column and frames clear of it. It converges because
+ * clearing the column can only reduce what is hidden, never add to it.
+ */
+export const FRAME_ALL = async (page, margin = 1.04) => {
+  await page.evaluate(m => window.mm.frameAll(m), margin);
+  await page.evaluate(() => window.mm.renderAt(window.mm.now()));
+  await page.evaluate(m => window.mm.frameAll(m), margin);
+  await page.evaluate(() => window.mm.renderAt(window.mm.now()));
+};
 
 export const SELECT = (page, text) => page.evaluate(t => {
   const d = window.mm.store.doc;

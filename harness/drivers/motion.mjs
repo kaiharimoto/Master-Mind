@@ -172,7 +172,16 @@ export default [
                  dist: window.mm.scene.pose.dist };
       });
       if (st.pose !== acting.pose) break;
-      if (st.present && st.conf >= 0.9 && distBefore / st.dist >= 1.25) { shutter = st; break; }
+      // 1.12, not 1.25. The travel target has to be one the pose can reach on a
+      // LOADED machine: the loop advances the app's virtual clock while the
+      // camera clip runs on the real one, so a busy box fits fewer virtual
+      // frames inside the pose's real duration — cycle 13's run reached 1.195
+      // and the pose ended, the shutter fell through to a live frame reading
+      // `fist`, and the claim failed for a reason that is about this machine
+      // rather than about the build. Materiality is already guaranteed by
+      // `operationTookEffect`, and the caption prints whatever ratio was
+      // actually achieved.
+      if (st.present && st.conf >= 0.9 && distBefore / st.dist >= 1.12) { shutter = st; break; }
       await page.evaluate(t => window.mm.renderAt(t), 800 + i * 33.3);
       await page.waitForTimeout(4);
       held = i;

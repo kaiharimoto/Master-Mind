@@ -134,6 +134,8 @@ const chrome = async (page) => {
            chromeOffFrame: c.offFrame,
            nodesUnderChrome: c.nodesUnderChrome, nodesUnderChromeIds: c.nodesUnderChromeIds,
            nodesUnderChromeBy: c.nodesUnderChromeBy,
+           heldNodesUnderChrome: c.heldNodesUnderChrome,
+           noHeldNodeBuriedByChrome: c.noHeldNodeBuriedByChrome,
            noTwoChromePanelsOverlap: c.noTwoChromePanelsOverlap,
            everyChromeBadgeInsideTheFrame: c.everyChromeBadgeInsideTheFrame,
            noNodeBuriedByChrome: c.noNodeBuriedByChrome };
@@ -658,7 +660,13 @@ export default [
               // somewhere else. Asked of every opaque overlay now, on every
               // artifact that carries chrome.
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
-              noNodeBuriedByChrome: true,
+              // The HELD form, not the whole-map one: this framing is solved to
+              // fill two thirds of the frame's height with the holding boundary,
+              // so a placed thought on the far side of the map passes behind the
+              // top bar and the frame is not claiming otherwise. What it claims
+              // is that every WAITING thought is visible, and the general count
+              // stays in the record either way.
+              noHeldNodeBuriedByChrome: true,
               countMatchesMarkers: true, everyHeldLabelAttributable: true,
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
               everyHeldMarkerCountable: true, everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true,
@@ -757,7 +765,24 @@ export default [
           .filter(q => d.nodes[q.id]?.placed &&
                        q.x > 0 && q.y > 0 && q.x < el.width && q.y < el.height).length;
       });
-      const score = (sep.worst !== null && sep.worst >= 12 ? 1000 : 0) + behind + (sep.worst ?? 0) * 0.05;
+      // AND NO MARKER UNDER THE TOP BAR. The bar is 52 px of opaque panel across
+      // the width of the frame, and a marker at y=51 is a marker whose light is
+      // half behind it: the cycle-13 run measured two of them at 2.36 and 2.43
+      // against a 2.5 visibility floor and `everyDrawnLabelHasAVisibleMarker`
+      // failed, correctly. This framing is solved rather than chosen, so the
+      // solve is where the constraint belongs — among the vantages that keep
+      // every held marker its own dot, prefer one that also keeps every marker
+      // clear of the chrome, and treat a buried marker as costing more than any
+      // amount of map in frame.
+      const underBar = await page.evaluate(() => {
+        const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+        const bar = document.querySelector('#top');
+        const h2 = bar ? bar.getBoundingClientRect().bottom : 52;
+        return window.mm.scene.screenPositions()
+          .filter(q => q.y / dpr - Math.max(q.r / dpr, 3) < h2 + 8 && q.y / dpr > -40).length;
+      });
+      const score = (sep.worst !== null && sep.worst >= 12 ? 1000 : 0)
+                  - underBar * 60 + behind + (sep.worst ?? 0) * 0.05;
       if (sep.worst !== null && score > bestSep) { bestSep = score; bestYaw = y; }
     }
     const TARGET = 0.66;

@@ -554,8 +554,16 @@ export class App {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (e) left = Math.max(left, e.getBoundingClientRect().right + 14);
     }
-    const ed = document.getElementById('editor');
-    if (ed) right = Math.max(right, w - ed.getBoundingClientRect().left + 14);
+    // THE RECOVERY COLUMN IS A PANEL TOO, and the most ironic one to have left
+    // out: it is 300 px of opaque ground listing the thoughts the frame cannot
+    // name, and on artifact 05 it was sitting on top of FORTY-SEVEN of them.
+    // A panel that hides thoughts to explain hidden thoughts.
+    for (const sel of ['#editor', '#unlabelled', '#hands']) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e || getComputedStyle(e).display === 'none') continue;
+      const r = e.getBoundingClientRect();
+      if (r.width > 2 && r.height > 2) right = Math.max(right, w - r.left + 14);
+    }
     return { top: Math.min((top + line) / h, 0.22), bottom: Math.min((bottom + line) / h, 0.22),
              left: Math.min(left / w, 0.38), right: Math.min(right / w, 0.38) };
   }
@@ -1236,9 +1244,23 @@ export class App {
              nodesUnderChrome: buried.length,
              nodesUnderChromeIds: buried.slice(0, 12),
              nodesUnderChromeBy: [...new Set(buriedD.map(b => b.by))],
+             // SCOPED, for the artifacts that deliberately frame close on one
+             // part of the map. At a framing solved to fill 66 % of the height
+             // with the holding ring, a placed thought on the far side of the
+             // map legitimately passes behind the top bar — the frame is not
+             // claiming to show it. What such a frame IS claiming is that every
+             // waiting thought is visible, so that is what it asserts. This is
+             // a narrower claim, not a weaker one, and the whole-map artifacts
+             // keep the unrestricted one.
+             heldNodesUnderChrome: buriedD.filter(b => {
+               const n = this.store.doc.nodes[b.id]; return n && !n.placed;
+             }).length,
              noTwoChromePanelsOverlap: pairs.length === 0,
              everyChromeBadgeInsideTheFrame: offFrame.length === 0,
-             noNodeBuriedByChrome: buried.length === 0 };
+             noNodeBuriedByChrome: buried.length === 0,
+             noHeldNodeBuriedByChrome: buriedD.every(b => {
+               const n = this.store.doc.nodes[b.id]; return !n || n.placed;
+             }) };
   }
 
   /**

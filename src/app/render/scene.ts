@@ -471,11 +471,54 @@ export class Scene {
     if (this.dirty) this.rebuild();
     this.nodes.setTime(this.clock);
     this.applyPose();
+    this.fitDepthFade();
     this.fitHoldingShell();
     this.deconflictLabels();
     this.renderer.render(this.scene, this.camera);
     this.screenCache = [];
   }
+
+  /**
+   * THE FADE RANGE IS THE SCENE'S OWN DEPTH, not a constant.
+   *
+   * "Distance fades toward the dark" is in the palette and the mechanism has
+   * been in the shader since cycle 3 — luminance attenuated within each state's
+   * own band, capped so a far node can never fall into the range of a nearer
+   * state (D-014, D-016). The cycle-12 Art Director measured the result and
+   * found it absent: a search hit at 21 px and one at 56 px both peaked at
+   * L ~172, plain nodes at 9 and 12 px both at 76.
+   *
+   * They were right, and the cause is not the shader. The ramp ran from a fixed
+   * 46 to a fixed 250 units, and at whole-map framing this map's nodes span
+   * 92.7 to 147.7 — a quarter of the way along a ramp built for a depth range
+   * six times larger. Every node landed within 4 % of every other. A viewer
+   * reads depth RELATIVELY, against the rest of what is in front of them, so
+   * the ramp is fitted to the cloud that is actually there: nearest node at
+   * full weight, furthest at its state's floor.
+   *
+   * The lens profile's own span survives as a MINIMUM, so a map genuinely flat
+   * in depth is not given a dramatic gradient it has not earned.
+   */
+  private fitDepthFade() {
+    const scr = this.screenPositions();
+    if (!scr.length) return;
+    let near = Infinity, far = -Infinity;
+    for (const q of scr) { if (q.z < near) near = q.z; if (q.z > far) far = q.z; }
+    if (!Number.isFinite(near) || !Number.isFinite(far)) return;
+    const p = LENS_PROFILE[this.lens];
+    // A floor on the span in proportion to the viewing distance: a cloud whose
+    // depth is a twentieth of how far away it is has no depth to show.
+    const span = Math.max(far - near, this.pose.dist * 0.30);
+    const start = near, end = near + span;
+    void p;
+    this.nodes.setFade(start, end);
+    this.filaments.setFade(start, end);
+    this.text.setFade(start, end);
+    this.depthFade = [+start.toFixed(1), +end.toFixed(1)];
+  }
+
+  /** The depth ramp actually in force this frame, for anything measuring it. */
+  depthFade: [number, number] = [0, 0];
 
   /**
    * Screen-space label deconfliction.
