@@ -402,6 +402,67 @@ const sampleDiscs = async (png, discs, min = 2.5) => {
   };
 };
 
+/**
+ * DOES THE SHIPPED FRAME CONTAIN THE THING ITS CAPTION IS ABOUT?
+ *
+ * Every claim in this harness that answers that question answered it from the
+ * app: how many nodes the projection puts in the view, whether the subject sits
+ * clear of a panel, what colour the model holds. Those are the right questions
+ * asked of the wrong witness. Cycle 13 shipped artifact 06 with 21 placed nodes
+ * and 20 filaments "in view" and not one strongly-coloured pixel anywhere on
+ * the canvas, and artifact 09 with the edited thought inside both panels and
+ * zero pixels of its new colour in the after panel. Both claims were true about
+ * the model and false about the picture, which is the F-030 shape once more:
+ * an instrument that cannot fail for the reason it exists.
+ *
+ * This reads the WRITTEN FILE. It decodes the frame that will be composed and
+ * shipped, and counts the pixels of the subject inside a region — by chroma,
+ * by luminance, and optionally by hue, so "the district markers are visible" and
+ * "the new teal is on the after panel" become measurements of the image rather
+ * than restatements of the state that produced it.
+ *
+ * `box` is the region to count inside; `exclude` a region to ignore (the
+ * holding ring, when the question is what is visible BEYOND it). `hue` is a
+ * turn in [0,1) with `hueTol` either side. Off-frame or undecodable is a
+ * failure with a reason, never a zero that reads like an answer.
+ */
+const subjectInk = async (png, { box = null, exclude = null, minChroma = 0.16,
+                                 minLum = 0.10, hue = null, hueTol = 0.06 } = {}) => {
+  const { raw, W, H } = await rawOf(png);
+  if (!raw.length || !W || !H) return { pixels: null, checked: 0, error: 'frame not decodable' };
+  const b = box ?? { x: 0, y: 0, w: W, h: H };
+  const x0 = Math.max(0, Math.round(b.x)), y0 = Math.max(0, Math.round(b.y));
+  const x1 = Math.min(W, Math.round(b.x + b.w)), y1 = Math.min(H, Math.round(b.y + b.h));
+  if (x1 <= x0 || y1 <= y0) return { pixels: null, checked: 0, error: 'region outside the frame' };
+  let pixels = 0, checked = 0, best = 0, bestAt = null, lit = 0;
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+    if (exclude && x >= exclude.x && y >= exclude.y &&
+        x < exclude.x + exclude.w && y < exclude.y + exclude.h) continue;
+    const i = (y * W + x) * 3;
+    const r = raw[i] / 255, g = raw[i + 1] / 255, bl = raw[i + 2] / 255;
+    const mx = Math.max(r, g, bl), mn = Math.min(r, g, bl);
+    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+    const chroma = mx - mn;
+    checked++;
+    if (lum >= minLum) lit++;
+    if (chroma > best) { best = chroma; bestAt = [x, y]; }
+    if (chroma < minChroma || lum < minLum) continue;
+    if (hue !== null) {
+      let h6;
+      if (mx === mn) continue;
+      else if (mx === r) h6 = ((g - bl) / chroma + 6) % 6;
+      else if (mx === g) h6 = (bl - r) / chroma + 2;
+      else h6 = (r - g) / chroma + 4;
+      const hh = h6 / 6;
+      let dh = Math.abs(hh - hue); if (dh > 0.5) dh = 1 - dh;
+      if (dh > hueTol) continue;
+    }
+    pixels++;
+  }
+  return { pixels, checked, litPixels: lit, strongestChroma: +best.toFixed(3), strongestAt: bestAt,
+           box: { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }, hue, minChroma, minLum };
+};
+
 const modelStats = (page) => page.evaluate(() => {
   const d = window.mm.store.doc;
   // The numbers the app PRINTS ON THE FRAME, read back from the DOM that drew
@@ -498,7 +559,7 @@ async function runDriver(d) {
       pages.push(r);
       return r;
     },
-    shot, step, record, compose, stack, crop, samplePixels, sampleDiscs, modelStats, clusterState, clusterDelta, positions,
+    shot, step, record, compose, stack, crop, samplePixels, sampleDiscs, subjectInk, modelStats, clusterState, clusterDelta, positions,
     async tmpShot(page, cdp, tag) { return shot(page, cdp, resolve(TMP, `${tag}.png`)); },
     async twin(driver, phase) {
       if (phase === 'after') return twinCache?.after ?? { error: 'twin before did not run' };

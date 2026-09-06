@@ -489,8 +489,20 @@ export async function diffEvidence(curDir, prevDir) {
     // Every row lands in exactly one bucket, and they sum to the set size. The
     // four buckets used to total 19 of 20 because 'uncomparable' was in none of
     // them, which reads as a missing row rather than a stated one.
-    summary: { unchanged: rows.filter(r => r.verdict === 'unchanged').length,
-               changed: changed.length, new: rows.filter(r => r.verdict === 'new').length,
+    //
+    // AND THEY SAY WHICH KIND OF SAME THEY MEAN. These were `unchanged` and
+    // `changed`, and both are verdicts of the perceptual comparison: cycle 13's
+    // summary read `unchanged: 6` on a set where all twenty files differed byte
+    // for byte from the previous cycle's, which the Auditor had to establish
+    // itself by hashing them. The perceptual buckets keep their meaning under a
+    // name that states it, and byte identity is counted beside them rather than
+    // left to be inferred from the absence of a note.
+    summary: { perceptuallyUnchanged: rows.filter(r => r.verdict === 'unchanged').length,
+               perceptuallyChanged: changed.length,
+               bytesIdentical: rows.filter(r => r.identicalBytes).length,
+               bytesChanged: rows.filter(r => r.sha256 && !r.identicalBytes).length,
+               bytesIdenticalIds: rows.filter(r => r.identicalBytes).map(r => r.id),
+               new: rows.filter(r => r.verdict === 'new').length,
                missing: missing.length,
                uncomparable: rows.filter(r => r.verdict === 'uncomparable').length,
                total: rows.length,

@@ -6,10 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T12:32:07.367Z",
+  "lastRunAt": "2026-09-06T13:11:01.224Z",
   "lastRunCaptured": [
-    "06",
-    "07",
+    "04",
     "10"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
@@ -1127,15 +1126,15 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.3,
+      "seconds": 2.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 445205,
-        "sha256": "9565a8a74755e6041797ed7ce1b9742770fed3d7f0ca8db624e3a14b29ea602a"
+        "bytes": 445790,
+        "sha256": "32b3b79cb2041d390a7baf335cddab05467ca4eab93c6428e02664c7c3211131"
       },
       "claims": {
         "ok": true,
@@ -1389,7 +1388,7 @@
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
-          "worstContrast": 2.73,
+          "worstContrast": 3.07,
           "invisibleIds": [],
           "weakest": [],
           "rows": [
@@ -1398,9 +1397,9 @@
               "x": 1157,
               "y": 585,
               "r": 14.4,
-              "peak": 0.2833,
+              "peak": 0.2934,
               "ground": 0.0574,
-              "contrast": 3.1
+              "contrast": 3.2
             },
             {
               "id": "n12900c3690",
@@ -1443,45 +1442,45 @@
               "x": 1156,
               "y": 655,
               "r": 14.4,
-              "peak": 0.2818,
+              "peak": 0.2947,
               "ground": 0.0574,
-              "contrast": 3.09
+              "contrast": 3.21
             },
             {
               "id": "n1c35c6c62f",
               "x": 871,
               "y": 717,
               "r": 14.4,
-              "peak": 0.2582,
+              "peak": 0.2871,
               "ground": 0.0574,
-              "contrast": 2.87
+              "contrast": 3.14
             },
             {
               "id": "n1d49087545",
               "x": 657,
               "y": 593,
               "r": 14.4,
-              "peak": 0.2678,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 2.96
+              "contrast": 3.15
             },
             {
               "id": "n20cb5b490f",
               "x": 677,
               "y": 437,
               "r": 14.4,
-              "peak": 0.2568,
+              "peak": 0.281,
               "ground": 0.0574,
-              "contrast": 2.86
+              "contrast": 3.08
             },
             {
               "id": "n2570828592",
               "x": 646,
               "y": 242,
               "r": 14.4,
-              "peak": 0.272,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 3
+              "contrast": 3.16
             },
             {
               "id": "n2a2ac6dd57",
@@ -1506,36 +1505,36 @@
               "x": 848,
               "y": 568,
               "r": 14.4,
-              "peak": 0.285,
+              "peak": 0.2959,
               "ground": 0.0574,
-              "contrast": 3.12
+              "contrast": 3.22
             },
             {
               "id": "n354196ac48",
               "x": 876,
               "y": 695,
               "r": 14.4,
-              "peak": 0.2526,
+              "peak": 0.2838,
               "ground": 0.0574,
-              "contrast": 2.82
+              "contrast": 3.11
             },
             {
               "id": "n356aeca57a",
               "x": 1077,
               "y": 292,
               "r": 14.4,
-              "peak": 0.2895,
+              "peak": 0.2971,
               "ground": 0.0574,
-              "contrast": 3.16
+              "contrast": 3.23
             },
             {
               "id": "n36627f75c9",
               "x": 605,
               "y": 617,
               "r": 14.4,
-              "peak": 0.2669,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 2.95
+              "contrast": 3.15
             },
             {
               "id": "n380afc9e85",
@@ -1560,18 +1559,18 @@
               "x": 656,
               "y": 334,
               "r": 14.4,
-              "peak": 0.277,
+              "peak": 0.2888,
               "ground": 0.0574,
-              "contrast": 3.04
+              "contrast": 3.15
             },
             {
               "id": "n3ad7401001",
               "x": 1052,
               "y": 225,
               "r": 14.4,
-              "peak": 0.2935,
+              "peak": 0.2974,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 3.23
             },
             {
               "id": "n3eba301186",
@@ -1587,18 +1586,18 @@
               "x": 864,
               "y": 743,
               "r": 14.4,
-              "peak": 0.2492,
+              "peak": 0.2845,
               "ground": 0.0574,
-              "contrast": 2.79
+              "contrast": 3.11
             },
             {
               "id": "n4233b3d94d",
               "x": 1182,
               "y": 205,
               "r": 14.4,
-              "peak": 0.2968,
+              "peak": 0.2996,
               "ground": 0.0574,
-              "contrast": 3.23
+              "contrast": 3.26
             },
             {
               "id": "n48e5dd13da",
@@ -1614,9 +1613,9 @@
               "x": 624,
               "y": 204,
               "r": 14.4,
-              "peak": 0.2658,
+              "peak": 0.2891,
               "ground": 0.0574,
-              "contrast": 2.94
+              "contrast": 3.16
             },
             {
               "id": "n4fd66d29cd",
@@ -1632,9 +1631,9 @@
               "x": 662,
               "y": 668,
               "r": 14.4,
-              "peak": 0.2711,
+              "peak": 0.2918,
               "ground": 0.0574,
-              "contrast": 2.99
+              "contrast": 3.18
             },
             {
               "id": "n53badd7a56",
@@ -1650,9 +1649,9 @@
               "x": 1249,
               "y": 635,
               "r": 14.4,
-              "peak": 0.2932,
+              "peak": 0.2966,
               "ground": 0.0574,
-              "contrast": 3.2
+              "contrast": 3.23
             },
             {
               "id": "n5880a05cab",
@@ -1668,18 +1667,18 @@
               "x": 810,
               "y": 538,
               "r": 14.4,
-              "peak": 0.291,
+              "peak": 0.296,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 3.22
             },
             {
               "id": "n5f31be08e0",
               "x": 796,
               "y": 459,
               "r": 14.4,
-              "peak": 0.2909,
+              "peak": 0.2968,
               "ground": 0.0574,
-              "contrast": 3.17
+              "contrast": 3.23
             },
             {
               "id": "n618ee08ab3",
@@ -1695,27 +1694,27 @@
               "x": 663,
               "y": 571,
               "r": 14.4,
-              "peak": 0.2666,
+              "peak": 0.2885,
               "ground": 0.0574,
-              "contrast": 2.95
+              "contrast": 3.15
             },
             {
               "id": "n69344565b8",
               "x": 759,
               "y": 484,
               "r": 14.4,
-              "peak": 0.291,
+              "peak": 0.2961,
               "ground": 0.0574,
-              "contrast": 3.18
+              "contrast": 3.22
             },
             {
               "id": "n703e3384c3",
               "x": 1330,
               "y": 266,
               "r": 14.4,
-              "peak": 0.2561,
+              "peak": 0.2832,
               "ground": 0.0574,
-              "contrast": 2.85
+              "contrast": 3.1
             },
             {
               "id": "n7091638a5d",
@@ -1749,9 +1748,9 @@
               "x": 620,
               "y": 402,
               "r": 14.4,
-              "peak": 0.2516,
+              "peak": 0.2832,
               "ground": 0.0574,
-              "contrast": 2.81
+              "contrast": 3.1
             },
             {
               "id": "n798586ed6b",
@@ -1767,90 +1766,90 @@
               "x": 863,
               "y": 714,
               "r": 14.4,
-              "peak": 0.2582,
+              "peak": 0.2871,
               "ground": 0.0574,
-              "contrast": 2.87
+              "contrast": 3.14
             },
             {
               "id": "n7deb3cc285",
               "x": 653,
               "y": 662,
               "r": 14.4,
-              "peak": 0.2711,
+              "peak": 0.2918,
               "ground": 0.0574,
-              "contrast": 2.99
+              "contrast": 3.18
             },
             {
               "id": "n7e876747ad",
               "x": 1193,
               "y": 668,
               "r": 14.4,
-              "peak": 0.2751,
+              "peak": 0.2919,
               "ground": 0.0574,
-              "contrast": 3.03
+              "contrast": 3.18
             },
             {
               "id": "n85ef9080ea",
               "x": 1299,
               "y": 293,
               "r": 14.4,
-              "peak": 0.2508,
+              "peak": 0.2823,
               "ground": 0.0574,
-              "contrast": 2.8
+              "contrast": 3.09
             },
             {
               "id": "n996700c24d",
               "x": 657,
               "y": 645,
               "r": 14.4,
-              "peak": 0.2591,
+              "peak": 0.2865,
               "ground": 0.0574,
-              "contrast": 2.88
+              "contrast": 3.13
             },
             {
               "id": "n9a939af75c",
               "x": 707,
               "y": 588,
               "r": 14.4,
-              "peak": 0.2661,
+              "peak": 0.2879,
               "ground": 0.0574,
-              "contrast": 2.94
+              "contrast": 3.15
             },
             {
               "id": "n9aee67caa2",
               "x": 1240,
               "y": 575,
               "r": 14.4,
-              "peak": 0.2798,
+              "peak": 0.2938,
               "ground": 0.0574,
-              "contrast": 3.07
+              "contrast": 3.2
             },
             {
               "id": "n9b0b5d8a6d",
               "x": 829,
               "y": 441,
               "r": 14.4,
-              "peak": 0.2773,
+              "peak": 0.2921,
               "ground": 0.0574,
-              "contrast": 3.05
+              "contrast": 3.19
             },
             {
               "id": "n9e05705d26",
               "x": 723,
               "y": 374,
               "r": 14.4,
-              "peak": 0.2437,
+              "peak": 0.2799,
               "ground": 0.0574,
-              "contrast": 2.74
+              "contrast": 3.07
             },
             {
               "id": "n9e5581acc8",
               "x": 1003,
               "y": 213,
               "r": 14.4,
-              "peak": 0.2579,
+              "peak": 0.2851,
               "ground": 0.0574,
-              "contrast": 2.87
+              "contrast": 3.12
             },
             {
               "id": "na2358b2b07",
@@ -1866,63 +1865,63 @@
               "x": 1117,
               "y": 225,
               "r": 14.4,
-              "peak": 0.2851,
+              "peak": 0.2963,
               "ground": 0.0574,
-              "contrast": 3.12
+              "contrast": 3.22
             },
             {
               "id": "na8ba0be3cd",
               "x": 720,
               "y": 467,
               "r": 14.4,
-              "peak": 0.2429,
+              "peak": 0.2818,
               "ground": 0.0574,
-              "contrast": 2.73
+              "contrast": 3.09
             },
             {
               "id": "na9606fee1c",
               "x": 1262,
               "y": 606,
               "r": 14.4,
-              "peak": 0.2888,
+              "peak": 0.2961,
               "ground": 0.0574,
-              "contrast": 3.15
+              "contrast": 3.22
             },
             {
               "id": "naaabbd92cb",
               "x": 909,
               "y": 712,
               "r": 14.4,
-              "peak": 0.2467,
+              "peak": 0.282,
               "ground": 0.0574,
-              "contrast": 2.76
+              "contrast": 3.09
             },
             {
               "id": "nba2805e3e1",
               "x": 882,
               "y": 532,
               "r": 14.4,
-              "peak": 0.2908,
+              "peak": 0.297,
               "ground": 0.0574,
-              "contrast": 3.17
+              "contrast": 3.23
             },
             {
               "id": "nd682eed70b",
               "x": 942,
               "y": 191,
               "r": 14.4,
-              "peak": 0.2643,
+              "peak": 0.282,
               "ground": 0.0574,
-              "contrast": 2.93
+              "contrast": 3.09
             },
             {
               "id": "nd960763431",
               "x": 1174,
               "y": 646,
               "r": 14.4,
-              "peak": 0.2762,
+              "peak": 0.291,
               "ground": 0.0574,
-              "contrast": 3.04
+              "contrast": 3.18
             },
             {
               "id": "ndcecf485a0",
@@ -1938,36 +1937,36 @@
               "x": 560,
               "y": 266,
               "r": 14.4,
-              "peak": 0.274,
+              "peak": 0.2899,
               "ground": 0.0574,
-              "contrast": 3.02
+              "contrast": 3.17
             },
             {
               "id": "ndebe2ada83",
               "x": 598,
               "y": 285,
               "r": 14.4,
-              "peak": 0.2689,
+              "peak": 0.2894,
               "ground": 0.0574,
-              "contrast": 2.97
+              "contrast": 3.16
             },
             {
               "id": "ne85bc87b03",
               "x": 928,
               "y": 483,
               "r": 14.4,
-              "peak": 0.2958,
+              "peak": 0.2978,
               "ground": 0.0574,
-              "contrast": 3.22
+              "contrast": 3.24
             },
             {
               "id": "nef369efdfc",
               "x": 637,
               "y": 427,
               "r": 14.4,
-              "peak": 0.2451,
+              "peak": 0.2802,
               "ground": 0.0574,
-              "contrast": 2.75
+              "contrast": 3.07
             },
             {
               "id": "nf2bb761959",
@@ -1992,9 +1991,9 @@
               "x": 553,
               "y": 279,
               "r": 14.4,
-              "peak": 0.2731,
+              "peak": 0.2899,
               "ground": 0.0574,
-              "contrast": 3.01
+              "contrast": 3.17
             }
           ]
         },
@@ -2108,7 +2107,7 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
         "fnSha": "bac9916dd5a965ca",
-        "appSha": "afee2ffa14e2e205",
+        "appSha": "953acb913dd6aeee",
         "claimShas": {
           "cameraPinned": "b5bea41b6c62",
           "nodes": "0b7500e49816",
@@ -2128,8 +2127,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T11:40:45.984Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T13:11:03.268Z"
     },
     {
       "id": "05",
@@ -2325,7 +2324,7 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 9.7,
+      "seconds": 10.2,
       "status": "captured",
       "error": null,
       "check": {
@@ -2356,6 +2355,14 @@
           },
           {
             "claim": "placedMapVisibleBeyondTheBoundary",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "placedMapDrawnInThePixels",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -2703,6 +2710,53 @@
         "districtsInView": 2,
         "filamentsInView": 20,
         "placedMapVisibleBeyondTheBoundary": true,
+        "placedMarkerContrast": {
+          "checked": 21,
+          "invisible": 4,
+          "worstContrast": 1,
+          "weakest": [
+            {
+              "id": "n9aee67caa2",
+              "x": 966,
+              "y": 28,
+              "r": 14.4,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "ncaf843cf89",
+              "x": 892,
+              "y": 2,
+              "r": 14.4,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "nf9a857969d",
+              "x": 1081,
+              "y": 36,
+              "r": 14.4,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "n44116b5fc8",
+              "x": 120,
+              "y": 45,
+              "r": 16.6,
+              "peak": 0.1909,
+              "ground": 0.0815,
+              "contrast": 1.83
+            }
+          ]
+        },
+        "placedMarkersLit": 17,
+        "canvasChromaticPixels": 3292,
+        "canvasStrongestChroma": 0.875,
+        "placedMapDrawnInThePixels": true,
         "cameraDistance": 21.248,
         "ringHeightFraction": 0.66,
         "heldNodes": {
@@ -2778,12 +2832,13 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "311a423500358bd4",
-        "appSha": "9bc41e425844cf98",
+        "fnSha": "7b57d2816b8426b0",
+        "appSha": "2ebc6889cef60871",
         "claimShas": {
           "holdingRingFillsFrame": "b5bea41b6c62",
           "everyHeldNodeInFrame": "b5bea41b6c62",
           "placedMapVisibleBeyondTheBoundary": "b5bea41b6c62",
+          "placedMapDrawnInThePixels": "b5bea41b6c62",
           "noTwoChromePanelsOverlap": "b5bea41b6c62",
           "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
           "noHeldNodeBuriedByChrome": "b5bea41b6c62",
@@ -2799,8 +2854,8 @@
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T12:32:16.664Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T13:03:18.756Z"
     },
     {
       "id": "07",
@@ -2815,8 +2870,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 188261,
-        "sha256": "a448b6109b68f51aef5bb6012dd6dee2891fc7fede530f9c75624fc325ac90b1"
+        "bytes": 185820,
+        "sha256": "e9e0d1ad384b588f12d74c56f8a038bd5a0e02d63750159290b8b989e118af67"
       },
       "claims": {
         "ok": true,
@@ -2876,6 +2931,14 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -2917,6 +2980,17 @@
         "namesListed": 0,
         "thoughtsLeftUnnamed": 0,
         "everyThoughtOnScreenIsNamed": true,
+        "camera": {
+          "yaw": 0.3,
+          "pitch": 0.13,
+          "dist": 26.06312,
+          "target": [
+            -2.292421,
+            -3.35,
+            2.412729
+          ]
+        },
+        "cameraPinned": true,
         "measuredRungsLuma709": {
           "plain": 0.2834,
           "connected": 0.4225,
@@ -2975,7 +3049,7 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "dd265abdc8c01ca5",
+        "fnSha": "d20566e6d80c4370",
         "appSha": "9bc41e425844cf98",
         "claimShas": {
           "ok": "b5bea41b6c62",
@@ -2984,13 +3058,14 @@
           "ladderMonotonicInRelLuminance": "b5bea41b6c62",
           "ladderStepsClearScatterInRelLuminance": "b5bea41b6c62",
           "noTwoChromePanelsOverlap": "b5bea41b6c62",
-          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62"
+          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
+          "cameraPinned": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T12:32:18.384Z"
+      "capturedInThisRun": false,
+      "fileMtime": "2026-09-06T13:00:47.376Z"
     },
     {
       "id": "08",
@@ -3120,15 +3195,15 @@
       "title": "Connect and edit",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.8,
+      "seconds": 3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 205621,
-        "sha256": "43d3daf3fd2712dda2f26971a3e2c061084f196fb5d42bb5645924c5c6924b44"
+        "bytes": 273773,
+        "sha256": "ba5d2662aff073e0eec4838ff13c815973650c10c6ab5eb3870a98968567670b"
       },
       "claims": {
         "ok": true,
@@ -3174,7 +3249,7 @@
             "ruleSha": "b5bea41b6c62"
           },
           {
-            "claim": "everyOtherLabelHeldItsPlace",
+            "claim": "everyOtherLabelHeldItsPlaceOrYieldedToAnActedName",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -3183,6 +3258,22 @@
           },
           {
             "claim": "editedThoughtVisibleInBothPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "bothEndsVisibleInBothPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "editedColourAppearsInThePixels",
             "expected": true,
             "actual": true,
             "pass": true,
@@ -3203,15 +3294,100 @@
           true,
           true
         ],
+        "farEndVisible": [
+          true,
+          true
+        ],
         "editedThoughtVisibleInBothPanels": true,
-        "labelsInBothPanels": 2,
+        "bothEndsVisibleInBothPanels": true,
+        "editedColourWindow": {
+          "x": 95.23543307712609,
+          "y": 183.2251667414842,
+          "w": 302.4,
+          "h": 302.4
+        },
+        "tealPixelsBefore": 0,
+        "tealPixelsAfter": 3834,
+        "editedColourAppearsInThePixels": true,
+        "labelsInBothPanels": 4,
         "labelsThatShifted": 0,
         "labelsThatShiftedOn": [],
-        "labelPlacementsBefore": {
+        "labelsThatShiftedBy": [],
+        "labelBoxesBefore": {
+          "n209e6a2a86": [
+            91.74,
+            615.35,
+            350.88,
+            645.35
+          ],
           "n35b0bd9a37": [
-            26,
-            44,
+            222.68,
+            841.89,
+            433.52,
+            871.89
+          ],
+          "n4e9bd59c87": [
+            87.42,
+            237.43,
+            328.57,
+            267.43
+          ],
+          "n83224a5de3": [
+            527.91,
+            680.65,
+            652.58,
+            710.65
+          ],
+          "n84a7397186": [
+            434.17,
+            531.82,
+            600.95,
+            561.82
+          ]
+        },
+        "labelBoxesAfter": {
+          "n209e6a2a86": [
+            91.74,
+            615.35,
+            350.88,
+            645.35
+          ],
+          "n35b0bd9a37": [
+            222.68,
+            841.89,
+            433.52,
+            871.89
+          ],
+          "n83224a5de3": [
+            527.91,
+            682.43,
+            652.58,
+            712.43
+          ],
+          "n84a7397186": [
+            434.17,
+            531.82,
+            600.95,
+            561.82
+          ]
+        },
+        "labelsShiftedWithoutACollision": 0,
+        "everyOtherLabelHeldItsPlaceOrYieldedToAnActedName": true,
+        "labelPlacementsBefore": {
+          "n209e6a2a86": [
+            -125,
+            52,
+            259
+          ],
+          "n35b0bd9a37": [
+            -102,
+            -73,
             211
+          ],
+          "n4e9bd59c87": [
+            -146,
+            -89,
+            241
           ],
           "n83224a5de3": [
             -69,
@@ -3225,6 +3401,16 @@
           ]
         },
         "labelPlacementsAfter": {
+          "n209e6a2a86": [
+            -125,
+            52,
+            259
+          ],
+          "n35b0bd9a37": [
+            -102,
+            -73,
+            211
+          ],
           "n83224a5de3": [
             -69,
             40,
@@ -3255,22 +3441,24 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "161bdf806baa438e",
-        "appSha": "afee2ffa14e2e205",
+        "fnSha": "6e328e9bc52a8290",
+        "appSha": "08845a35fe02b393",
         "claimShas": {
           "connectedByThisCapture": "b5bea41b6c62",
           "linkedBefore": "fcbcf165908d",
           "linkedAfter": "b5bea41b6c62",
           "editorWroteToTheModel": "b5bea41b6c62",
           "recencyMatchesModel": "b5bea41b6c62",
-          "everyOtherLabelHeldItsPlace": "b5bea41b6c62",
-          "editedThoughtVisibleInBothPanels": "b5bea41b6c62"
+          "everyOtherLabelHeldItsPlaceOrYieldedToAnActedName": "b5bea41b6c62",
+          "editedThoughtVisibleInBothPanels": "b5bea41b6c62",
+          "bothEndsVisibleInBothPanels": "b5bea41b6c62",
+          "editedColourAppearsInThePixels": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T12:25:17.708Z"
+      "fileMtime": "2026-09-06T13:09:57.729Z"
     },
     {
       "id": "10",
@@ -3285,8 +3473,8 @@
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 173917,
-        "sha256": "f68f8db2f031bc321c46b18066fe528b1806ebc4f9edf7ab1e040e00738df57a"
+        "bytes": 189722,
+        "sha256": "333246b1483d778086ff8b60cca990fc02eccc7a410697f9b7981f2c0b9dc057"
       },
       "claims": {
         "ok": true,
@@ -3386,6 +3574,14 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "railTookTheEmptierSide",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
@@ -3393,6 +3589,16 @@
         "query": "koji",
         "node": "Koji-kin sourcing",
         "hits": 19,
+        "recoveryRail": {
+          "left": 6,
+          "right": 0,
+          "side": "right",
+          "leftRows": 56,
+          "rightRows": 56,
+          "rowsNeeded": 16
+        },
+        "thoughtsBehindTheRail": 0,
+        "railTookTheEmptierSide": true,
         "searchBreakdown": "19 hits · 6 in the text · 13 in the label “Koji”",
         "hitsMatchedOnLabel": 13,
         "searchBreakdownOcclusion": {
@@ -3407,7 +3613,7 @@
         },
         "searchMatchReasonShown": true,
         "searchMatchReasonUnoccluded": true,
-        "labelsAudited": 9,
+        "labelsAudited": 11,
         "labelWorstOverhangPx": 0,
         "labelWorstOverhangOn": "Amazake",
         "labelWorstOffFramePx": 0,
@@ -3430,29 +3636,38 @@
           "Barley miso, 18 months",
           "Stir at 24h to cool"
         ],
-        "labelWorstDisplacementPx": 60.2,
-        "labelsMoreThan40pxFromTheirNode": 6,
+        "labelWorstDisplacementPx": 52,
+        "labelsMoreThan40pxFromTheirNode": 7,
         "markersBuriedByOtherLabels": 0,
         "worstBuriedFraction": 0,
         "noDrawnLabelBuriesAnotherMarker": true,
-        "labelWorstReservedDisplacementPx": 58.2,
-        "labelWorstDisplacementEm": 2.51,
+        "labelWorstReservedDisplacementPx": 52,
+        "labelWorstDisplacementEm": 2.16,
         "everyLabelStaysBesideItsNode": true,
-        "labelWorstAmbiguityRatio": 1.21,
+        "labelWorstAmbiguityRatio": 3.18,
         "labelsAmbiguousWithoutALeader": 0,
         "labelsAmbiguousWithoutALeaderIds": [],
         "labelsAmbiguousWithoutALeaderOn": [],
         "everyLabelUnambiguouslyBound": true,
         "markerContrast": {
-          "checked": 9,
-          "sampled": 9,
+          "checked": 11,
+          "sampled": 11,
           "offFrame": 0,
           "threshold": 2.5,
           "invisible": 0,
-          "worstContrast": 7.71,
+          "worstContrast": 3.05,
           "invisibleIds": [],
           "weakest": [],
           "rows": [
+            {
+              "id": "n043f593b30",
+              "x": 105,
+              "y": 443,
+              "r": 15.9,
+              "peak": 0.2776,
+              "ground": 0.0574,
+              "contrast": 3.05
+            },
             {
               "id": "n209e6a2a86",
               "x": 1105,
@@ -3526,6 +3741,15 @@
               "contrast": 7.81
             },
             {
+              "id": "n8d055e5297",
+              "x": 125,
+              "y": 571,
+              "r": 14.4,
+              "peak": 0.2816,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
               "id": "nbc542622a2",
               "x": 724,
               "y": 762,
@@ -3572,8 +3796,8 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "fd63e3fef04b71f6",
-        "appSha": "9bc41e425844cf98",
+        "fnSha": "4e38fdfef29cba10",
+        "appSha": "953acb913dd6aeee",
         "claimShas": {
           "positionUnchanged": "b5bea41b6c62",
           "severalHitsShown": "b5bea41b6c62",
@@ -3586,13 +3810,14 @@
           "everyLabelStaysBesideItsNode": "b5bea41b6c62",
           "everyLabelUnambiguouslyBound": "b5bea41b6c62",
           "searchMatchReasonShown": "b5bea41b6c62",
-          "searchMatchReasonUnoccluded": "b5bea41b6c62"
+          "searchMatchReasonUnoccluded": "b5bea41b6c62",
+          "railTookTheEmptierSide": "b5bea41b6c62"
         }
       },
       "capturedInCycle": 13,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T12:32:24.488Z"
+      "fileMtime": "2026-09-06T13:11:09.400Z"
     },
     {
       "id": "11",
@@ -5862,15 +6087,15 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T12:32:26.637Z",
+  "finishedAt": "2026-09-06T13:11:11.459Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
-    "bytes": 825918,
-    "sha256": "9bc41e425844cf98cd33de197a6349efbaac4195a9f5d220f9acadce831a292a",
-    "appSha": "9bc41e425844cf98",
-    "gitHead": "292984f6f030",
-    "gitHeadAt": "2026-09-06T12:23:46+00:00",
+    "bytes": 826986,
+    "sha256": "953acb913dd6aeee675b77030db8e32a93010159754a11213ad3c8e9ffd2cb29",
+    "appSha": "953acb913dd6aeee",
+    "gitHead": "578c67aa97fd",
+    "gitHeadAt": "2026-09-06T12:55:47+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,

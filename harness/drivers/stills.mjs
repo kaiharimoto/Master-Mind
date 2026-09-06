@@ -29,6 +29,13 @@ export const PIN = {
   // it — against a 16:9 frame, not a framing error. Breaking a position
   // regression instrument for that is a bad trade, so it was not taken.
   '04': { yaw: 0.30, pitch: 0.16, dist: 128.755009, target: [4.227, -4.996, 0.6945] },
+  // 07 pinned at cycle 14, at the values its own solve produced — read out of
+  // the scene after FRAME_ALL and the pan that clears the panels, not chosen.
+  // Before this it re-solved every run, so a change to any panel's width moved
+  // the camera: the cycle-13 Auditor measured all of this frame's markers
+  // shifting 33.1-41.3 px in x with y held, a rigid pan it could only rule out
+  // as a position regression by inference. Pinned, the diff says it outright.
+  '07': { yaw: 0.30, pitch: 0.13, dist: 26.063120, target: [-2.292421, -3.35, 2.412729] },
 };
 
 /**
@@ -674,6 +681,10 @@ export default [
               // The map is visible BEYOND the boundary, or the frame does not
               // show what it says it shows.
               placedMapVisibleBeyondTheBoundary: true,
+              // And the same question asked of the PIXELS, because the line
+              // above asks it of the projection and cycle 13 shipped a frame
+              // where the two disagreed completely.
+              placedMapDrawnInThePixels: true,
               // Three cycles running a critic found one overlay sitting on
               // another, each fixed where it was found and the next appearing
               // somewhere else. Asked of every opaque overlay now, on every
@@ -878,6 +889,26 @@ export default [
       return { placed: placed.length, districts: new Set(placed.map(q => d.nodes[q.id].label)).size, links };
     });
     const seq06 = await stillShot(H, page, cdp, H.out(this.file));
+    // AND NOW READ THE MAP BACK OUT OF THE PIXELS.
+    //
+    // `placedMapVisibleBeyondTheBoundary` above counts what the projection puts
+    // in the view, and cycle 13 shipped this frame with 21 placed nodes and 20
+    // filaments by that count and, as its Auditor measured, not one strongly
+    // coloured pixel anywhere on the canvas. The claim was true of the model
+    // and false of the picture. These two are taken from the written file: the
+    // placed markers are sampled where they project, against the same
+    // visibility floor every other marker in this set is held to, and the whole
+    // canvas is counted for chromatic ink so the number the critic measured is
+    // one this capture measures first.
+    const placedDiscs = await page.evaluate(() => {
+      const sc = window.mm.scene, el = sc.renderer.domElement, d = window.mm.store.doc;
+      return sc.screenPositions()
+        .filter(q => (d.nodes[q.id] || {}).placed &&
+                     q.x > 0 && q.y > 0 && q.x < el.width && q.y < el.height)
+        .slice(0, 40).map(q => ({ id: q.id, x: q.x, y: q.y, r: q.r }));
+    });
+    const placedInk = await H.sampleDiscs(H.out(this.file), placedDiscs, 2.0);
+    const canvasInk = await H.subjectInk(H.out(this.file), { minChroma: 0.20, minLum: 0.06 });
     const st = await H.modelStats(page);
     const frac = await ringHeightFrac();
     // ATTRIBUTION, measured on the frame that ships. A holding ring packs its
@@ -928,6 +959,16 @@ export default [
              // The boundary is drawn INSIDE the map, and the frame shows it.
              placedMapVisibleBeyondTheBoundary:
                placedInView.placed >= 3 && placedInView.links >= 1,
+             placedMarkerContrast: { checked: placedInk.checked, invisible: placedInk.invisible,
+                                     worstContrast: placedInk.worstContrast, weakest: placedInk.weakest },
+             placedMarkersLit: (placedInk.sampled ?? 0) - (placedInk.invisible ?? 0),
+             canvasChromaticPixels: canvasInk.pixels, canvasStrongestChroma: canvasInk.strongestChroma,
+             // READ BACK OUT OF THE SHIPPED FILE, not out of the projection:
+             // at least three placed markers actually drawn above the
+             // visibility floor, and chromatic ink on the canvas to see them by.
+             placedMapDrawnInThePixels:
+               ((placedInk.sampled ?? 0) - (placedInk.invisible ?? 0)) >= 3 &&
+               (canvasInk.pixels ?? 0) >= 60,
              cameraDistance: +hi.toFixed(3), ringHeightFraction: +Number(frac ?? 0).toFixed(3),
              heldNodes: held,
              // The ring is the subject: it has to be the thing the frame is of.
@@ -962,7 +1003,10 @@ export default [
   // pushed to x = -76 by the same wrong rule.
   requires: { ok: true, ladderMonotonic: true, ladderStepsClearScatter: true,
               ladderMonotonicInRelLuminance: true, ladderStepsClearScatterInRelLuminance: true,
-              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true },
+              noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
+              // The camera is a constant here now, so a marker that moves
+              // between cycles moved for a reason this record cannot hide.
+              cameraPinned: true },
   demonstrates: 'the five node states side by side with the legend, with the luminance ladder measured off the shipped frame', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-talk', title: 'Five node states staged',
   async run(H) {
@@ -973,11 +1017,30 @@ export default [
     await page.fill('[data-t=search]', 'loci');
     await page.waitForTimeout(80);
     await SELECT(page, 'Positions are the memory');
-    await POSE(page, { yaw: 0.30, pitch: 0.13 });
-    await FRAME_ALL(page, 1.10);
-    // Framing resets the target, so clear the panels AFTER it, not before.
-    await page.evaluate(() => window.mm.clearOfPanels());
+    // PINNED, LIKE 02 AND 04.
+    //
+    // This framing was solved on every run — FRAME_ALL against whatever chrome
+    // happened to be open, then a pan to clear the panels — so a chrome change
+    // anywhere moved the camera, and the cycle-13 Auditor measured every marker
+    // in this frame sliding 33.1 to 41.3 px in x with y held: a rigid pan, no
+    // position moved, and nothing in the record able to say so. A pinned camera
+    // makes the cross-cycle diff of this artifact mean what it means on 02.
+    // The value is the one the solve landed on, read back out of the scene and
+    // written down rather than invented.
+    if (PIN['07']) await POSE(page, PIN['07']);
+    else {
+      await POSE(page, { yaw: 0.30, pitch: 0.13 });
+      await FRAME_ALL(page, 1.10);
+      // Framing resets the target, so clear the panels AFTER it, not before.
+      await page.evaluate(() => window.mm.clearOfPanels());
+    }
     await sleepFrames(page, 0, 3);
+    const solved07 = await page.evaluate(() => {
+      const p2 = window.mm.scene.pose;
+      return { yaw: +p2.yaw.toFixed(6), pitch: +p2.pitch.toFixed(6), dist: +p2.dist.toFixed(6),
+               target: p2.target.toArray().map(v => +v.toFixed(6)) };
+    });
+    console.log('    [07] camera', JSON.stringify(solved07), PIN['07'] ? '(pinned)' : '(solved)');
     await page.evaluate(() => {
       // C10: the seed banner sits at the same corner as the legend and was
       // showing ten pixels of glyph tops behind it — unreadable, and the wrong
@@ -1045,6 +1108,7 @@ export default [
     const L = ladder(v => v.luma), R = ladder(v => v.relLuminance);
     const rung = L.rung, spread = L.spread, steps = L.steps, present = L.present;
     return { statesInFrame: [...seen].sort(), byNode: states, ...(await chrome(page)),
+             camera: solved07, cameraPinned: !!PIN['07'],
              // Named for what it is: Rec.709 weights on the encoded framebuffer
              // bytes. It is NOT relative luminance and is no longer called that.
              measuredRungsLuma709: rung, withinRungSpreadLuma709: spread, rungStepsLuma709: steps,
@@ -1073,12 +1137,20 @@ export default [
   requires: { connectedByThisCapture: true, linkedBefore: false, linkedAfter: true,
               editorWroteToTheModel: true, recencyMatchesModel: true,
               // Only the link and the editor changed — the names included.
-              everyOtherLabelHeldItsPlace: true,
+              // Stated as: held its place, or yielded the space one of the two
+              // acted names now occupies, which is this capture's own doing and
+              // is measured as a collision rather than assumed.
+              everyOtherLabelHeldItsPlaceOrYieldedToAnActedName: true,
               // And the thought whose colour and text the header claims changed
               // is IN both panels, clear of every panel — not merely left of
               // the editor, which is what the framing loop used to test while
               // the recovery column sat in the other rail.
-              editedThoughtVisibleInBothPanels: true },
+              editedThoughtVisibleInBothPanels: true,
+              bothEndsVisibleInBothPanels: true,
+              // And the colour change the header names is IN the after panel's
+              // pixels. Both lines above were true of the cycle-13 frame that
+              // carried no teal at all.
+              editedColourAppearsInThePixels: true },
   demonstrates: 'connect and edit before/after: a new filament created between two named nodes', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Connect and edit',
   async run(H) {
@@ -1107,12 +1179,11 @@ export default [
         // found the edited node cropped out of the after panel under a header
         // still claiming its colour had changed. The app's own occlusion
         // inventory answers this; nothing here needs its own copy of it.
-        const buried = new Set(window.mm.nodesUnderChrome());
         const s = window.mm.scene.screenPositions();
         const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
         const ok = (i) => {
           const q = s.find(p => p.id === i);
-          if (!q || buried.has(i)) return false;
+          if (!q || window.mm.coveredByChrome(i)) return false;
           const x = q.x / dpr, y = q.y / dpr, r = Math.max(q.r / dpr, 6);
           return x - r > 12 && x + r < window.innerWidth - 12 &&
                  y - r > 60 && y + r < window.innerHeight - 40;
@@ -1130,17 +1201,27 @@ export default [
     // hoped for by the framing loop. The header asserts a colour change; if the
     // node carrying that colour is not in the picture, the header is a claim
     // about something outside the frame.
-    const editedVisible = [];
-    const seesEdited = () => page.evaluate((i) => {
-      const buried = new Set(window.mm.nodesUnderChrome());
-      const q = window.mm.scene.screenPositions().find(p2 => p2.id === i);
-      if (!q || buried.has(i)) return false;
+    const editedVisible = [], farEndVisible = [];
+    const sees = (i) => page.evaluate((i2) => {
+      // NOTHING FORGIVEN. `nodesUnderChrome()` exempts a thought the chrome
+      // names, and the recovery column names exactly the thoughts the canvas
+      // could not — so the edited node passed this test while sitting under
+      // 250 px of that column, with the caption naming its new colour and the
+      // panel holding not one pixel of it.
+      if (window.mm.coveredByChrome(i2)) return false;
+      const q = window.mm.scene.screenPositions().find(p2 => p2.id === i2);
+      if (!q) return false;
       const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
       const x = q.x / dpr, y = q.y / dpr, r = Math.max(q.r / dpr, 6);
       return x - r > 12 && x + r < window.innerWidth - 12 &&
              y - r > 60 && y + r < window.innerHeight - 40;
-    }, b);
+    }, i);
+    // BOTH ENDS, AND THE EDITED ONE BY NAME. This checked the FAR end of the
+    // filament under a claim named for the thought whose colour changed — which
+    // is the other one. The claim now asks about the node the header is about.
+    const seesEdited = () => sees(a);
     editedVisible.push(await seesEdited());
+    farEndVisible.push(await sees(b));
     // WHERE EVERY NAME SAT, relative to the node it names. This composite's
     // whole claim is that between the panels only the link and the editor
     // changed; the cycle-9 Audience found a label moving 115 px and
@@ -1152,7 +1233,16 @@ export default [
       return Object.fromEntries(au.anchors.map(n =>
         [n.id, [Math.round(n.x0 - n.x), Math.round(n.y0 - n.y), Math.round(n.x1 - n.x0)]]));
     });
+    // The same boxes in ABSOLUTE frame coordinates. No node moves in this
+    // capture, so a box in the before panel and a box in the after panel are
+    // directly comparable — which is what makes it possible to ask whether one
+    // name moved because another name took its place.
+    const labelBoxes = () => page.evaluate(() => {
+      const au = window.mm.scene.labelDrawAudit();
+      return Object.fromEntries(au.anchors.map(n => [n.id, [n.x0, n.y0, n.x1, n.y1]]));
+    });
     const placedBefore = await placements();
+    const boxesBefore = await labelBoxes();
 
     const colourBefore = await page.evaluate(i => window.mm.store.doc.nodes[i].color, a);
     const textBefore = await page.evaluate(i => window.mm.store.doc.nodes[i].text, a);
@@ -1181,7 +1271,36 @@ export default [
     await sleepFrames(page, 0, 3);
     const after = await H.tmpShot(page, cdp, '09b');
     editedVisible.push(await seesEdited());
+    farEndVisible.push(await sees(b));
+    // AND NOW READ THE NEW COLOUR OUT OF THE PIXELS.
+    //
+    // Everything above this line asks the model whether the edit happened and
+    // asks the projection whether the node is in the frame. Cycle 13 shipped
+    // this composite with both answering yes and, as its Auditor measured, zero
+    // teal pixels on the after panel: the header named a colour change the
+    // picture did not contain. The same window is counted in both panels, in
+    // the files that are about to be composed, for ink at teal's own hue — so
+    // the header's claim is read back out of the frame it captions.
+    const editedBox = await page.evaluate((i) => {
+      const q = window.mm.scene.screenPositions().find(p2 => p2.id === i);
+      if (!q) return null;
+      // IN THE UNITS THE FILE IS IN. `screenPositions()` is framebuffer pixels
+      // and the screenshot is CSS pixels; sampling one in the other put this
+      // window 246 px from the marker, on bare ground, and the first run of
+      // this gate duly reported zero teal in a frame that has plenty. A probe
+      // aimed at the wrong place answers a question nobody asked.
+      const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const x = q.x / dpr, y = q.y / dpr, s2 = Math.max((q.r / dpr) * 3, 26);
+      return { x: x - s2, y: y - s2, w: s2 * 2, h: s2 * 2 };
+    }, a);
+    // #2FD0C0 — the teal the swatch writes, as its own hue turn.
+    const TEAL = { hue: 0.483, hueTol: 0.06, minChroma: 0.20, minLum: 0.10 };
+    const tealBefore = editedBox ? await H.subjectInk(before, { box: editedBox, ...TEAL })
+                                 : { pixels: null, error: 'edited node does not project' };
+    const tealAfter = editedBox ? await H.subjectInk(after, { box: editedBox, ...TEAL })
+                                : { pixels: null, error: 'edited node does not project' };
     const placedAfter = await placements();
+    const boxesAfter = await labelBoxes();
     // THE TWO NODES THIS CAPTURE ACTED ON ARE EXPECTED TO MOVE. The edited
     // node's text got longer, so its box is a different size; and the node at
     // the far end of the new filament changes state from plain to connected,
@@ -1193,6 +1312,18 @@ export default [
     // the far end — and the honest reading of that failure was not that the
     // renderer was wrong but that the claim was naming the wrong exemption.
     // The two endpoints are named explicitly rather than the rule loosened.
+    // WHY A THIRD NAME MOVED, answered rather than asserted.
+    //
+    // The edit lengthens the selected thought's name, and the arbiter that
+    // places names is a global solve: a neighbour whose box the longer name now
+    // occupies has to go somewhere else. 'Inoculate at 30C' flipped from above
+    // its node to below it for exactly that reason. That is a consequence of
+    // the demonstrated edit, not drift — but only if the two boxes actually
+    // collide, so the collision is measured. A name that moved without one is
+    // still a failure.
+    const overlaps = (p, q) => p && q && p[0] < q[2] && q[0] < p[2] && p[1] < q[3] && q[1] < p[3];
+    const textById = await page.evaluate(() => Object.fromEntries(
+      Object.values(window.mm.store.doc.nodes).map(n => [n.id, n.text])));
     const acted = new Set([a, b]);
     const shifted = Object.keys(placedBefore).filter(id => !acted.has(id) && placedAfter[id] &&
       JSON.stringify(placedBefore[id]) !== JSON.stringify(placedAfter[id]));
@@ -1228,10 +1359,45 @@ export default [
       return { shown, when, pct, ok: shown.includes(when) && shown.includes(`${pct}%`) };
     });
     return { between: [A, B], linkedBefore, linkedAfter, connectedByThisCapture: !linkedBefore && linkedAfter,
-             editedThoughtVisible: editedVisible,
+             editedThoughtVisible: editedVisible, farEndVisible,
              editedThoughtVisibleInBothPanels: editedVisible.length === 2 && editedVisible.every(Boolean),
+             bothEndsVisibleInBothPanels: farEndVisible.length === 2 && farEndVisible.every(Boolean) &&
+               editedVisible.length === 2 && editedVisible.every(Boolean),
+             editedColourWindow: editedBox,
+             tealPixelsBefore: tealBefore.pixels, tealPixelsAfter: tealAfter.pixels,
+             // The colour the caption names, counted in the frame the caption
+             // is under: present after, and not already there before.
+             editedColourAppearsInThePixels:
+               (tealAfter.pixels ?? 0) >= 20 && (tealAfter.pixels ?? 0) > (tealBefore.pixels ?? 0) + 15,
              labelsInBothPanels: bothPanels, labelsThatShifted: shifted.length,
              labelsThatShiftedOn: shifted.slice(0, 8),
+             // WHAT the shift was, not only that there was one: a claim that
+             // fails with nothing but an id in it costs a whole capture cycle
+             // to diagnose.
+             labelsThatShiftedBy: shifted.slice(0, 8).map(id => ({
+               id, text: (textById[id] ?? '').slice(0, 40),
+               before: placedBefore[id], after: placedAfter[id],
+               beforeBox: boxesBefore[id], afterBox: boxesAfter[id],
+               yieldedTo: [a, b].filter(k => overlaps(boxesBefore[id], boxesAfter[k])) })),
+             editedNameBoxBefore: boxesBefore[a], editedNameBoxAfter: boxesAfter[a],
+             labelBoxesBefore: boxesBefore, labelBoxesAfter: boxesAfter,
+             labelsShiftedWithoutACollision: shifted.filter(id =>
+               ![a, b].some(k => overlaps(boxesBefore[id], boxesAfter[k]))).length,
+             // The claim the frames can carry: every other name either held its
+             // exact place, or moved out of a space one of the two thoughts
+             // this capture acted on now occupies. Both of those names change
+             // in this take — one is edited and gets longer, and the other
+             // becomes connected, which earns it a name it did not have — and
+             // the arbiter that places names is a global solve, so a neighbour
+             // whose box either one now needs has to go somewhere else. Here
+             // 'Inoculate at 30C' flips from above its node to below it because
+             // the newly connected 'Shio koji' is named into the space it held.
+             // That is the demonstrated change propagating, and it is measured
+             // as an actual collision: a name that moved without one is still a
+             // failure.
+             everyOtherLabelHeldItsPlaceOrYieldedToAnActedName:
+               bothPanels > 0 && shifted.every(id =>
+                 [a, b].some(k => overlaps(boxesBefore[id], boxesAfter[k]))),
              labelPlacementsBefore: placedBefore, labelPlacementsAfter: placedAfter,
              everyOtherLabelHeldItsPlace: shifted.length === 0 && bothPanels > 0,
              nodeCount: Object.keys(moved).length, editorOpen: true,

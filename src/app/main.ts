@@ -1174,8 +1174,25 @@ export class App {
    */
   nodesUnderChrome(): string[] { return this.nodesUnderChromeDetail().map(b => b.id); }
 
+  /**
+   * IS THIS ONE THOUGHT'S MARK COVERED — with no exemptions at all?
+   *
+   * `nodesUnderChromeDetail` exempts a thought whose name the chrome itself
+   * prints, and that exemption is right for the question it answers: a thought
+   * the frame names is not a thought the frame is hiding. It is wrong for a
+   * frame that claims to show that thought's COLOUR. Artifact 09's edited node
+   * sat under the recovery column — which listed it, so the exemption cleared
+   * it — while the caption said its colour had changed and the panel contained
+   * no pixel of that colour. This asks the narrower question with nothing
+   * forgiven, and returns the covering selector or null.
+   */
+  coveredByChrome(id: string): string | null {
+    const hit = this.nodesUnderChromeDetail(false).find(b => b.id === id);
+    return hit ? hit.by : null;
+  }
+
   /** The same question, with the piece of chrome that is doing it named. */
-  nodesUnderChromeDetail(): { id: string; by: string }[] {
+  nodesUnderChromeDetail(exemptNamed = true): { id: string; by: string }[] {
     const boxes: { sel: string; r: DOMRect }[] = [];
     for (const sel of App.CHROME_SELECTORS) {
       const e = document.querySelector(sel) as HTMLElement | null;
@@ -1207,7 +1224,7 @@ export class App {
     const out: { id: string; by: string }[] = [];
     for (const s of this.scene.screenPositions()) {
       const x = s.x / dpr, y = s.y / dpr, rad = Math.max(s.r / dpr, 2);
-      if (named.has(s.id)) continue;
+      if (exemptNamed && named.has(s.id)) continue;
       const hit = boxes.find(b => x + rad > b.r.left && x - rad < b.r.right &&
                                   y + rad > b.r.top && y - rad < b.r.bottom);
       if (hit) out.push({ id: s.id, by: hit.sel });
@@ -1552,6 +1569,51 @@ export class App {
 
   /** Thoughts the recovery column could not fit, after widening to two columns. */
   unlistedCount = 0;
+  // Which rail the recovery column took and what it would have covered on
+  // each — reported so a capture can check the choice rather than trust it.
+  railChoice: { left: number | null; right: number | null; side: string; why?: string;
+                leftRows?: number; rightRows?: number; rowsNeeded?: number } | null = null;
+
+  /**
+   * WHERE A RAIL PANEL HAS TO START, given the box it would otherwise occupy.
+   *
+   * Only what sits ABOVE it pushes its top down. The webcam panel and the tool
+   * row are anchored to the bottom of the frame, so treating them as things to
+   * start below drove the recovery column to y=1078 with 20 px of height left —
+   * the list reduced to nothing by the rule meant to keep it clear. What is
+   * below shortens it instead; see the floor pass in renderUnlabelled.
+   *
+   * It is a method rather than an inline loop because the side-choosing
+   * measurement needs the same answer: comparing a full-height box on one rail
+   * against a box that will start below the editor on the other is comparing
+   * two things the column will never be.
+   */
+  /** The lowest y a rail panel may reach: the frame, or whatever shares the
+   * rail below it. Same list as the floor pass in renderUnlabelled. */
+  railFloor(own: { left: number; right: number }): number {
+    let f = window.innerHeight - 12;
+    for (const sel of ['#hands', '#tools', '#gesture', '#lenstag', '#argyro']) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
+      const r = this.outerRect(e);
+      if (r.width > 2 && r.height > 2 && r.right + 6 > own.left && r.left < own.right)
+        f = Math.min(f, r.top - 10);
+    }
+    return f;
+  }
+
+  railTop(own: { left: number; right: number }): number {
+    let top = 0;
+    for (const sel of ['#editor', '#hidden', '#hitbreak', '#origin', '#states',
+                       '#finder', '#clusterproof']) {
+      const e = document.querySelector(sel) as HTMLElement | null;
+      if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
+      const r = this.outerRect(e);
+      if (r.width < 2 || r.height < 2) continue;
+      if (r.right + 6 > own.left && r.left < own.right) top = Math.max(top, r.bottom + 10);
+    }
+    return top;
+  }
 
   /** Which labels needed a leader this frame, for anything checking the frame. */
   readonly leaderFor = new Set<NodeId>();
@@ -1607,11 +1669,66 @@ export class App {
     // and it cannot move in response to the column. So: the column takes the
     // left rail when the editor holds the right one, and the right rail
     // otherwise. Stable by construction.
+    //
+    // AND WHEN THE EDITOR IS SHUT, THE SIDE IS THE ONE WITH FEWER THOUGHTS
+    // BEHIND IT. The rule above put the column on the right whenever the editor
+    // was closed, whatever was under it: the cycle-13 Auditor found seven
+    // markers on artifact 10 behind the rail it had just moved to. Free run was
+    // the wrong thing to measure because it includes the badges and the badges
+    // move in response to this column — but WHERE THE THOUGHTS PROJECT does not.
+    // Node projections depend on the camera alone, and the camera does not
+    // respond to a panel, so choosing by marker count is stable frame to frame
+    // in the way the first attempt was not. The editor still decides when it is
+    // open: it holds the right rail and the column cannot be there.
+    //
+    // AND THE EDITOR NO LONGER FORCES IT. Being open does not fill the right
+    // rail: the column already starts below whatever is above it there, so with
+    // the editor open the right rail's lower two thirds are free — and the
+    // cycle-13 Auditor found seven markers behind the left rail on artifact 10,
+    // where the editor is exactly what put the column there. Both sides are
+    // measured with the same start-below rule applied, so the comparison is
+    // between the boxes the column would actually occupy.
     {
-      const ed = document.getElementById('editor');
-      const open = !!ed && getComputedStyle(ed).display !== 'none' &&
-                   ed.getBoundingClientRect().width > 2;
-      col.classList.toggle('left', open);
+      const dpr = this.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const pts = this.scene.screenPositions().map(q => [q.x / dpr, q.y / dpr]);
+      // ROOM TO LIST THEM COMES FIRST, THEN MARKERS BEHIND IT.
+      //
+      // Choosing purely by markers moved the column below the editor on the
+      // right, where it is short: artifact 04 went from every thought on screen
+      // named to thirty of them named nowhere at all, and that is a declared
+      // gate on that artifact. A buried marker costs the reader a mark it can
+      // still infer from its neighbours; a thought listed nowhere is a thought
+      // the frame has lost. So a side that can hold the whole list beats one
+      // that cannot, and markers decide between sides that both can (or both
+      // cannot). The row count here is an ESTIMATE — the real list is laid out
+      // and trimmed by measurement further down — and it is only ever used to
+      // pick a side.
+      const ROW = 18, HEADS = 8;
+      const need = ids.length + HEADS;
+      const side = () => {
+        const r = col.getBoundingClientRect();
+        if (r.width < 2) return { buried: 0, fits: true, rows: need };
+        const top = Math.max(r.top, this.railTop(r));
+        const bottom = Math.min(r.bottom, this.railFloor(r));
+        const cols = window.innerWidth >= 1400 ? 2 : 1;
+        const rows = Math.max(0, Math.floor((bottom - top) / ROW)) * cols;
+        const buried = pts.filter(([x, y]) => x > r.left - 4 && x < r.right + 4 &&
+                                              y > top - 4 && y < bottom + 4).length;
+        return { buried, rows, fits: rows >= need };
+      };
+      // Measured on both sides rather than assumed from a width: the column is
+      // put on each rail and asked what it would cover and hold there.
+      col.classList.remove('left');
+      const R = side();
+      col.classList.add('left');
+      const L = side();
+      const cost = (c: { buried: number; rows: number; fits: boolean }) =>
+        (c.fits ? 0 : 1e6 + (need - c.rows)) + c.buried;
+      // Ties go to the right rail, which is where it has always sat.
+      const takeLeft = cost(L) < cost(R);
+      col.classList.toggle('left', takeLeft);
+      this.railChoice = { left: L.buried, right: R.buried, side: takeLeft ? 'left' : 'right',
+                          leftRows: L.rows, rightRows: R.rows, rowsNeeded: need };
     }
     // BELOW EVERYTHING ALREADY IN THE RAIL IT CHOSE, not only the editor.
     //
@@ -1624,21 +1741,7 @@ export class App {
     {
       col.style.top = '';
       const own = col.getBoundingClientRect();
-      let top = 0;
-      // Only what sits ABOVE this column pushes its top down. The webcam panel
-      // and the tool row are anchored to the bottom of the frame, so treating
-      // them as things to start below drove the column to y=1078 with 20 px of
-      // height left — the recovery list reduced to nothing by the rule meant to
-      // keep it clear. What is below the column shortens it instead; see
-      // floor() further down.
-      for (const sel of ['#editor', '#hidden', '#hitbreak', '#origin', '#states',
-                         '#finder', '#clusterproof']) {
-        const e = document.querySelector(sel) as HTMLElement | null;
-        if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
-        const r = this.outerRect(e);
-        if (r.width < 2 || r.height < 2) continue;
-        if (r.right + 6 > own.left && r.left < own.right) top = Math.max(top, r.bottom + 10);
-      }
+      const top = this.railTop(own);
       col.style.top = top ? `${Math.round(top)}px` : '';
       // AND ITS FLOOR IS RAISED, not just its content trimmed. The column's own
       // BOX ran from y=96 to y=1016 while the webcam panel occupied 698 to 1068

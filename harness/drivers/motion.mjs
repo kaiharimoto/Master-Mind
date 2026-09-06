@@ -39,6 +39,10 @@ export default [
   // Claims this artifact must carry; a capture that fails one is a FAILED
   // capture rather than a record with a false flag inside it.
   requires: { operationTookEffect: true, declaredSynthetic: true,
+              // The ×N the caption prints compares the same thoughts to
+              // themselves; the cycle-13 Auditor found it comparing 21 against
+              // 24 and landing below both of its own corroborating measures.
+              spanMeasuredOverAFixedNodeSet: true,
               captionMatchesTheAppsVocabulary: true, headlineMatchesTheHud: true,
               // A move-closer has to buy something legible or the pose is not
               // worth the gesture. It does not buy MORE names — the drawn count
@@ -104,7 +108,16 @@ export default [
     // compressed to a unique first few characters, and moving closer turns
     // those into the thought itself. That is the honest claim and it is the one
     // asserted; the drawn count is reported beside it either way.
-    const nameCount = () => page.evaluate(() => {
+    // THE SPAN IS MEASURED OVER A FIXED SET OF THOUGHTS.
+    //
+    // It was taken over whatever `screenPositions()` returned in each panel, and
+    // those two sets are not the same set: the cycle-13 Auditor found the panels
+    // naming 21 and 24 thoughts and the reported ×1.11 sitting below both the
+    // ×1.153 the distance change implies and the ×1.147 it measured off the node
+    // cloud itself. A ratio between two different populations is not a ratio of
+    // anything. The AFTER panel is measured over the BEFORE panel's own ids, so
+    // the number compares the same thoughts to themselves.
+    const nameCount = (basis = null) => page.evaluate((ids) => {
       const sc = window.mm.scene;
       const drawn = [...sc.labelRects.values()].filter(r => r.alpha > 0.02).length;
       // The size the drawn type is actually set at, off the boxes the arbiter
@@ -113,15 +126,19 @@ export default [
         .map(r => r.y1 - r.y0).sort((a, b) => a - b);
       // HOW MUCH OF THE FRAME THE MAP FILLS — the operation's own stated
       // effect, read off the projected node cloud.
-      const sp = sc.screenPositions();
+      const all = sc.screenPositions();
+      const set = ids ? new Set(ids) : null;
+      const sp = set ? all.filter(q => set.has(q.id)) : all;
       const xs = sp.map(q => q.x), ys = sp.map(q => q.y);
       const span = sp.length
         ? Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) : 0;
       return { drawn, compressed: sc.compressed, shortened: sc.shortened,
                inFull: drawn - sc.compressed - sc.shortened,
                typePx: h.length ? +h[h.length >> 1].toFixed(1) : 0,
-               cloudSpanPx: +span.toFixed(1) };
-    });
+               cloudSpanPx: +span.toFixed(1),
+               spanBasis: sp.map(q => q.id), spanBasisCount: sp.length,
+               spanBasisMissing: set ? [...set].filter(i => !sp.some(q => q.id === i)).length : 0 };
+    }, basis);
     const chipText = () => page.evaluate(() => {
       const e = document.getElementById('hidden');
       return e && getComputedStyle(e).display !== 'none' ? (e.textContent || '').trim() : '';
@@ -192,7 +209,7 @@ export default [
       await page.waitForTimeout(4);
       held = i;
     }
-    const countAfter = await nameCount();
+    const countAfter = await nameCount(countBefore.spanBasis);
     const chipAfter = await chipText();
     const namedAfter = countAfter.drawn;
     const after = await H.tmpShot(page, cdp, '05b', 800 + (held + 1) * 33.3);
@@ -254,7 +271,8 @@ export default [
       // the fix for a caption that was wrong.
       sublabels: [`view distance ${distBefore.toFixed(1)} · the map spans ${countBefore.cloudSpanPx} px of frame · ${namedBefore} thoughts named`,
                   `view distance ${distAfter.toFixed(1)} · no thought moves: the vantage travels, the map does not · ` +
-                  `the map now spans ${countAfter.cloudSpanPx} px, ×${(countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1)).toFixed(2)} · ` +
+                  `the same ${countBefore.spanBasisCount} thoughts now span ${countAfter.cloudSpanPx} px, ` +
+                  `×${(countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1)).toFixed(2)} · ` +
                   `${namedAfter} thoughts named at the same ${countAfter.typePx} px type: at this framing the pose buys distance, not legibility`] });
     const src = await page.evaluate(() => ({ label: window.mm.hands.sourceLabel,
                                              synthetic: window.mm.hands.synthetic }));
@@ -278,6 +296,20 @@ export default [
              namesDrawnBefore: namedBefore, namesDrawnAfter: namedAfter,
              namesInFullBefore: countBefore.inFull, namesInFullAfter: countAfter.inFull,
              viewDistanceRatio: +(distBefore / distAfter).toFixed(3),
+             spanBasisCount: countBefore.spanBasisCount, spanBasisMissingAfter: countAfter.spanBasisMissing,
+             cloudSpanRatio: +(countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1)).toFixed(3),
+             // The ×N in the caption is the same thoughts measured twice, not
+             // one population against another.
+             spanMeasuredOverAFixedNodeSet:
+               countAfter.spanBasisCount === countBefore.spanBasisCount &&
+               countAfter.spanBasisMissing === 0,
+             // And over a fixed set it has something to agree with: a dolly
+             // scales the cloud by the inverse of the distance it travelled.
+             // Within 4 %, because the projection is perspective and the cloud
+             // has depth — a ratio outside that is a rearrangement, not a move.
+             spanRatioTracksTheVantage: Math.abs(
+               (countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1)) /
+               Math.max(distBefore / distAfter, 1e-6) - 1) <= 0.04,
              poseHeldFrames: held + 1,
              // THE CLAIM THE FRAMES CAN ACTUALLY CARRY, and it took three
              // measurements to find out which one that is. A nearer vantage on
@@ -436,7 +468,8 @@ export default [
               // gates written to describe what the code already did.
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
               everyLabelStaysBesideItsNode: true, everyLabelUnambiguouslyBound: true,
-              searchMatchReasonShown: true, searchMatchReasonUnoccluded: true },
+              searchMatchReasonShown: true, searchMatchReasonUnoccluded: true,
+              railTookTheEmptierSide: true },
   demonstrates: 'search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
   async run(H) {
@@ -515,7 +548,27 @@ export default [
       return { ok: worst < 0.02, coveredFraction: +worst.toFixed(3), coveredBy: by,
                rect: [Math.round(r.left), Math.round(r.top), Math.round(r.width)] };
     });
+    // WHICH RAIL THE RECOVERY COLUMN TOOK, and what it would have covered on
+    // the other one. The cycle-13 Auditor counted seven markers behind it here.
+    // The app now chooses the side by that count; this reads the choice back
+    // and checks it, so the rule is verified on the frame rather than trusted.
+    const rail = await page.evaluate(() => window.mm.railChoice);
+    const railCover = await page.evaluate(() => {
+      const col = document.getElementById('unlabelled');
+      if (!col || getComputedStyle(col).display === 'none') return null;
+      const r = col.getBoundingClientRect();
+      const dpr = window.mm.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      return window.mm.scene.screenPositions()
+        .filter(q => { const x = q.x / dpr, y = q.y / dpr;
+                       return x > r.left - 4 && x < r.right + 4 && y > r.top - 4 && y < r.bottom + 4; })
+        .length;
+    });
     return { query: QUERY, node: nodeText, hits: hitCount,
+             recoveryRail: rail, thoughtsBehindTheRail: railCover,
+             // The column sits on the side that buries fewer thoughts — checked
+             // against the count on the side it did not take.
+             railTookTheEmptierSide: rail === null || rail.left === null ||
+               (rail.side === 'left' ? rail.left <= rail.right : rail.right <= rail.left),
              searchBreakdown: breakdown, hitsMatchedOnLabel: labelHits,
              // A lit node whose visible words do not contain the query is
              // correct behaviour and unreadable as such unless the frame says
