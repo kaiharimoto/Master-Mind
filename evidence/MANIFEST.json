@@ -6,10 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T16:23:40.810Z",
+  "lastRunAt": "2026-09-06T16:33:16.486Z",
   "lastRunCaptured": [
-    "02",
-    "04"
+    "20"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -1053,7 +1052,7 @@
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T16:23:42.405Z"
     },
     {
@@ -2326,7 +2325,7 @@
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T16:23:44.857Z"
     },
     {
@@ -6519,18 +6518,18 @@
       "title": "Finder round-trip",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 20s",
-      "seconds": 189,
+      "seconds": 196,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 1195267,
-        "sha256": "7796bacc0f2426aab35cc17a2e37274272026f2321e477098615d8e9c8e90b4e",
-        "seconds": 47,
+        "bytes": 1222339,
+        "sha256": "e6ed3500b0e47dd493d2edf4a34ef4cde9dff913f7643c4f1978ce6b9f3e6369",
+        "seconds": 49,
         "fps": 30,
-        "frames": 1410
+        "frames": 1470
       },
       "claims": {
         "ok": true,
@@ -6606,10 +6605,60 @@
             "pass": true,
             "rule": "true",
             "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "placementLandedInThePixels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "holdingBadgeFellOnCamera",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
           }
         ]
       },
       "result": {
+        "placementDestination": {
+          "id": "destination",
+          "x": 884.9196575070525,
+          "y": 500.2085827752837,
+          "r": 3
+        },
+        "placementDestinationBefore": {
+          "id": "destination",
+          "x": 885,
+          "y": 500,
+          "r": 4.8,
+          "peak": 0.0574,
+          "ground": 0.0574,
+          "contrast": 1
+        },
+        "placementDestinationAfter": {
+          "id": "destination",
+          "x": 885,
+          "y": 500,
+          "r": 4.8,
+          "peak": 0.769,
+          "ground": 0.0574,
+          "contrast": 7.63
+        },
+        "holdingBadgeAcrossPlacement": [
+          "4",
+          "3"
+        ],
+        "placementDestinationPeaks": [
+          0.0574,
+          0.769
+        ],
+        "placementLandedInThePixels": true,
+        "holdingBadgeFellOnCamera": true,
         "placementAccepted": {
           "node": "s13669df17f",
           "from": [
@@ -6754,8 +6803,8 @@
         "runtimes": [
           "windows: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "9387e777a5795c22",
-        "appSha": "10c188b09545c35e",
+        "fnSha": "94057b86c7fab52c",
+        "appSha": "70a8d3dc760bb00f",
         "claimShas": {
           "rejectionLeftNoTrace": "b5bea41b6c62",
           "allThreeKindsAccepted": "b5bea41b6c62",
@@ -6765,13 +6814,15 @@
           "roundTripShownAt150Nodes": "b5bea41b6c62",
           "bigMapNothingAppliedWhileStaged": "b5bea41b6c62",
           "acceptLandedAt150Nodes": "b5bea41b6c62",
-          "rejectLeftNoTraceAt150Nodes": "b5bea41b6c62"
+          "rejectLeftNoTraceAt150Nodes": "b5bea41b6c62",
+          "placementLandedInThePixels": "b5bea41b6c62",
+          "holdingBadgeFellOnCamera": "b5bea41b6c62"
         }
       },
-      "capturedInCycle": 13,
+      "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T14:19:03.942Z"
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-06T16:36:30.169Z"
     }
   ],
   "supersededRuns": [
@@ -6859,22 +6910,18 @@
     {
       "id": "19",
       "capturedInCycle": 13
-    },
-    {
-      "id": "20",
-      "capturedInCycle": 13
     }
   ],
   "allCapturedInThisCycle": false,
-  "finishedAt": "2026-09-06T16:23:47.003Z",
+  "finishedAt": "2026-09-06T16:36:34.143Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 830012,
     "sha256": "70a8d3dc760bb00f67d82c0f75acd2997404d443f95d45e9b94a7f03b3d68a29",
     "appSha": "70a8d3dc760bb00f",
-    "gitHead": "c4a530e11cb4",
-    "gitHeadAt": "2026-09-06T15:19:14+00:00",
+    "gitHead": "cac96819f395",
+    "gitHeadAt": "2026-09-06T16:29:32+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,
