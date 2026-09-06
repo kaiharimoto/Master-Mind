@@ -250,7 +250,18 @@ export class App {
    * in the AR lens.
    */
   private renderPin() {
-    const id = this.pinned;
+    // THE THOUGHT UNDER EDIT IS NAMED ON THE MAP, not only in a form field.
+    //
+    // Artifact 08's headline is "the same node at its permanent dropped spot"
+    // and cycle 10 drew that node as a bare ringed dot with its name in the
+    // hidden count — identity recoverable only from the editor's Text input.
+    // A before/after composite about one node has to name that node. If the
+    // arbiter could not place its label clear, the tag draws instead: same
+    // mechanism as the pin, for the same reason, and it costs no other label
+    // its ground because the tag is a reserved rectangle like any panel.
+    const suppressed = this.selected !== null &&
+      (this.scene.labelRects.get(this.selected)?.alpha ?? 0) <= 0.02;
+    const id = this.pinned ?? (suppressed ? this.selected : null);
     let r = document.getElementById('pinmark');
     if (!id || !this.store.doc.nodes[id]) { r?.remove(); return; }
     if (!r) {
@@ -720,11 +731,6 @@ export class App {
     return !!document.querySelector('#finder, #states, .overlay');
   }
 
-  /** Anything that would draw over a chip anchored top-right. */
-  private rightPanelOpen() {
-    return !!document.querySelector('#editor, .overlay');
-  }
-
   private reflowSessionChips() {
     const hide = this.panelOpen();
     for (const id of ['origin', 'activity']) {
@@ -799,17 +805,65 @@ export class App {
           right = Math.max(right, window.innerWidth - r.left + 8);
       }
       chip.style.right = `${Math.round(right)}px`;
-      const banner = document.getElementById('origin');
-      const b = banner && getComputedStyle(banner).display !== 'none'
-        ? banner.getBoundingClientRect() : null;
-      const now = chip.getBoundingClientRect();
-      chip.style.top = b && b.right + 8 > now.left && b.bottom > now.top && b.top < now.bottom
-        ? `${Math.round(b.bottom + 8)}px` : '';
+      // BELOW ANYTHING THAT IS ALREADY THERE, and the search readout outranks
+      // this chip. Making this one always visible in cycle 9 fixed its being
+      // hidden and created a worse fault: it landed on top of the hit
+      // breakdown, leaving 8 % of "19 hits · 6 in the text · 13 in the label" on
+      // artifact 04. Of the two, the one that says how many thoughts matched is
+      // the more informative, so it keeps the corner and this drops below it.
+      let top = 0;
+      for (const sel of ['#origin', '#hitbreak']) {
+        const e = document.getElementById(sel.slice(1));
+        if (!e || getComputedStyle(e).display === 'none' || !e.textContent) continue;
+        const r = e.getBoundingClientRect();
+        const now = chip.getBoundingClientRect();
+        if (r.right + 8 > now.left && r.left < now.right) top = Math.max(top, r.bottom + 8);
+      }
+      chip.style.top = top ? `${Math.round(top)}px` : '';
     }
     this.renderUnlabelled();
     this.renderLeaders();
     this.renderHitBreakdown();
     this.renderPin();
+    this.renderGrab();
+  }
+
+  /**
+   * WHAT THE FIST HAS HOLD OF.
+   *
+   * The closed fist grabs a whole district and moves it rigidly, and nothing on
+   * the frame said which district — so even when the operation worked, a viewer
+   * could not see it working, and the cycle-10 Audience could not tell the pose
+   * apart from the mouse equivalent that followed it. A ring around the grabbed
+   * members, sized to contain them, drawn only while the grab is held.
+   */
+  private renderGrab() {
+    let el0 = document.getElementById('grabmark');
+    const g = this.handGrab;
+    if (!g || !g.ids.length) { el0?.remove(); return; }
+    if (!el0) {
+      el0 = el('div', { id: 'grabmark', 'data-t': 'grab-mark' });
+      el0.innerHTML = '<div class="ring"></div><div class="tag" data-t="grab-name"></div>';
+      document.body.appendChild(el0);
+    }
+    const dpr = this.scene.renderer.domElement.width / Math.max(window.innerWidth, 1);
+    const held = new Set(g.ids);
+    const pts = this.scene.screenPositions().filter(q => held.has(q.id));
+    if (!pts.length) { el0.className = ''; return; }
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const q of pts) {
+      x0 = Math.min(x0, q.x - q.r); x1 = Math.max(x1, q.x + q.r);
+      y0 = Math.min(y0, q.y - q.r); y1 = Math.max(y1, q.y + q.r);
+    }
+    const pad = 16;
+    el0.className = 'on';
+    el0.style.left = `${Math.round(x0 / dpr - pad)}px`;
+    el0.style.top = `${Math.round(y0 / dpr - pad)}px`;
+    el0.style.width = `${Math.round((x1 - x0) / dpr + pad * 2)}px`;
+    el0.style.height = `${Math.round((y1 - y0) / dpr + pad * 2)}px`;
+    const label = this.store.doc.nodes[g.ids[0]]?.label ?? '';
+    $('[data-t=grab-name]', el0).textContent =
+      `holding ${g.ids.length} thought${g.ids.length === 1 ? '' : 's'}${label ? ` · ${label}` : ''}`;
   }
 
   /**
@@ -902,10 +956,21 @@ export class App {
     // the hidden names in one lens and nothing at all in the other — and the
     // canvas lens is where the cap-and-drop ruling hides the most. Same loss,
     // same recovery.
+    // THE RECOVERY COLUMN SURVIVES AN OPEN EDITOR. Standing it down whenever a
+    // right-hand panel opened meant that selecting a node — which artifact 04
+    // now does, to show all five states at density — silently removed the only
+    // way back to the hidden names, taking artifact 04 from 113 of 150 nodes
+    // identifiable to 45. The editor occupies the top of the right rail; the
+    // column starts below it.
     const show = (this.lens === 'expansion' || this.lens === 'canvas') && ids.length > 0 &&
-                 !this.panelOpen() && !this.rightPanelOpen();
+                 !this.panelOpen();
     col.className = show ? 'show' : '';
-    if (!show) { col.innerHTML = ''; return; }
+    if (!show) { col.innerHTML = ''; col.style.top = ''; return; }
+    {
+      const ed = document.getElementById('editor');
+      const r = ed ? ed.getBoundingClientRect() : null;
+      col.style.top = r && r.height > 2 ? `${Math.round(r.bottom + 10)}px` : '';
+    }
     // As many as the column can hold, longest-settled first so the order is a
     // property of the map rather than of the arbiter's iteration.
     const named = ids.map(i => this.store.doc.nodes[i]).filter(Boolean)

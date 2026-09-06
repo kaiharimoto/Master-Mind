@@ -215,6 +215,16 @@ tr.map:hover{background:var(--panel)}
    auto sizing leaves it at its intrinsic 300x150 and every line outside that
    box is clipped away — which is why the first attempt drew eight lines and
    showed none of them. */
+/* The fist's grip, shown while it is held. Amber like every other live
+   affordance, and a rounded rectangle rather than a ring so it does not read as
+   a sixth node signature. */
+#grabmark{position:fixed;z-index:21;display:none;pointer-events:none}
+#grabmark.on{display:block}
+#grabmark .ring{position:absolute;inset:0;border:2px dashed var(--hot);border-radius:14px;
+  box-shadow:0 0 0 1px rgba(0,0,0,0.5)}
+#grabmark .tag{position:absolute;left:50%;top:-10px;transform:translate(-50%,-100%);
+  white-space:nowrap;font-size:11px;color:#1A1206;background:var(--hot);
+  border-radius:4px;padding:2px 8px;font-weight:600}
 #pinmark{position:fixed;z-index:20;display:none;pointer-events:none}
 #pinmark.on{display:block}
 #pinmark .ring{position:absolute;inset:0;border:2px solid var(--hot);border-radius:50%;

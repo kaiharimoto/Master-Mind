@@ -553,7 +553,7 @@ export class Scene {
     // the world reserves its rectangle, and the list is every such element.
     for (const sel of ['#editor', '#finder', '#states', '#hands', '#top', '#unlabelled',
                        '#hitbreak', '#pinmark', '#reticle', '#argyro', '#gesture', '#lenstag',
-                       '#toast', '#tools', '#hidden', '#origin']) {
+                       '#toast', '#tools', '#hidden', '#origin', '#grabmark']) {
       const e = document.querySelector(sel) as HTMLElement | null;
       if (!e) continue;
       const r = e.getBoundingClientRect();

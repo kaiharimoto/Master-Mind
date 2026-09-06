@@ -13,9 +13,24 @@ const OUT = resolve(ROOT, 'harness/clips');
 const W = 640, H = 480, FPS = 30;
 
 // The clip: each pose held, with short blends between them. Timings in seconds.
+// A HAND THAT GRABS ALSO TRAVELS.
+//
+// The closed fist is the one pose that moves thoughts, and in the clip the hand
+// held the pose while staying put — so the app picked up a cluster, measured a
+// hand delta of nearly zero, and moved nothing. The cycle-10 Audience proved it
+// from the frames: the coral district's centroid, normalised by the azure
+// district's own radius so camera zoom cancels, sat at (0.54, -0.78) through
+// all three fist beats and only moved at the alt-drag beat. `clusterMoved` was
+// true of the take and produced by the mouse substitute, not by the pose the
+// artifact is named for.
+//
+// The pose recognition was never the problem and is not touched. What was
+// missing is that nobody grabbing something keeps their hand still: `travel`
+// carries the hand across the frame while the fist is held, in fractions of the
+// frame, and the app's own grab-and-translate path does the rest.
 export const SCRIPT = [
   { pose: 'spread', hold: 3.0 },
-  { pose: 'fist',   hold: 3.0 },
+  { pose: 'fist',   hold: 3.0, travel: [0.16, -0.09] },
   { pose: 'gather', hold: 3.0 },
   { pose: 'two',    hold: 3.0 },
 ];
@@ -32,14 +47,20 @@ async function renderFrames(page, plan, drift) {
       const cur = M.POSES[plan[i].pose];
       const nxt = M.POSES[plan[(i + 1) % plan.length].pose];
       const holdF = Math.round(plan[i].hold * FPS), blendF = Math.round(BLEND * FPS);
+      const tv = plan[i].travel ?? [0, 0];
       for (let f = 0; f < holdF + blendF; f++) {
         const p = f < holdF ? cur : M.blend(cur, nxt, (f - holdF + 1) / blendF);
         // A little drift and breathing, so it does not look like a still frame.
         const k = t / FPS;
+        // Travel runs over the HOLD, easing in and out, and unwinds during the
+        // blend so the next pose starts from the same place every time and the
+        // clip stays a loop.
+        const u = f < holdF ? f / Math.max(1, holdF - 1) : 1 - (f - holdF + 1) / blendF;
+        const ease = u * u * (3 - 2 * u);
         M.drawScene(ctx, W, H, p, {
           scale: H * (0.30 + 0.006 * Math.sin(k * 1.1)),
-          cx: W * (0.50 + drift * Math.sin(k * 0.55)),
-          cy: H * (0.87 + 0.010 * Math.cos(k * 0.8)),
+          cx: W * (0.50 + drift * Math.sin(k * 0.55) + tv[0] * ease),
+          cy: H * (0.87 + 0.010 * Math.cos(k * 0.8) + tv[1] * ease),
           rot: 5 * Math.sin(k * 0.42),
         });
         out.push(c.toDataURL('image/png').slice(22));
