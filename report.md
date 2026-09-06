@@ -1570,6 +1570,92 @@ into pale slabs at close range in artifact 19; artifact 07's legend sitting on
 a toast; the finder round-trip never run at 150 nodes; the clipboard never
 shown; and artifact 16's device shape disagreeing with artifact 03's.
 
+## Cycle 12 — 87.0, the best of the run, and still not regression-free
+
+**22 + 21 → 21 + 21 + 18 + 13 + 9 + 5 = 87.0**, against cycle 11's 84.5. Every
+category is at or above its minimum for the first time since cycle 6, both hard
+gates clear, and category 06 takes the first full marks any category has scored.
+The Auditor nonetheless declares the cycle **not regression-free**, and is right
+to.
+
+| category | 10 | 11 | 12 | min |
+|---|---:|---:|---:|---:|
+| 01 core workflow | 21 | 22 | 21 | 20 |
+| 02 landmarks live | 20 | 21 | 21 | 20 |
+| 03 one model, sacred positions | 17 | 16 | **18** | 17 |
+| 04 evidence and report integrity | 12 | 13 | 13 | 13 |
+| 05 quality compliance | 8 | 8 | **9** | 8 |
+| 06 finder round-trip | 4 | 4.5 | **5** | 4 |
+| **total** | **82.0** | **84.5** | **87.0** | 90 |
+
+**The regression is the worst kind, and it was mine.** The framing-summary strip
+moved into the canvas this cycle and painted over a map-talk node in four panels
+across artifacts 08 and 12 — and artifact 12 printed
+`everyNodeUnoccludedByChrome` as **passing** over that very frame. The Auditor
+read strip background (25,20,16) where cycle 11 read node (152,57,31), with
+every neighbouring marker holding to 0.24 px and the map seed unchanged.
+
+The cause was **a second copy of a list**. The occlusion check tested five
+hand-kept selectors — editor, finder, states, top, tools — and the strip was in
+none of them. There is one inventory now, `App.CHROME_SELECTORS`, read by both
+the audit and the twin check. The strip also stops doing it: the badge solver
+scores node markers alongside chrome rectangles, weighting a buried thought far
+above a covered badge. Two refinements the fix itself needed, because its first
+version failed six nodes on artifact 08 and all six were false: a pin or grab
+mark is a transparent *ring* on its own node with an opaque name hanging off it,
+so only the tag counts; and a thought whose name is printed on the frame is the
+opposite of a thought the frame is hiding.
+
+**Two critics ruled opposite ways on the compressed identity**, and the conflict
+is resolved in the open rather than by taking the more recent. The cycle-11 Art
+Director asked for the tier and scored the category at its minimum without it;
+the cycle-12 Audience called three-character stubs *"ink without a thought"*.
+Both are right about what they looked at. A stub now carries a **whole word
+wherever one fits** — "Bed…", "Amy…", "Fil…" became "Bed depth…", "Amylase…",
+"Filter…" — and the badge stops calling them first letters. Recorded as an
+amendment in `DIRECTION.md` with both rulings named.
+
+**The cycle-12 Audience's two majors were also mine, and both were caused by
+cycle-12 fixes.** Holding the move-closer pose for its full duration to get a
+larger dolly meant shooting at the instant the pose *ends*, which is the instant
+the recogniser loses the hand — so the still titled "Hand tracking live" showed
+`conf 0.00` and a caption admitting it was running on a held pose. The shutter
+waits for both the travel and the detector now. And artifact 08's payload label
+was clipped by the framing notice, because a node's own chip was not among the
+things a badge must avoid and the chips were drawn *after* the badges were
+placed.
+
+**What closing those took is the cycle's real lesson.** Five passes, and the last
+one was the instrument again: the chrome audit was sampled *before* the shot
+that renders the frame, so with the app stopped and the webcam panel newly
+created it reported 92,015 px of overlap the frame does not contain. Third time
+this exact shape has appeared. On the way it found a badge solver that could
+clamp its answer back into a blocker it had just cleared; a `getBoundingClientRect`
+that excludes an element's overflowing name; a top bar 44 px tall holding 52 px
+controls, so four pixels of every one of them sat above the frame on **every
+artifact in the set**; and a recovery column that treated bottom-anchored panels
+as things to start below, driving it to y=1078 with 20 px of height left.
+
+### What the critics found, and what was done
+
+| # | finding | response |
+|---|---|---|
+| Auditor B/major · a08, a12 | a node painted over by the framing strip, with a claim saying otherwise | **Fixed at the cause** — one chrome inventory, the badge avoids markers, and `noNodeBuriedByChrome` declared on every artifact carrying chrome, naming which chrome buries what |
+| Auditor m1 | byte-identity attested only by the process under audit | The manifest records the **git HEAD** at capture with its commit timestamp and whether the tree was dirty — a hash the capturer does not own |
+| Auditor m2 | the frozen manifest carried no trace of the superseded 15/20 run | `supersededRuns` records the count and the failed ids inside the set; a `--only` run supersedes nothing and the gate says so |
+| Auditor m3 | most claims fingerprint their rule as the literal `true` | That is what a rule hash is, and the manifest now says so: the producing code is covered by `fnSha` and `appSha` |
+| Audience A/major · a05 | the hand-tracking still showed `conf 0.00` | The shutter waits for travel **and** a confident named pose; `detectorLiveInBothPanels` required |
+| Audience A/major · a08 | the notice clipped the payload label | Naming marks drawn first, chips are blockers, badge solver rewritten |
+| Audience minor · a10, a18 | the found thought labelled in the smallest type on the canvas | The tag takes the canvas type size |
+| Audience minor · a16 | one thought named twice, chip and leader | One label per thought: a node the chrome names gets no leader |
+| Audience minor · a19 | the holding boundary stretched after the drag, 308 px → 673 px | The thought under the hand is out of the extent — a circle that runs away cannot be crossed, and crossing it is what places a thought |
+| Audience minor · a15 | the status chip printed the raw pose key beside a table naming it differently | Through the vocabulary |
+| Art Director major · depth | **no distance fade at all**: a node six times nearer measures the same luminance to within two units | **Open, and the cycle-13 agenda.** D-014 and D-016 describe the mechanism; the frames say it is not reaching the pixels |
+| Art Director major · a02 | 43 of 118 nodes carry no name anywhere in the frame — the list truncates at "…and 43 more" | **Open** |
+| Art Director minor · a07 | "listed at right" where the right column is one flat colour | **Open** — the clause is unconditional while the list stands down for an open editor |
+| Art Director minor · a04 | the selection callout overpaints a neighbouring label | **Open** — the callout is not a reserved rectangle in the label solver |
+| Art Director minor · a20 | nothing is ever accepted or rejected at 150 nodes | **Open** |
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:

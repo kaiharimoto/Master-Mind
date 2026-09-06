@@ -290,9 +290,14 @@ export default [
     // toasts `Created "Sprint retro".`, so a body-text wait was satisfied by the
     // confirmation rather than by the row, and would have passed even if the row
     // never appeared.
+    // 45 s, not 15. The row appears when the create has round-tripped through
+    // the sync service, and on a loaded box that legitimately takes longer than
+    // fifteen seconds — this artifact failed once mid-run and passed in
+    // isolation minutes either side of it. The CONDITION is unchanged and is
+    // still the row rather than the toast; only the patience is.
     await page.waitForFunction(() => [...document.querySelectorAll('[data-t=maps-home] tbody tr')]
                                      .some(tr => tr.textContent.includes('Sprint retro')),
-                               null, { timeout: 15000 });
+                               null, { timeout: 45000 });
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const a = await H.tmpShot(page, cdp, '01a');
     const id = await page.evaluate(() => (window.mm.maps.find(m => m.name === 'Sprint retro') || {}).id);
@@ -310,7 +315,7 @@ export default [
     page.on('dialog', async d => { dialogSeen = d.type(); await d.accept('Retro - sprint 14'); });
     await page.click(`[data-t="map-rename-${id}"]`);
     await page.waitForFunction(i => (document.querySelector(`[data-t="map-row-${i}"]`)?.textContent ?? '')
-                                     .includes('Retro - sprint 14'), id, { timeout: 15000 });
+                                     .includes('Retro - sprint 14'), id, { timeout: 45000 });
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const b = await H.tmpShot(page, cdp, '01b');
     // The maps overlay replaces its whole table on every list change, so for a
@@ -327,7 +332,7 @@ export default [
     // is waiting for and times out — with the delete already done. The capture
     // failed for fifteen seconds on a step that had succeeded immediately.
     await page.waitForFunction(i => !document.querySelector(`[data-t="map-row-${i}"]`),
-                               id, { timeout: 15000 });
+                               id, { timeout: 45000 });
     await page.evaluate(() => { const t = document.querySelector('#toast'); if (t) t.className = ''; });
     const c = await H.tmpShot(page, cdp, '01c');
     const crop = async (src, tag) => H.crop(src, H.tmp(`01-${tag}.png`), 0, 40, 1920, 360);
