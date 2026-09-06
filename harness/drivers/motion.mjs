@@ -822,7 +822,12 @@ export default [
   // is a FAILED capture — the auditor found `clusterInternalArrangementPreserved:
   // false` sitting inside a record whose status read `captured` for two cycles.
   requires: {
-    clusterMoved: true,
+    // Split from a single `clusterMoved`. The fist and the alt-drag are two
+    // different operations on two different clusters, and one flag standing for
+    // both meant the pose could regress with the ledger still green.
+    clusterMovedByPose: true,
+    clusterArrangementPreservedByPose: true,
+    clusterMovedByMouse: true,
     clusterInternalArrangementPreserved: true,
     // NOT clusterMovePropagatedToTheOtherSurface. It was declared here and the
     // cycle-9 Audience was right that this take shows one surface, so its
@@ -865,6 +870,45 @@ export default [
     let peerBefore = null, peerAfter = null, ownAfter = null;
     // Cluster arrangement before any grab, so the video's claim is checkable.
     let grabAnchor = null, before = null, after = null;
+    // THE INSTRUMENT WAS MEASURING THE MOUSE. `clusterMoved` was a single
+    // before/after pair taken at frames 820 and 890 — both of them AFTER
+    // tracking is switched off at 780 — so it described the alt-drag and
+    // nothing else. The cycle-11 Audience read the fist moving a DIFFERENT
+    // cluster (twenty thoughts, Lacto-vegetables) off the pixels alone, and
+    // the ledger would still have passed green if the fist had done nothing.
+    // The pose now gets its own record: every frame of the tracking section is
+    // asked whether a hand grab is live, and each contiguous run of the same
+    // held member set is closed into a window carrying the cluster, its size,
+    // its centroid at both ends and the frames it spanned.
+    const grabAt = () => page.evaluate(() => {
+      const g = window.mm.handGrab;
+      if (!g || !g.ids.length) return null;
+      const ns = g.ids.map(i => window.mm.store.doc.nodes[i]).filter(Boolean);
+      if (!ns.length) return null;
+      const c = ns.reduce((a, n) => [a[0] + n.pos[0], a[1] + n.pos[1], a[2] + n.pos[2]], [0, 0, 0])
+                  .map(v => v / ns.length);
+      return { ids: g.ids, members: ns.length, label: ns[0].label,
+               centroid: c, offsets: ns.map(n => [n.pos[0] - c[0], n.pos[1] - c[1], n.pos[2] - c[2]]),
+               pose: window.mm.hands.frame.present ? window.mm.hands.frame.pose : 'none' };
+    });
+    const grabWindows = [];
+    let liveGrab = null;
+    // onFrame runs BEFORE the frame's step(), so what it reads is the state
+    // the PREVIOUS step produced: the sample is attributed to frame i - 1.
+    const closeGrab = () => { if (liveGrab) grabWindows.push(liveGrab); liveGrab = null; };
+    const sampleGrab = async (i) => {
+      let g = await grabAt();
+      // A held grab is only cleared when the hand LEAVES; a pose that follows a
+      // fist without releasing would otherwise stretch the window past the
+      // gesture it is meant to time. Only frames the detector reads as a fist
+      // count, so the window is the fist and nothing else.
+      if (g && g.pose !== 'fist') g = null;
+      const key = g ? g.ids.join(',') : null;
+      if (liveGrab && key !== liveGrab.key) closeGrab();
+      if (!g) return;
+      if (!liveGrab) liveGrab = { key, first: g, last: g, fromFrame: i - 1, toFrame: i - 1, poses: [g.pose] };
+      else { liveGrab.last = g; liveGrab.toFrame = i - 1; if (!liveGrab.poses.includes(g.pose)) liveGrab.poses.push(g.pose); }
+    };
     const steps = [
       // Tracking off, then reframe so the mouse-only tail is shown on a
       // composed map rather than wherever the last gesture left the camera.
@@ -917,13 +961,50 @@ export default [
       { at: 1010, fn: async () => page.click('[data-t=tool-gather]') },
       { at: 1080, fn: async () => page.click('[data-t=tool-two]') },
     ];
-    await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: script(steps) });
+    const beats = script(steps);
+    await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: async (i, t, total) => {
+      // Sampling only runs while tracking is on; the mouse tail is measured by
+      // its own before/after pair and must not leak into the pose record.
+      if (i <= 781) await sampleGrab(i);
+      else closeGrab();
+      await beats(i, t, total);
+    } });
+    closeGrab();
     const uniq = [...new Set(poses)].filter(p => p !== 'none');
     // "Moved" is a question about the CENTROID; "arrangement preserved" is a
     // question about each member's offset FROM that centroid. The old check
     // compared one rounded string for both and could answer neither.
     const dl = before && after ? H.clusterDelta(before, after) : null;
+    // Each pose window reduced to what can be checked: which cluster, how many
+    // members, where its centroid stood at each end of the hold, how far that
+    // is, how much the members drifted relative to one another, and the frames
+    // and seconds the window covers so the claim can be put beside the picture.
+    const FPS = 30;
+    const poseGrabs = grabWindows.map(w => {
+      const a = w.first.centroid, b = w.last.centroid;
+      const travelled = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+      let drift = 0;
+      const same = w.first.offsets.length === w.last.offsets.length;
+      if (same) for (let i = 0; i < w.first.offsets.length; i++)
+        drift = Math.max(drift, Math.hypot(w.last.offsets[i][0] - w.first.offsets[i][0],
+                                           w.last.offsets[i][1] - w.first.offsets[i][1],
+                                           w.last.offsets[i][2] - w.first.offsets[i][2]));
+      return { cluster: w.first.label, members: w.first.members, poses: w.poses,
+               centroidBefore: a.map(v => +v.toFixed(3)), centroidAfter: b.map(v => +v.toFixed(3)),
+               travelled: +travelled.toFixed(4), maxMemberDrift: +drift.toFixed(6),
+               frames: [w.fromFrame, w.toFrame],
+               seconds: [+(w.fromFrame / FPS).toFixed(2), +(w.toFrame / FPS).toFixed(2)] };
+    });
+    const movedByPose = poseGrabs.filter(g => g.travelled > 0.5);
     return { posesRecognised: uniq, count: uniq.length, samples: poses.length,
+             // The fist's own record, independent of the mouse tail.
+             poseGrabs, poseGrabCount: poseGrabs.length,
+             poseGrabbedClusters: [...new Set(poseGrabs.map(g => g.cluster))],
+             poseGrabLargest: poseGrabs.reduce((m, g) => Math.max(m, g.members), 0),
+             poseGrabMaxTravel: poseGrabs.reduce((m, g) => Math.max(m, g.travelled), 0),
+             clusterMovedByPose: movedByPose.length > 0,
+             clusterArrangementPreservedByPose:
+               poseGrabs.length > 0 && poseGrabs.every(g => g.maxMemberDrift < 1e-3),
              clusterGrabbed: 'Koji', clusterMembers: before ? before.members.length : 0,
              clusterCentroidBefore: before ? before.centroid.map(v => +v.toFixed(3)) : null,
              clusterCentroidAfter: after ? after.centroid.map(v => +v.toFixed(3)) : null,
@@ -937,7 +1018,10 @@ export default [
              clusterLedgerAfterHere: ownAfter ? createHash('sha256').update(ownAfter).digest('hex').slice(0, 12) : null,
              clusterMovePropagatedToTheOtherSurface:
                !!peerBefore && !!peerAfter && !!ownAfter && peerAfter === ownAfter && peerAfter !== peerBefore,
-             clusterMoved: !!dl && dl.centroidTravelled > 0.5,
+             // Renamed from `clusterMoved`. The old name did not say which input
+             // moved it, and the measurement it stood on could only have been
+             // the mouse: both of its samples are taken after tracking stops.
+             clusterMovedByMouse: !!dl && dl.centroidTravelled > 0.5,
              clusterInternalArrangementPreserved: !!dl && dl.sameMembers && dl.maxMemberDrift < 1e-3,
              mouseOnlyTail: true };
   },

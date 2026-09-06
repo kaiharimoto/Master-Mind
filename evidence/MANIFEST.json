@@ -6,28 +6,9 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-06T05:52:54.615Z",
+  "lastRunAt": "2026-09-06T06:38:22.607Z",
   "lastRunCaptured": [
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "07",
-    "08",
-    "09",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20"
+    "17"
   ],
   "artifacts": [
     {
@@ -96,7 +77,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:52:57.630Z"
     },
     {
@@ -276,7 +257,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:52:59.562Z"
     },
     {
@@ -411,7 +392,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:03.199Z"
     },
     {
@@ -701,7 +682,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:06.198Z"
     },
     {
@@ -781,7 +762,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:23.465Z"
     },
     {
@@ -1026,7 +1007,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:28.322Z"
     },
     {
@@ -1163,7 +1144,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:29.898Z"
     },
     {
@@ -1235,7 +1216,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:32.017Z"
     },
     {
@@ -1388,7 +1369,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:34.901Z"
     },
     {
@@ -1583,7 +1564,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:41.470Z"
     },
     {
@@ -1669,7 +1650,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:52.251Z"
     },
     {
@@ -1926,7 +1907,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:56.815Z"
     },
     {
@@ -1994,7 +1975,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:53:58.550Z"
     },
     {
@@ -2163,7 +2144,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:54:01.541Z"
     },
     {
@@ -2218,7 +2199,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:54:05.282Z"
     },
     {
@@ -2302,7 +2283,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T05:55:52.727Z"
     },
     {
@@ -2311,15 +2292,15 @@
       "title": "Hand gesture vocabulary",
       "kind": "mp4",
       "minimum": "1920x1080 @24fps 24s",
-      "seconds": 527.7,
+      "seconds": 585.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 6622457,
-        "sha256": "410f8d5a6194bd2cbf5c2f2fd18b720ff00b006345ec541dbfde33bb1c52bffa",
+        "bytes": 6076918,
+        "sha256": "b4213b75dd6021b2af2ef168e925c45d995eda73fbe751612c53c0560843fd81",
         "seconds": 41,
         "fps": 30,
         "frames": 1230
@@ -2328,7 +2309,19 @@
         "ok": true,
         "claims": [
           {
-            "claim": "clusterMoved",
+            "claim": "clusterMovedByPose",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "clusterArrangementPreservedByPose",
+            "expected": true,
+            "actual": true,
+            "pass": true
+          },
+          {
+            "claim": "clusterMovedByMouse",
             "expected": true,
             "actual": true,
             "pass": true
@@ -2350,12 +2343,321 @@
       "result": {
         "posesRecognised": [
           "spread",
-          "fist",
           "two",
+          "fist",
           "gather"
         ],
         "count": 4,
-        "samples": 1559,
+        "samples": 1799,
+        "poseGrabs": [
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -1.927,
+              0.332,
+              16.814
+            ],
+            "centroidAfter": [
+              -2.048,
+              -3.588,
+              17.513
+            ],
+            "travelled": 3.9846,
+            "maxMemberDrift": 0,
+            "frames": [
+              31,
+              33
+            ],
+            "seconds": [
+              1.03,
+              1.1
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -20.228,
+              -15.778,
+              10.138
+            ],
+            "centroidAfter": [
+              -13.041,
+              -16.179,
+              7.983
+            ],
+            "travelled": 7.514,
+            "maxMemberDrift": 0,
+            "frames": [
+              36,
+              47
+            ],
+            "seconds": [
+              1.2,
+              1.57
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -11.492,
+              -17.602,
+              7.744
+            ],
+            "centroidAfter": [
+              -5.591,
+              -19.333,
+              6.211
+            ],
+            "travelled": 6.3382,
+            "maxMemberDrift": 0,
+            "frames": [
+              49,
+              65
+            ],
+            "seconds": [
+              1.63,
+              2.17
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.224,
+              -3.009,
+              18.089
+            ],
+            "centroidAfter": [
+              6.47,
+              1.488,
+              14.021
+            ],
+            "travelled": 12.2943,
+            "maxMemberDrift": 0,
+            "frames": [
+              67,
+              70
+            ],
+            "seconds": [
+              2.23,
+              2.33
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.623,
+              -21.113,
+              3.352
+            ],
+            "centroidAfter": [
+              4.623,
+              -21.113,
+              3.352
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              197,
+              197
+            ],
+            "seconds": [
+              6.57,
+              6.57
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.623,
+              -21.113,
+              3.352
+            ],
+            "centroidAfter": [
+              4.77,
+              -20.769,
+              3.248
+            ],
+            "travelled": 0.388,
+            "maxMemberDrift": 0,
+            "frames": [
+              216,
+              220
+            ],
+            "seconds": [
+              7.2,
+              7.33
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              4.189,
+              -20.124,
+              3.319
+            ],
+            "centroidAfter": [
+              8.854,
+              -22.609,
+              2.296
+            ],
+            "travelled": 5.3836,
+            "maxMemberDrift": 0,
+            "frames": [
+              224,
+              232
+            ],
+            "seconds": [
+              7.47,
+              7.73
+            ]
+          },
+          {
+            "cluster": "Equipment",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              -4.559,
+              -25.853,
+              -6.533
+            ],
+            "centroidAfter": [
+              4.414,
+              -22.525,
+              -9.871
+            ],
+            "travelled": 10.1354,
+            "maxMemberDrift": 0,
+            "frames": [
+              235,
+              237
+            ],
+            "seconds": [
+              7.83,
+              7.9
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              10.648,
+              -19.079,
+              1.145
+            ],
+            "centroidAfter": [
+              10.648,
+              -19.079,
+              1.145
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              407,
+              407
+            ],
+            "seconds": [
+              13.57,
+              13.57
+            ]
+          },
+          {
+            "cluster": "Lacto-vegetables",
+            "members": 20,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              9.458,
+              -15.944,
+              0.983
+            ],
+            "centroidAfter": [
+              13.751,
+              -13.204,
+              -0.808
+            ],
+            "travelled": 5.3983,
+            "maxMemberDrift": 0,
+            "frames": [
+              410,
+              411
+            ],
+            "seconds": [
+              13.67,
+              13.7
+            ]
+          },
+          {
+            "cluster": "Safety and pH",
+            "members": 12,
+            "poses": [
+              "fist"
+            ],
+            "centroidBefore": [
+              10.49,
+              3.843,
+              12.38
+            ],
+            "centroidAfter": [
+              10.49,
+              3.843,
+              12.38
+            ],
+            "travelled": 0,
+            "maxMemberDrift": 0,
+            "frames": [
+              746,
+              746
+            ],
+            "seconds": [
+              24.87,
+              24.87
+            ]
+          }
+        ],
+        "poseGrabCount": 11,
+        "poseGrabbedClusters": [
+          "Safety and pH",
+          "Lacto-vegetables",
+          "Equipment"
+        ],
+        "poseGrabLargest": 20,
+        "poseGrabMaxTravel": 12.2943,
+        "clusterMovedByPose": true,
+        "clusterArrangementPreservedByPose": true,
         "clusterGrabbed": "Koji",
         "clusterMembers": 16,
         "clusterCentroidBefore": [
@@ -2364,17 +2666,17 @@
           -9.151
         ],
         "clusterCentroidAfter": [
-          2.432,
-          0.445,
-          -3.416
+          2.03,
+          0.122,
+          -3.237
         ],
-        "clusterCentroidTravelled": 17.2866,
+        "clusterCentroidTravelled": 17.8296,
         "clusterMaxMemberDrift": 0,
         "clusterLedgerBeforeOnPeer": "5144cc62a503",
-        "clusterLedgerAfterOnPeer": "54cd53fd73f3",
-        "clusterLedgerAfterHere": "54cd53fd73f3",
+        "clusterLedgerAfterOnPeer": "50b0a07a0afd",
+        "clusterLedgerAfterHere": "50b0a07a0afd",
         "clusterMovePropagatedToTheOtherSurface": true,
-        "clusterMoved": true,
+        "clusterMovedByMouse": true,
         "clusterInternalArrangementPreserved": true,
         "mouseOnlyTail": true
       },
@@ -2389,12 +2691,12 @@
           "windows: chromium 141.0.7390.37 · Linux x86_64",
           "android: chromium 141.0.7390.37 · Linux x86_64"
         ],
-        "fnSha": "269d3aff2a2dd9b9"
+        "fnSha": "aff50901f6687ec6"
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-06T06:04:39.338Z"
+      "fileMtime": "2026-09-06T06:48:04.671Z"
     },
     {
       "id": "18",
@@ -2506,7 +2808,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T06:06:00.323Z"
     },
     {
@@ -2624,7 +2926,7 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T06:08:15.320Z"
     },
     {
@@ -2777,13 +3079,13 @@
       },
       "capturedInCycle": 11,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-06T06:09:48.175Z"
     }
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-06T06:09:51.882Z",
+  "finishedAt": "2026-09-06T06:48:09.685Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
