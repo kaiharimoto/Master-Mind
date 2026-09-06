@@ -198,6 +198,35 @@ export async function diffEvidence(curDir, prevDir) {
         }
       }
     }
+    // THE CLAIM SETS ARE DIFFED, because they are the thing this whole apparatus
+    // is for.
+    //
+    // The diff compared bytes, SSIM, recipe fingerprints, subject luminance and
+    // positions — and not the machine-checked claims. So between cycles 9 and
+    // 10 eight artifacts changed their claim sets, one of them LOSING a passing
+    // claim, and none of it appeared anywhere in the diff. A machine-checked
+    // assertion could be deleted between cycles with no trace, which is exactly
+    // the failure this category exists to catch, and the cycle-10 Auditor found
+    // it by diffing the claim names itself — work the instrument should have
+    // done for it.
+    //
+    // A REMOVAL IS A FINDING BY DEFAULT. Adding a claim is ordinary progress;
+    // dropping one means an assertion that used to be checked no longer is, and
+    // that has to be said out loud rather than inferred from its absence.
+    {
+      const names = (a) => (a?.claims?.claims ?? []).map(c => c.claim).sort();
+      const prevNames = names(prevById.get(a.id));
+      const curNames = names(a);
+      const added = curNames.filter(n => !prevNames.includes(n));
+      const removed = prevNames.filter(n => !curNames.includes(n));
+      if (added.length || removed.length) {
+        row.claims = { added, removed, before: prevNames.length, after: curNames.length };
+        if (removed.length) {
+          row.claimsRemoved = removed;
+          row.substantiveClaimChange = true;
+        }
+      }
+    }
     // A similarity number cannot distinguish a re-framing from a bug fix from a
     // change to what the artifact demonstrates. The recipe fingerprint can, so
     // substantive change is named rather than left to a reviewer to notice.
@@ -218,7 +247,14 @@ export async function diffEvidence(curDir, prevDir) {
         // moved is a separate question with its own field.
         row.recipeFingerprintChanged = true;
       }
-      if (notes.length) notes.push(`demonstrates now: "${cr.demonstrates ?? '—'}"`);
+      // Only say "demonstrates now" when it actually changed. Every one of
+      // cycle 10's ten recipe-changed rows carried a `demonstrates now: X`
+      // whose X was byte-identical to the previous cycle's, which implies a
+      // change of purpose where there was none and buries the change there
+      // was. Say which it is.
+      if (notes.length) notes.push(pr.demonstrates === cr.demonstrates
+        ? 'demonstrates: unchanged'
+        : `demonstrates now: "${cr.demonstrates ?? '—'}"`);
       if (notes.length) {
         row.whatChanged = notes.join('; ');
         // A recipe edit is only SUBSTANTIVE if the output actually moved. Cycle
@@ -297,7 +333,18 @@ export async function diffEvidence(curDir, prevDir) {
       for (const id of Object.keys(cm)) if (!(id in pm)) added.push(`${map}/${id}`);
     }
     positions = { compared: true, moved, added, removed,
-                  identical: moved.length === 0 && removed.length === 0 && added.length === 0 };
+                  identical: moved.length === 0 && removed.length === 0 && added.length === 0,
+                  // WHAT THIS ACTUALLY CHECKS, said out loud. positions.json is
+                  // the committed-seed ledger snapshotted at capture time, so
+                  // its constancy across cycles evidences SEED stability — that
+                  // no capture left the map moved — and not that nothing drifts
+                  // while the app runs. The cycle-10 Auditor read the field's
+                  // name as promising the second and was right that it does not
+                  // deliver it. The runtime evidence is in the pixels: the idle
+                  // windows in the video artifacts, where that critic measured
+                  // no marker moving more than 0.14 px.
+                  what: 'the seed ledger as each capture left it — not a runtime drift measure; ' +
+                        'runtime stillness is evidenced by the idle windows in artifacts 16, 17, 19 and 20' };
   }
 
   const changed = rows.filter(r => r.verdict === 'changed').map(r => r.id);
@@ -350,6 +397,24 @@ export async function diffEvidence(curDir, prevDir) {
   // said it.
   for (const r of rows.filter(r => r.substantive && !r.recipeChanged))
     notes.push(`${r.id} ${r.file}: ${r.whatChanged}`);
+  // A DROPPED CLAIM IS ANNOUNCED, not left to be noticed by its absence.
+  for (const r of rows.filter(r => r.claimsRemoved?.length))
+    notes.push(`${r.id} ${r.file}: CLAIM REMOVED — ${r.claimsRemoved.join(', ')}` +
+               `${r.claims.added.length ? `; added ${r.claims.added.join(', ')}` : ''}` +
+               ` — a machine-checked assertion that used to hold is no longer being made`);
+  for (const r of rows.filter(r => r.claims?.added.length && !r.claimsRemoved?.length))
+    notes.push(`${r.id} ${r.file}: claims added — ${r.claims.added.join(', ')}`);
+  // AND A THRESHOLD CROSSED IS ALWAYS EXPLAINED. Artifacts 08, 18 and 19 each
+  // fell below their own similarity threshold in cycle 10 with nothing said,
+  // and 19 was classified non-substantive while 12 with the same shape was
+  // classified substantive — a rule applied two ways because it was never
+  // written down. Below threshold now always produces a line.
+  for (const r of rows) {
+    if (r.ssim == null || r.threshold == null || r.ssim >= r.threshold) continue;
+    if (notes.some(n => n.startsWith(`${r.id} `))) continue;
+    notes.push(`${r.id} ${r.file}: ssim ${r.ssim.toFixed(4)} is below its ${r.threshold} threshold` +
+               `${r.subjectChanged ? ' and the lit subject moved' : ''} — inspect`);
+  }
   if (fallback.length) notes.push(
     `${fallback.length} video(s) compared as takes rather than through their contact sheets ` +
     `(${fallback.map(r => r.id).join(', ')}) — the sheets changed shape this cycle. The thresholds in ` +
@@ -371,7 +436,11 @@ export async function diffEvidence(curDir, prevDir) {
                changedIds: changed, missingIds: missing,
                uncomparableIds: rows.filter(r => r.verdict === 'uncomparable').map(r => r.id),
                substantiveIds: rows.filter(r => r.substantive).map(r => r.id),
-               recipeChangedIds: rows.filter(r => r.recipeFingerprintChanged).map(r => r.id) },
+               recipeChangedIds: rows.filter(r => r.recipeFingerprintChanged).map(r => r.id),
+               claimsChangedIds: rows.filter(r => r.claims).map(r => r.id),
+               claimsRemovedIds: rows.filter(r => r.claimsRemoved?.length).map(r => r.id),
+               belowThresholdIds: rows.filter(r => r.ssim != null && r.threshold != null && r.ssim < r.threshold)
+                 .map(r => r.id) },
   };
 }
 

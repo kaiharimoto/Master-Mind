@@ -205,7 +205,7 @@ export default [
               // gates written to describe what the code already did.
               noTwoDrawnLabelsOverlap: true, everyDrawnLabelHasAVisibleMarker: true,
               everyLabelStaysBesideItsNode: true,
-              searchMatchReasonShown: true },
+              searchMatchReasonShown: true, searchMatchReasonUnoccluded: true },
   demonstrates: 'search fly-to end-state: one hit of several centred, with the others still wearing the search-hit signature around it', minW: 1920, minH: 1080,
   surface: 'windows', map: 'map-fermentation', title: 'Search fly-to end-state',
   async run(H) {
@@ -257,13 +257,43 @@ export default [
       return e && getComputedStyle(e).display !== 'none' ? e.textContent.trim() : null;
     });
     const labelHits = await page.evaluate(() => window.mm.hitLabelMatches.length);
+    // AND THAT A READER CAN ACTUALLY READ IT. searchMatchReasonShown asserted
+    // that the app printed the breakdown, and passed on a frame where 84 % of
+    // it was covered by the labels-hidden chip — 47 readable pixels of 288,
+    // leaving "19 hit". Whether a string was rendered and whether it survives to
+    // the viewer are different questions, and only the second one matters.
+    const breakdownClear = await page.evaluate(() => {
+      const e = document.querySelector('[data-t=search-breakdown]');
+      if (!e || getComputedStyle(e).display === 'none') return { ok: false, why: 'not shown' };
+      const r = e.getBoundingClientRect();
+      let worst = 0, by = null;
+      for (const o of document.querySelectorAll('body > *')) {
+        if (o === e || !(o instanceof HTMLElement)) continue;
+        const s = getComputedStyle(o);
+        if (s.display === 'none' || s.position === 'static') continue;
+        const q = o.getBoundingClientRect();
+        if (q.width < 2 || q.height < 2) continue;
+        const ox = Math.min(r.right, q.right) - Math.max(r.left, q.left);
+        const oy = Math.min(r.bottom, q.bottom) - Math.max(r.top, q.top);
+        if (ox <= 0 || oy <= 0) continue;
+        // Only chrome drawn ON TOP of it can hide it.
+        if ((Number(s.zIndex) || 0) < (Number(getComputedStyle(e).zIndex) || 0)) continue;
+        const frac = (ox * oy) / Math.max(1, r.width * r.height);
+        if (frac > worst) { worst = frac; by = o.id || o.getAttribute('data-t') || o.tagName; }
+      }
+      return { ok: worst < 0.02, coveredFraction: +worst.toFixed(3), coveredBy: by,
+               rect: [Math.round(r.left), Math.round(r.top), Math.round(r.width)] };
+    });
     return { query: QUERY, node: nodeText, hits: hitCount,
              searchBreakdown: breakdown, hitsMatchedOnLabel: labelHits,
              // A lit node whose visible words do not contain the query is
              // correct behaviour and unreadable as such unless the frame says
              // why. It says why or this capture failed.
+             searchBreakdownOcclusion: breakdownClear,
              searchMatchReasonShown: !!breakdown && /\d+\s+hits?/.test(breakdown) &&
                (labelHits === 0 || /in the label/.test(breakdown)),
+             // Printed AND readable. The first is not evidence of the second.
+             searchMatchReasonUnoccluded: breakdownClear.ok === true,
              labelsAudited: audit.checked, labelWorstOverhangPx: audit.worstGapPx,
              labelWorstOverhangOn: audit.worstText,
              labelWorstOffFramePx: audit.worstOffFramePx, labelWorstOffFrameOn: audit.offText,

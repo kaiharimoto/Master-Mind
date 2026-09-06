@@ -184,7 +184,7 @@ export function wrapCaption(text, cellW, size = 13, maxLines = 5) {
            overlong: lines.filter(l => l.length > perLine).length };
 }
 
-export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, sublabels2 = null, width = 1920, height = 1080 } = {}) {
+export async function compose(inputs, out, { mode = 'h', labels = null, sublabels = null, sublabels2 = null, sublabels3 = null, width = 1920, height = 1080 } = {}) {
   const n = inputs.length;
   const cellW = mode === 'h' ? Math.floor(width / n) : width;
   const cellH = mode === 'h' ? height : Math.floor(height / n);
@@ -198,7 +198,8 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
   for (let i = 0; i < n; i++) {
     const a = sublabels && sublabels[i] ? wrapCaption(sublabels[i], cellW).lines : [];
     const b = sublabels2 && sublabels2[i] ? wrapCaption(sublabels2[i], cellW).lines : [];
-    capLines.push([...a, ...b]);
+    const c = sublabels3 && sublabels3[i] ? wrapCaption(sublabels3[i], cellW).lines : [];
+    capLines.push([...a, ...b, ...c]);
   }
   const maxCap = Math.max(0, ...capLines.map(l => l.length));
   const strip = labels ? 34 + maxCap * 21 + (maxCap ? 6 : 12) : 0;
@@ -234,7 +235,7 @@ export async function compose(inputs, out, { mode = 'h', labels = null, sublabel
   // No clause may be silently lost. A caption that cannot be laid out is a
   // failed compose, not a shorter caption.
   for (let i = 0; i < n; i++) {
-    for (const src of [sublabels && sublabels[i], sublabels2 && sublabels2[i]]) {
+    for (const src of [sublabels && sublabels[i], sublabels2 && sublabels2[i], sublabels3 && sublabels3[i]]) {
       if (!src) continue;
       const w = wrapCaption(src, cellW);
       if (w.dropped || w.overlong)

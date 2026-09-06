@@ -583,29 +583,35 @@ async function runDriver(d) {
         clusterArrived = (await clusterLedger(a.page, CLUSTER)) === clusterAfterW;
       }
       const clusterAfterA = await clusterLedger(a.page, CLUSTER);
-      // And put it back EXACTLY — by writing the original vectors, not by
-      // applying the inverse delta. The inverse-delta version passed its own
-      // toFixed(6) ledger check and still failed the artifact's
-      // onlyTheDraggedNodeMoved claim, because adding 1.7 and then subtracting
-      // 1.7 does not return a float to where it started. A proof that has to
-      // move the map must put every coordinate back bit for bit, and the
-      // artifact's existing claims are what caught that it had not.
-      await w.page.evaluate(({ l, snap }) => {
-        for (const [id, pos] of snap) window.mm.store.move(id, pos);
-        void l;
-      }, { l: CLUSTER, snap: JSON.parse(clusterBeforeW) });
-      for (let k = 0; k < 60; k++) {
-        await sleepFrames(a.page, 0, 1);
-        if ((await clusterLedger(a.page, CLUSTER)) === clusterBeforeA) break;
-      }
-      const clusterRestored = (await clusterLedger(w.page, CLUSTER)) === clusterBeforeW &&
-                              (await clusterLedger(a.page, CLUSTER)) === clusterBeforeA;
+      // THE DISTRICT STAYS MOVED UNTIL THE PANELS HAVE BEEN SHOT.
+      //
+      // It was moved, checked and put back before the twin panels were
+      // captured, so artifact 12 asserted a cluster crossing that appeared
+      // nowhere in its own 1920x2160 frame — the cycle-10 Auditor's M1, and a
+      // fair one: a claim belongs where its evidence is. The restore is
+      // deferred until after the big-map panels are shot, so both surfaces are
+      // photographed with the district displaced and their ledgers agreeing,
+      // and only then does it go back — bit for bit, by writing the original
+      // vectors rather than applying an inverse delta, because adding 1.7 and
+      // subtracting 1.7 does not return a float to where it started.
+      const restoreCluster = async () => {
+        await w.page.evaluate(({ l, snap }) => {
+          for (const [id, pos] of snap) window.mm.store.move(id, pos);
+          void l;
+        }, { l: CLUSTER, snap: JSON.parse(clusterBeforeW) });
+        for (let k = 0; k < 60; k++) {
+          await sleepFrames(a.page, 0, 1);
+          if ((await clusterLedger(a.page, CLUSTER)) === clusterBeforeA) break;
+        }
+        return (await clusterLedger(w.page, CLUSTER)) === clusterBeforeW &&
+               (await clusterLedger(a.page, CLUSTER)) === clusterBeforeA;
+      };
       clusterProof = {
         district: CLUSTER,
         members: JSON.parse(clusterBeforeW).length,
         movedOnWindows: clusterAfterW !== clusterBeforeW,
         arrivedOnAndroid: clusterArrived && clusterAfterA === clusterAfterW,
-        restored: clusterRestored,
+        restored: false,   // set below, once the panels are shot
       };
         const bw = await positions(w.page), ba = await positions(a.page);
         const dw = createHash('sha256').update(JSON.stringify(bw)).digest('hex').slice(0, 10);
@@ -627,6 +633,8 @@ async function runDriver(d) {
         bigShots = { w: await shot(w.page, w.cdp, resolve(TMP, 'twin-w-big.png')),
                      a: await shot(a.page, a.cdp, resolve(TMP, 'twin-a-big.png')),
                      pose: bigPose };
+        // Panels taken with the district displaced; now put it back.
+        clusterProof.restored = await restoreCluster();
         bigTwin = { nodes: { windows: Object.keys(bw).length, android: Object.keys(ba).length },
                     sha: { windows: dw, android: da }, identical: dw === da, shown: true,
                     camera: bigPose };
@@ -709,6 +717,17 @@ async function runDriver(d) {
               ? `the two position ledgers are BYTE-IDENTICAL across the two processes at 150 nodes`
               : `LEDGERS DIFFER: ${bigTwin.sha.windows} vs ${bigTwin.sha.android}`,
             `${bigCheck} · socket #${provAfter.a.socket} vs #${provAfter.w.socket}`,
+          ],
+          // What these two panels are OF. Without it the displaced district is
+          // just a map, and the cluster claim asks the reader to diff against
+          // artifact 11 to see the point.
+          sublabels3: [
+            clusterProof.district
+              ? `“${clusterProof.district}” — ${clusterProof.members} thoughts — was moved as one on Windows and is shown here as it arrived on Android`
+              : 'no cluster move in this take',
+            clusterProof.district
+              ? `both ledgers agree while it is displaced; every coordinate is written back afterwards`
+              : '',
           ] });
         await stack([twinTop, bigBot], resolve(OUTDIR, '12_sync_twin_after.png'));
       }
