@@ -1491,6 +1491,7 @@ export default [
       if (!liveGrab) liveGrab = { key, first: g, last: g, fromFrame: i - 1, toFrame: i - 1, poses: [g.pose] };
       else { liveGrab.last = g; liveGrab.toFrame = i - 1; if (!liveGrab.poses.includes(g.pose)) liveGrab.poses.push(g.pose); }
     };
+    let tailDepth = null;
     const steps = [
       // Tracking off, then reframe so the mouse-only tail is shown on a
       // composed map rather than wherever the last gesture left the camera.
@@ -1551,7 +1552,26 @@ export default [
       // offers no way back. The way back exists now, and it is a feature rather
       // than a capture trick: the same Undo control a user has, clicked, once
       // per act, with the toast naming each district as it returns.
-      ...Array.from({ length: 26 }, (_, k) => ({ at: 1090 + k * 5, fn: async () => {
+      // AS MANY CLICKS AS THE TAKE HAS ACTS TO GIVE BACK, not a fixed 26.
+      //
+      // The tail scheduled exactly 26 undo beats, which is exactly the number of
+      // move groups the take made when it was written. The number of groups is
+      // not a constant: a grab begins and ends on whichever frame the detector
+      // reads the fist on, and the detector runs against the clip asynchronously
+      // — so under the load of a full twenty-artifact run the take made more
+      // acts than the tail had beats, and cycle 14's run recorded
+      // `mapReturnedToItsStartingLayout: false` on a take that returned all but
+      // the last one or two. Re-run alone it passed, which is the worse of the
+      // two outcomes: an intermittent claim is a claim nobody can trust.
+      //
+      // The beats are closer together and run to the end of the take, so the
+      // tail has room for however many acts the take actually made. The claim
+      // is unchanged and just as strict — every coordinate back, or a failed
+      // capture — and `undoDepthAtTailStart` records what it had to return.
+      { at: 1080, fn: async () => {
+          tailDepth = await page.evaluate(() => window.mm.store.undoDepth);
+        } },
+      ...Array.from({ length: 48 }, (_, k) => ({ at: 1082 + k * 3, fn: async () => {
           const enabled = await page.evaluate(() => {
             const b = document.querySelector('[data-t=tool-undo]');
             return !!b && !b.disabled;
@@ -1560,6 +1580,8 @@ export default [
         } })),
     ];
     const beats = script(steps);
+    // How many acts the take made, read at the moment the tail begins.
+    
     await H.record(page, cdp, { out: H.out(this.file), seconds: 41, onFrame: async (i, t, total) => {
       // Sampling only runs while tracking is on; the mouse tail is measured by
       // its own before/after pair and must not leak into the pose record.
@@ -1613,7 +1635,7 @@ export default [
              // EVERY COORDINATE THE TAKE MOVED IS GIVEN BACK, through the app's
              // own Undo control rather than by the harness writing positions.
              undoStackEmptiedOnCamera: undoLeft === 0,
-             undoDepthAtEnd: undoLeft,
+             undoDepthAtEnd: undoLeft, undoDepthAtTailStart: tailDepth,
              // WHICH coordinates did not come back, when they do not. A claim
              // that fails with nothing but a false beside it costs a whole
              // capture to diagnose.
