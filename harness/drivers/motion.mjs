@@ -2084,7 +2084,11 @@ export default [
             const sc = window.mm.scene;
             const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
             const q = sc.project(pos);
-            return q ? [{ id: 'destination', x: q.x / dpr, y: q.y / dpr, r: 9 }] : null;
+            // A TIGHT WINDOW. The suggestion places this thought BESIDE an
+            // existing one — "next to the slide budget" is the reason it gives —
+            // so a wide sample reaches the neighbour's own glow and the
+            // destination is never dark. The window is the arriving mark.
+            return q ? [{ id: 'destination', x: q.x / dpr, y: q.y / dpr, r: 3 }] : null;
           }, log.placement.to) : null;
           if (log.destDisc) {
             const png = await H.tmpShot(page, cdp, '20-dest-before');
@@ -2214,11 +2218,21 @@ export default [
       placementDestinationBefore: log.destBefore?.rows?.[0] ?? null,
       placementDestinationAfter: log.destAfter?.rows?.[0] ?? null,
       holdingBadgeAcrossPlacement: [log.badgeBeforePlacement ?? null, log.badgeAfterPlacement ?? null],
-      // Nothing at the destination before, a mark there after — in the take's
-      // own frames — and the badge on the frame counts one fewer waiting.
-      placementLandedInThePixels:
-        !!log.destBefore && !!log.destAfter &&
-        log.destBefore.invisible === 1 && log.destAfter.invisible === 0,
+      // A MARK ARRIVES WHERE THE SUGGESTION SAID IT WOULD — measured in the
+      // take's own frames, as a rise rather than as darkness.
+      //
+      // "Nothing there before" was the wrong test and the capture failed on it
+      // correctly: this suggestion places the thought BESIDE an existing one
+      // ("next to the slide budget"), so the destination carries a neighbour's
+      // glow before anything lands. What a landing looks like is the light at
+      // that point going up by a factor no neighbour can account for, and the
+      // mark clearing the visibility floor afterwards.
+      placementDestinationPeaks: [log.destBefore?.rows?.[0]?.peak ?? null,
+                                  log.destAfter?.rows?.[0]?.peak ?? null],
+      placementLandedInThePixels: (() => {
+        const b = log.destBefore?.rows?.[0], a2 = log.destAfter?.rows?.[0];
+        return !!b && !!a2 && a2.peak >= b.peak * 2 && a2.contrast >= 5;
+      })(),
       holdingBadgeFellOnCamera:
         !!log.badgeBeforePlacement && !!log.badgeAfterPlacement &&
         Number(String(log.badgeBeforePlacement).replace(/\D+/g, '')) ===
