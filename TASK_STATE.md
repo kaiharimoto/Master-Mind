@@ -11,14 +11,25 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 |---|---|
 | Phase | review |
 | Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
-| Review cycle | **11 complete.** All three critics dispatched strictly sequentially, all three verdicts written verbatim, none altered. **Cycle 12 in progress** — every cycle-11 finding answered in code, capture running |
-| Rubric score | **84.5 / 100** at cycle 11 — 22 + 21 + **16** + 13 + 8 + 4.5. Category 04 recovers to its minimum after two cycles below it; **category 03 falls below its minimum of 17 for the first time**, on one blocking finding, and the Auditor declares cycle 11 not regression-free |
-| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 → 84.5 (cycles 1–11) |
+| Review cycle | **13 complete.** All three critics dispatched strictly sequentially in every cycle, all verdicts written verbatim, none altered. **Cycle 14 in progress** — every cycle-13 finding answered in code |
+| Rubric score | **86.5 / 100** at cycle 13 — 21 + 22 + 18 + 13 + 8 + 4.5. Every category at or above its minimum for the second cycle running; both hard gates hold; the Auditor declares cycle 13 **not** regression-free, naming artifacts 06 and 09 |
+| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 → 84.5 → 87.0 → 86.5 (cycles 1–13) |
 | Artifacts captured | **20 of 20, all as defined**, in every frozen cycle |
-| Positions | **identical for eleven consecutive cycles**, compared as model values |
-| Reading | **ruled and closed by the cycle-11 Art Director: organic-bioluminescent** (D-004) |
+| Positions | **identical for thirteen consecutive cycles**, compared as model values |
+| Reading | **ruled and closed by the cycle-1 Art Director: organic-bioluminescent** (D-004). The cycle-13 Art Director ruled `restrained-holographic`; §09 forbids reopening a recorded decision, so D-004 stands and the conflict is recorded verbatim in `evidence/critics/art-director-cycle-13.md` |
 | Exit condition | total ≥ 90, both hard gates, two consecutive regression-free cycles — or the 15-cycle cap with a final report listing every unmet gate |
 | Cold start | **passed** — 161 positions verified against the committed fixtures as model values |
+
+## The cycle-14 agenda, in the Auditor's words
+
+> What it still lacks is a gate that asks whether the shipped frame contains the
+> thing its caption is about; 06 and 09 are what that gap costs.
+
+Answered by `subjectInk()` in `harness/run-capture.mjs` — it decodes the WRITTEN
+file and counts the subject's own ink in a region — and by per-artifact claims
+built on it and on `sampleDiscs`: `placedMapDrawnInThePixels` (06),
+`editedColourAppearsInThePixels` (09), `spanChangeVisibleInThePixels` (05),
+`theDropIsVisibleInThePixels` (08).
 
 ## Completed
 

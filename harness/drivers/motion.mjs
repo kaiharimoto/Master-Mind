@@ -43,6 +43,9 @@ export default [
               // themselves; the cycle-13 Auditor found it comparing 21 against
               // 24 and landing below both of its own corroborating measures.
               spanMeasuredOverAFixedNodeSet: true,
+              // And the change it reports is in the two files, not only in the
+              // camera that produced them.
+              spanChangeVisibleInThePixels: true,
               captionMatchesTheAppsVocabulary: true, headlineMatchesTheHud: true,
               // A move-closer has to buy something legible or the pose is not
               // worth the gesture. It does not buy MORE names — the drawn count
@@ -143,9 +146,19 @@ export default [
       const e = document.getElementById('hidden');
       return e && getComputedStyle(e).display !== 'none' ? (e.textContent || '').trim() : '';
     });
+    // WHERE THOSE THOUGHTS ARE ON THE FILE, so the span can be read out of the
+    // pixels as well as out of the projection. In the shot's own coordinates.
+    const discsFor = (basis) => page.evaluate((ids) => {
+      const sc = window.mm.scene;
+      const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const set = ids ? new Set(ids) : null;
+      return sc.screenPositions().filter(q => !set || set.has(q.id))
+        .map(q => ({ id: q.id, x: q.x / dpr, y: q.y / dpr, r: q.r / dpr }));
+    }, basis);
     const countBefore = await nameCount();
     const chipBefore = await chipText();
     const namedBefore = countBefore.drawn;
+    const discsBefore = await discsFor(null);
     const before = await H.tmpShot(page, cdp, '05a', 800);
     // AFTER THE SHOT, because the shot is what drives the render. Sampled
     // before it, the audit described a layout that had never been laid out:
@@ -212,7 +225,28 @@ export default [
     const countAfter = await nameCount(countBefore.spanBasis);
     const chipAfter = await chipText();
     const namedAfter = countAfter.drawn;
+    const discsAfter = await discsFor(countBefore.spanBasis);
     const after = await H.tmpShot(page, cdp, '05b', 800 + (held + 1) * 33.3);
+    // AND NOW THE SAME MEASUREMENT OFF THE TWO FILES.
+    //
+    // Everything above reads the projection. The caption's claim is about what
+    // the two panels look like, so the same thoughts are sampled where they land
+    // in each written panel, the ones actually drawn above the visibility floor
+    // are kept, and the span is taken over those. A dolly that exists only in
+    // the camera and not in the picture cannot pass this.
+    const litSpan = async (png, discs) => {
+      const m = await H.sampleDiscs(png, discs, 2.0);
+      const weak = new Set(m.invisibleIds ?? []);
+      const lit = discs.filter(d => !weak.has(d.id));
+      if (lit.length < 2) return { span: 0, lit: lit.length, of: discs.length };
+      const xs = lit.map(d => d.x), ys = lit.map(d => d.y);
+      return { span: +Math.hypot(Math.max(...xs) - Math.min(...xs),
+                                 Math.max(...ys) - Math.min(...ys)).toFixed(1),
+               lit: lit.length, of: discs.length, worstContrast: m.worstContrast };
+    };
+    const basisSet = new Set(countBefore.spanBasis);
+    const pxBefore = await litSpan(before, discsBefore.filter(d => basisSet.has(d.id)));
+    const pxAfter = await litSpan(after, discsAfter);
     chrome05.push(await chromeAt(page));
     // READ OFF THE FRAME, not from the model after it. The headline was taking
     // the camera distance after the shot while the HUD in the picture had been
@@ -298,6 +332,15 @@ export default [
              viewDistanceRatio: +(distBefore / distAfter).toFixed(3),
              spanBasisCount: countBefore.spanBasisCount, spanBasisMissingAfter: countAfter.spanBasisMissing,
              cloudSpanRatio: +(countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1)).toFixed(3),
+             litSpanBefore: pxBefore, litSpanAfter: pxAfter,
+             litSpanRatio: +(pxAfter.span / Math.max(pxBefore.span, 1)).toFixed(3),
+             // THE SAME RATIO, TAKEN OFF THE TWO FILES. Same thoughts, only the
+             // ones whose marks are actually drawn in each panel, measured in
+             // the pixels rather than in the projection that produced them.
+             spanChangeVisibleInThePixels:
+               pxBefore.lit >= 2 && pxAfter.lit >= 2 &&
+               Math.abs((pxAfter.span / Math.max(pxBefore.span, 1)) /
+                        Math.max(countAfter.cloudSpanPx / Math.max(countBefore.cloudSpanPx, 1), 1e-6) - 1) <= 0.05,
              // The ×N in the caption is the same thoughts measured twice, not
              // one population against another.
              spanMeasuredOverAFixedNodeSet:
@@ -366,6 +409,8 @@ export default [
   // of BOTH panels at their own shutters, because a composite's panels are
   // separate moments and the live page at the end describes neither.
   requires: { placed: true, stableAfterDrop: true, cameraFrozenAcrossPanels: true,
+              // And the move the caption names is IN the two panels.
+              theDropIsVisibleInThePixels: true,
               noTwoChromePanelsOverlap: true, everyChromeBadgeInsideTheFrame: true,
               // A thought a reader cannot see is a thought the frame is not
               // showing, whatever the model says. The cycle-12 Auditor found
@@ -423,7 +468,37 @@ export default [
       const e = document.getElementById('editor');
       return e ? e.getBoundingClientRect().left : window.innerWidth;
     });
-    const to = { x: Math.min(from.x + 200, edLeft - 150), y: from.y - 330 };
+    // WHERE TO DROP IT: SOMEWHERE A READER CAN SEE IT LAND.
+    //
+    // The destination was a fixed offset — 200 px right, 330 px up — and it put
+    // the mark 10 px from another thought's mark, so the after panel shows two
+    // overlapping dots where the whole point is that THIS one is now here. The
+    // first pixel readback of this drop duly failed: the destination was
+    // already lit in the before panel, by the neighbour. The spot is searched
+    // instead: on a 10 px lattice, inside the band the chrome leaves, as far
+    // from every other mark as it can be while staying near enough that the
+    // drag reads as one gesture. Deterministic — same map, same camera, same
+    // answer every cycle.
+    const to = await page.evaluate(({ skip, edLeft: lim, fx, fy }) => {
+      const sc = window.mm.scene;
+      const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const pts = sc.screenPositions().filter(p2 => p2.id !== skip)
+        .map(q => [q.x / dpr, q.y / dpr]);
+      const boxes = window.mm.chromeAudit().boxes ?? [];
+      let best = null;
+      for (let y = 130; y <= window.innerHeight - 170; y += 10)
+        for (let x = 130; x <= lim - 150; x += 10) {
+          if (boxes.some(b => x > b.x0 - 30 && x < b.x1 + 30 && y > b.y0 - 30 && y < b.y1 + 30)) continue;
+          let d = Infinity;
+          for (const [px, py] of pts) { const q = Math.hypot(x - px, y - py); if (q < d) d = q; }
+          // Clearance is the point, up to a distance past which more is no
+          // better; the drag length only breaks ties among equally clear spots.
+          const score = Math.min(d, 90) * 10 - Math.hypot(x - fx, y - fy) * 0.1;
+          if (!best || score > best.score) best = { x, y, score, clearance: +d.toFixed(1) };
+        }
+      return best;
+    }, { skip: id, edLeft, fx: from.x, fy: from.y });
+    if (!to) throw new Error('08: no clear spot to drop the node into');
     await page.mouse.move(from.x, from.y);
     await page.mouse.down();
     for (let k = 1; k <= 14; k++) {
@@ -442,6 +517,23 @@ export default [
       labels: [`Before — unplaced, waiting in holding (${beforeCount})`,
                `After — dropped, and it stays there (holding ${beforeCount - 1})`] });
 
+    // THE MOVE, READ OUT OF THE TWO FILES.
+    //
+    // Everything below this line is the model's account of the drop. The
+    // caption is about a mark that is in one place in the left panel and
+    // another in the right, so the mark itself is sampled: the destination is
+    // dark in the before panel and lit in the after one, at the same point in
+    // both. The destination is open space — the drop is aimed clear of the
+    // editor and 330 px above the ring — so a neighbour standing there would
+    // fail this claim rather than satisfy it, which is the right way round.
+    const dest = await page.evaluate((i) => {
+      const sc = window.mm.scene;
+      const dpr = sc.renderer.domElement.width / Math.max(window.innerWidth, 1);
+      const q = sc.screenPositions().find(p2 => p2.id === i);
+      return q ? [{ id: i, x: q.x / dpr, y: q.y / dpr, r: q.r / dpr }] : null;
+    }, id);
+    const destBefore = dest ? await H.sampleDiscs(a, dest, 2.0) : null;
+    const destAfter = dest ? await H.sampleDiscs(b, dest, 2.0) : null;
     const afterCount = await page.evaluate(() => window.mm.store.holdingCount());
     const afterPos = await page.evaluate(i => window.mm.store.doc.nodes[i].pos.slice(), id);
     // Nothing must move after the drop.
@@ -451,6 +543,13 @@ export default [
              ...mergeChrome(chrome08),
              placed: await page.evaluate(i => window.mm.store.doc.nodes[i].placed, id),
              beforePos, afterPos, stableAfterDrop: JSON.stringify(afterPos) === JSON.stringify(settled),
+             dropTarget: to,
+             destinationSampleBefore: destBefore?.rows?.[0] ?? null,
+             destinationSampleAfter: destAfter?.rows?.[0] ?? null,
+             // Nothing there before, a mark there after — in the pixels of the
+             // two panels, at one point measured the same way in both.
+             theDropIsVisibleInThePixels:
+               !!destBefore && !!destAfter && destBefore.invisible === 1 && destAfter.invisible === 0,
              cameraFrozenAcrossPanels: othersBefore === othersAfter };
   },
 },

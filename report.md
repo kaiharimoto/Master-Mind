@@ -1656,6 +1656,86 @@ as things to start below, driving it to y=1078 with 20 px of height left.
 | Art Director minor · a04 | the selection callout overpaints a neighbouring label | **Open** — the callout is not a reserved rectangle in the label solver |
 | Art Director minor · a20 | nothing is ever accepted or rejected at 150 nodes | **Open** |
 
+## Cycle 13 — 86.5, every category at or above its minimum, and still not regression-free
+
+**21 + 22 + 18 + 13 + 8 + 4.5 = 86.5**, against cycle 12's 87.0. Every category
+clears its minimum for the second cycle running and both hard gates hold, but
+the total falls half a point and the Auditor again declares the cycle **not
+regression-free**.
+
+| category | 11 | 12 | 13 | min |
+|---|---:|---:|---:|---:|
+| 01 core workflow | 22 | 21 | 21 | 20 |
+| 02 landmarks live | 21 | 21 | **22** | 20 |
+| 03 one model, sacred positions | 16 | 18 | 18 | 17 |
+| 04 evidence and report integrity | 13 | 13 | 13 | 13 |
+| 05 quality compliance | 8 | 9 | **8** | 8 |
+| 06 finder round-trip | 4.5 | 5 | **4.5** | 4 |
+| **total** | **84.5** | **87.0** | **86.5** | 90 |
+
+**Both regressions are mine, both were caused by cycle-13 fixes, and both are
+the same fault.** Artifact 06's vantage was re-solved to keep every held marker
+clear of the top bar, and the vantage it found looks away from the map: the
+Auditor measured strongly-coloured canvas pixels falling from 211 to **exactly
+zero**, so the artifact whose premise is that holding sits *inside* the shared
+space shipped a cluster floating on black. Artifact 09 was reframed so both ends
+of the new filament clear the editor, and the reframing cropped the edited node
+out from under a caption naming its new colour: teal pixels on the after panel
+fell from 1937 to **zero**. The Art Director found both independently.
+
+**The Auditor's closing line names the gap exactly**, and it is the cycle-14
+agenda:
+
+> What it still lacks is a gate that asks whether the shipped frame contains the
+> thing its caption is about; 06 and 09 are what that gap costs.
+
+Every gate in the harness that could have caught these asks the *model* or the
+*projection*. Artifact 06 reported 21 placed nodes and 20 filaments in view on a
+frame with no coloured pixel on it; artifact 09 reported the edited thought
+visible in both panels, and it was — the projection put it in the frame, and 250
+px of recovery column sat on top of it. Both claims were true of the state and
+false of the picture. That is the F-030 shape for the seventh time: an
+instrument that cannot fail for the reason it exists.
+
+**The reading was ruled a second time, and the second ruling does not stand.**
+The cycle-13 Art Director rules `restrained-holographic` where the cycle-1 Art
+Director ruled `organic-bioluminescent`, recorded as **D-004, SETTLED**. §09
+makes reopening a recorded decision a failure condition, so D-004 stands and
+nothing in the build moves. The conflict is recorded rather than smoothed over,
+in `evidence/critics/art-director-cycle-13.md` with the verdict unedited: the
+critic had no access to DIRECTION.md by design, and its own rider — that the
+ruling "grants no licence toward cyan, HUD frames or blue-purple cyberpunk,
+because the quality section's warm near-black palette remains binding" —
+describes the same frame the cycle-1 ruling described. The two rulings disagree
+about a name, not about a pixel.
+
+**What the Art Director measured that no instrument here measures.** Three
+numbers, all about the detail standard at whole-map zoom, all reproduced by the
+critic itself rather than read off a caption: 87 of 150 labels hidden with only
+about 23 nodes carrying untruncated text on the canvas; filaments at **1.12:1**
+against the ground at whole-brain against 2.67:1 close in; and state marks
+rendering 2-3 px there, leaving the distinction to luminance — which the
+chroma-encodes-age rule makes non-comparable between districts. Its verdict on
+the set is that "honesty about a gap is not the same as closing it", which is
+the correct reading of a build whose on-frame audit strips have been doing a lot
+of work.
+
+### What the critics found, and what was done
+
+| # | finding | response |
+|---|---|---|
+| Auditor B/major · a06 | strongly-coloured canvas pixels fell from 211 to zero: the holding cluster no longer sits in the shared space | **Fixed at the cause**, and the fix is a new instrument, not a new framing: `placedMapDrawnInThePixels` samples the placed markers in the *written file* against the same visibility floor every other marker is held to, and counts chromatic ink across the canvas. 17 markers lit, 3292 chromatic px |
+| Auditor B/major · a09 | teal pixels on the after panel fell from 1937 to zero under a caption naming the colour change | **Fixed at the cause.** `editedColourAppearsInThePixels` counts teal in the same window in both panel files: 0 before, 410 after. It failed on its first run and was right to — the node sat under the recovery column, cleared by `nodesUnderChrome()`'s exemption for a thought the chrome itself names. `coveredByChrome()` asks the narrower question with nothing forgiven |
+| Auditor m · a10 | seven markers behind the rail the column had just moved to | **Fixed at the cause.** The column chooses its rail by measurement — room to list every thought first, then markers behind it — and the editor no longer forces a side. Artifact 10 goes from 8 markers behind the left rail to 0 behind the right |
+| Auditor m · a05 | `×1.11` measured over a shifting basis of 21 then 24 named thoughts | **Fixed.** The span is measured over the before panel's own ids in both panels, checked against the vantage's travel, and now also read off the two files: 150 of 150 markers lit in each, pixel ratio 1.113 against a projection ratio of 1.113 |
+| Auditor m · a07 | markers shifted 33.1-41.3 px in x with y held; the camera is not pinned | **Fixed.** 07 is pinned at the values its own solve produced, with `cameraPinned` declared, joining 02 and 04 |
+| Auditor m · a02 | DIFF's "unchanged" means SSIM, not bytes | **Fixed.** `perceptuallyUnchanged` / `perceptuallyChanged`, with `bytesIdentical` and `bytesChanged` counted beside them |
+| Art Director major · a02 | 87 of 150 labels hidden; the index carries the text the space does not | **Open** |
+| Art Director major · a02 | filaments at 1.12:1 against the ground at whole-brain zoom | **Open** |
+| Art Director minor · a07 | state marks at 2-3 px at overview, leaving luminance alone to carry the state | **Open** |
+| Art Director minor · a20 | a freshly generated prompt above a rejection log naming another map's nodes, for ~1.5 s | **Open** |
+| Art Director minor · a14 | audit chips clipped mid-word at the detail-row crop boundaries | **Open** |
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
