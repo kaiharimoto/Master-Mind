@@ -378,6 +378,14 @@ export default [
               // through — which is shared, and is why they match.
               panelRuntimesDiffer: true, eachPanelNamesItsRasteriser: true,
               clusterMoveCrossedTheBoundary: true,
+              // The cycle-11 Auditor's blocking finding: the bottom row prints
+              // a 150-node position sha and two sentences about a displaced
+              // district, and nothing on this artifact compared any of that
+              // against the picture it is printed on. Both are checked against
+              // the pixels of the shot now, and the second is the one with
+              // power — it fails if the district is not visibly displaced.
+              printedShaMatchesRenderedState: true,
+              clusterDisplacementVisibleInPixels: true,
               bigMapShownOnBothSurfaces: true, bigMapLedgersIdentical: true,
               everyNodeUnoccludedByChrome: true },
   demonstrates: 'twin composite AFTER: an Android drag and edit arriving on Windows at the same frozen camera, and the 150-node map on those same two sockets under one camera', minW: 1920, minH: 1080,

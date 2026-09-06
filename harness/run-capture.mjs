@@ -660,6 +660,73 @@ async function runDriver(d) {
         bigShots = { w: await shot(w.page, w.cdp, resolve(TMP, 'twin-w-big.png')),
                      a: await shot(a.page, a.cdp, resolve(TMP, 'twin-a-big.png')),
                      pose: bigPose };
+        // THE PRINTED NUMBER MUST DESCRIBE THE PICTURE IT IS PRINTED ON.
+        //
+        // The cycle-11 Auditor reproduced the app's own hashing scheme, found
+        // that this row's `pos sha` was not the committed ledger's, and read
+        // the displaced district's markers as sitting within 0.67 px of where
+        // they were the cycle before — a headline attestation that may not
+        // describe its own pixels. The model was displaced when the sha was
+        // taken; whether the canvas was displaced when it was rastered was
+        // nowhere established, and no claim on this artifact could have caught
+        // it, because every claim compared the model against the model.
+        //
+        // So it is established against the pixels, three ways, on the shot
+        // itself rather than on the composite: the ledger is re-read AFTER the
+        // raster and must still hash to the printed value; the district's
+        // members are projected under the camera the shot was taken with and a
+        // lit marker must be found at each; and the SAME members are projected
+        // from the pre-move snapshot, where — if the displacement really is in
+        // this picture — markers must NOT be found. The third is the one with
+        // power: the first two would both pass on an un-displaced frame.
+        const projectAt = (pg, pts) => pg.evaluate(ps => {
+          const sc = window.mm.scene, cam = sc.camera, el = sc.renderer.domElement;
+          const ap = (m, v) => {
+            const [x, y, z] = v;
+            const w = (m[3] * x + m[7] * y + m[11] * z + m[15]) || 1;
+            return [(m[0] * x + m[4] * y + m[8] * z + m[12]) / w,
+                    (m[1] * x + m[5] * y + m[9] * z + m[13]) / w,
+                    (m[2] * x + m[6] * y + m[10] * z + m[14]) / w];
+          };
+          const mv = cam.matrixWorldInverse.elements, pm = cam.projectionMatrix.elements;
+          return ps.map(q => {
+            const e = ap(mv, q), c = ap(pm, e);
+            return { x: (c[0] * 0.5 + 0.5) * el.width, y: (1 - (c[1] * 0.5 + 0.5)) * el.height };
+          });
+        }, pts);
+        const beforeSnap = JSON.parse(clusterBeforeW);
+        const afterSnap = JSON.parse(clusterAfterW);
+        const radii = await w.page.evaluate(ids => {
+          const m = new Map(window.mm.scene.screenPositions().map(q => [q.id, q.r]));
+          return ids.map(i => m.get(i) ?? 4);
+        }, afterSnap.map(([id]) => id));
+        const nowXY = await projectAt(w.page, afterSnap.map(([, p2]) => p2));
+        const wasXY = await projectAt(w.page, beforeSnap.map(([, p2]) => p2));
+        const seps = nowXY.map((q, i) => Math.hypot(q.x - wasXY[i].x, q.y - wasXY[i].y))
+                          .sort((x, y) => x - y);
+        const discAt = (xy) => xy.map((q, i) => ({ id: afterSnap[i][0], x: q.x, y: q.y, r: radii[i] }));
+        const atNow = await sampleDiscs(bigShots.w, discAt(nowXY));
+        const atWas = await sampleDiscs(bigShots.w, discAt(wasXY));
+        const shaAfterRaster = createHash('sha256')
+          .update(JSON.stringify(await positions(w.page))).digest('hex').slice(0, 10);
+        clusterProof.pixels = {
+          members: afterSnap.length,
+          medianSeparationPx: +(seps[seps.length >> 1] ?? 0).toFixed(2),
+          minSeparationPx: +(seps[0] ?? 0).toFixed(2),
+          markersAtDisplacedPositions: atNow.checked - atNow.invisible,
+          markersAtPreMovePositions: atWas.checked - atWas.invisible,
+          shaPrinted: dw, shaAfterRaster,
+          worstDisplacedContrast: atNow.worstContrast,
+          worstPreMoveContrast: atWas.worstContrast,
+        };
+        clusterProof.printedShaMatchesRenderedState = shaAfterRaster === dw &&
+          atNow.checked > 0 && atNow.invisible === 0;
+        // The displacement is IN THE PICTURE, not only in the model: the
+        // members have moved far enough to be separable at all, they are lit
+        // where the model says they now are, and the ground they left is empty.
+        clusterProof.displacementVisibleInPixels =
+          (seps[0] ?? 0) > 4 && atNow.checked > 0 && atNow.invisible === 0 &&
+          clusterProof.pixels.markersAtPreMovePositions < afterSnap.length * 0.5;
         // Panels taken with the district displaced; now put it back.
         clusterProof.restored = await restoreCluster();
         bigTwin = { nodes: { windows: Object.keys(bw).length, android: Object.keys(ba).length },
@@ -753,7 +820,11 @@ async function runDriver(d) {
               ? `“${clusterProof.district}” — ${clusterProof.members} thoughts — was moved as one on Windows and is shown here as it arrived on Android`
               : 'no cluster move in this take',
             clusterProof.district
-              ? `both ledgers agree while it is displaced; every coordinate is written back afterwards`
+              ? `both ledgers agree while it is displaced; every coordinate is written back afterwards` +
+                (clusterProof.pixels
+                  ? ` · checked against these pixels: ${clusterProof.pixels.markersAtDisplacedPositions}/${clusterProof.pixels.members} markers lit where the moved ledger says, ` +
+                    `${clusterProof.pixels.markersAtPreMovePositions} still lit where it was, ${clusterProof.pixels.minSeparationPx} px apart at the closest`
+                  : '')
               : '',
           ] });
         await stack([twinTop, bigBot], resolve(OUTDIR, '12_sync_twin_after.png'));
@@ -819,6 +890,12 @@ async function runDriver(d) {
       // it. All three or the capture failed.
       after.clusterMoveCrossedTheBoundary = clusterProof.movedOnWindows &&
         clusterProof.arrivedOnAndroid && clusterProof.restored && clusterProof.members > 1;
+      // The whole cluster proof, in the record, because the frame prints
+      // sentences about it and the record carried none of them.
+      after.clusterProof = clusterProof;
+      after.clusterPixelProof = clusterProof.pixels ?? null;
+      after.printedShaMatchesRenderedState = !!clusterProof.printedShaMatchesRenderedState;
+      after.clusterDisplacementVisibleInPixels = !!clusterProof.displacementVisibleInPixels;
       after.panelRuntimes = { windows: provAfter.w.runtime, android: provAfter.a.runtime };
       after.panelRasterisers = { windows: provAfter.w.gl, android: provAfter.a.gl };
       after.panelRuntimesDiffer = !!provAfter.w.runtime && !!provAfter.a.runtime &&
