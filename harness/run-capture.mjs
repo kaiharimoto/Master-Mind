@@ -633,7 +633,19 @@ let twinCache = null;
 async function runDriver(d) {
   const dataDir = resolve(TMP, `data-${d.id}`);
   rmSync(dataDir, { recursive: true, force: true });
-  const httpPort = 8760 + Number(d.id), wsPort = 8860 + Number(d.id);
+  // A PORT NOTHING ELSE IS HOLDING.
+  //
+  // The ports were a fixed function of the artifact id, so a capture run that
+  // is killed — a container restart, a timeout — leaves its sync service alive
+  // holding the port the NEXT run's same artifact wants. Cycle 15's second
+  // recapture died on artifact 16 with `EADDRINUSE 127.0.0.1:8776`, with nine
+  // orphaned services from earlier runs still listening. The harness names the
+  // fault rather than swallowing it, which is why it is in this record at all,
+  // but a run should not be able to be killed by its own leftovers: the base is
+  // offset by the run's own pid, so two runs never contend, and a stale
+  // listener from a dead run is simply not in the way.
+  const portBase = 8300 + ((process.pid % 40) * 60);
+  const httpPort = portBase + Number(d.id), wsPort = portBase + 30 + Number(d.id);
   const S = await launch({ httpPort, wsPort, data: dataDir });
   const extra = [];
   if (d.camera) extra.push('--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream',
