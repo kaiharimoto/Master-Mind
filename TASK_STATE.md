@@ -9,18 +9,25 @@ Open the newest `checkpoints/` entry and continue from **NEXT ACTION**.
 
 | | |
 |---|---|
-| Phase | review |
-| Build-order step | STEP 09 — polish and final evidence (STEPs 01–08 complete) |
-| Review cycle | **14 complete.** All three critics dispatched strictly sequentially in every cycle, all verdicts written verbatim, none altered. **Cycle 15 — the last under the cap — in progress** |
-| Rubric score | **86.0 / 100** at cycle 14 — 21 + 21 + 18 + 13 + 8.5 + 4.5. Every category at or above its minimum for the third cycle running; both hard gates hold; the Auditor declares cycle 14 **not** regression-free on three findings, two of them mine and both now closed |
-| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 → 84.5 → 87.0 → 86.5 → 86.0 (cycles 1–14) |
+| Phase | **complete — the fifteen-cycle cap is reached** |
+| Build-order step | STEP 09 complete; final report written |
+| Review cycle | **15 of 15.** All three critics dispatched strictly sequentially in every cycle; 27 verdicts recorded verbatim, none altered |
+| Rubric score | **86.0 / 100** at cycle 15 — 21 + 21 + 18 + 13 + 8.5 + 4.5. Every category at or above its minimum for the fourth cycle running; both hard gates hold; not regression-free |
+| Score history | 85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 → 84.5 → 87.0 → 86.5 → 86.0 → 86.0 |
 | Artifacts captured | **20 of 20, all as defined**, in every frozen cycle |
-| Positions | **identical for fourteen consecutive cycles**; the cycle-14 Auditor fitted a camera to artifact 11 and reproduced the committed seeds at 0.22 px RMS |
-| Reading | **ruled and closed by the cycle-1 Art Director: organic-bioluminescent** (D-004). The cycle-13 AND cycle-14 Art Directors both ruled `restrained-holographic` from the same pixels; §09 forbids reopening a recorded decision, so D-004 stands, the build does not move, and both verdicts are recorded verbatim |
-| Exit condition | total ≥ 90, both hard gates, two consecutive regression-free cycles — or the 15-cycle cap with a final report listing every unmet gate |
+| Positions | **identical for fifteen consecutive cycles**; the cycle-15 Auditor reproduced 227 markers to 0.365 px and found no position regression |
+| Reading | **organic-bioluminescent** (D-004, settled at cycle 1). Ruled three more times from three frozen sets: cycles 13 and 14 said `restrained-holographic`, cycle 15 said `organic-bioluminescent`. §09 forbids reopening a recorded decision, so the build moved on none of them |
+| Exit condition | **NOT met** — 86.0 against 90, and no two consecutive regression-free cycles. Ended under the cap clause with the final report at the end of `report.md` |
 | Cold start | **passed** — 161 positions verified against the committed fixtures as model values |
+| Release | `Master Mind.exe` 188.8 MB · `app-debug.apk` 23.1 MB · `docs/TESTING.md` |
 
-## The cycle-15 agenda
+## Where to read the outcome
+
+The **final report** is at the end of `report.md`: the score, every unmet gate
+named with its measurement, the fifteen-cycle history, both environment
+substitutions, and the commands a reader runs to check any of it.
+
+## The cycle-15 agenda## The cycle-15 agenda
 
 Two majors, both named by the Art Director, one of them also by the Audience:
 

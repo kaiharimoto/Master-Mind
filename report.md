@@ -1910,6 +1910,87 @@ fact about this run.
 | Audience m · a17, a03 | no frame shows a real hand, or either detector failing and recovering | **Open** — the substitution is declared; what is missing is a failure mode |
 | Audience m · a19 | every refind shown is a text query; none is spatial recall | **Open** |
 
+## Cycle 15 — 86.0, every category at its minimum for the fourth cycle, not regression-free
+
+**21 + 21 + 18 + 13 + 8.5 + 4.5 = 86.0**, level with cycle 14. Every category
+clears its minimum for the fourth cycle running, both hard gates hold, and the
+Auditor declares the cycle **not regression-free**.
+
+| category | 13 | 14 | 15 | min |
+|---|---:|---:|---:|---:|
+| 01 core workflow | 21 | 21 | 21 | 20 |
+| 02 landmarks live | 22 | 21 | 21 | 20 |
+| 03 one model, sacred positions | 18 | 18 | 18 | 17 |
+| 04 evidence and report integrity | 13 | 13 | 13 | 13 |
+| 05 quality compliance | 8 | 8.5 | 8.5 | 8 |
+| 06 finder round-trip | 4.5 | 4.5 | 4.5 | 4 |
+| **total** | **86.5** | **86.0** | **86.0** | 90 |
+
+**The regression is in the record, and the interruptions caused it.** The
+manifest attested byte counts and digests for artifacts 03, 04 and 05 that
+matched no file in the set, with `check.ok` true on all three, while
+`cycle-15.sha256` and `DIFF.json` hashed the real bytes — so the set's own
+records contradicted each other. The Auditor ran the same test across every
+frozen set and found cycles 2–14 clean. A container restart killed a capture
+mid-run and the working set was restored with `git checkout`; both replace files
+out of band, and a later `--only` run carries the previous manifest's `check`
+for every artifact it did not itself capture. The manifest-writing loop was
+already computing that comparison and writing `undefined` when it failed.
+Closed: the digest is re-read from disk, the stale one is kept in
+`checkBeforeRefresh`, the artifact is flagged `claimsPredateTheShippedFile`, and
+`cycle.mjs` refuses to freeze a set whose manifest does not describe its own
+files. The frozen set is **not** replaced — two critics had read those bytes.
+
+**On the thing this whole run exists to protect, the Auditor is unequivocal:**
+
+> There is NO position regression
+
+227 markers on 02 and 04 reproducing cycle 14 to a maximum of **0.365 px** under
+identical cameras; the twin pair position-identical across surfaces on 51
+markers of the 150-node map; artifact 08's six placed-graph markers bit-identical
+across its panels; and every marker in videos 19 and 17 holding at exactly
+**0.00 px** through every span between explicit acts. Eight claims added, none
+removed, across 174.
+
+**The reading was ruled a third time — and this time it agrees with D-004.**
+The cycle-15 Art Director rules `organic-bioluminescent`, where cycles 13 and 14
+both ruled `restrained-holographic`. Three fresh-context critics, three frozen
+sets, none with access to DIRECTION.md, two answers. The decision was settled at
+cycle 1, §09 forbids reopening it, and nothing in the build moved on any of the
+three rulings. What this one adds is the arbiter test applied to the pixels:
+*"the state ladder's widest channel is exactly the self-luminous core a
+holographic reading would have to give up."*
+
+**A correction to me, from the same critic.** I recorded artifact 20's cycle-15
+change as making a placement land on camera, on the cycle-14 Art Director's word
+that *"the finder never shows a placement land"*. The cycle-15 critic extracted
+cycle 14's video at the same timestamps and found the same placement card at
+25.7 s and the same applied toast at 28.2 s. The beat was already there; the
+cycle-14 critic missed it, and I took its report as fact. What cycle 15 actually
+adds is the inspector opening afterwards to confirm the written coordinates, a
+hold long enough for a contact sheet to sample it, and two claims that read the
+landing out of the pixels — `placementLandedInThePixels` (destination 0.057 →
+0.769) and `holdingBadgeFellOnCamera`.
+
+### What the critics found, and what was done
+
+| # | finding | response |
+|---|---|---|
+| Auditor A/major · a03, a04, a05 | the manifest attests renders that exist nowhere, `check.ok` true | **Fixed at the cause** — digest re-read from disk, stale one preserved, claims flagged, and a freeze that refuses a self-contradicting set |
+| Auditor m · a11 | the twin reframed 1.084× between cycles; cycle 14 recorded no camera for it | Camera now pinned and recorded; the *cross-cycle* comparison it asks for is **open** |
+| Auditor m · evidence | `positions.json` is a seed write-back, so `identical: true` is true by construction | **Open** — it asks for a marker-level cross-cycle diff in the differ, and is right that a critic should not have to compute it |
+| Auditor m · a04 | 72 drawn + 77 listed = 149 of 150; one thought named through a third channel | **Open** |
+| Art Director A/major · a02, a04 | ~70 % of thoughts on screen carry no text at whole-map framing; the smaller tier recovered 7 | **Open** — the tier is real and measured, and it is not enough |
+| Art Director m · a02 | the deepest faded label measures 2.39:1; floor-size labels ~4:1 | **Open** |
+| Art Director m · a02 | chroma-encodes-age is flat inside two of eight districts (0.09–0.10 saturation range) | **Open** |
+| Art Director m · a20 | no undo affordance for an applied finder placement | **Open** — the one place the sacred-positions claim visibly bends |
+| Art Director m · a14 | a sixth ring signature the legend does not define | **Open** |
+| Art Director m · a20 | my change note credited a capability cycle 14 already had | **Recorded as a correction** above |
+| Audience A/major · a17 | no artifact shows a real hand through the detector | **Unmet** — there is no camera on this machine |
+| Audience m · a16 | labels clipped at the invisible device-panel edge | **Open** |
+| Audience m · a17 | four poses buy three operations, none in the core loop | **Open** |
+| Audience m · a19 | the recovery rail changes side three times inside one take | **Open** |
+
 ## Cold-start validation
 
 `bash src/bootstrap.sh`, run end to end with no interactive step:
@@ -2060,3 +2141,161 @@ Every capture failure that has cost an artifact **in a frozen, reviewed set**:
 none — artifact 14's cycle-5 failure was fixed and recaptured before the set was
 frozen, and the failure is recorded here rather than erased by the recapture.
 Every capture whose **definition** was narrowed to make it pass: **none.**
+
+---
+
+# FINAL REPORT — the fifteen-cycle cap
+
+The mission gives two ways out of the review loop: **90/100 with every category
+at or above its minimum and no regression across the final two cycles**, or the
+**fifteen-cycle cap** with a report listing every unmet gate. This run reaches
+the cap at **86.0**. It does not reach 90. What follows is what it did reach,
+what it did not, and what a reader runs to check either claim.
+
+## The score, and the gates
+
+| | required | reached | |
+|---|---|---|---|
+| **Total** | ≥ 90 | **86.0** | **NOT MET** |
+| 01 core workflow | ≥ 20 of 25 | 21 | met |
+| 02 landmarks live | ≥ 20 of 25 | 21 | met |
+| 03 one model, sacred positions *(hard gate)* | ≥ 17 of 20 | 18 | met |
+| 04 evidence and report integrity *(hard gate)* | ≥ 13 of 15 | 13 | met |
+| 05 quality compliance | ≥ 8 of 10 | 8.5 | met |
+| 06 finder round-trip | ≥ 4 of 5 | 4.5 | met |
+| Regression-free across the final two cycles | both | neither | **NOT MET** |
+
+Every category cleared its minimum in each of the last four cycles, and both
+hard gates held in every one of them. Two gates are unmet: the total is four
+points short, and no two consecutive cycles were declared regression-free.
+
+**Score history, all fifteen cycles:**
+
+85 → 86.1 → 88.0 → 86.75 → 85.5 → 88.0 → 82.0 → 84.5 → 85.5 → 82.0 → 84.5 →
+87.0 → 86.5 → 86.0 → 86.0
+
+The peak was 88.0 at cycles 3 and 6, before several instruments were replaced
+with ones that could fail. The two collapses to 82.0, at cycles 7 and 10, were
+both the evidence gate falling; both recoveries came from the same move —
+retiring a probe that could not fail for the reason it existed.
+
+## Every unmet gate, named
+
+**1. Four points short of 90.** The three critics of the final cycle agree on
+where they are: the detail standard at whole-map framing (Art Director, major),
+a landmark never shown against real input (Audience, major), and a record that
+briefly stopped describing its own files (Auditor, major).
+
+**2. No two consecutive regression-free cycles.** Cycles 12, 13, 14 and 15 were
+each declared not regression-free by their Auditor. In every case the regression
+was named, reproduced, and fixed at its cause — the chrome inventory (12), the
+two framings I broke fixing something else (13), the cycle mislabelling and a
+removed claim (14), the manifest digest drift (15) — but a cycle that fixes last
+cycle's regression while introducing its own never produces the clean pair the
+exit condition asks for.
+
+**3. About 70 % of thoughts carry no on-canvas text at whole-map framing.**
+Artifact 02 draws 115 node blobs and its own strip declares 80 labels hidden;
+artifact 04 declares 77. Cycle 15 added a size tier between "full label" and
+"nothing", floored at the 12 px the atlas is built for, and it recovered seven
+labels on 02 and five on 04 — real, measured, and not enough. The recovery
+column names every hidden thought and groups it by district, which is an honest
+mitigation and not the thing the brief asked for: a list is not the map.
+
+**4. Neither landmark has met real input.** There is no camera on this machine,
+so the hand lens runs a real MediaPipe HandLandmarker against a rendered clip
+through Chromium's fake capture device, and the AR lens runs a Chromium Android
+device profile with real `deviceorientation` and no camera pass-through. Both
+are stamped on the frames themselves. The detector is provably live — a critic
+measured confidence 0.98/0.96/0.95/0.92 and finger-extension changing across
+four consecutive frames of one held pose — but no artifact shows a human hand,
+and none shows either detector failing and recovering. The cycle-15 Audience put
+it exactly right: *"Do not change the honesty — it is the best thing about this
+lens. Do add one non-idealised input before the demo."*
+
+**5. The hand vocabulary buys three operations, not four**, and none of them
+captures, connects or places a thought — open palm and gathered hand are two
+directions of one zoom. The Android touch set spans six gestures across all five
+verbs, so the two landmarks are not equal in reach.
+
+**6. An applied finder placement has no undo affordance on the frame.** The
+footer reads "Nothing to undo" before and after the apply. For a build whose
+thesis is that positions are sacred, that is the one place the thesis visibly
+bends.
+
+**7. Smaller, all open and all measured:** the deepest depth-faded label reaches
+only 2.39:1 against the ground and floor-size labels about 4:1; the
+chroma-encodes-age channel is flat inside two of eight districts (0.09–0.10 of
+saturation range against 0.26 in the widest); artifact 04's naming accounting
+sums to 149 of 150; the recovery rail changes side three times inside one take;
+labels clip at the invisible device-panel edge in the touch video; and artifact
+14 shows a ring signature the legend does not define.
+
+**8. `positions.json` proves the seed unchanged, not the app faithful.** It is
+written back from the committed fixtures after each capture, so
+`DIFF.positions.identical` is true by construction. The real position evidence is
+the marker-level cross-cycle comparison — which holds, and which the cycle-15
+Auditor had to compute itself because the harness does not publish it.
+
+## What the run does establish
+
+Stated as measurements, each reproducible by the command beside it.
+
+- **Positions are sacred, and it is measured rather than asserted.** Fifteen
+  consecutive frozen cycles with identical positions; 161 seeded coordinates
+  matching the committed fixtures as model values; the final Auditor reproducing
+  227 markers to within **0.365 px** across cycles under identical cameras, and
+  every marker in two videos holding at **0.00 px** between explicit acts.
+  `node harness/test-model.mjs` · 11/11, including *120 edits moved 0 nodes*.
+- **One model across a real platform boundary.** The twin composite is the
+  built win32-x64 Electron binary under Wine beside a Chromium Android profile,
+  each naming its own runtime and rasteriser on the frame; their node fields
+  agree pixel-for-pixel at a 960 px offset while their label sets visibly differ.
+- **Both landmark modes work.** Four webcam-detected poses at 99.5 % pose
+  accuracy and 99.2 % detection on a held-out clip, each with a mouse
+  equivalent; six touch gestures plus live gyroscope control on the AR lens.
+- **The finder round-trip closes on both maps**, including a 150-node reply with
+  unquoted keys and single-quoted strings, a prose-only reply refused safely, a
+  seven-entry rejection log with a specific reason each, and a rejection that
+  changes **zero** canvas pixels.
+- **Twenty artifacts, every one with a recipe**, an external per-file hash
+  ledger, and a claim set where a declared claim coming out false **fails the
+  capture** — which is why this report contains the failures it does.
+- **Cold start from a base OS image**: one command, no interactive step,
+  161/161 positions verified. `bash src/bootstrap.sh`.
+- **Both targets build**: `Master Mind.exe`, 188.8 MB win32-x64 Electron;
+  `app-debug.apk`, 23.1 MB via Capacitor and Gradle.
+
+## What a reader runs
+
+```bash
+bash src/bootstrap.sh                    # cold start, both targets, 161 positions
+node harness/test-model.mjs              # 11 model invariants
+node harness/validate-poses.mjs          # 99.2 % detection, 99.5 % pose accuracy
+node harness/run-capture.mjs             # recapture all 20 artifacts
+cd evidence/cycles/cycle-15 && sha256sum -c ../cycle-15.sha256
+```
+
+`docs/TESTING.md` is the short path for someone who wants to use the tool rather
+than audit it. `docs/capture/<id>.md` is the recipe for each artifact.
+`evidence/critics/` holds all 27 critic verdicts, verbatim, each written down
+before it was answered.
+
+## The one pattern worth carrying out of this run
+
+Six times — F-030, F-034, F-035, F-040, the chrome audit sampled before the
+shot, the vantage search scored at a distance the shot was not taken at — the
+fault was the same shape: **an instrument that could not fail for the reason it
+existed**. A marker probe that skipped its own failing cases. An audit that read
+a layout rendered after the picture. A claim about the model standing in for a
+claim about the picture. Cycle 14 and 15 answered it directly by reading five
+captions back out of the shipped pixels, and cycle 15's own regression was one
+more instance: a manifest field that computed the right comparison and wrote
+`undefined` when it failed.
+
+The build is honest about what it is. Both environment substitutions are printed
+on the artifacts, not confessed in prose; the failures are in this report with
+their measurements; and where two critics disagreed about the same frames, both
+readings are recorded rather than the convenient one. It is four points short of
+the bar it was aiming at, and it says so in the same voice it says everything
+else.
