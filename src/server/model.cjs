@@ -32,6 +32,7 @@ __export(model_exports, {
   placedNodes: () => placedNodes,
   recencyOf: () => recencyOf,
   resolveStates: () => resolveStates,
+  searchHits: () => searchHits,
   searchMatches: () => searchMatches
 });
 module.exports = __toCommonJS(model_exports);
@@ -190,18 +191,18 @@ function recencyOf(doc, n) {
   if (!isFinite(lo) || hi <= lo) return 1;
   return (n.createdAt - lo) / (hi - lo);
 }
-function resolveStates(doc, selected, searchHits) {
+function resolveStates(doc, selected, searchHits2) {
   const out = /* @__PURE__ */ new Map();
   const conn = selected ? neighbours(doc, selected) : /* @__PURE__ */ new Set();
   for (const n of Object.values(doc.nodes)) {
     out.set(
       n.id,
-      n.id === selected ? "selected" : searchHits.has(n.id) ? "searchHit" : !n.placed ? "unplaced" : conn.has(n.id) ? "connected" : "plain"
+      n.id === selected ? "selected" : searchHits2.has(n.id) ? "searchHit" : !n.placed ? "unplaced" : conn.has(n.id) ? "connected" : "plain"
     );
   }
   return out;
 }
-function searchMatches(doc, q) {
+function searchHits(doc, q) {
   const needle = q.trim().toLowerCase();
   if (!needle) return [];
   return nodeList(doc).map((n) => {
@@ -213,7 +214,10 @@ function searchMatches(doc, q) {
     else if (t.includes(needle)) score = 3;
     else if (l.includes(needle)) score = 4;
     return { n, score };
-  }).filter((r) => r.score >= 0).sort((a, b) => a.score - b.score || (a.n.id < b.n.id ? -1 : 1)).map((r) => r.n);
+  }).filter((r) => r.score >= 0).sort((a, b) => a.score - b.score || (a.n.id < b.n.id ? -1 : 1)).map((r) => ({ n: r.n, field: r.score === 2 || r.score === 4 ? "label" : "text" }));
+}
+function searchMatches(doc, q) {
+  return searchHits(doc, q).map((r) => r.n);
 }
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
@@ -229,5 +233,6 @@ function searchMatches(doc, q) {
   placedNodes,
   recencyOf,
   resolveStates,
+  searchHits,
   searchMatches
 });

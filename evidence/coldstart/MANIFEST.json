@@ -6,13 +6,14 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T21:03:04.024Z",
-  "lastRunAt": "2026-09-04T21:03:04.024Z",
+  "lastRunAt": "2026-09-09T06:40:03.346Z",
   "lastRunCaptured": [
     "02",
     "03",
     "06",
     "07"
   ],
+  "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
     {
       "id": "02",
@@ -20,15 +21,140 @@
       "title": "Canvas at scale",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.5,
+      "seconds": 2.4,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 360361,
-        "sha256": "04566cfa785582597690fdb3a916ac01f5ff3e63bdbcf2af7bb3f98034b9ed76"
+        "bytes": 416388,
+        "sha256": "0b2d4a6f3b7e5ec84e01a00b065c4f64eb35bb39ba654b687f6a7c123e0338fc"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "nodes",
+            "expected": "(predicate)",
+            "actual": 150,
+            "pass": true,
+            "rule": "(n) => n === 150",
+            "ruleSha": "0b7500e49816"
+          },
+          {
+            "claim": "labelArbiterAgreesWithDraw",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noTwoChromePanelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyChromeBadgeInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noNodeBuriedByChrome",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyThoughtOnScreenIsNamed",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyLabelInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noTwoDrawnLabelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyDrawnLabelHasAVisibleMarker",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyLabelStaysBesideItsNode",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyLabelUnambiguouslyBound",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "auditDescribesTheShippedFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyReducedLabelClearsTheContrastFloor",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyFilamentClearsTheGround",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          }
+        ]
       },
       "result": {
         "map": "map-fermentation",
@@ -37,12 +163,844 @@
         "holding": 8,
         "lens": "canvas",
         "surface": "windows",
-        "sync": "live"
+        "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 80,
+          "labelsShortened": 14,
+          "labelsSetSmaller": 8,
+          "smallestLabelPx": 12,
+          "unlabelledListed": 80,
+          "searchBreakdown": null,
+          "mapName": "Fermentation notebook"
+        },
+        "camera": {
+          "yaw": 0.42,
+          "pitch": 0.2,
+          "dist": 120.110861,
+          "target": [
+            4.227,
+            -4.996,
+            0.6945
+          ]
+        },
+        "cameraPinned": true,
+        "arbiterSeq": 6,
+        "labelsAudited": 70,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Carrot batons hold crunch",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
+        "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
+        "labelOverlappingPairs": 0,
+        "labelWorstPairOverlapPx": 0,
+        "labelWorstPairOn": null,
+        "labelTightestPairGapPx": 1.63,
+        "labelTightestPairOn": [
+          "Acetobacter needs air",
+          "A pellicle is not a mother"
+        ],
+        "noTwoDrawnLabelsOverlap": true,
+        "labelsTruncated": 43,
+        "labelsTruncatedOn": [
+          "Kombucha SCOBY overlap",
+          "60C for eight weeks",
+          "Soy sauce moromi",
+          "Fido jars burp themselves",
+          "3.5% for cucumbers",
+          "Salt tolerance curve",
+          "Stiff levain keeps longer",
+          "Katz: Wild Fermentation",
+          "Solera stacking",
+          "Filter through muslin",
+          "Crock with a water moat",
+          "Sauerkraut by weight",
+          "Koji on pearl barley",
+          "Bulk to 50% rise",
+          "Garum at 20% salt",
+          "Rice koji: polish to 90%",
+          "Strips lie above pH 4",
+          "Barley miso, 18 months",
+          "Log every batch",
+          "Miso at 12% salt",
+          "pH 4.6 is the line",
+          "Anchovy vs mackerel",
+          "Koji Alchemy",
+          "Leuconostoc mesenteroides",
+          "2% brine baseline",
+          "Grape leaf tannin trick",
+          "Carrot batons hold crunch",
+          "Mold vs yeast ID",
+          "Creme fraiche shortcut",
+          "Salt by weight only",
+          "Noma Guide to Fermentation",
+          "Balsamic mosto cotto",
+          "Mesophilic vs thermophilic",
+          "Kimchi: gochugaru",
+          "Scoring at 30 degrees",
+          "Lactose to lactic acid",
+          "Acetobacter aceti",
+          "Coil folds, not slaps",
+          "Dechlorinate the water",
+          "Whey as a brine starter",
+          "Wild yeast capture",
+          "The Art of Fermentation",
+          "Steam the first 20 min"
+        ],
+        "labelWorstDisplacementPx": 36.3,
+        "labelsMoreThan40pxFromTheirNode": 0,
+        "markersBuriedByOtherLabels": 0,
+        "worstBuriedFraction": 0,
+        "noDrawnLabelBuriesAnotherMarker": true,
+        "labelWorstReservedDisplacementPx": 36.3,
+        "labelWorstDisplacementEm": 2.59,
+        "everyLabelStaysBesideItsNode": true,
+        "labelWorstAmbiguityRatio": 3.24,
+        "labelsAmbiguousWithoutALeader": 0,
+        "labelsAmbiguousWithoutALeaderIds": [],
+        "everyLabelUnambiguouslyBound": true,
+        "chromeChecked": 5,
+        "chromeOverlappingPairs": 0,
+        "chromeWorstOverlapPx": 0,
+        "chromeOverlaps": [],
+        "chromeOffFrame": [],
+        "nodesUnderChrome": 0,
+        "nodesUnderChromeIds": [],
+        "nodesUnderChromeBy": [],
+        "heldNodesUnderChrome": 0,
+        "noHeldNodeBuriedByChrome": true,
+        "noTwoChromePanelsOverlap": true,
+        "everyChromeBadgeInsideTheFrame": true,
+        "noNodeBuriedByChrome": true,
+        "namesDrawn": 70,
+        "namesListed": 80,
+        "thoughtsLeftUnnamed": 0,
+        "everyThoughtOnScreenIsNamed": true,
+        "markerContrast": {
+          "checked": 70,
+          "sampled": 70,
+          "offFrame": 0,
+          "threshold": 2.5,
+          "invisible": 0,
+          "worstContrast": 3.07,
+          "invisibleIds": [],
+          "weakest": [],
+          "rows": [
+            {
+              "id": "n0433ea1e7e",
+              "x": 1133,
+              "y": 592,
+              "r": 14.4,
+              "peak": 0.2934,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "n12900c3690",
+              "x": 1378,
+              "y": 322,
+              "r": 14.4,
+              "peak": 0.2877,
+              "ground": 0.0574,
+              "contrast": 3.14
+            },
+            {
+              "id": "n191b9e1952",
+              "x": 1327,
+              "y": 286,
+              "r": 14.4,
+              "peak": 0.356,
+              "ground": 0.0574,
+              "contrast": 3.78
+            },
+            {
+              "id": "n1aba7a1979",
+              "x": 1106,
+              "y": 453,
+              "r": 14.4,
+              "peak": 0.3167,
+              "ground": 0.0574,
+              "contrast": 3.42
+            },
+            {
+              "id": "n1ada6cb3e2",
+              "x": 780,
+              "y": 895,
+              "r": 14.4,
+              "peak": 0.578,
+              "ground": 0.0574,
+              "contrast": 5.85
+            },
+            {
+              "id": "n1c35c6c62f",
+              "x": 883,
+              "y": 698,
+              "r": 14.4,
+              "peak": 0.2834,
+              "ground": 0.0574,
+              "contrast": 3.11
+            },
+            {
+              "id": "n1d49087545",
+              "x": 685,
+              "y": 582,
+              "r": 14.4,
+              "peak": 0.286,
+              "ground": 0.0574,
+              "contrast": 3.13
+            },
+            {
+              "id": "n20cb5b490f",
+              "x": 723,
+              "y": 436,
+              "r": 14.4,
+              "peak": 0.2813,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "n2570828592",
+              "x": 676,
+              "y": 262,
+              "r": 14.4,
+              "peak": 0.2888,
+              "ground": 0.0574,
+              "contrast": 3.16
+            },
+            {
+              "id": "n28348ea4f1",
+              "x": 1103,
+              "y": 189,
+              "r": 14.4,
+              "peak": 0.286,
+              "ground": 0.0574,
+              "contrast": 3.13
+            },
+            {
+              "id": "n28b9263cd2",
+              "x": 1155,
+              "y": 622,
+              "r": 14.4,
+              "peak": 0.2947,
+              "ground": 0.0574,
+              "contrast": 3.21
+            },
+            {
+              "id": "n2a2ac6dd57",
+              "x": 747,
+              "y": 897,
+              "r": 14.4,
+              "peak": 0.5819,
+              "ground": 0.0574,
+              "contrast": 5.88
+            },
+            {
+              "id": "n2c7b63a710",
+              "x": 938,
+              "y": 689,
+              "r": 14.4,
+              "peak": 0.2818,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
+              "id": "n2eac7c2b16",
+              "x": 1324,
+              "y": 352,
+              "r": 14.4,
+              "peak": 0.2885,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "n344b78a9bd",
+              "x": 842,
+              "y": 569,
+              "r": 14.4,
+              "peak": 0.2948,
+              "ground": 0.0574,
+              "contrast": 3.21
+            },
+            {
+              "id": "n354196ac48",
+              "x": 890,
+              "y": 677,
+              "r": 14.4,
+              "peak": 0.2838,
+              "ground": 0.0574,
+              "contrast": 3.11
+            },
+            {
+              "id": "n36627f75c9",
+              "x": 641,
+              "y": 602,
+              "r": 14.4,
+              "peak": 0.2888,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "n380afc9e85",
+              "x": 800,
+              "y": 920,
+              "r": 14.4,
+              "peak": 0.6138,
+              "ground": 0.0574,
+              "contrast": 6.18
+            },
+            {
+              "id": "n383f10ab25",
+              "x": 1067,
+              "y": 426,
+              "r": 14.4,
+              "peak": 0.29,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "n3a2b198a84",
+              "x": 690,
+              "y": 345,
+              "r": 14.4,
+              "peak": 0.2888,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "n3e0d08c741",
+              "x": 1101,
+              "y": 375,
+              "r": 14.4,
+              "peak": 0.2883,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "n3eba301186",
+              "x": 1344,
+              "y": 353,
+              "r": 14.4,
+              "peak": 0.2863,
+              "ground": 0.0574,
+              "contrast": 3.13
+            },
+            {
+              "id": "n4163afee7d",
+              "x": 880,
+              "y": 720,
+              "r": 14.4,
+              "peak": 0.2817,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
+              "id": "n48e5dd13da",
+              "x": 1035,
+              "y": 165,
+              "r": 14.4,
+              "peak": 0.2857,
+              "ground": 0.0574,
+              "contrast": 3.13
+            },
+            {
+              "id": "n49831ccd16",
+              "x": 660,
+              "y": 226,
+              "r": 14.4,
+              "peak": 0.2863,
+              "ground": 0.0574,
+              "contrast": 3.13
+            },
+            {
+              "id": "n4fd66d29cd",
+              "x": 809,
+              "y": 893,
+              "r": 14.4,
+              "peak": 0.578,
+              "ground": 0.0574,
+              "contrast": 5.85
+            },
+            {
+              "id": "n53badd7a56",
+              "x": 1040,
+              "y": 400,
+              "r": 14.4,
+              "peak": 0.288,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "n5630d9df9f",
+              "x": 1214,
+              "y": 645,
+              "r": 14.4,
+              "peak": 0.2966,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "n5b46c6f107",
+              "x": 801,
+              "y": 542,
+              "r": 14.4,
+              "peak": 0.2949,
+              "ground": 0.0574,
+              "contrast": 3.21
+            },
+            {
+              "id": "n5daeac7b96",
+              "x": 1065,
+              "y": 417,
+              "r": 14.4,
+              "peak": 0.29,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "n5f31be08e0",
+              "x": 790,
+              "y": 468,
+              "r": 14.4,
+              "peak": 0.2957,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "n618ee08ab3",
+              "x": 1036,
+              "y": 416,
+              "r": 14.4,
+              "peak": 0.2891,
+              "ground": 0.0574,
+              "contrast": 3.16
+            },
+            {
+              "id": "n69344565b8",
+              "x": 757,
+              "y": 490,
+              "r": 14.4,
+              "peak": 0.295,
+              "ground": 0.0574,
+              "contrast": 3.21
+            },
+            {
+              "id": "n703e3384c3",
+              "x": 1330,
+              "y": 280,
+              "r": 14.4,
+              "peak": 0.2885,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "n704f284dfe",
+              "x": 946,
+              "y": 654,
+              "r": 14.4,
+              "peak": 0.2822,
+              "ground": 0.0574,
+              "contrast": 3.09
+            },
+            {
+              "id": "n7091638a5d",
+              "x": 1314,
+              "y": 358,
+              "r": 14.4,
+              "peak": 0.2885,
+              "ground": 0.0574,
+              "contrast": 3.15
+            },
+            {
+              "id": "n70b3c5270b",
+              "x": 975,
+              "y": 159,
+              "r": 14.4,
+              "peak": 0.2846,
+              "ground": 0.0574,
+              "contrast": 3.12
+            },
+            {
+              "id": "n714166721d",
+              "x": 1104,
+              "y": 435,
+              "r": 14.4,
+              "peak": 0.3028,
+              "ground": 0.0574,
+              "contrast": 3.29
+            },
+            {
+              "id": "n7402597e54",
+              "x": 731,
+              "y": 286,
+              "r": 14.4,
+              "peak": 0.2854,
+              "ground": 0.0574,
+              "contrast": 3.12
+            },
+            {
+              "id": "n75d8f580e5",
+              "x": 667,
+              "y": 405,
+              "r": 14.4,
+              "peak": 0.2824,
+              "ground": 0.0574,
+              "contrast": 3.1
+            },
+            {
+              "id": "n798586ed6b",
+              "x": 832,
+              "y": 909,
+              "r": 14.4,
+              "peak": 0.5654,
+              "ground": 0.0574,
+              "contrast": 5.73
+            },
+            {
+              "id": "n7deb3cc285",
+              "x": 689,
+              "y": 641,
+              "r": 14.4,
+              "peak": 0.289,
+              "ground": 0.0574,
+              "contrast": 3.16
+            },
+            {
+              "id": "n7e876747ad",
+              "x": 1171,
+              "y": 670,
+              "r": 14.4,
+              "peak": 0.2922,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "n83224a5de3",
+              "x": 1154,
+              "y": 408,
+              "r": 14.4,
+              "peak": 0.2852,
+              "ground": 0.0574,
+              "contrast": 3.12
+            },
+            {
+              "id": "n8ecfabd19e",
+              "x": 698,
+              "y": 605,
+              "r": 14.4,
+              "peak": 0.2904,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "n9a939af75c",
+              "x": 730,
+              "y": 579,
+              "r": 14.4,
+              "peak": 0.2876,
+              "ground": 0.0574,
+              "contrast": 3.14
+            },
+            {
+              "id": "n9aee67caa2",
+              "x": 1217,
+              "y": 583,
+              "r": 14.4,
+              "peak": 0.2935,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "n9b0b5d8a6d",
+              "x": 831,
+              "y": 449,
+              "r": 14.4,
+              "peak": 0.3988,
+              "ground": 0.0574,
+              "contrast": 4.18
+            },
+            {
+              "id": "n9e05705d26",
+              "x": 762,
+              "y": 379,
+              "r": 14.4,
+              "peak": 0.2799,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "na2358b2b07",
+              "x": 825,
+              "y": 933,
+              "r": 14.4,
+              "peak": 0.5772,
+              "ground": 0.0574,
+              "contrast": 5.84
+            },
+            {
+              "id": "na6b4e90f5b",
+              "x": 1100,
+              "y": 245,
+              "r": 14.4,
+              "peak": 0.2963,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "na9606fee1c",
+              "x": 1236,
+              "y": 614,
+              "r": 14.4,
+              "peak": 0.2961,
+              "ground": 0.0574,
+              "contrast": 3.22
+            },
+            {
+              "id": "nba2805e3e1",
+              "x": 869,
+              "y": 537,
+              "r": 14.4,
+              "peak": 0.2967,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "nc03712e059",
+              "x": 1169,
+              "y": 582,
+              "r": 14.4,
+              "peak": 0.2922,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "nd682eed70b",
+              "x": 965,
+              "y": 208,
+              "r": 14.4,
+              "peak": 0.2812,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "nd960763431",
+              "x": 1153,
+              "y": 648,
+              "r": 14.4,
+              "peak": 0.2938,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "nd9ddb0ca5c",
+              "x": 1135,
+              "y": 265,
+              "r": 14.4,
+              "peak": 0.31,
+              "ground": 0.0574,
+              "contrast": 3.35
+            },
+            {
+              "id": "ndae1a65514",
+              "x": 770,
+              "y": 656,
+              "r": 14.4,
+              "peak": 0.2874,
+              "ground": 0.0574,
+              "contrast": 3.14
+            },
+            {
+              "id": "ndd346f34ee",
+              "x": 597,
+              "y": 285,
+              "r": 14.4,
+              "peak": 0.2899,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "nddfd2443e1",
+              "x": 1123,
+              "y": 311,
+              "r": 14.4,
+              "peak": 0.2974,
+              "ground": 0.0574,
+              "contrast": 3.23
+            },
+            {
+              "id": "nde70483d7f",
+              "x": 721,
+              "y": 470,
+              "r": 14.4,
+              "peak": 0.2802,
+              "ground": 0.0574,
+              "contrast": 3.07
+            },
+            {
+              "id": "ndebe2ada83",
+              "x": 637,
+              "y": 301,
+              "r": 14.4,
+              "peak": 0.2865,
+              "ground": 0.0574,
+              "contrast": 3.13
+            },
+            {
+              "id": "ne85bc87b03",
+              "x": 916,
+              "y": 491,
+              "r": 14.4,
+              "peak": 0.2938,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "nee0ed92067",
+              "x": 1143,
+              "y": 262,
+              "r": 14.4,
+              "peak": 0.31,
+              "ground": 0.0574,
+              "contrast": 3.35
+            },
+            {
+              "id": "nef369efdfc",
+              "x": 684,
+              "y": 427,
+              "r": 14.4,
+              "peak": 0.281,
+              "ground": 0.0574,
+              "contrast": 3.08
+            },
+            {
+              "id": "nf155ca376d",
+              "x": 699,
+              "y": 667,
+              "r": 14.4,
+              "peak": 0.2871,
+              "ground": 0.0574,
+              "contrast": 3.14
+            },
+            {
+              "id": "nf2bb761959",
+              "x": 739,
+              "y": 926,
+              "r": 14.4,
+              "peak": 0.5665,
+              "ground": 0.0574,
+              "contrast": 5.74
+            },
+            {
+              "id": "nf3603a277e",
+              "x": 1005,
+              "y": 271,
+              "r": 14.4,
+              "peak": 0.2837,
+              "ground": 0.0574,
+              "contrast": 3.11
+            },
+            {
+              "id": "nf53f4946cf",
+              "x": 595,
+              "y": 296,
+              "r": 14.4,
+              "peak": 0.2899,
+              "ground": 0.0574,
+              "contrast": 3.17
+            },
+            {
+              "id": "nfb7073c20e",
+              "x": 747,
+              "y": 266,
+              "r": 14.4,
+              "peak": 0.2896,
+              "ground": 0.0574,
+              "contrast": 3.16
+            }
+          ]
+        },
+        "filamentContrast": {
+          "checked": 38,
+          "worst": 1.41,
+          "below": 0,
+          "weakest": []
+        },
+        "everyFilamentClearsTheGround": true,
+        "labelsSetSmaller": 8,
+        "reducedLabelInk": {
+          "checked": 8,
+          "worstContrast": 4.18,
+          "belowFloor": 0,
+          "weakest": [
+            {
+              "id": "n704f284dfe",
+              "text": "Muslin vs cheesecloth",
+              "peak": 0.3994,
+              "ground": 0.0574,
+              "contrast": 4.18
+            },
+            {
+              "id": "n9e05705d26",
+              "text": "Mold vs yeast ID",
+              "peak": 0.4106,
+              "ground": 0.0574,
+              "contrast": 4.29
+            },
+            {
+              "id": "n7402597e54",
+              "text": "Autolyse 40 min",
+              "peak": 0.5523,
+              "ground": 0.0574,
+              "contrast": 5.61
+            },
+            {
+              "id": "n53badd7a56",
+              "text": "Rice koji: polish to 90%",
+              "peak": 0.596,
+              "ground": 0.0574,
+              "contrast": 6.02
+            }
+          ]
+        },
+        "everyReducedLabelClearsTheContrastFloor": true,
+        "labelsWithoutVisibleMarker": 0,
+        "everyDrawnLabelHasAVisibleMarker": true,
+        "arbiterSeqAtShot": 6,
+        "arbiterSeqAtAudit": 6,
+        "auditDescribesTheShippedFrame": true
       },
       "pageErrors": [],
+      "recipe": {
+        "demonstrates": "canvas lens at whole-map framing on Windows, 150 nodes with seed provenance",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "73b7deb0e7bd2172",
+        "appSha": "22b293298fb8cc2f",
+        "claimShas": {
+          "cameraPinned": "b5bea41b6c62",
+          "nodes": "0b7500e49816",
+          "labelArbiterAgreesWithDraw": "b5bea41b6c62",
+          "noTwoChromePanelsOverlap": "b5bea41b6c62",
+          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
+          "noNodeBuriedByChrome": "b5bea41b6c62",
+          "everyThoughtOnScreenIsNamed": "b5bea41b6c62",
+          "everyLabelInsideTheFrame": "b5bea41b6c62",
+          "noTwoDrawnLabelsOverlap": "b5bea41b6c62",
+          "everyDrawnLabelHasAVisibleMarker": "b5bea41b6c62",
+          "everyLabelStaysBesideItsNode": "b5bea41b6c62",
+          "everyLabelUnambiguouslyBound": "b5bea41b6c62",
+          "auditDescribesTheShippedFrame": "b5bea41b6c62",
+          "everyReducedLabelClearsTheContrastFloor": "b5bea41b6c62",
+          "everyFilamentClearsTheGround": "b5bea41b6c62"
+        }
+      },
+      "capturedInCycle": "cold",
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-04T21:03:05.343Z"
+      "fileMtime": "2026-09-09T06:40:04.983Z"
     },
     {
       "id": "03",
@@ -50,15 +1008,60 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 1.8,
+      "seconds": 3.3,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 511469,
-        "sha256": "ac1262f1c874f1e5f349f90f78c162ca740e96989b3050e03e810b40925d4f9f"
+        "bytes": 833753,
+        "sha256": "a47777244da1c3ba758fe9b4f6232675864e430c5247e1c32a399efa9f362920"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "gyroDroveTheView",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "positionsUnchangedBetweenPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "headingChanged",
+            "expected": "(predicate)",
+            "actual": 62,
+            "pass": true,
+            "rule": "(d) => d > 25",
+            "ruleSha": "0f03192d78d0"
+          },
+          {
+            "claim": "anchorNamedInBothPanels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "travelScaleDescribesTheDrawnPanel",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          }
+        ]
       },
       "result": {
         "map": "map-fermentation",
@@ -68,35 +1071,107 @@
         "lens": "ar",
         "surface": "android",
         "sync": "live",
-        "gyroNeutral": {
-          "alpha": 0,
-          "beta": 90,
-          "gamma": 0
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 54,
+          "labelsShortened": 12,
+          "labelsSetSmaller": 9,
+          "smallestLabelPx": 12,
+          "unlabelledListed": 0,
+          "searchBreakdown": null,
+          "mapName": "Fermentation notebook"
         },
-        "gyroSent": {
-          "alpha": 34,
-          "beta": 62,
-          "gamma": 6
-        },
-        "gyroReceivedByApp": {
-          "alpha": 34,
-          "beta": 62,
-          "gamma": 6
-        },
+        "anchorTravelAppPx": 271,
+        "anchorTravelXY": [
+          125,
+          -240
+        ],
+        "panelScale": 0.9285,
+        "anchorTravelOnImagePx": 252,
+        "travelScaleStripPx": 103,
+        "travelScaleSettled": true,
+        "travelScaleDescribesTheDrawnPanel": true,
+        "panels": [
+          {
+            "sent": {
+              "alpha": 34,
+              "beta": 62,
+              "gamma": 6
+            },
+            "received": {
+              "alpha": 34,
+              "beta": 62,
+              "gamma": 6
+            },
+            "pose": {
+              "yaw": 0.007,
+              "pitch": -0.269
+            },
+            "anchor": {
+              "x": 253,
+              "y": 460
+            }
+          },
+          {
+            "sent": {
+              "alpha": 96,
+              "beta": 58,
+              "gamma": -4
+            },
+            "received": {
+              "alpha": 96,
+              "beta": 58,
+              "gamma": -4
+            },
+            "pose": {
+              "yaw": -1.076,
+              "pitch": -0.339
+            },
+            "anchor": {
+              "x": 378,
+              "y": 220
+            }
+          }
+        ],
         "poseBefore": {
           "yaw": 0.6,
           "pitch": 0.22
         },
-        "pose": {
-          "yaw": 0.007,
-          "pitch": -0.269
-        },
-        "gyroDroveTheView": true
+        "gyroDroveTheView": true,
+        "headingChanged": 62,
+        "anchorMovedOnScreen": 271,
+        "anchorMovedOnScreenXY": [
+          125,
+          -240
+        ],
+        "positionsUnchangedBetweenPanels": true,
+        "pinnedNode": "n36627f75c9",
+        "pinNameA": "Sauerkraut by weight",
+        "pinNameB": "Sauerkraut by weight",
+        "anchorNamedInBothPanels": true
       },
       "pageErrors": [],
+      "recipe": {
+        "demonstrates": "AR lens hero on Android at cold first launch, one map at two device orientations — framed on a placed district, so the holding ring is at the frame edge rather than whole",
+        "surface": "android",
+        "lens": null,
+        "runtimes": [
+          "android: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "9fd1fb456beeaa7c",
+        "appSha": "22b293298fb8cc2f",
+        "claimShas": {
+          "gyroDroveTheView": "b5bea41b6c62",
+          "positionsUnchangedBetweenPanels": "b5bea41b6c62",
+          "headingChanged": "0f03192d78d0",
+          "anchorNamedInBothPanels": "b5bea41b6c62",
+          "travelScaleDescribesTheDrawnPanel": "b5bea41b6c62"
+        }
+      },
+      "capturedInCycle": "cold",
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-04T21:03:07.127Z"
+      "fileMtime": "2026-09-09T06:40:08.899Z"
     },
     {
       "id": "06",
@@ -104,17 +1179,411 @@
       "title": "Holding cluster",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.4,
+      "seconds": 9.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 153854,
-        "sha256": "48a5439520c7b69e41d919006dd6440e6899afd06c782bb65ebfb93ec25ebf8b"
+        "bytes": 193138,
+        "sha256": "b13ea1e743115a87f535e3a0f1b8ccfd9e5cfc074502fd4d044cb827006cc9d9"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "holdingRingFillsFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyHeldNodeInFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "placedMapVisibleBeyondTheBoundary",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "placedMapDrawnInThePixels",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noTwoChromePanelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyChromeBadgeInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noHeldNodeBuriedByChrome",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "countMatchesMarkers",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyHeldLabelAttributable",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noTwoDrawnLabelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyDrawnLabelHasAVisibleMarker",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyHeldMarkerCountable",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyLabelStaysBesideItsNode",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyLabelUnambiguouslyBound",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "auditDescribesTheShippedFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          }
+        ]
       },
       "result": {
+        "arbiterSeq": 140,
+        "labelsAudited": 15,
+        "labelWorstOverhangPx": 0,
+        "labelWorstOverhangOn": "Recalibrate the pH meter",
+        "labelWorstOffFramePx": 0,
+        "labelWorstOffFrameOn": null,
+        "labelArbiterAgreesWithDraw": true,
+        "everyLabelInsideTheFrame": true,
+        "labelOverlappingPairs": 0,
+        "labelWorstPairOverlapPx": 0,
+        "labelWorstPairOn": null,
+        "labelTightestPairGapPx": 5.87,
+        "labelTightestPairOn": [
+          "Vacuum bags for lacto",
+          "Silicone airlock lids"
+        ],
+        "noTwoDrawnLabelsOverlap": true,
+        "labelsTruncated": 3,
+        "labelsTruncatedOn": [
+          "Vinegar from failed wine",
+          "Label tape and a marker",
+          "Immersion circulator at 60C"
+        ],
+        "labelWorstDisplacementPx": 59.1,
+        "labelsMoreThan40pxFromTheirNode": 10,
+        "markersBuriedByOtherLabels": 0,
+        "worstBuriedFraction": 0,
+        "noDrawnLabelBuriesAnotherMarker": true,
+        "labelWorstReservedDisplacementPx": 59.1,
+        "labelWorstDisplacementEm": 2.59,
+        "everyLabelStaysBesideItsNode": true,
+        "labelWorstAmbiguityRatio": 3.6,
+        "labelsAmbiguousWithoutALeader": 0,
+        "labelsAmbiguousWithoutALeaderIds": [],
+        "everyLabelUnambiguouslyBound": true,
+        "chromeChecked": 5,
+        "chromeOverlappingPairs": 0,
+        "chromeWorstOverlapPx": 0,
+        "chromeOverlaps": [],
+        "chromeOffFrame": [],
+        "nodesUnderChrome": 11,
+        "nodesUnderChromeIds": [
+          "n1c35c6c62f",
+          "n354196ac48",
+          "n3905d583dc",
+          "n44116b5fc8",
+          "n5630d9df9f",
+          "n68bbeec55e",
+          "n9aee67caa2",
+          "nc03712e059",
+          "ncaf843cf89",
+          "nd847548de9",
+          "nf9a857969d"
+        ],
+        "nodesUnderChromeBy": [
+          "#top"
+        ],
+        "heldNodesUnderChrome": 0,
+        "noHeldNodeBuriedByChrome": true,
+        "noTwoChromePanelsOverlap": true,
+        "everyChromeBadgeInsideTheFrame": true,
+        "noNodeBuriedByChrome": false,
+        "namesDrawn": 15,
+        "namesListed": 14,
+        "thoughtsLeftUnnamed": 0,
+        "everyThoughtOnScreenIsNamed": true,
+        "markerContrast": {
+          "checked": 15,
+          "sampled": 15,
+          "offFrame": 0,
+          "threshold": 2.5,
+          "invisible": 0,
+          "worstContrast": 3.11,
+          "invisibleIds": [],
+          "weakest": [],
+          "rows": [
+            {
+              "id": "n1ada6cb3e2",
+              "x": 676,
+              "y": 593,
+              "r": 24.7,
+              "peak": 0.7124,
+              "ground": 0.0574,
+              "contrast": 7.1
+            },
+            {
+              "id": "n1ba5874893",
+              "x": 973,
+              "y": 81,
+              "r": 14.4,
+              "peak": 0.2849,
+              "ground": 0.0574,
+              "contrast": 3.12
+            },
+            {
+              "id": "n2a2ac6dd57",
+              "x": 790,
+              "y": 496,
+              "r": 29.1,
+              "peak": 0.7511,
+              "ground": 0.0574,
+              "contrast": 7.46
+            },
+            {
+              "id": "n380afc9e85",
+              "x": 1176,
+              "y": 472,
+              "r": 21.7,
+              "peak": 0.6923,
+              "ground": 0.0574,
+              "contrast": 6.91
+            },
+            {
+              "id": "n4163afee7d",
+              "x": 170,
+              "y": 164,
+              "r": 18.2,
+              "peak": 0.2938,
+              "ground": 0.0574,
+              "contrast": 3.2
+            },
+            {
+              "id": "n4fd66d29cd",
+              "x": 810,
+              "y": 538,
+              "r": 21.2,
+              "peak": 0.6844,
+              "ground": 0.0574,
+              "contrast": 6.84
+            },
+            {
+              "id": "n690b2d0ef8",
+              "x": 311,
+              "y": 118,
+              "r": 18.1,
+              "peak": 0.2917,
+              "ground": 0.0574,
+              "contrast": 3.18
+            },
+            {
+              "id": "n7e876747ad",
+              "x": 948,
+              "y": 151,
+              "r": 14.4,
+              "peak": 0.2855,
+              "ground": 0.0574,
+              "contrast": 3.12
+            },
+            {
+              "id": "n8c38c1d35f",
+              "x": 330,
+              "y": 110,
+              "r": 17.2,
+              "peak": 0.2922,
+              "ground": 0.0574,
+              "contrast": 3.19
+            },
+            {
+              "id": "na2358b2b07",
+              "x": 1051,
+              "y": 614,
+              "r": 19.8,
+              "peak": 0.6805,
+              "ground": 0.0574,
+              "contrast": 6.8
+            },
+            {
+              "id": "naaabbd92cb",
+              "x": 237,
+              "y": 149,
+              "r": 15.6,
+              "peak": 0.2913,
+              "ground": 0.0574,
+              "contrast": 3.18
+            },
+            {
+              "id": "nd960763431",
+              "x": 939,
+              "y": 97,
+              "r": 14.4,
+              "peak": 0.2838,
+              "ground": 0.0574,
+              "contrast": 3.11
+            },
+            {
+              "id": "nf219dae259",
+              "x": 1142,
+              "y": 526,
+              "r": 25.2,
+              "peak": 0.7037,
+              "ground": 0.0574,
+              "contrast": 7.02
+            },
+            {
+              "id": "nf2bb761959",
+              "x": 1051,
+              "y": 558,
+              "r": 30.1,
+              "peak": 0.7746,
+              "ground": 0.0574,
+              "contrast": 7.68
+            },
+            {
+              "id": "nf3c5ca54f5",
+              "x": 111,
+              "y": 228,
+              "r": 15.8,
+              "peak": 0.2929,
+              "ground": 0.0574,
+              "contrast": 3.19
+            }
+          ]
+        },
+        "filamentContrast": {
+          "checked": 39,
+          "worst": 1,
+          "below": 14,
+          "weakest": [
+            {
+              "id": "link@0",
+              "x": 998,
+              "y": 30,
+              "r": 3.5,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "link@1",
+              "x": 1012,
+              "y": 31,
+              "r": 3.5,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "link@2",
+              "x": 1023,
+              "y": 32,
+              "r": 3.5,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            }
+          ]
+        },
+        "everyFilamentClearsTheGround": false,
+        "labelsSetSmaller": 1,
+        "reducedLabelInk": {
+          "checked": 1,
+          "worstContrast": 6.88,
+          "belowFloor": 0,
+          "weakest": [
+            {
+              "id": "naaabbd92cb",
+              "text": "Silicone airlock lids",
+              "peak": 0.689,
+              "ground": 0.0574,
+              "contrast": 6.88
+            }
+          ]
+        },
+        "everyReducedLabelClearsTheContrastFloor": true,
+        "labelsWithoutVisibleMarker": 0,
+        "everyDrawnLabelHasAVisibleMarker": true,
+        "arbiterSeqAtShot": 140,
+        "arbiterSeqAtAudit": 140,
+        "auditDescribesTheShippedFrame": true,
         "map": "map-fermentation",
         "nodes": 150,
         "links": 208,
@@ -122,17 +1591,179 @@
         "lens": "canvas",
         "surface": "windows",
         "sync": "live",
+        "onFrame": {
+          "holdingBadge": 8,
+          "labelsHidden": 14,
+          "labelsShortened": 1,
+          "labelsSetSmaller": 1,
+          "smallestLabelPx": 16.6,
+          "unlabelledListed": 14,
+          "searchBreakdown": null,
+          "mapName": "Fermentation notebook"
+        },
         "holdingOrigin": [
           -5,
           -40,
           22
         ],
-        "holdingRadius": 6.6
+        "holdingRadius": 6.6,
+        "heldMarkerYaw": 5.236,
+        "heldMarkerWorstGapPx": 15,
+        "heldMarkerClosestPair": [
+          "n2a2ac6dd57",
+          "n4fd66d29cd"
+        ],
+        "everyHeldMarkerCountable": true,
+        "placedNodesInView": 21,
+        "districtsInView": 2,
+        "filamentsInView": 20,
+        "placedMapVisibleBeyondTheBoundary": true,
+        "placedMarkerContrast": {
+          "checked": 21,
+          "invisible": 4,
+          "worstContrast": 1,
+          "weakest": [
+            {
+              "id": "n9aee67caa2",
+              "x": 966,
+              "y": 28,
+              "r": 14.4,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "ncaf843cf89",
+              "x": 892,
+              "y": 2,
+              "r": 14.4,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "nf9a857969d",
+              "x": 1081,
+              "y": 36,
+              "r": 14.4,
+              "peak": 0.0815,
+              "ground": 0.0815,
+              "contrast": 1
+            },
+            {
+              "id": "n44116b5fc8",
+              "x": 120,
+              "y": 45,
+              "r": 16.6,
+              "peak": 0.1909,
+              "ground": 0.0815,
+              "contrast": 1.83
+            }
+          ]
+        },
+        "placedMarkersLit": 17,
+        "canvasChromaticPixels": 3292,
+        "canvasStrongestChroma": 0.875,
+        "placedMapDrawnInThePixels": true,
+        "cameraDistance": 21.248,
+        "ringHeightFraction": 0.66,
+        "heldNodes": {
+          "held": 8,
+          "onScreen": 8,
+          "inFrame": 8,
+          "badge": "8"
+        },
+        "heldLabelAttribution": [
+          {
+            "text": "Sour cherry kvass",
+            "own": 59.1,
+            "nearestIsOwn": false,
+            "hasLeader": true,
+            "margin": 2.5
+          },
+          {
+            "text": "Recalibrate the pH meter",
+            "own": 49.4,
+            "nearestIsOwn": true,
+            "hasLeader": true,
+            "margin": 14
+          },
+          {
+            "text": "Nixtamal plus koji",
+            "own": 25.1,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 30.2
+          },
+          {
+            "text": "Preserved lemon, batch 3",
+            "own": 56.7,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 138.8
+          },
+          {
+            "text": "Ask M about her crock",
+            "own": 41.4,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 47.7
+          },
+          {
+            "text": "Black garlic: 60C for 40 days",
+            "own": 21.4,
+            "nearestIsOwn": true,
+            "hasLeader": true,
+            "margin": 6.2
+          },
+          {
+            "text": "Coffee cherry cascara ferment?",
+            "own": 40.5,
+            "nearestIsOwn": true,
+            "hasLeader": false,
+            "margin": 55.7
+          }
+        ],
+        "heldLabelsNearestOwnNode": 6,
+        "heldLabelsWithLeader": 3,
+        "everyHeldLabelAttributable": true,
+        "holdingRingHeightFraction": 0.6599946584792388,
+        "holdingRingFillsFrame": true,
+        "everyHeldNodeInFrame": true,
+        "countMatchesMarkers": true
       },
       "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the holding cluster framed on its own boundary: every unplaced node inside the dashed ring, and the holding count that names them",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "2b05b8c869fbf385",
+        "appSha": "22b293298fb8cc2f",
+        "claimShas": {
+          "holdingRingFillsFrame": "b5bea41b6c62",
+          "everyHeldNodeInFrame": "b5bea41b6c62",
+          "placedMapVisibleBeyondTheBoundary": "b5bea41b6c62",
+          "placedMapDrawnInThePixels": "b5bea41b6c62",
+          "noTwoChromePanelsOverlap": "b5bea41b6c62",
+          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
+          "noHeldNodeBuriedByChrome": "b5bea41b6c62",
+          "countMatchesMarkers": "b5bea41b6c62",
+          "everyHeldLabelAttributable": "b5bea41b6c62",
+          "noTwoDrawnLabelsOverlap": "b5bea41b6c62",
+          "everyDrawnLabelHasAVisibleMarker": "b5bea41b6c62",
+          "everyHeldMarkerCountable": "b5bea41b6c62",
+          "everyLabelStaysBesideItsNode": "b5bea41b6c62",
+          "everyLabelUnambiguouslyBound": "b5bea41b6c62",
+          "auditDescribesTheShippedFrame": "b5bea41b6c62"
+        }
+      },
+      "capturedInCycle": "cold",
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-04T21:03:08.583Z"
+      "fileMtime": "2026-09-09T06:40:17.847Z"
     },
     {
       "id": "07",
@@ -140,15 +1771,84 @@
       "title": "Five node states staged",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1,
+      "seconds": 1.5,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 164047,
-        "sha256": "449662d301c1d3020154f8451850e7e618c8196d932e53719e1ac29ab37437fd"
+        "bytes": 185049,
+        "sha256": "e655476f3529e00e044094690defe93da4648a3e182aa4d25c48f59b799db4ca"
+      },
+      "claims": {
+        "ok": true,
+        "claims": [
+          {
+            "claim": "ok",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "ladderMonotonic",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "ladderStepsClearScatter",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "ladderMonotonicInRelLuminance",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "ladderStepsClearScatterInRelLuminance",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "noTwoChromePanelsOverlap",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "everyChromeBadgeInsideTheFrame",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          },
+          {
+            "claim": "cameraPinned",
+            "expected": true,
+            "actual": true,
+            "pass": true,
+            "rule": "true",
+            "ruleSha": "b5bea41b6c62"
+          }
+        ]
       },
       "result": {
         "statesInFrame": [
@@ -171,15 +1871,124 @@
           "Cut the history section?": "unplaced",
           "Timebox to 18 minutes": "unplaced"
         },
+        "chromeChecked": 7,
+        "chromeOverlappingPairs": 0,
+        "chromeWorstOverlapPx": 0,
+        "chromeOverlaps": [],
+        "chromeOffFrame": [],
+        "nodesUnderChrome": 0,
+        "nodesUnderChromeIds": [],
+        "nodesUnderChromeBy": [],
+        "heldNodesUnderChrome": 0,
+        "noHeldNodeBuriedByChrome": true,
+        "noTwoChromePanelsOverlap": true,
+        "everyChromeBadgeInsideTheFrame": true,
+        "noNodeBuriedByChrome": true,
+        "namesDrawn": 10,
+        "namesListed": 0,
+        "thoughtsLeftUnnamed": 0,
+        "everyThoughtOnScreenIsNamed": true,
+        "camera": {
+          "yaw": 0.3,
+          "pitch": 0.13,
+          "dist": 26.06312,
+          "target": [
+            -2.292421,
+            -3.35,
+            2.412729
+          ]
+        },
+        "cameraPinned": true,
+        "measuredRungsLuma709": {
+          "plain": 0.2834,
+          "connected": 0.4225,
+          "unplaced": 0.5511,
+          "searchHit": 0.6492,
+          "selected": 0.7834
+        },
+        "withinRungSpreadLuma709": {
+          "plain": 0.0151,
+          "connected": 0.005,
+          "unplaced": 0.0158,
+          "searchHit": 0,
+          "selected": 0
+        },
+        "rungStepsLuma709": [
+          0.1391,
+          0.1286,
+          0.0981,
+          0.1342
+        ],
+        "measuredRungsRelLuminance": {
+          "plain": 0.069,
+          "connected": 0.1662,
+          "unplaced": 0.2655,
+          "searchHit": 0.3823,
+          "selected": 0.5915
+        },
+        "withinRungSpreadRelLuminance": {
+          "plain": 0.0145,
+          "connected": 0.0178,
+          "unplaced": 0.0168,
+          "searchHit": 0,
+          "selected": 0
+        },
+        "rungStepsRelLuminance": [
+          0.0972,
+          0.0993,
+          0.1168,
+          0.2092
+        ],
+        "ladderMonotonicInRelLuminance": true,
+        "ladderStepsClearScatterInRelLuminance": true,
+        "minRungStepRelLuminance": 0.0972,
+        "maxWithinRungSpreadRelLuminance": 0.0178,
+        "ladderMonotonic": true,
+        "minRungStep": 0.0981,
+        "maxWithinRungSpread": 0.0158,
+        "ladderStepsClearScatter": true,
         "ok": true
       },
       "pageErrors": [],
+      "recipe": {
+        "demonstrates": "the five node states side by side with the legend, with the luminance ladder measured off the shipped frame",
+        "surface": "windows",
+        "lens": null,
+        "runtimes": [
+          "windows: chromium 141.0.7390.37 · Linux x86_64"
+        ],
+        "fnSha": "d20566e6d80c4370",
+        "appSha": "22b293298fb8cc2f",
+        "claimShas": {
+          "ok": "b5bea41b6c62",
+          "ladderMonotonic": "b5bea41b6c62",
+          "ladderStepsClearScatter": "b5bea41b6c62",
+          "ladderMonotonicInRelLuminance": "b5bea41b6c62",
+          "ladderStepsClearScatterInRelLuminance": "b5bea41b6c62",
+          "noTwoChromePanelsOverlap": "b5bea41b6c62",
+          "everyChromeBadgeInsideTheFrame": "b5bea41b6c62",
+          "cameraPinned": "b5bea41b6c62"
+        }
+      },
+      "capturedInCycle": "cold",
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": true,
-      "fileMtime": "2026-09-04T21:03:09.587Z"
+      "fileMtime": "2026-09-09T06:40:20.091Z"
     }
   ],
-  "finishedAt": "2026-09-04T21:03:11.304Z",
+  "staleFromEarlierCycles": [],
+  "allCapturedInThisCycle": true,
+  "finishedAt": "2026-09-09T06:40:21.974Z",
+  "lateFaults": [],
+  "build": {
+    "bundle": "src/dist/app.js",
+    "bytes": 830987,
+    "sha256": "22b293298fb8cc2f02b6bea3e115ec86c9d4db55eb8df9e562840c0fdb5cfcd4",
+    "appSha": "22b293298fb8cc2f",
+    "gitHead": "05f2988df3c9",
+    "gitHeadAt": "2026-09-09T06:32:00+00:00",
+    "treeDirtyAtCapture": true
+  },
   "captured": 4,
   "total": 20
 }
