@@ -2299,3 +2299,27 @@ their measurements; and where two critics disagreed about the same frames, both
 readings are recorded rather than the convenient one. It is four points short of
 the bar it was aiming at, and it says so in the same voice it says everything
 else.
+
+## Release verification
+
+The released tree was run once more into an **empty directory** — not the
+evidence tree, so nothing already recorded could stand in for anything — under
+`harness/watch-run.mjs`:
+
+```bash
+node harness/watch-run.mjs --out /tmp/mm-verify --cycle 15
+```
+
+**20 of 20 captured as defined, in one clean run**, every declared claim met, no
+artifact carrying claims that predate its file. That is the whole set
+reproduced from the commit that ships, by the same gates that judged it.
+
+It took three attempts to get a clean measurement of that, and the reason is
+worth recording with the rest: three long runs were killed with no error and a
+truncated log, each inside the longest video take, each while nothing was
+watching. The harness had no opinion about how long a take may take, so a
+driver that stopped making progress stopped the process. Both halves are now
+closed — a per-artifact time budget that records an overrun as a failed capture
+and carries on, and a runner that detaches the capture into its own session,
+watches for stalls, and resumes with only the artifacts still missing.
+
