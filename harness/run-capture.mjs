@@ -1357,8 +1357,25 @@ async function runDriver(d) {
     },
   };
   let result, error = null;
-  try { result = await d.run.call(d, H); }
+  // A TAKE THAT HANGS IS A FINDING, NOT A SILENT WAIT.
+  //
+  // Three long runs died inside artifact 17 with no error and a truncated log,
+  // and each time the whole run went with it — the harness had no opinion about
+  // how long a take may take, so a driver that stops making progress simply
+  // stops the process. The cap is generous (a video take of 49 s at 30 fps with
+  // per-frame sampling legitimately runs several minutes) and it is per
+  // artifact, so one stuck take fails as `driver-error: exceeded its time
+  // budget` and the run carries on to the rest of the set.
+  const BUDGET_MS = Number(arg('--budget-ms', d.kind === 'mp4' ? 20 * 60_000 : 6 * 60_000));
+  let timer = null;
+  const budget = new Promise((_, rej) => {
+    timer = setTimeout(() => rej(new Error(
+      `exceeded its time budget of ${Math.round(BUDGET_MS / 60000)} min — recorded as a failed capture ` +
+      'rather than left to hang')), BUDGET_MS);
+  });
+  try { result = await Promise.race([d.run.call(d, H), budget]); }
   catch (e) { error = e.message + '\n' + (e.stack || '').split('\n').slice(1, 4).join('\n'); }
+  finally { clearTimeout(timer); }
   const errs = pages.flatMap(p => p.errs);
   // WHICH RUNTIME ACTUALLY DREW THIS ONE.
   //
