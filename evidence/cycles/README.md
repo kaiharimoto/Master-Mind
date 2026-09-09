@@ -114,3 +114,46 @@ Three machine checks were added so it cannot recur:
 - `diff-evidence.mjs` records `cycleAdvanced` and a `cycleDisagreement` line
   whenever a set claims a cycle that does not follow the one it is diffed
   against.
+
+## cycle-15's manifest stopped describing three of its own files
+
+The cycle-15 Auditor found that `cycles/cycle-15/MANIFEST.json` attests byte
+counts and digests for artifacts **03, 04 and 05** that do not match the files
+frozen beside it, with `check.ok` true on all three:
+
+| | manifest | shipped |
+|---|---|---|
+| 03 | 843703 · `318a180ab6d5…` | 835986 · `6cab90b804b9…` |
+| 04 | 444048 · `e4f6513b438b…` | 444033 · `905bfa89e425…` |
+| 05 | 617999 · `c83eadfd6f05…` | 617865 · `5f6e74aebeb9…` |
+
+It ran the same test across every frozen set: cycles 2–14 are clean, so this is
+new in cycle 15. `cycle-15.sha256` and `DIFF.json` both hash the real files,
+which is why the set's records disagree with each other and why the divergence
+was findable at all.
+
+**The cause was the interruptions.** A container restart killed a capture
+mid-run and the working set was restored with `git checkout -- evidence/`; both
+replace files out of band. A later `--only` run then carries the *previous*
+manifest's `check` for every artifact it did not itself capture, so the record
+and the bytes drift apart with nothing looking. The consequence is not cosmetic:
+the claims recorded for those three were measured on a render that is not the
+one in the set.
+
+**The frozen files are not replaced.** Two critics read these bytes before the
+fault was reported, and re-freezing would make the ledger disagree with the
+review — the same reasoning as the cycle-14 mislabelling above.
+
+Three machine checks close it:
+
+- `run-capture.mjs` re-reads every artifact's digest from disk when the manifest
+  is written, replaces a stale `check`, records what it was in
+  `checkBeforeRefresh`, and flags the artifact `claimsPredateTheShippedFile`.
+- `digestUnchangedFromPreviousRun` now says `false` where it used to say
+  nothing at all.
+- `cycle.mjs` refuses to freeze a set in which any artifact's `check.sha256` is
+  not the sha256 of the file it names, or in which any artifact's claims predate
+  its file, and names the offenders.
+
+Verified: the guard flagged exactly 03, 04 and 05 on the working set, and after
+recapturing those three the flag list is empty.

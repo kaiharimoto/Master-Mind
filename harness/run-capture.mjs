@@ -1617,14 +1617,39 @@ manifest.captured = manifest.artifacts.filter(a => a.status === 'captured').leng
 manifest.total = DRIVERS.length;
 // Deterministic seeding means an untouched artifact re-renders byte-identically.
 // Say so explicitly, so an auditor can tell a real re-render from a stale file.
+// A MANIFEST DESCRIBES THE BYTES THAT SHIP, OR IT SAYS IT DOES NOT.
+//
+// This loop already hashed every file and compared it against the recorded
+// `check` — and when they differed it wrote `undefined` and moved on. The
+// cycle-15 Auditor found the consequence: artifacts 03, 04 and 05 attesting
+// byte counts and digests of renders that exist nowhere, with `check.ok` true
+// on all three, while `cycle-N.sha256` and DIFF.json hashed the real files. The
+// cause was the run being interrupted twice — a killed capture and a restore
+// from git both replace files out of band, and a later `--only` run carries the
+// previous manifest's `check` for every artifact it did not itself capture.
+//
+// Three changes, so the same drift cannot be silent again: the digest is
+// RE-READ from disk and replaces the stale one; the artifact is flagged so a
+// reader knows its claims were computed against a different render; and
+// `digestUnchangedFromPreviousRun` says `false` rather than nothing.
 for (const a of manifest.artifacts) {
   const f = resolve(OUTDIR, a.file);
   if (!existsSync(f)) continue;
   const digest = sha(f);
-  a.digestUnchangedFromPreviousRun = a.check && a.check.sha256 === digest ? true : undefined;
+  const stale = a.check && a.check.sha256 && a.check.sha256 !== digest;
+  a.digestUnchangedFromPreviousRun = a.check && a.check.sha256 ? a.check.sha256 === digest : undefined;
+  if (stale) {
+    a.checkBeforeRefresh = { sha256: a.check.sha256, bytes: a.check.bytes };
+    a.check = await verify(DRIVERS.find(d => d.id === a.id) ?? { id: a.id, file: a.file, kind: a.kind }, f);
+    // The claims in this record were measured on the render that WAS here. The
+    // bytes changed underneath them, so they are not claims about this file.
+    a.claimsPredateTheShippedFile = true;
+  }
   a.capturedInThisRun = manifest.lastRunCaptured.includes(a.id);
   a.fileMtime = new Date(statSync(f).mtimeMs).toISOString();
 }
+manifest.artifactsWhoseClaimsPredateTheirFile =
+  manifest.artifacts.filter(a => a.claimsPredateTheShippedFile).map(a => a.id);
 writeFileSync(manPath, JSON.stringify(manifest, null, 2));
 console.log(`\n${manifest.captured}/${manifest.total} in the manifest captured as defined ` +
             `(${manifest.lastRunCaptured.length} recaptured in this run)`);

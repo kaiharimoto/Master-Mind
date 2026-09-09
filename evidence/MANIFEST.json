@@ -6,10 +6,11 @@
     "fps": 30
   },
   "startedAt": "2026-09-04T19:46:47.167Z",
-  "lastRunAt": "2026-09-09T06:28:58.290Z",
+  "lastRunAt": "2026-09-09T07:06:11.732Z",
   "lastRunCaptured": [
-    "11",
-    "12"
+    "03",
+    "04",
+    "05"
   ],
   "claimFingerprintScope": "recipe.claimShas hashes each claim’s acceptance rule only. The code producing the measured value is covered by recipe.fnSha (capture script) and recipe.appSha (app bundle).",
   "artifacts": [
@@ -1087,15 +1088,15 @@
       "title": "Hero — AR projection, cold start",
       "kind": "png",
       "minimum": "2560x1440",
-      "seconds": 3.5,
+      "seconds": 3.9,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 2560,
         "height": 1440,
-        "bytes": 843703,
-        "sha256": "318a180ab6d57ca5945b3ab282793b382c0a3bc1705d6311227e164cfef1a398"
+        "bytes": 833756,
+        "sha256": "4c6ffde2de86d875bf5adf66b43c54835b69fbb13ddaf6da003791e4e2f3ee4a"
       },
       "claims": {
         "ok": true,
@@ -1152,9 +1153,9 @@
         "sync": "live",
         "onFrame": {
           "holdingBadge": 8,
-          "labelsHidden": 53,
-          "labelsShortened": 11,
-          "labelsSetSmaller": 10,
+          "labelsHidden": 54,
+          "labelsShortened": 12,
+          "labelsSetSmaller": 9,
           "smallestLabelPx": 12,
           "unlabelledListed": 0,
           "searchBreakdown": null,
@@ -1248,8 +1249,9 @@
         }
       },
       "capturedInCycle": 15,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T17:04:22.838Z"
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-09T07:06:15.495Z"
     },
     {
       "id": "04",
@@ -1257,7 +1259,7 @@
       "title": "Mind expansion overview",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 2.7,
+      "seconds": 2.8,
       "status": "captured",
       "error": null,
       "check": {
@@ -2348,8 +2350,9 @@
         }
       },
       "capturedInCycle": 15,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T17:04:26.353Z"
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-09T07:06:17.655Z"
     },
     {
       "id": "05",
@@ -2357,15 +2360,15 @@
       "title": "Hand tracking live",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 15.7,
+      "seconds": 17.2,
       "status": "captured",
       "error": null,
       "check": {
         "ok": true,
         "width": 1920,
         "height": 1080,
-        "bytes": 617999,
-        "sha256": "c83eadfd6f05f372152f04f35b5826cf5253ba01903559902b7a1beb18e0d6ee"
+        "bytes": 617684,
+        "sha256": "be83faf1608cf78c61aad8b3bbac0d3994bd2cf59ccca1474e2801e763646c41"
       },
       "claims": {
         "ok": true,
@@ -2468,8 +2471,8 @@
         "captionMatchesTheAppsVocabulary": true,
         "landmarks": 21,
         "tipsOut": 4,
-        "fan": 0.999,
-        "confidence": 0.945,
+        "fan": 1.014,
+        "confidence": 0.947,
         "distBefore": 441.69,
         "distAfter": 383,
         "distAfterReadFromTheFrame": true,
@@ -2844,9 +2847,9 @@
         "detectorAtShutter": {
           "pose": "spread",
           "present": true,
-          "conf": 0.952
+          "conf": 0.953
         },
-        "confidenceBefore": 0.945,
+        "confidenceBefore": 0.947,
         "detectorLiveInBothPanels": true,
         "chipPromisesNoLegibilityItCannotDeliver": true,
         "captureSource": "/home/user/Master-Mind/harness/clips/hand-vocabulary-slow.y4m",
@@ -2879,8 +2882,9 @@
         }
       },
       "capturedInCycle": 15,
-      "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T17:04:48.231Z"
+      "digestUnchangedFromPreviousRun": true,
+      "capturedInThisRun": true,
+      "fileMtime": "2026-09-09T07:06:35.392Z"
     },
     {
       "id": "06",
@@ -4649,7 +4653,7 @@
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-09T06:30:07.279Z"
     },
     {
@@ -5118,7 +5122,7 @@
       },
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
-      "capturedInThisRun": true,
+      "capturedInThisRun": false,
       "fileMtime": "2026-09-09T06:30:16.511Z"
     },
     {
@@ -5127,7 +5131,7 @@
       "title": "Finder prompt export",
       "kind": "png",
       "minimum": "1920x1080",
-      "seconds": 1.3,
+      "seconds": 2.6,
       "status": "captured",
       "error": null,
       "check": {
@@ -5202,7 +5206,7 @@
       "capturedInCycle": 15,
       "digestUnchangedFromPreviousRun": true,
       "capturedInThisRun": false,
-      "fileMtime": "2026-09-06T17:05:45.177Z"
+      "fileMtime": "2026-09-09T07:06:02.583Z"
     },
     {
       "id": "14",
@@ -6835,17 +6839,18 @@
   ],
   "staleFromEarlierCycles": [],
   "allCapturedInThisCycle": true,
-  "finishedAt": "2026-09-09T06:30:18.705Z",
+  "finishedAt": "2026-09-09T07:06:37.107Z",
   "lateFaults": [],
   "build": {
     "bundle": "src/dist/app.js",
     "bytes": 830987,
     "sha256": "22b293298fb8cc2f02b6bea3e115ec86c9d4db55eb8df9e562840c0fdb5cfcd4",
     "appSha": "22b293298fb8cc2f",
-    "gitHead": "36f5675dc845",
-    "gitHeadAt": "2026-09-07T04:41:10+00:00",
+    "gitHead": "76010e96deef",
+    "gitHeadAt": "2026-09-09T07:05:00+00:00",
     "treeDirtyAtCapture": true
   },
   "captured": 20,
-  "total": 20
+  "total": 20,
+  "artifactsWhoseClaimsPredateTheirFile": []
 }

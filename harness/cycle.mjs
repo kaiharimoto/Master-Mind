@@ -180,6 +180,32 @@ console.log(`positions: ${diff.positions.compared ? (diff.positions.identical ? 
                   'without --skip-capture) so the records and the directory agree.');
     process.exit(2);
   }
+  // AND THE MANIFEST MUST DESCRIBE THE FILES IT IS ABOUT TO FREEZE.
+  //
+  // The cycle-15 Auditor found three artifacts — the AR hero among them — whose
+  // recorded digests belonged to renders that no longer existed, so their
+  // claims were measurements of a picture nobody reviewed. The external ledger
+  // catches a set that changes AFTER the freeze; this catches one that was
+  // already inconsistent before it.
+  const drifted = [];
+  for (const a of man.artifacts ?? []) {
+    const f = join(EV, a.file);
+    if (!existsSync(f) || !a.check?.sha256) continue;
+    const d = createHash('sha256').update(readFileSync(f)).digest('hex');
+    if (d !== a.check.sha256) drifted.push(`${a.id} ${a.file}: manifest ${a.check.sha256.slice(0, 12)} vs file ${d.slice(0, 12)}`);
+  }
+  if (drifted.length) {
+    console.error('REFUSING TO FREEZE: the manifest does not describe the files it names —');
+    for (const line of drifted) console.error(`  ${line}`);
+    console.error('Recapture those artifacts so their claims and their bytes are the same render.');
+    process.exit(2);
+  }
+  const claimsStale = (man.artifacts ?? []).filter(a => a.claimsPredateTheShippedFile).map(a => a.id);
+  if (claimsStale.length) {
+    console.error(`REFUSING TO FREEZE: ${claimsStale.join(', ')} carry claims measured on an earlier render ` +
+                  '(the file changed out of band). Recapture them.');
+    process.exit(2);
+  }
   const stale = (man.artifacts ?? []).filter(a => a.capturedInCycle !== cycle);
   if (stale.length)
     console.log(`carried over from an earlier cycle: ${stale.map(a => `${a.id}@${a.capturedInCycle}`).join(', ')}`);
